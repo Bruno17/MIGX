@@ -54,7 +54,7 @@ Ext.onReady(function() {
         ,autoTabs: true
         ,border: false
         ,plain: true
-        ,width: '800px'
+        ,width: '900px'
         ,hideMode: 'offsets'
         ,autoScroll: true
         ,defaults: {

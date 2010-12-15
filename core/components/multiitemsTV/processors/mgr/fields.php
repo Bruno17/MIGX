@@ -59,7 +59,7 @@ $categories[$tabid] = $emptycat;
 		//$tv->set('id',$fieldid);
 		
 		/*generate unique tvid*/
-		$field['tv_id']=$scriptProperties['tv_id']*1000000000+$fieldid;
+		$field['tv_id']=$scriptProperties['tv_id']*100000000+$fieldid;
         				
 		$field['array_tv_id']=$field['tv_id'].'[]'; 
    		$allfields[]=$field;

@@ -12,8 +12,9 @@
 MODx.grid.multiTVgrid = function(config) {
     config = config || {};
 	Ext.applyIf(config,{
-	height: 300,
-	width:400,
+	width:'1000px',    
+	autoHeight: true,
+    collapsible: true,
 	resizable: true,
     store: 	new Ext.data.JsonStore({
         fields : config.fields
@@ -111,6 +112,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         }
 		this.getStore().sortInfo = null;
 		this.getStore().loadData(items);
+		this.syncSize();
 
 	/*
     if (items.length>0){
@@ -142,7 +144,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     }
 	,addItem: function() {
 		var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}')
-		this.getStore().loadData(items,true);		
+		this.getStore().loadData(items,true);
+				
 	}	
 	,remove: function() {
         var _this=this;
@@ -242,8 +245,7 @@ MODx.window.UpdateTvItem = function(config) {
     Ext.applyIf(config,{
         title: _('property_update')
         ,id: 'modx-window-element-property-update'
-        ,height: 250
-        ,width: 450
+        ,width: '1000px'
 		,closeAction: 'hide'
         ,shadow: true
         ,resizable: true
@@ -322,7 +324,8 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             labelAlign: this.config.labelAlign || 'right'
             ,labelWidth: this.config.labelWidth || 100
             ,frame: this.config.formFrame || true
-            ,border: false
+            ,popwindow : this
+			,border: false
             ,bodyBorder: false
             ,autoHeight: true
             ,errorReader: MODx.util.JSONReader
@@ -350,6 +353,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
 					this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(rec.json);
 										  
 					  this.fp.doAutoLoad();
+
 					  /*
 					   this.fp.load({
                             url: MODx.config.assets_url+'components/multiitemsTV/connector.php',
@@ -383,9 +387,9 @@ MODx.panel.Object = function(config) {
         ,baseParams: config.baseParams	
         ,class_key: ''
         ,bodyStyle: 'padding: 15px;'
-        ,autoHeight: true
+        ,autoSize: true
         ,autoLoad: this.autoload(config)
-        ,width: '97%'
+        ,width: '1000px'
         ,listeners: {
             //'beforeSubmit': {fn:this.beforeSubmit,scope:this},
             'success': {fn:this.success,scope:this}
@@ -458,7 +462,11 @@ Ext.extend(MODx.panel.Object,MODx.FormPanel,{
 		    //console.log(s); 
             tinyMCE.init(s);				
 		}
-        this.syncSize();
+        //this.popwindow.width='1000px';
+		//this.width='1000px';
+		this.syncSize();
+		this.popwindow.syncSize();
+		
 		return '';
 	 }
 });
