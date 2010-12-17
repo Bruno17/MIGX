@@ -12,7 +12,7 @@
 MODx.grid.multiTVgrid = function(config) {
     config = config || {};
 	Ext.applyIf(config,{
-	width:'1000px',    
+	width:'1000px',
 	autoHeight: true,
     collapsible: true,
 	resizable: true,
@@ -74,7 +74,7 @@ MODx.grid.multiTVgrid = function(config) {
                       }
                    }) 
 		
-		this.setWidth('110%');
+		//this.setWidth('110%');
 		//this.syncSize();
                    // load the grid store
                   //  after the grid has been rendered
@@ -116,22 +116,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		this.getStore().loadData(items);
 		this.syncSize();
 		this.setWidth('95%');
-		
-	/*
-    if (items.length>0){
-        for (var i = 0; i < items.length; i++) {
-            //menueItem_Identifier++;
-            //this.addItem({data:items[i]});
-        }
-    }
-	else {
-		//menueItem_Identifier++;
-        //this.addItem({data:{}});
-	}	
-
-	return '';
-	*/	
-		
 	}
 
     ,getSelectedAsList: function() {
@@ -162,12 +146,16 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	}   
 	,update: function(btn,e) {
 
-       var s = this.getStore();
-       var rec = s.getAt(this.menu.recordIndex);
-	   //this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(rec.json);
- 		
+        var s = this.getStore();
+        var rec = s.getAt(this.menu.recordIndex);
+		var win_xtype = 'modx-window-tv-item-update';
+		if (this.windows[win_xtype]){
+			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
+		    this.windows[win_xtype].fp.autoLoad.params.itemid=this.menu.recordIndex;
+			this.windows[win_xtype].grid=this;
+		}
 		this.loadWindow(btn,e,{
-            xtype: 'modx-window-tv-item-update'
+            xtype: win_xtype
             ,record: this.menu.record
 			,grid: this
 			,baseParams : {
@@ -177,41 +165,9 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 				'class_key': 'modDocument',
 				itemid : this.menu.recordIndex	
 			}
-            ,listeners: {
-                'success': {fn:function(r) {
-                    //var def = this.isDefaultPropSet();
-                    var s = this.getStore();
-                    var rec = s.getAt(this.menu.recordIndex);
-                    //var r_json = Ext.util.JSON.encode(r);
-					var fields = Ext.util.JSON.decode(r['mulititems_grid_item_fields']);
-					var item = {};
-					var tvid = '';
-                    if (fields.length>0){
-                        for (var i = 0; i < fields.length; i++) {
-							tvid = (fields[i].tv_id);
-							item[fields[i].field]=r['tv'+tvid+'[]'] || r['tv'+tvid] || '';							
-                            //set defined record-fields to its new value
-							rec.set(fields[i].field,item[fields[i].field])
-						}
-						//we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
-						rec.json=item;
-						//console.log(rec);
-                    }					
-                    this.getView().refresh();
-					this.collectItems();
-                    //this.onDirty();
-                },scope:this
-				,}
-				,'hide': {fn:function(fp) {
-                    fp.isloading=false;
-                },scope:this
-				}
-            }
         });
     }
     ,getMenu: function() {
-        //this.store.on('load', this.reloadDateCombos(this)); 
-		//console.log(this.store);
 		var n = this.menu.record; 
         //var cls = n.cls.split(',');
         var m = [];
@@ -247,7 +203,7 @@ MODx.window.UpdateTvItem = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         title: _('property_update')
-        ,id: 'modx-window-element-property-update'
+        ,id: 'modx-window-mi-grid-update' 
         ,width: '1000px'
 		,closeAction: 'hide'
         ,shadow: true
@@ -294,16 +250,26 @@ MODx.window.UpdateTvItem = function(config) {
 Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     submit: function() {
         var v = this.fp.getForm().getValues();
-
-		//console.log(v);
-        /*
-        var g = Ext.getCmp('modx-uep-grid-element-property-options');
-        var opt = eval(g.encode());
-        Ext.apply(v,{
-            options: opt
-        });
-        */
         if (this.fp.getForm().isValid()) {
+            var s = this.grid.getStore();
+            var rec = s.getAt(this.grid.menu.recordIndex);
+            var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
+            var item = {};
+            var tvid = '';
+            if (fields.length>0){
+                for (var i = 0; i < fields.length; i++) {
+                    tvid = (fields[i].tv_id);
+                    item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
+                    //set defined record-fields to its new value
+                    rec.set(fields[i].field,item[fields[i].field])
+                }
+                //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
+                rec.json=item;
+            }					
+            this.grid.getView().refresh();
+            this.grid.collectItems();
+            //this.onDirty();			
+			
             if (this.fireEvent('success',v)) {
                 this.fp.getForm().reset();
                 this.hide();
@@ -346,36 +312,12 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
 		
     }		
     ,onShow: function() {
-		
-		if (this.fp.isloading) return;
-		this.fp.isloading=true;
-		//console.log('isloading'+this.fp.isloading);
-		//console.log('isloaded'+this.fp.isloaded);
-                    var s = this.grid.getStore();
-                    var rec = s.getAt(this.grid.menu.recordIndex);
-					this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(rec.json);
-										  
-					  this.fp.doAutoLoad();
-
-					  /*
-					   this.fp.load({
-                            url: MODx.config.assets_url+'components/multiitemsTV/connector.php',
-                            scripts: true,
-				            params: {
-					            //'a': MODx.action['resource/tvs']
-					            action: 'mgr/xdbedit/fields',
-					            object_id: '17',
-					            configs: 'angebote',
-					            tv_id: '18',
-					            itemid:this.itemid,
-					            'class_key': 'modDocument'//config.class_key
-				            }
-							, 
-                            text: "Loading Form"
-                        });
-                        */	
-                        	
-
+        if (this.fp.isloading) return;
+        this.fp.isloading=true;
+        var s = this.grid.getStore();
+        var rec = s.getAt(this.grid.menu.recordIndex);
+        this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(rec.json);
+        this.fp.doAutoLoad();
     }
 
 });
@@ -384,7 +326,7 @@ Ext.reg('modx-window-tv-item-update',MODx.window.UpdateTvItem);
 MODx.panel.Object = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        id: 'xdbedit-panel-object'
+        id: 'xdbedit-panel-object-{/literal}{$tv->id}{literal}'
 		,title: _('template_variables')
         ,url: config.url
         ,baseParams: config.baseParams	
