@@ -1,5 +1,5 @@
 <input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv->get('value')|escape}"{$style} tvtype="{$tv->type}" />
-<div id="tvpanel{$tv->id}">
+<div id="tvpanel{$tv->id}" style="width:650px">
 </div>
 <div id="tvpanel2{$tv->id}">
 </div>
@@ -12,7 +12,6 @@
 MODx.grid.multiTVgrid = function(config) {
     config = config || {};
 	Ext.applyIf(config,{
-	width:'1000px',
 	autoHeight: true,
     collapsible: true,
 	resizable: true,
@@ -74,7 +73,7 @@ MODx.grid.multiTVgrid = function(config) {
                       }
                    }) 
 		
-		//this.setWidth('110%');
+		this.setWidth('95%');
 		//this.syncSize();
                    // load the grid store
                   //  after the grid has been rendered
@@ -101,7 +100,17 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
     ,renderImage : function(val){
-	    return '<img style="height:60px" src="' + val + '"/>' ;
+		if (val.substr(0,4) == 'http'){
+			return '<img style="height:60px" src="' + val + '"/>' ;
+		}        
+		if (val != ''){
+			return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?h=60&src=' + val + '" alt="" />';
+		}
+		return val;
+	}
+    ,renderPreview : function(val,md,rec){
+		console.log(rec);
+		return val;
 	}
 
 	,loadData: function(){
@@ -114,8 +123,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         }
 		this.getStore().sortInfo = null;
 		this.getStore().loadData(items);
+			
 		this.syncSize();
-		this.setWidth('95%');
+        this.setWidth('100%');
+		
+		
 	}
 
     ,getSelectedAsList: function() {
@@ -302,7 +314,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             ,baseParams: this.config.baseParams || {}
             ,fileUpload: this.config.fileUpload || false
         });
-        return new MODx.panel.Object(config);
+        return new MODx.panel.MiGridUpdate(config);
 
 		
     }
@@ -323,7 +335,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
 });
 Ext.reg('modx-window-tv-item-update',MODx.window.UpdateTvItem);
 
-MODx.panel.Object = function(config) {
+MODx.panel.MiGridUpdate = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'xdbedit-panel-object-{/literal}{$tv->id}{literal}'
@@ -341,11 +353,11 @@ MODx.panel.Object = function(config) {
 			,'load': {fn:this.load,scope:this}
         }		
     });
- 	MODx.panel.Object.superclass.constructor.call(this,config);
+ 	MODx.panel.MiGridUpdate.superclass.constructor.call(this,config);
 	
 	//this.addEvents({ load: true });
 };
-Ext.extend(MODx.panel.Object,MODx.FormPanel,{
+Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
 		var a = {
@@ -415,7 +427,7 @@ Ext.extend(MODx.panel.Object,MODx.FormPanel,{
 		return '';
 	 }
 });
-Ext.reg('xdbedit-panel-object',MODx.panel.Object);
+Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate);
 
         MODx.load({
             xtype: 'modx-grid-multitvgrid'

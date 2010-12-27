@@ -20,6 +20,7 @@ if (! isset ($modx->smarty)){
 $modx->smarty->template_dir = $modx->getOption('manager_path').'templates/'.$modx->getOption('manager_theme', null, 'default').'/';
 
 $modx->smarty->assign('OnResourceTVFormPrerender',$onResourceTVFormPrerender);
+$modx->smarty->assign('_config',$modx->config);
 
 $tv = $modx->getObject('modTemplateVar',array('id'=>$scriptProperties['tv_id']));
 //$options = $tv->parseInputOptions($tv->processBindings($tv->get('elements'),$tv->get('name')));
@@ -32,6 +33,7 @@ $allfields=array();
 
 /*actual record */
 $record=$modx->fromJSON($scriptProperties['record_json']);
+
 
 foreach ($formtabs as $tabid=>$tab){
 /*virtual categories for tabs*/
