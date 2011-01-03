@@ -163,6 +163,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		var win_xtype = 'modx-window-tv-item-update';
 		if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
+			this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    this.windows[win_xtype].fp.autoLoad.params.itemid=this.menu.recordIndex;
 			this.windows[win_xtype].grid=this;
 		}

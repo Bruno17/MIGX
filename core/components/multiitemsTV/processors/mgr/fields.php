@@ -22,10 +22,11 @@ $modx->smarty->template_dir = $modx->getOption('manager_path').'templates/'.$mod
 $modx->smarty->assign('OnResourceTVFormPrerender',$onResourceTVFormPrerender);
 $modx->smarty->assign('_config',$modx->config);
 
-$tv = $modx->getObject('modTemplateVar',array('id'=>$scriptProperties['tv_id']));
+$tv = $modx->getObject('modTemplateVar',array('name'=>$scriptProperties['tv_name']));
 //$options = $tv->parseInputOptions($tv->processBindings($tv->get('elements'),$tv->get('name')));
 $properties=$tv->getProperties();
 $formtabs=$modx->fromJSON($properties['formtabs']);
+
 
 $fieldid=0;
 $tabid=0;

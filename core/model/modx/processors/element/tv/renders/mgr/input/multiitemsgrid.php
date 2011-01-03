@@ -10,6 +10,7 @@ $this->xpdo->lexicon->load('tv_widget');
 $properties=$this->getProperties();
 $columns=$this->xpdo->fromJSON($properties['columns']);
 
+
 if (count($columns)>0){
 	foreach ($columns as $column){
 		$field['name']=$column['dataIndex'];
