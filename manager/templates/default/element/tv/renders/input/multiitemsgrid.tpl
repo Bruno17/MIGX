@@ -175,6 +175,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 				record_json:Ext.util.JSON.encode(rec.json),
 			    action: 'mgr/fields',
 				tv_id: '{/literal}{$tv->id}{literal}',
+				tv_name: '{/literal}{$tv->name}{literal}',
 				'class_key': 'modDocument',
 				itemid : this.menu.recordIndex	
 			}
