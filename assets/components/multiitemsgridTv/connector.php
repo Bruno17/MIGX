@@ -34,7 +34,7 @@ require_once MODX_CONNECTORS_PATH.'index.php';
 //$modx->lexicon->load('multiitemsTV:default');
 
 /* handle request */
-$miTVCorePath = $modx->getOption('multiitemsTV.core_path',null,$modx->getOption('core_path').'components/multiitemsTV/');
+$miTVCorePath = $modx->getOption('multiitemsgridTv.core_path',null,$modx->getOption('core_path').'components/multiitemsgridTv/');
 
 $modx->request->handleRequest(array(
     'processors_path' => $miTVCorePath.'processors/',

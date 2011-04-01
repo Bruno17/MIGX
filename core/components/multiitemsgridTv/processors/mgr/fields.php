@@ -61,8 +61,9 @@ $categories[$tabid] = $emptycat;
 		$tv->set('caption',$field['caption']);
 		//$tv->set('id',$fieldid);
 		
-		/*generate unique tvid*/
-		$field['tv_id']=$scriptProperties['tv_id']*100000000+$fieldid;
+		/*generate unique tvid, must be numeric*/
+        /*todo: find a better solution*/
+		$field['tv_id']=$scriptProperties['tv_id']*10000000+$fieldid;
         				
 		$field['array_tv_id']=$field['tv_id'].'[]'; 
    		$allfields[]=$field;
@@ -139,7 +140,7 @@ $modx->smarty->assign('properties',$scriptProperties);
 if (!empty($_REQUEST['showCheckbox'])) {
     $modx->smarty->assign('showCheckbox',1);
 }
-$miTVCorePath = $modx->getOption('multiitemsTV.core_path',null,$modx->getOption('core_path').'components/multiitemsTV/');
+$miTVCorePath = $modx->getOption('multiitemsgridTv.core_path',null,$modx->getOption('core_path').'components/multiitemsgridTv/');
 $modx->smarty->template_dir = $miTVCorePath.'templates/';
 return $modx->smarty->fetch('mgr/fields.tpl');
 
