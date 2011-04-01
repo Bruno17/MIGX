@@ -24,7 +24,7 @@
  *
  * get Images from TV with custom-input-type imageList for MODx Revolution 2.0.
  *
- * @version 1.0
+ * @version 1.1
  * @author Bruno Perner <b.perner@gmx.de>
  * @copyright Copyright &copy; 2009-2010
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
@@ -32,21 +32,35 @@
  * @package imageListTv
  */
 
-/*example: <ul>[[!getImageList? &tvname=`myTV`&tpl=`@CODE:<li><img src="[[+imageURL]]"/><p>[[+imageAlt]]</p></li>`]]</ul>*/
+/*example: <ul>[[!getImageList? &tvname=`myTV`&tpl=`@CODE:<li>[[+idx]]<img src="[[+imageURL]]"/><p>[[+imageAlt]]</p></li>`]]</ul>*/
 /* get default properties */
 
 
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
 $docid = $modx->getOption('docid', $scriptProperties, $modx->resource->get('id'));
+$outputvalue = $modx->getOption('value', $scriptProperties, '');
+$limit = $modx->getOption('limit', $scriptProperties, '999999');
+$offset = $modx->getOption('offset',$scriptProperties,0);
+$totalVar = $modx->getOption('totalVar',$scriptProperties,'total');
 
-if ($tvname == '' || $tpl == 'xx')
+if (empty($tpl))
 {
-    return;
+    return 'empty property: &tpl';
 }
 
-$tv = $modx->getObject('modTemplateVar', array ('name'=>$tvname));
-$outputvalue = $tv->renderOutput($docid);
+if (!empty($tvname))
+{
+    if ($tv = $modx->getObject('modTemplateVar', array ('name'=>$tvname))){
+        $outputvalue = $tv->renderOutput($docid);
+    }
+}
+
+if (empty($outputvalue))
+{
+    return '';
+}
+
 $items = $modx->fromJSON($outputvalue);
 $output = '';
 if (substr($tpl, 0, 6) == "@FILE:")
@@ -67,15 +81,22 @@ if ($template)
 {
     if (count($items) > 0)
     {
-        foreach ($items as $item)
+        $idx=0;
+		foreach ($items as $key=>$item)
         {
-            $chunk = $modx->newObject('modChunk');
-            $chunk->setCacheable(false);
-            $output .= $chunk->process($item, $template);
+			echo $key.':';
+			if ($key>=$offset && $idx<$limit){
+                $idx++;
+                $item['idx'] = $idx;
+                $chunk = $modx->newObject('modChunk');
+                $chunk->setCacheable(false);
+				$chunk->setContent($template);
+                $output .= $chunk->process($item);				
+			}
+
         }
     }
 }
 
-
+$modx->setPlaceholder($totalVar, count($items));
 return $output;
-?>

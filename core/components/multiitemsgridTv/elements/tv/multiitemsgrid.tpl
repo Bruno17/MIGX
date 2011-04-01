@@ -104,12 +104,14 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			return '<img style="height:60px" src="' + val + '"/>' ;
 		}        
 		if (val != ''){
-			return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?h=60&src=' + val + '" alt="" />';
+			//return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?h=60&src=' + val + '" alt="" />';
+			
+			return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?h=60&src='+val+'&wctx={$ctx}&basePath={$params.basePath}&basePathRelative={if $params.basePathRelative}1{else}0{/if}&baseUrl={$params.baseUrl}&baseUrlRelative={if $params.baseUrlRelative}1{else}0{/if}{literal}" alt="" />';
+		
 		}
 		return val;
 	}
     ,renderPreview : function(val,md,rec){
-		console.log(rec);
 		return val;
 	}
 
@@ -141,10 +143,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         cs = Ext.util.Format.substr(cs,1,cs.length-1);
         return cs;
     }
-	,addItem: function() {
-		var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}')
-		this.getStore().loadData(items,true);
-				
+	,addItem: function(btn,e) {
+		//var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
+		var s=this.getStore();
+		//s.loadData(items,true);
+		this.loadWin(btn,e,s.getCount(),'a');
 	}	
 	,remove: function() {
         var _this=this;
@@ -157,30 +160,48 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             }),this;		
 	}   
 	,update: function(btn,e) {
+      this.loadWin(btn,e,this.menu.recordIndex,'u');
+    }
+	,duplicate: function(btn,e) {
+      this.loadWin(btn,e,this.menu.recordIndex,'d');
+    }    
+	,loadWin: function(btn,e,index,action) {
 
-        var s = this.getStore();
-        var rec = s.getAt(this.menu.recordIndex);
-		var win_xtype = 'modx-window-tv-item-update';
+        if (action == 'a'){
+           var json='{/literal}{$newitem}{literal}';
+           var data=Ext.util.JSON.decode(json);
+        }else{
+		   var s = this.getStore();
+           var rec = s.getAt(index)            
+           var data = rec.data;
+           var json = Ext.util.JSON.encode(rec.json);
+        }
+        
+		
+        var win_xtype = 'modx-window-tv-item-update';
 		if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
-		    this.windows[win_xtype].fp.autoLoad.params.itemid=this.menu.recordIndex;
+		    this.windows[win_xtype].fp.autoLoad.params.itemid=index;
+            this.windows[win_xtype].fp.autoLoad.params.record_json=json;
 			this.windows[win_xtype].grid=this;
+            this.windows[win_xtype].action=action;
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
-            ,record: this.menu.record
+            ,record: data
 			,grid: this
+            ,action: action
 			,baseParams : {
-				record_json:Ext.util.JSON.encode(rec.json),
+				record_json:json,
 			    action: 'mgr/fields',
 				tv_id: '{/literal}{$tv->id}{literal}',
 				tv_name: '{/literal}{$tv->name}{literal}',
 				'class_key': 'modDocument',
-				itemid : this.menu.recordIndex	
+				itemid : index
 			}
         });
-    }
+    }	
     ,getMenu: function() {
 		var n = this.menu.record; 
         //var cls = n.cls.split(',');
@@ -189,6 +210,10 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             text: 'edit'
             ,handler: this.update
         });
+        m.push({
+            text: 'duplicate'
+            ,handler: this.duplicate
+        });        
         m.push('-');
         m.push({
             text: 'remove'
@@ -201,12 +226,10 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		var items=[];
 		
 		// read jsons from grid-store-items 
-		//console.log(this);
         var griddata=this.store.data;
 		for(i = 0; i <  griddata.length; i++) {
  			items.push(griddata.items[i].json);
         }
-		//console.log(Ext.get('tv{/literal}{$tv->id}{literal}'));
         Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
 		return;						 
     }
@@ -239,6 +262,7 @@ MODx.window.UpdateTvItem = function(config) {
         }]
         ,record: {}
 		,grid: null
+        ,action: 'u'
 		,record_json: ''
         ,keys: [{
             key: Ext.EventObject.ENTER
@@ -266,7 +290,17 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         var v = this.fp.getForm().getValues();
         if (this.fp.getForm().isValid()) {
             var s = this.grid.getStore();
-            var rec = s.getAt(this.grid.menu.recordIndex);
+            if (this.action == 'u'){
+                var idx = this.baseParams.itemid; 
+            }else{
+                /*append record*/
+                var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
+		        s.loadData(items,true);
+                idx=s.getCount()-1;                
+            }
+
+            
+            var rec = s.getAt(idx);
             var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
             var item = {};
             var tvid = '';
@@ -328,9 +362,10 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     ,onShow: function() {
         if (this.fp.isloading) return;
         this.fp.isloading=true;
-        var s = this.grid.getStore();
-        var rec = s.getAt(this.grid.menu.recordIndex);
-        this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(rec.json);
+        //var s = this.grid.getStore();
+        //var rec = s.getAt(this.baseParams.itemid);
+        //this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(rec.json);
+        this.fp.autoLoad.params.record_json=this.baseParams.record_json;
         this.fp.doAutoLoad();
     }
 
@@ -363,13 +398,12 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
 		var a = {
-            url: MODx.config.assets_url+'components/multiitemsTV/connector.php'
+            url: MODx.config.assets_url+'components/multiitemsgridTv/connector.php'
             //url: config.url
 			,method: 'GET'
             ,params: config.baseParams
             ,scripts: true
             ,callback: function() {
-          		//console.log(this.isloaded);
 				this.isloading=false;
 				this.isloaded=true;
 				this.fireEvent('load');
@@ -394,9 +428,7 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
 		gf.refresh();
      },
 	 load: function() {
-        //console.log('load');
 		//MODx.loadRTE();
-		//
 		if (typeof(Tiny) != 'undefined') {
 		    var s={};
             if (Tiny.config){
@@ -418,7 +450,6 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
 			s.mode = "specific_textareas";
             s.editor_selector = "modx-richtext";
 		    s.language = "en";// de seems not to work at the moment
-		    //console.log(s); 
             tinyMCE.init(s);				
 		}
         //this.popwindow.width='1000px';
