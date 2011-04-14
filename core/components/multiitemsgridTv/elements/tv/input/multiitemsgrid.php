@@ -1,11 +1,25 @@
 <?php
 
 /**
- * @package modx
- * @subpackage processors.element.tv.renders.mgr.input
+ * @package multiitemsgridTv
+ * @subpackage elements.tv.input
  */
 
-$this->xpdo->lexicon->load('tv_widget');
+$path='components/multiitemsgridTv/';
+
+$corePath = $this->xpdo->getOption('multiitemsgridTv.core_path', null, $this->xpdo->getOption('core_path') . $path);
+$namespace = 'multiitemsgridTv';
+if ($nsp = $modx->getObject('modNamespace',$namespace)){
+    
+}else{
+   $nsp = $modx->newObject('modNamespace');
+   $nsp->set('path','{core_path}'.$path);
+   $nsp->set('name',$namespace);
+   $nsp->save(); 
+}
+
+$this->xpdo->lexicon->load($namespace.':default');
+//echo 'lex_test:'.$modx->lexicon('mig_add');
 
 $properties = $this->getProperties();
 
@@ -23,9 +37,9 @@ foreach ($formtabs as $tab) {
 }
 
 /* get base path based on either TV param or filemanager_path */
-//$key = 1;
 $modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->xpdo->context->get('key')));
 
+/* pasted from processors.element.tv.renders.mgr.input*/
 /* get working context */
 $wctx = isset($_GET['wctx']) && !empty($_GET['wctx']) ? $modx->sanitizeString($_GET['wctx']) : '';
 if (!empty($wctx)) {
@@ -39,6 +53,7 @@ if (!empty($wctx)) {
 }
 
 /* get base path based on either TV param or filemanager_path */
+
 $replacePaths = array(
     '[[++base_path]]' => $modx->getOption('base_path', null, MODX_BASE_PATH), 
     '[[++core_path]]' => $modx->getOption('core_path', null, MODX_CORE_PATH), 
@@ -50,20 +65,7 @@ $replacePaths = array(
 $replaceKeys = array_keys($replacePaths);
 $replaceValues = array_values($replacePaths);
 
-/*
-if (empty($params[$key]['basePath'])) {
-    $params[$key]['basePath'] = $modx->fileHandler->getBasePath();
-    $params[$key]['basePathRelative'] = $this->xpdo->getOption('filemanager_path_relative', null, true) ? 1 : 0;
-} else {
-    $params[$key]['basePathRelative'] = !isset($params[$key]['basePathRelative']) || in_array($params[$key]['basePathRelative'], array('true', 1, '1'));
-}
-if (empty($params[$key]['baseUrl'])) {
-    $params[$key]['baseUrl'] = $modx->fileHandler->getBaseUrl();
-    $params[$key]['baseUrlRelative'] = $this->xpdo->getOption('filemanager_url_relative', null, true) ? 1 : 0;
-} else {
-    $params[$key]['baseUrlRelative'] = !isset($params[$key]['baseUrlRelative']) || in_array($params[$key]['baseUrlRelative'], array('true', 1, '1'));
-}
-*/
+/* pasted end*/
 
 $columns = $this->xpdo->fromJSON($properties['columns']);
 
@@ -83,6 +85,7 @@ if (count($columns) > 0) {
         if (isset($inputTvs[$field['name']]) && $tv = $modx->getObject('modTemplateVar', array ('name'=>$inputTvs[$field['name']]))) {
             $params = $tv->get('input_properties');
             $params ['wctx'] = $wctx;
+            /* pasted from processors.element.tv.renders.mgr.input*/
             if (empty( $params['basePath'])) {
                 $params['basePath'] = $modx->fileHandler->getBasePath();
                 $params['basePath'] = str_replace($replaceKeys, $replaceValues, $params['basePath']);
@@ -107,15 +110,10 @@ if (count($columns) > 0) {
             if ($params['baseUrlRelative'] && $modxBaseUrl != '/') {
                 $params['baseUrl'] = ltrim(str_replace($modxBaseUrl, '', $params['baseUrl']), '/');
             }
-            /*
-            if (!empty($params['baseUrl']) && !empty($value)) {
-                $relativeValue = $params['baseUrl'] . ltrim($value, '/');
-            } else {
-                $relativeValue = $value;
-            }
-            */
+
             $params['basePathRelative']=$params['basePathRelative']?1:0;
             $params['baseUrlRelative']=$params['baseUrlRelative']?1:0;
+            /* pasted end*/
             $pathconfigs[$key]=$params;
             
         }
@@ -127,6 +125,7 @@ if (count($columns) > 0) {
 
 
 $newitem[] = $item;
+$modx->smarty->assign( 'i18n', $this->xpdo->lexicon->fetch() );
 $this->xpdo->smarty->assign('pathconfigs', $this->xpdo->toJSON($pathconfigs));
 $this->xpdo->smarty->assign('columns', $this->xpdo->toJSON($cols));
 $this->xpdo->smarty->assign('fields', $this->xpdo->toJSON($fields));
@@ -134,5 +133,5 @@ $this->xpdo->smarty->assign('newitem', $this->xpdo->toJSON($newitem));
 $this->xpdo->smarty->assign('base_url', $this->xpdo->getOption('base_url'));
 //return $this->xpdo->smarty->fetch('element/tv/renders/input/multiitemsgrid.tpl');
 
-$corePath = $this->xpdo->getOption('multiitemsgridTv.core_path', null, $this->xpdo->getOption('core_path') . 'components/multiitemsgridTv/');
+
 return $modx->smarty->fetch($corePath . 'elements/tv/multiitemsgrid.tpl');

@@ -83,7 +83,7 @@ MODx.grid.multiTVgrid = function(config) {
 }
 
 		,tbar: [{
-            text: 'Add Item',
+            text: '{/literal}{$i18n.mig_add}{literal}',
 			handler: this.addItem
         }]        
 		,viewConfig: {
@@ -154,7 +154,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	}	
 	,remove: function() {
         var _this=this;
-		Ext.Msg.confirm(_('warning') || '','Remove Item?' || '',function(e) {
+		Ext.Msg.confirm(_('warning') || '','{/literal}{$i18n.mig_remove_confirm}{literal}' || '',function(e) {
             if (e == 'yes') {
 				_this.getStore().removeAt(_this.menu.recordIndex);
                 _this.getView().refresh();
@@ -210,16 +210,16 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         //var cls = n.cls.split(',');
         var m = [];
         m.push({
-            text: 'edit'
+            text: '{/literal}{$i18n.mig_edit}{literal}'
             ,handler: this.update
         });
         m.push({
-            text: 'duplicate'
+            text: '{/literal}{$i18n.mig_duplicate}{literal}'
             ,handler: this.duplicate
         });        
         m.push('-');
         m.push({
-            text: 'remove'
+            text: '{/literal}{$i18n.mig_remove}{literal}'
             ,handler: this.remove
         });
         //this.addContextMenuItem(m);
