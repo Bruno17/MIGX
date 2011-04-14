@@ -53,6 +53,21 @@ if (!empty($tvname))
 {
     if ($tv = $modx->getObject('modTemplateVar', array ('name'=>$tvname))){
         $outputvalue = $tv->renderOutput($docid);
+        /*
+        *   get inputTvs 
+        */
+        $properties = $tv->getProperties();
+        $formtabs = $modx->fromJSON($properties['formtabs']);
+        $inputTvs = array();
+        foreach ($formtabs as $tab){
+            if (isset($tab['fields'])){
+                foreach ($tab['fields'] as $field){
+                    if (isset($field['inputTV'])){
+                        $inputTvs[$field['field']]=$field['inputTV'];
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -65,7 +80,7 @@ $items = $modx->fromJSON($outputvalue);
 $output = '';
 if (substr($tpl, 0, 6) == "@FILE:")
 {
-    $template = $this->get_file_contents($modx->config['base_path'].substr($tpl, 6));
+    $template = file_get_contents($modx->config['base_path'].substr($tpl, 6));
 } else if (substr($tpl, 0, 6) == "@CODE:")
 {
     $template = substr($tpl, 6);
@@ -84,14 +99,27 @@ if ($template)
         $idx=0;
 		foreach ($items as $key=>$item)
         {
-			echo $key.':';
+            $fields = array();
+            foreach ($item as $field=>$value){
+                if (isset($inputTvs[$field])){
+                    if ($tv = $modx->getObject('modTemplateVar', array ('name'=>$inputTvs[$field]))){
+                        $tv->set('default_text', $value);
+                        $fields[$field]=$tv->renderOutput($docid);
+                    }
+                }
+                else{
+                   $fields[$field]=$value; 
+                }
+                
+            }
+			
 			if ($key>=$offset && $idx<$limit){
                 $idx++;
-                $item['idx'] = $idx;
+                $fields['idx'] = $idx;
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
-				$chunk->setContent($template);
-                $output .= $chunk->process($item);				
+		$chunk->setContent($template);
+                $output .= $chunk->process($fields);				
 			}
 
         }

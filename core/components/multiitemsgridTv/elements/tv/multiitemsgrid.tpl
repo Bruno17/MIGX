@@ -73,7 +73,7 @@ MODx.grid.multiTVgrid = function(config) {
                       }
                    }) 
 		
-		this.setWidth('95%');
+		this.setWidth('99%');
 		//this.syncSize();
                    // load the grid store
                   //  after the grid has been rendered
@@ -93,20 +93,23 @@ MODx.grid.multiTVgrid = function(config) {
 	
     MODx.grid.multiTVgrid.superclass.constructor.call(this,config)
 	//this.getStore().on('load',this.onStoreLoad,this);
+    //this.config = config;
+    this.getStore().pathconfigs=config.pathconfigs;
 	this.loadData();
 };
 Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     _renderUrl: function(v,md,rec) {
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
-    ,renderImage : function(val){
+    ,renderImage : function(val, md, rec, row, col, s){
+		var pc = s.pathconfigs[col];
 		if (val.substr(0,4) == 'http'){
 			return '<img style="height:60px" src="' + val + '"/>' ;
 		}        
 		if (val != ''){
 			//return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?h=60&src=' + val + '" alt="" />';
 			
-			return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?h=60&src='+val+'&wctx={$ctx}&basePath={$params.basePath}&basePathRelative={if $params.basePathRelative}1{else}0{/if}&baseUrl={$params.baseUrl}&baseUrlRelative={if $params.baseUrlRelative}1{else}0{/if}{literal}" alt="" />';
+			return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?h=60&src='+val+'&wctx={$ctx}&basePath='+pc.basePath+'&basePathRelative='+pc.basePathRelative+'&baseUrl='+pc.baseUrl+'&baseUrlRelative='+pc.baseUrlRelative+'{literal}" alt="" />';
 		
 		}
 		return val;
@@ -469,6 +472,7 @@ Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate);
             ,cls:'tv{/literal}{$tv->id}{literal}_items'
             ,id:'tv{/literal}{$tv->id}{literal}_items'
 			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
+			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
 
             ,width: '97%'			
