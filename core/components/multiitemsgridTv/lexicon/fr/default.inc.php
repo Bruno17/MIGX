@@ -14,4 +14,4 @@ $_lang['mig_add'] = 'Ajouter un élément';
 $_lang['mig_remove_confirm'] = 'Êtes-vous sûr de vouloir supprimer cet élément ?';
 $_lang['mig_edit'] = 'Éditer';
 $_lang['mig_remove'] = 'Supprimer';
-$_lang['mig_duplicate'] = 'Duplicate';
+$_lang['mig_duplicate'] = 'Dupliquer';

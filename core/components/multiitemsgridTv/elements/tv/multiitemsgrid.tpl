@@ -403,7 +403,7 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
 		var a = {
             url: MODx.config.assets_url+'components/multiitemsgridTv/connector.php'
             //url: config.url
-			,method: 'GET'
+			,method: 'POST'
             ,params: config.baseParams
             ,scripts: true
             ,callback: function() {

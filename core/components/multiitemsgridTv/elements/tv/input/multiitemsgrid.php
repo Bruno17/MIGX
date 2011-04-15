@@ -18,7 +18,7 @@ if ($nsp = $modx->getObject('modNamespace',$namespace)){
    $nsp->save(); 
 }
 
-$this->xpdo->lexicon->load($namespace.':default');
+$this->xpdo->lexicon->load('tv_widget',$namespace.':default');
 //echo 'lex_test:'.$modx->lexicon('mig_add');
 
 $properties = $this->getProperties();
