@@ -114,6 +114,14 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		}
 		return val;
 	}
+    ,renderLimited : function(val, md, rec, row, col, s){
+		var max = 100;
+        var count = val.length;
+		if (count>max){
+            return(val.substring(0, max));
+		}        
+		return val;
+	}    
     ,renderPreview : function(val,md,rec){
 		return val;
 	}

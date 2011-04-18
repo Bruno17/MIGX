@@ -47,6 +47,7 @@ foreach ($formtabs as $tabid => $tab) {
 
         } else {
             $tv = $modx->newObject('modTemplateVar');
+            $tv->set('type','text');
         }
 
         /*insert actual value from requested record, convert arrays to ||-delimeted string */
@@ -102,11 +103,13 @@ foreach ($formtabs as $tabid => $tab) {
         */
         
         $params = $tv->get('input_properties');
+        if (!isset($params['allowBlank'])) $params['allowBlank'] = 1;
 
         $value = $tv->get('value');
         if ($value === null) {
             $value = $tv->get('default_text');
         }
+        $modx->smarty->assign('params',$params);
         /* find the correct renderer for the TV, if not one, render a textbox */
         $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
         $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', $resourceId, $tv->get('type'));
