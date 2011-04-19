@@ -440,7 +440,8 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
      },
 	 load: function() {
 		//MODx.loadRTE();
-		if (typeof(Tiny) != 'undefined') {
+		
+        if (typeof(Tiny) != 'undefined') {
 		    var s={};
             if (Tiny.config){
                 s = Tiny.config || {};
@@ -460,9 +461,10 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
 		    }
 			s.mode = "specific_textareas";
             s.editor_selector = "modx-richtext";
-		    s.language = "en";// de seems not to work at the moment
+		    //s.language = "en";// de seems not to work at the moment
             tinyMCE.init(s);				
 		}
+        
         //this.popwindow.width='1000px';
 		//this.width='1000px';
 		this.syncSize();
