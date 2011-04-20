@@ -56,7 +56,7 @@ if (!empty($tvname))
         /*
         *   get inputTvs 
         */
-        $properties = $tv->getProperties();
+        $properties = $tv->get('input_properties');
         $formtabs = $modx->fromJSON($properties['formtabs']);
         $inputTvs = array();
         foreach ($formtabs as $tab){
@@ -118,7 +118,7 @@ if ($template)
                 $fields['idx'] = $idx;
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
-		$chunk->setContent($template);
+		        $chunk->setContent($template);
                 $output .= $chunk->process($fields);				
 			}
 

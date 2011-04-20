@@ -5,13 +5,17 @@ switch ($modx->event->name) {
     case 'OnTVInputRenderList':
         $modx->event->output($corePath.'elements/tv/input/');
         break;
+    case 'OnTVInputPropertiesList':
+        $modx->event->output($corePath.'elements/tv/inputoptions/');
+        break; 
+    /*          
     case 'OnTVOutputRenderList':
         $modx->event->output($corePath.'elements/tv/output/');
         break;
     case 'OnTVOutputRenderPropertiesList':
         $modx->event->output($corePath.'elements/tv/properties/');
         break;
-    /*    
+    
     case 'OnDocFormPrerender':
         $assetsUrl = $modx->getOption('colorpicker.assets_url',null,$modx->getOption('assets_url').'components/colorpicker/'); 
         $modx->regClientStartupHTMLBlock('<script type="text/javascript">

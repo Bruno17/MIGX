@@ -5,36 +5,44 @@
  * @subpackage elements.tv.input
  */
 
-$path='components/multiitemsgridTv/';
+$path = 'components/multiitemsgridTv/';
 
 $corePath = $this->xpdo->getOption('multiitemsgridTv.core_path', null, $this->xpdo->getOption('core_path') . $path);
 $namespace = 'multiitemsgridTv';
-if ($nsp = $modx->getObject('modNamespace',$namespace)){
-    
-}else{
-   $nsp = $modx->newObject('modNamespace');
-   $nsp->set('path','{core_path}'.$path);
-   $nsp->set('name',$namespace);
-   $nsp->save(); 
+if ($nsp = $modx->getObject('modNamespace', $namespace)) {
+
+} else {
+    $nsp = $modx->newObject('modNamespace');
+    $nsp->set('path', '{core_path}' . $path);
+    $nsp->set('name', $namespace);
+    $nsp->save();
 }
 
-$this->xpdo->lexicon->load('tv_widget',$namespace.':default');
+$this->xpdo->lexicon->load('tv_widget', $namespace . ':default');
 //echo 'lex_test:'.$modx->lexicon('mig_add');
 
-$properties = $this->getProperties();
+//$properties = $this->getProperties();
+$properties = $params;
+//print_r($params);
 
 /* get input-tvs */
-$formtabs = $modx->fromJSON($properties['formtabs']);
+$default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
+$default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
+
+$formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
 $inputTvs = array();
-foreach ($formtabs as $tab) {
-    if (isset($tab['fields'])) {
-        foreach ($tab['fields'] as $field) {
-            if (isset($field['inputTV'])) {
-                $inputTvs[$field['field']] = $field['inputTV'];
+if (is_array($formtabs)) {
+    foreach ($formtabs as $tab) {
+        if (isset($tab['fields'])) {
+            foreach ($tab['fields'] as $field) {
+                if (isset($field['inputTV'])) {
+                    $inputTvs[$field['field']] = $field['inputTV'];
+                }
             }
         }
     }
 }
+
 
 /* get base path based on either TV param or filemanager_path */
 $modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->xpdo->context->get('key')));
@@ -54,23 +62,18 @@ if (!empty($wctx)) {
 
 /* get base path based on either TV param or filemanager_path */
 
-$replacePaths = array(
-    '[[++base_path]]' => $modx->getOption('base_path', null, MODX_BASE_PATH), 
-    '[[++core_path]]' => $modx->getOption('core_path', null, MODX_CORE_PATH), 
-    '[[++manager_path]]' => $modx->getOption('manager_path', null, MODX_MANAGER_PATH), 
-    '[[++assets_path]]' => $modx->getOption('assets_path', null, MODX_ASSETS_PATH), 
-    '[[++base_url]]' => $modx->getOption('base_url', null, MODX_BASE_URL),
-    '[[++manager_url]]' => $modx->getOption('manager_url', null, MODX_MANAGER_URL), 
-    '[[++assets_url]]' => $modx->getOption('assets_url', null, MODX_ASSETS_URL), );
+$replacePaths = array('[[++base_path]]' => $modx->getOption('base_path', null, MODX_BASE_PATH), '[[++core_path]]' => $modx->getOption('core_path', null, MODX_CORE_PATH), '[[++manager_path]]' => $modx->
+    getOption('manager_path', null, MODX_MANAGER_PATH), '[[++assets_path]]' => $modx->getOption('assets_path', null, MODX_ASSETS_PATH), '[[++base_url]]' => $modx->getOption('base_url', null, MODX_BASE_URL),
+    '[[++manager_url]]' => $modx->getOption('manager_url', null, MODX_MANAGER_URL), '[[++assets_url]]' => $modx->getOption('assets_url', null, MODX_ASSETS_URL), );
 $replaceKeys = array_keys($replacePaths);
 $replaceValues = array_values($replacePaths);
 
 /* pasted end*/
 
-$columns = $this->xpdo->fromJSON($properties['columns']);
+$columns = $modx->fromJSON($modx->getOption('columns',$properties,$default_columns));
 
-if (count($columns) > 0) {
-    foreach ($columns as $key=>$column) {
+if (is_array($columns) && count($columns) > 0) {
+    foreach ($columns as $key => $column) {
         $field['name'] = $column['dataIndex'];
         $field['mapping'] = $column['dataIndex'];
         $fields[] = $field;
@@ -82,11 +85,11 @@ if (count($columns) > 0) {
         $cols[] = $col;
         $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
 
-        if (isset($inputTvs[$field['name']]) && $tv = $modx->getObject('modTemplateVar', array ('name'=>$inputTvs[$field['name']]))) {
+        if (isset($inputTvs[$field['name']]) && $tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field['name']]))) {
             $params = $tv->get('input_properties');
-            $params ['wctx'] = $wctx;
+            $params['wctx'] = $wctx;
             /* pasted from processors.element.tv.renders.mgr.input*/
-            if (empty( $params['basePath'])) {
+            if (empty($params['basePath'])) {
                 $params['basePath'] = $modx->fileHandler->getBasePath();
                 $params['basePath'] = str_replace($replaceKeys, $replaceValues, $params['basePath']);
                 $params['basePathRelative'] = $this->xpdo->getOption('filemanager_path_relative', null, true) ? 1 : 0;
@@ -111,21 +114,20 @@ if (count($columns) > 0) {
                 $params['baseUrl'] = ltrim(str_replace($modxBaseUrl, '', $params['baseUrl']), '/');
             }
 
-            $params['basePathRelative']=$params['basePathRelative']?1:0;
-            $params['baseUrlRelative']=$params['baseUrlRelative']?1:0;
+            $params['basePathRelative'] = $params['basePathRelative'] ? 1 : 0;
+            $params['baseUrlRelative'] = $params['baseUrlRelative'] ? 1 : 0;
             /* pasted end*/
-            $pathconfigs[$key]=$params;
-            
-        }
-        else{
-            $pathconfigs[$key]=array();    
+            $pathconfigs[$key] = $params;
+
+        } else {
+            $pathconfigs[$key] = array();
         }
     }
 }
 
 
 $newitem[] = $item;
-$modx->smarty->assign( 'i18n', $this->xpdo->lexicon->fetch() );
+$modx->smarty->assign('i18n', $this->xpdo->lexicon->fetch());
 $this->xpdo->smarty->assign('pathconfigs', $this->xpdo->toJSON($pathconfigs));
 $this->xpdo->smarty->assign('columns', $this->xpdo->toJSON($cols));
 $this->xpdo->smarty->assign('fields', $this->xpdo->toJSON($fields));

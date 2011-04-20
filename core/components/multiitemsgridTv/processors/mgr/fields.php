@@ -25,8 +25,10 @@ $modx->smarty->assign('_config', $modx->config);
 
 $tv = $modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']));
 //$options = $tv->parseInputOptions($tv->processBindings($tv->get('elements'),$tv->get('name')));
-$properties = $tv->getProperties();
-$formtabs = $modx->fromJSON($properties['formtabs']);
+$properties = $tv->get('input_properties');
+$default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
+$formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
+//$formtabs = $modx->fromJSON($properties['formtabs']);
 $fieldid = 0;
 $tabid = 0;
 $allfields = array();
