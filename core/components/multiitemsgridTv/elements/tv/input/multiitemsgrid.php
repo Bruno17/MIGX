@@ -23,13 +23,16 @@ $this->xpdo->lexicon->load('tv_widget', $namespace . ':default');
 
 //$properties = $this->getProperties();
 $properties = $params;
-//print_r($params);
+
 
 /* get input-tvs */
 $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
 $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
 
 $formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
+$formtabs = empty($properties['formtabs'])?$modx->fromJSON($default_formtabs):$formtabs;
+
+
 $inputTvs = array();
 if (is_array($formtabs)) {
     foreach ($formtabs as $tab) {
@@ -71,6 +74,8 @@ $replaceValues = array_values($replacePaths);
 /* pasted end*/
 
 $columns = $modx->fromJSON($modx->getOption('columns',$properties,$default_columns));
+$columns = empty($properties['columns'])?$modx->fromJSON($default_columns):$columns;
+
 
 if (is_array($columns) && count($columns) > 0) {
     foreach ($columns as $key => $column) {

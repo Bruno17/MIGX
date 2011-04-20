@@ -19,7 +19,7 @@ if (!isset($modx->smarty)) {
         'default') . '/', ));
 }
 $modx->smarty->template_dir = $modx->getOption('manager_path') . 'templates/' .
-    $modx->getOption('manager_theme', null, 'default') . '/';
+$modx->getOption('manager_theme', null, 'default') . '/';
 $modx->smarty->assign('OnResourceTVFormPrerender', $onResourceTVFormPrerender);
 $modx->smarty->assign('_config', $modx->config);
 
@@ -28,7 +28,7 @@ $tv = $modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_n
 $properties = $tv->get('input_properties');
 $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
 $formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
-//$formtabs = $modx->fromJSON($properties['formtabs']);
+$formtabs = empty($properties['formtabs'])?$modx->fromJSON($default_formtabs):$formtabs;
 $fieldid = 0;
 $tabid = 0;
 $allfields = array();
