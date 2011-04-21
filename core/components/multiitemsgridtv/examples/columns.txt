@@ -1,4 +1,0 @@
-[
-{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}, 
-{"header": "Image", "width": "50", "sortable": "false", "dataIndex": "image","renderer": "this.renderImage"}
-]
