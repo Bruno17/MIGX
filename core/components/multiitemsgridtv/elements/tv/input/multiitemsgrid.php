@@ -7,7 +7,7 @@
 
 $path = 'components/multiitemsgridtv/';
 $corePath = $this->xpdo->getOption('multiitemsgridTv.core_path', null, $this->xpdo->getOption('core_path') . $path);
-$namespace = 'multiitemsgridtv';
+$namespace = 'multiitemsgridTv';
 $this->xpdo->lexicon->load('tv_widget', $namespace . ':default');
 $properties = $params;
 
