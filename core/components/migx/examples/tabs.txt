@@ -1,0 +1,9 @@
+[
+{"caption":"Info", "fields": [
+    {"field":"title","caption":"Title"}, 
+    {"field":"description","caption":"Description","inputTV":"richtext"}
+]}, 
+{"caption":"Image", "fields":[
+    {"field":"image","caption":"Image","inputTV":"image"}
+]}
+] 
