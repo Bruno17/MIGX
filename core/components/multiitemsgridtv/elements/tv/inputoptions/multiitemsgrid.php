@@ -31,7 +31,6 @@ $modx->smarty->assign('base_url',$modx->getOption('base_url'));
 $path='components/multiitemsgridtv/';
 
 $corePath = $modx->getOption('multiitemsgridTv.core_path', null, $modx->getOption('core_path') . $path);
-//$modx->addPackage('gallery',$corePath.'model/');
 
 /* get TV input properties specific language strings */
 $lang = $modx->lexicon->fetch('mig.',true);

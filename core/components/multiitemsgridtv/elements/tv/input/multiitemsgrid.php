@@ -6,27 +6,10 @@
  */
 
 $path = 'components/multiitemsgridtv/';
-
 $corePath = $this->xpdo->getOption('multiitemsgridTv.core_path', null, $this->xpdo->getOption('core_path') . $path);
-
-
 $namespace = 'multiitemsgridtv';
-/* done by package?
-if ($nsp = $modx->getObject('modNamespace', $namespace)) {
-
-} else {
-    $nsp = $modx->newObject('modNamespace');
-    $nsp->set('path', '{core_path}' . $path);
-    $nsp->set('name', $namespace);
-    $nsp->save();
-}
-*/
 $this->xpdo->lexicon->load('tv_widget', $namespace . ':default');
-//echo 'lex_test:'.$modx->lexicon('mig_add');
-
-//$properties = $this->getProperties();
 $properties = $params;
-
 
 /* get input-tvs */
 $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
@@ -34,7 +17,6 @@ $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "da
 
 $formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
 $formtabs = empty($properties['formtabs'])?$modx->fromJSON($default_formtabs):$formtabs;
-
 
 $inputTvs = array();
 if (is_array($formtabs)) {
@@ -79,13 +61,8 @@ $replaceValues = array_values($replacePaths);
 $columns = $modx->fromJSON($modx->getOption('columns',$properties,$default_columns));
 $columns = empty($properties['columns'])?$modx->fromJSON($default_columns):$columns;
 
-
-
 if (is_array($columns) && count($columns) > 0) {
     foreach ($columns as $key => $column) {
-        
-        echo htmlspecialchars($column['header']);
-        
         $field['name'] = $column['dataIndex'];
         $field['mapping'] = $column['dataIndex'];
         $fields[] = $field;
@@ -137,7 +114,6 @@ if (is_array($columns) && count($columns) > 0) {
     }
 }
 
-
 $newitem[] = $item;
 $modx->smarty->assign('i18n', $this->xpdo->lexicon->fetch());
 $this->xpdo->smarty->assign('pathconfigs', $this->xpdo->toJSON($pathconfigs));
@@ -145,7 +121,5 @@ $this->xpdo->smarty->assign('columns', $this->xpdo->toJSON($cols));
 $this->xpdo->smarty->assign('fields', $this->xpdo->toJSON($fields));
 $this->xpdo->smarty->assign('newitem', $this->xpdo->toJSON($newitem));
 $this->xpdo->smarty->assign('base_url', $this->xpdo->getOption('base_url'));
-//return $this->xpdo->smarty->fetch('element/tv/renders/input/multiitemsgrid.tpl');
-
 
 return $modx->smarty->fetch($corePath . 'elements/tv/multiitemsgrid.tpl');

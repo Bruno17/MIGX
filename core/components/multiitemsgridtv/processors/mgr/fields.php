@@ -24,7 +24,6 @@ $modx->smarty->assign('OnResourceTVFormPrerender', $onResourceTVFormPrerender);
 $modx->smarty->assign('_config', $modx->config);
 
 $tv = $modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']));
-//$options = $tv->parseInputOptions($tv->processBindings($tv->get('elements'),$tv->get('name')));
 $properties = $tv->get('input_properties');
 $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
 $formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
@@ -80,30 +79,8 @@ foreach ($formtabs as $tabid => $tab) {
             }
             $tv->set('value', $v);
         }
-        /*
-        if ($tv->type == 'richtext') {
-            if (is_array($replace_richtexteditor)) $replace_richtexteditor = array_merge($replace_richtexteditor,
-                    array('tv' . $tv->id));
-            else  $replace_richtexteditor = array('tv' . $tv->id);
-        }
-        */
 
         $modx->smarty->assign('tv', $tv);
-        
-        /*
-        $params = array();
-        if ($paramstring = $tv->get('display_params')) {
-            $cp = explode("&", $paramstring);
-            foreach ($cp as $p => $v) {
-                $v = trim($v);
-                $ar = explode("=", $v);
-                if (is_array($ar) && count($ar) == 2) {
-                    $params[$ar[0]] = $tv->decodeParamValue($ar[1]);
-                }
-            }
-        }
-        */
-        
         $params = $tv->get('input_properties');
         if (!isset($params['allowBlank'])) $params['allowBlank'] = 1;
 
@@ -127,7 +104,6 @@ foreach ($formtabs as $tabid => $tab) {
 
     }
 }
-
 
 $modx->smarty->assign('fields', $modx->toJSON($allfields));
 $modx->smarty->assign('categories', $categories);

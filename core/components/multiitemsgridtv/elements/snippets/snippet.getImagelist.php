@@ -18,7 +18,7 @@
  * FormIt; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
  * Suite 330, Boston, MA 02111-1307 USA
  *
- * @package imageListTv
+ * @package multiitemsgridtv
  */
 /**
  * getImageList
@@ -30,7 +30,7 @@
  * @copyright Copyright &copy; 2009-2010
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
  * version 2 or (at your option) any later version.
- * @package imageListTv
+ * @package multiitemsgridtv
  */
 
 /*example: <ul>[[!getImageList? &tvname=`myTV`&tpl=`@CODE:<li>[[+idx]]<img src="[[+imageURL]]"/><p>[[+imageAlt]]</p></li>`]]</ul>*/

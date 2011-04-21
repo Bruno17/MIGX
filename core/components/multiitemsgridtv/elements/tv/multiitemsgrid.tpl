@@ -92,8 +92,6 @@ MODx.grid.multiTVgrid = function(config) {
     });
 	
     MODx.grid.multiTVgrid.superclass.constructor.call(this,config)
-	//this.getStore().on('load',this.onStoreLoad,this);
-    //this.config = config;
     this.getStore().pathconfigs=config.pathconfigs;
 	this.loadData();
 };
@@ -139,9 +137,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			
 		this.syncSize();
         this.setWidth('100%');
-		
-		
-	}
+    }
 
     ,getSelectedAsList: function() {
         var sels = this.getSelectionModel().getSelections();
@@ -155,9 +151,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         return cs;
     }
 	,addItem: function(btn,e) {
-		//var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
 		var s=this.getStore();
-		//s.loadData(items,true);
 		this.loadWin(btn,e,s.getCount(),'a');
 	}	
 	,remove: function() {
@@ -177,7 +171,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
       this.loadWin(btn,e,this.menu.recordIndex,'d');
     }    
 	,loadWin: function(btn,e,index,action) {
-
         if (action == 'a'){
            var json='{/literal}{$newitem}{literal}';
            var data=Ext.util.JSON.decode(json);
@@ -187,7 +180,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
            var data = rec.data;
            var json = Ext.util.JSON.encode(rec.json);
         }
-        
 		
         var win_xtype = 'modx-window-tv-item-update';
 		if (this.windows[win_xtype]){
@@ -215,7 +207,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     }	
     ,getMenu: function() {
 		var n = this.menu.record; 
-        //var cls = n.cls.split(',');
         var m = [];
         m.push({
             text: '{/literal}{$i18n.mig_edit}{literal}'
@@ -230,12 +221,10 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             text: '{/literal}{$i18n.mig_remove}{literal}'
             ,handler: this.remove
         });
-        //this.addContextMenuItem(m);
 		return m;
     }
 	,collectItems: function(){
 		var items=[];
-		
 		// read jsons from grid-store-items 
         var griddata=this.store.data;
 		for(i = 0; i <  griddata.length; i++) {
@@ -309,7 +298,6 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
 		        s.loadData(items,true);
                 idx=s.getCount()-1;                
             }
-
             
             var rec = s.getAt(idx);
             var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
@@ -362,20 +350,14 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             ,fileUpload: this.config.fileUpload || false
         });
         return new MODx.panel.MiGridUpdate(config);
-
-		
     }
     ,renderForm: function() {
 		this.add(this.fp);
-        //this.fp.doAutoLoad();
 		
     }		
     ,onShow: function() {
         if (this.fp.isloading) return;
         this.fp.isloading=true;
-        //var s = this.grid.getStore();
-        //var rec = s.getAt(this.baseParams.itemid);
-        //this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(rec.json);
         this.fp.autoLoad.params.record_json=this.baseParams.record_json;
         this.fp.doAutoLoad();
     }
@@ -469,7 +451,6 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
 		//this.width='1000px';
 		this.syncSize();
 		this.popwindow.syncSize();
-		
 		return '';
 	 }
 });
@@ -484,7 +465,6 @@ Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate);
 			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
 			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
-
             ,width: '97%'			
         });
 
