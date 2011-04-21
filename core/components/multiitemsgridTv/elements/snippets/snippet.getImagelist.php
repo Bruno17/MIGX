@@ -1,4 +1,5 @@
 <?php
+
 /**
  * getImageList
  *
@@ -19,7 +20,7 @@
  *
  * @package imageListTv
  */
- /**
+/**
  * getImageList
  *
  * get Images from TV with custom-input-type imageList for MODx Revolution 2.0.
@@ -41,17 +42,15 @@ $tpl = $modx->getOption('tpl', $scriptProperties, '');
 $docid = $modx->getOption('docid', $scriptProperties, $modx->resource->get('id'));
 $outputvalue = $modx->getOption('value', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '999999');
-$offset = $modx->getOption('offset',$scriptProperties,0);
-$totalVar = $modx->getOption('totalVar',$scriptProperties,'total');
+$offset = $modx->getOption('offset', $scriptProperties, 0);
+$totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
 
-if (empty($tpl))
-{
+if (empty($tpl)) {
     return 'empty property: &tpl';
 }
 
-if (!empty($tvname))
-{
-    if ($tv = $modx->getObject('modTemplateVar', array ('name'=>$tvname))){
+if (!empty($tvname)) {
+    if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $outputvalue = $tv->renderOutput($docid);
         /*
         *   get inputTvs 
@@ -59,72 +58,68 @@ if (!empty($tvname))
         $properties = $tv->get('input_properties');
         $formtabs = $modx->fromJSON($properties['formtabs']);
         $inputTvs = array();
-        foreach ($formtabs as $tab){
-            if (isset($tab['fields'])){
-                foreach ($tab['fields'] as $field){
-                    if (isset($field['inputTV'])){
-                        $inputTvs[$field['field']]=$field['inputTV'];
+        if (is_array($formtabs)) {
+            foreach ($formtabs as $tab) {
+                if (isset($tab['fields'])) {
+                    foreach ($tab['fields'] as $field) {
+                        if (isset($field['inputTV'])) {
+                            $inputTvs[$field['field']] = $field['inputTV'];
+                        }
                     }
                 }
             }
         }
+
     }
 }
 
-if (empty($outputvalue))
-{
+if (empty($outputvalue)) {
     return '';
 }
 
 $items = $modx->fromJSON($outputvalue);
 $output = '';
-if (substr($tpl, 0, 6) == "@FILE:")
-{
-    $template = file_get_contents($modx->config['base_path'].substr($tpl, 6));
-} else if (substr($tpl, 0, 6) == "@CODE:")
-{
-    $template = substr($tpl, 6);
-} else if ($chunk = $modx->getObject('modChunk', array ('name'=>$tpl), true))
-{
-    $template = $chunk->getContent();
+if (substr($tpl, 0, 6) == "@FILE:") {
+    $template = file_get_contents($modx->config['base_path'] . substr($tpl, 6));
 } else
-{
-    $template = FALSE;
-}
-
-if ($template)
-{
-    if (count($items) > 0)
-    {
-        $idx=0;
-		foreach ($items as $key=>$item)
-        {
-            $fields = array();
-            foreach ($item as $field=>$value){
-                if (isset($inputTvs[$field])){
-                    if ($tv = $modx->getObject('modTemplateVar', array ('name'=>$inputTvs[$field]))){
-                        $tv->set('default_text', $value);
-                        $fields[$field]=$tv->renderOutput($docid);
-                    }
-                }
-                else{
-                   $fields[$field]=$value; 
-                }
-                
-            }
-			
-			if ($key>=$offset && $idx<$limit){
-                $idx++;
-                $fields['idx'] = $idx;
-                $chunk = $modx->newObject('modChunk');
-                $chunk->setCacheable(false);
-		        $chunk->setContent($template);
-                $output .= $chunk->process($fields);				
-			}
-
+    if (substr($tpl, 0, 6) == "@CODE:") {
+        $template = substr($tpl, 6);
+    } else
+        if ($chunk = $modx->getObject('modChunk', array('name' => $tpl), true)) {
+            $template = $chunk->getContent();
+        } else {
+            $template = false;
         }
-    }
-}
+
+        if ($template) {
+            if (count($items) > 0) {
+                $idx = 0;
+                foreach ($items as $key => $item) {
+                    $fields = array();
+                    foreach ($item as $field => $value) {
+                        if (isset($inputTvs[$field])) {
+                            if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
+                                $tv->set('default_text', $value);
+                                $fields[$field] = $tv->renderOutput($docid);
+                            }
+                        } else {
+                            $fields[$field] = $value;
+                        }
+
+                    }
+
+                    if ($key >= $offset && $idx < $limit) {
+                        $idx++;
+                        $fields['idx'] = $idx;
+                        $chunk = $modx->newObject('modChunk');
+                        $chunk->setCacheable(false);
+                        $chunk->setContent($template);
+                        $output .= $chunk->process($fields);
+                    }
+
+                }
+            }
+        }
 
 $modx->setPlaceholder($totalVar, count($items));
 return $output;

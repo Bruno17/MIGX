@@ -409,7 +409,7 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
 		var a = {
-            url: MODx.config.assets_url+'components/multiitemsgridTv/connector.php'
+            url: MODx.config.assets_url+'components/multiitemsgridtv/connector.php'
             //url: config.url
 			,method: 'POST'
             ,params: config.baseParams

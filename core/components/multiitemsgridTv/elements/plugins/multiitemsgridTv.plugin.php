@@ -1,6 +1,6 @@
 <?php
 
-$corePath = $modx->getOption('multiitemsgridTv.core_path',null,$modx->getOption('core_path').'components/multiitemsgridTv/');
+$corePath = $modx->getOption('multiitemsgridTv.core_path',null,$modx->getOption('core_path').'components/multiitemsgridtv/');
 switch ($modx->event->name) {
     case 'OnTVInputRenderList':
         $modx->event->output($corePath.'elements/tv/input/');

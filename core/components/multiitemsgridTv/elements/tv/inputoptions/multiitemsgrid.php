@@ -28,7 +28,7 @@
 $modx->lexicon->load('tv_widget','multiitemsgridTv:tvprops');
 $modx->smarty->assign('base_url',$modx->getOption('base_url'));
 
-$path='components/multiitemsgridTv/';
+$path='components/multiitemsgridtv/';
 
 $corePath = $modx->getOption('multiitemsgridTv.core_path', null, $modx->getOption('core_path') . $path);
 //$modx->addPackage('gallery',$corePath.'model/');

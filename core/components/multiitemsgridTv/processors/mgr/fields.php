@@ -39,7 +39,7 @@ $record = $modx->fromJSON($scriptProperties['record_json']);
 foreach ($formtabs as $tabid => $tab) {
     /*virtual categories for tabs*/
     $emptycat = $modx->newObject('modCategory');
-    $emptycat->set('category', $tab['caption']);
+    $emptycat->set('category',  $tab['caption']);
     $emptycat->id = $tabid;
     $categories[$tabid] = $emptycat;
     $fields = $tab['fields'];
@@ -56,8 +56,8 @@ foreach ($formtabs as $tabid => $tab) {
         $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
 
         $tv->set('value', $fieldvalue);
-        $tv->set('caption', $field['caption']);
-
+        $tv->set('caption', htmlentities($field['caption'], ENT_QUOTES));
+ 
         /*generate unique tvid, must be numeric*/
         /*todo: find a better solution*/
         $field['tv_id'] = $scriptProperties['tv_id'] * 10000000 + $fieldid;
@@ -136,6 +136,6 @@ $modx->smarty->assign('properties', $scriptProperties);
 if (!empty($_REQUEST['showCheckbox'])) {
     $modx->smarty->assign('showCheckbox', 1);
 }
-$miTVCorePath = $modx->getOption('multiitemsgridTv.core_path', null, $modx->getOption('core_path') . 'components/multiitemsgridTv/');
+$miTVCorePath = $modx->getOption('multiitemsgridTv.core_path', null, $modx->getOption('core_path') . 'components/multiitemsgridtv/');
 $modx->smarty->template_dir = $miTVCorePath . 'templates/';
 return $modx->smarty->fetch('mgr/fields.tpl');

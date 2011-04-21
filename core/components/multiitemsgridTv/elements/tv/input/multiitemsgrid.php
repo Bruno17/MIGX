@@ -5,10 +5,13 @@
  * @subpackage elements.tv.input
  */
 
-$path = 'components/multiitemsgridTv/';
+$path = 'components/multiitemsgridtv/';
 
 $corePath = $this->xpdo->getOption('multiitemsgridTv.core_path', null, $this->xpdo->getOption('core_path') . $path);
-$namespace = 'multiitemsgridTv';
+
+
+$namespace = 'multiitemsgridtv';
+/* done by package?
 if ($nsp = $modx->getObject('modNamespace', $namespace)) {
 
 } else {
@@ -17,7 +20,7 @@ if ($nsp = $modx->getObject('modNamespace', $namespace)) {
     $nsp->set('name', $namespace);
     $nsp->save();
 }
-
+*/
 $this->xpdo->lexicon->load('tv_widget', $namespace . ':default');
 //echo 'lex_test:'.$modx->lexicon('mig_add');
 
@@ -77,13 +80,17 @@ $columns = $modx->fromJSON($modx->getOption('columns',$properties,$default_colum
 $columns = empty($properties['columns'])?$modx->fromJSON($default_columns):$columns;
 
 
+
 if (is_array($columns) && count($columns) > 0) {
     foreach ($columns as $key => $column) {
+        
+        echo htmlspecialchars($column['header']);
+        
         $field['name'] = $column['dataIndex'];
         $field['mapping'] = $column['dataIndex'];
         $fields[] = $field;
         $col['dataIndex'] = $column['dataIndex'];
-        $col['header'] = $column['header'];
+        $col['header'] = htmlentities($column['header'], ENT_QUOTES);
         $col['sortable'] = $column['sortable'] == 'true' ? true : false;
         $col['width'] = $column['width'];
         $col['renderer'] = $column['renderer'];
