@@ -1,3 +1,4 @@
+
 <?php
 
 /**
@@ -15,7 +16,7 @@
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
- * FormIt; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+ * getImageList; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
  * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package migx
@@ -41,7 +42,7 @@ $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
 $docid = $modx->getOption('docid', $scriptProperties, $modx->resource->get('id'));
 $outputvalue = $modx->getOption('value', $scriptProperties, '');
-$limit = $modx->getOption('limit', $scriptProperties, '999999');
+$limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
 
@@ -78,6 +79,7 @@ if (empty($outputvalue)) {
 }
 
 $items = $modx->fromJSON($outputvalue);
+$limit = $limit == 0 ? count($items) : $limit;
 $output = '';
 if (substr($tpl, 0, 6) == "@FILE:") {
     $template = file_get_contents($modx->config['base_path'] . substr($tpl, 6));
@@ -109,16 +111,16 @@ if (substr($tpl, 0, 6) == "@FILE:") {
                     }
 
                     if ($key >= $offset && $idx < $limit) {
-                        $fields['idx'] = $idx;
-                        $ct = count($items);
                         $fields['_alt'] = $idx % 2;
-                        if ($idx == 0) $fields['_first'] = true;
-                        if ($idx == $ct-1) $fields['_last'] = true;
+                        $idx++;
+                        $fields['_first'] = $idx == 1 ? true:'';
+                        $fields['_last'] = $idx == $limit ? true:'';
+                        $fields['idx'] = $idx;
                         $chunk = $modx->newObject('modChunk');
                         $chunk->setCacheable(false);
                         $chunk->setContent($template);
                         $output .= $chunk->process($fields);
-                        $idx++;
+                        
                     }
 
                 }
