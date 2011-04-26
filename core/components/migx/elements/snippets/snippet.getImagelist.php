@@ -109,12 +109,16 @@ if (substr($tpl, 0, 6) == "@FILE:") {
                     }
 
                     if ($key >= $offset && $idx < $limit) {
-                        $idx++;
                         $fields['idx'] = $idx;
+                        $ct = count($items);
+                        $fields['_alt'] = $idx % 2;
+                        if ($idx == 0) $fields['_first'] = true;
+                        if ($idx == $ct-1) $fields['_last'] = true;
                         $chunk = $modx->newObject('modChunk');
                         $chunk->setCacheable(false);
                         $chunk->setContent($template);
                         $output .= $chunk->process($fields);
+                        $idx++;
                     }
 
                 }
