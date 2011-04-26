@@ -1,3 +1,4 @@
+
 <?php
 
 /**
@@ -9,7 +10,7 @@ $path = 'components/migx/';
 $corePath = $this->xpdo->getOption('migx.core_path', null, $this->xpdo->getOption('core_path') . $path);
 $namespace = 'migx';
 $this->xpdo->lexicon->load('tv_widget', $namespace . ':default');
-$properties = $params;
+$properties = isset($params['columns']) ? $params : $this->getProperties();
 
 /* get input-tvs */
 $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';

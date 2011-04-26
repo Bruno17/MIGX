@@ -57,6 +57,7 @@ if (!empty($tvname)) {
         *   get inputTvs 
         */
         $properties = $tv->get('input_properties');
+        $properties = isset($properties['columns']) ? $properties : $tv->getProperties();
         $formtabs = $modx->fromJSON($properties['formtabs']);
         $inputTvs = array();
         if (is_array($formtabs)) {

@@ -24,7 +24,9 @@ $modx->smarty->assign('OnResourceTVFormPrerender', $onResourceTVFormPrerender);
 $modx->smarty->assign('_config', $modx->config);
 
 $tv = $modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']));
+
 $properties = $tv->get('input_properties');
+$properties = isset($properties['columns']) ? $properties : $tv->getProperties();
 $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
 $formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
 $formtabs = empty($properties['formtabs'])?$modx->fromJSON($default_formtabs):$formtabs;
