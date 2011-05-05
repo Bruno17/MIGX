@@ -1,6 +1,6 @@
 [
 {"caption":"Info", "fields": [
-    {"field":"title","caption":"Title"}, 
+    {"field":"title","caption":"Title","description":"Title for the image."}, 
     {"field":"description","caption":"Description","inputTV":"richtext"}
 ]}, 
 {"caption":"Image", "fields":[

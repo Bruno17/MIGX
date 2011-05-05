@@ -58,7 +58,9 @@ foreach ($formtabs as $tabid => $tab) {
 
         $tv->set('value', $fieldvalue);
         $tv->set('caption', htmlentities($field['caption'], ENT_QUOTES));
- 
+        if (!empty($field['description'])){
+           $tv->set('description', htmlentities($field['description'], ENT_QUOTES)); 
+        }      
         /*generate unique tvid, must be numeric*/
         /*todo: find a better solution*/
         $field['tv_id'] = $scriptProperties['tv_id'] * 10000000 + $fieldid;
