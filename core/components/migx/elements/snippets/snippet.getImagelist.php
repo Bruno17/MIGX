@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -26,7 +25,7 @@
  *
  * get Images from TV with custom-input-type imageList for MODx Revolution 2.0.
  *
- * @version 1.1
+ * @version 1.2
  * @author Bruno Perner <b.perner@gmx.de>
  * @copyright Copyright &copy; 2009-2010
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
@@ -45,6 +44,9 @@ $outputvalue = $modx->getOption('value', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
+$randomize = $modx->getOption('randomize', $scriptProperties, false);
+$preSelectLimit = $modx->getOption('preSelectLimit', $scriptProperties, 0); // when random preselect important images
+
 
 if (empty($tpl)) {
     return 'empty property: &tpl';
@@ -57,7 +59,7 @@ if (!empty($tvname)) {
         *   get inputTvs 
         */
         $properties = $tv->get('input_properties');
-        $properties = isset($properties['columns']) ? $properties : $tv->getProperties();
+        $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
         $formtabs = $modx->fromJSON($properties['formtabs']);
         $inputTvs = array();
         if (is_array($formtabs)) {
@@ -96,34 +98,48 @@ if (substr($tpl, 0, 6) == "@FILE:") {
 
         if ($template) {
             if (count($items) > 0) {
+                //preselect important items
+                if ($randomize && $preSelectLimit>0) {
+                    $tempitems = array();
+                    for ($i=$offset;$i<$preSelectLimit+$offset;$i++){
+                        $tempitems[]=$items[$i];            
+                        unset($items[$i]);
+                    }
+                    shuffle($items);
+                    $items=array_merge($tempitems,$items);
+                }
+
+                for ($i=$offset;$i<$limit+$offset;$i++){
+                    $tempitems[]=$items[$i];            
+                }
+                $items = $tempitems;
+                if ($randomize) {
+                    shuffle($items);    
+                }
+                
                 $idx = 0;
                 foreach ($items as $key => $item) {
-                    $fields = array();
-                    foreach ($item as $field => $value) {
-                        if (isset($inputTvs[$field])) {
-                            if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
-                                $tv->set('default_text', $value);
-                                $fields[$field] = $tv->renderOutput($docid);
+
+                        $fields = array();
+                        foreach ($item as $field => $value) {
+                            if (isset($inputTvs[$field])) {
+                                if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
+                                    $tv->set('default_text', $value);
+                                    $fields[$field] = $tv->renderOutput($docid);
+                                }
+                            } else {
+                                $fields[$field] = $value;
                             }
-                        } else {
-                            $fields[$field] = $value;
                         }
-
-                    }
-
-                    if ($key >= $offset && $idx < $limit) {
                         $fields['_alt'] = $idx % 2;
                         $idx++;
-                        $fields['_first'] = $idx == 1 ? true:'';
-                        $fields['_last'] = $idx == $limit ? true:'';
+                        $fields['_first'] = $idx == 1 ? true : '';
+                        $fields['_last'] = $idx == $limit ? true : '';
                         $fields['idx'] = $idx;
                         $chunk = $modx->newObject('modChunk');
                         $chunk->setCacheable(false);
                         $chunk->setContent($template);
                         $output .= $chunk->process($fields);
-                        
-                    }
-
                 }
             }
         }
