@@ -45,13 +45,13 @@ $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
 $randomize = $modx->getOption('randomize', $scriptProperties, false);
-$preSelectLimit = $modx->getOption('preSelectLimit', $scriptProperties, 0); // when random preselect important images
+$preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
 
-
+/*
 if (empty($tpl)) {
     return 'empty property: &tpl';
 }
-
+*/
 if (!empty($tvname)) {
     if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $outputvalue = $tv->renderOutput($docid);
@@ -82,7 +82,7 @@ if (empty($outputvalue)) {
 }
 
 $items = $modx->fromJSON($outputvalue);
-$limit = $limit == 0 ? count($items) : $limit;
+$modx->setPlaceholder($totalVar, count($items));
 $output = '';
 if (substr($tpl, 0, 6) == "@FILE:") {
     $template = file_get_contents($modx->config['base_path'] . substr($tpl, 6));
@@ -96,53 +96,61 @@ if (substr($tpl, 0, 6) == "@FILE:") {
             $template = false;
         }
 
-        if ($template) {
-            if (count($items) > 0) {
-                //preselect important items
-                if ($randomize && $preSelectLimit>0) {
-                    $tempitems = array();
-                    for ($i=$offset;$i<$preSelectLimit+$offset;$i++){
-                        $tempitems[]=$items[$i];            
-                        unset($items[$i]);
-                    }
-                    shuffle($items);
-                    $items=array_merge($tempitems,$items);
-                }
 
-                for ($i=$offset;$i<$limit+$offset;$i++){
-                    $tempitems[]=$items[$i];            
+        if (count($items) > 0) {
+            $items = $offset > 0 ? array_slice($items, $offset) : $items;
+            $count = count($items);
+            $limit = $limit == 0 || $limit > $count ? $count : $limit;
+            $preselectLimit = $preselectLimit > $count ? $count : $preselectLimit;
+            //preselect important items
+            if ($randomize && $preselectLimit > 0) {
+                $tempitems = array();
+                for ($i = 0; $i < $preselectLimit; $i++) {
+                    $tempitems[] = $items[$i];
+                    unset($items[$i]);
                 }
-                $items = $tempitems;
-                if ($randomize) {
-                    shuffle($items);    
-                }
-                
-                $idx = 0;
-                foreach ($items as $key => $item) {
+                shuffle($items);
+                $items = array_merge($tempitems, $items);
+            }
 
-                        $fields = array();
-                        foreach ($item as $field => $value) {
-                            if (isset($inputTvs[$field])) {
-                                if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
-                                    $tv->set('default_text', $value);
-                                    $fields[$field] = $tv->renderOutput($docid);
-                                }
-                            } else {
-                                $fields[$field] = $value;
-                            }
+            $tempitems = array();
+            for ($i = 0; $i < $limit; $i++) {
+                $tempitems[] = $items[$i];
+            }
+            $items = $tempitems;
+            if ($randomize) {
+                shuffle($items);
+            }
+
+            $idx = 0;
+            foreach ($items as $key => $item) {
+
+                $fields = array();
+                foreach ($item as $field => $value) {
+                    if (isset($inputTvs[$field])) {
+                        if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
+                            $tv->set('default_text', $value);
+                            $fields[$field] = $tv->renderOutput($docid);
                         }
-                        $fields['_alt'] = $idx % 2;
-                        $idx++;
-                        $fields['_first'] = $idx == 1 ? true : '';
-                        $fields['_last'] = $idx == $limit ? true : '';
-                        $fields['idx'] = $idx;
-                        $chunk = $modx->newObject('modChunk');
-                        $chunk->setCacheable(false);
-                        $chunk->setContent($template);
-                        $output .= $chunk->process($fields);
+                    } else {
+                        $fields[$field] = $value;
+                    }
+                }
+                $fields['_alt'] = $idx % 2;
+                $idx++;
+                $fields['_first'] = $idx == 1 ? true : '';
+                $fields['_last'] = $idx == $limit ? true : '';
+                $fields['idx'] = $idx;
+                if ($template) {
+                    $chunk = $modx->newObject('modChunk');
+                    $chunk->setCacheable(false);
+                    $chunk->setContent($template);
+                    $output .= $chunk->process($fields);
+                } else {
+                    $output .= '<pre>' . print_r($fields, 1) . '</pre>';
                 }
             }
         }
 
-$modx->setPlaceholder($totalVar, count($items));
+
 return $output;
