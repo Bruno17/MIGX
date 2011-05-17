@@ -34,6 +34,7 @@ $corePath = $modx->getOption('migx.core_path', null, $modx->getOption('core_path
 
 /* get TV input properties specific language strings */
 $lang = $modx->lexicon->fetch('mig.',true);
+
 $modx->smarty->assign('mig',$lang);
 
 return $modx->smarty->fetch($corePath.'elements/tv/migx.inputproperties.tpl');

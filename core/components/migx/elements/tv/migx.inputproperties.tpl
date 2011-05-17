@@ -37,6 +37,16 @@ MODx.load({
         ,width: 600
         ,height: 150
         ,listeners: oc
+    },{
+        xtype: 'textfield'
+        ,fieldLabel: '{/literal}{$mig.btntext}{literal}'
+        ,description: '{/literal}{$mig.btntext_desc}{literal}'
+        ,name: 'inopt_btntext'
+        ,hiddenName: 'inopt_btntext'
+        ,id: 'inopt_btntext{/literal}{$tv}{literal}'
+        ,value: params['btntext']
+        ,width: 300
+        ,listeners: oc
     }]
     ,renderTo: 'tv-input-properties-form{/literal}{$tv}{literal}'
 });
