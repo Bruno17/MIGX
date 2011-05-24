@@ -25,9 +25,9 @@
  *
  * get Images from TV with custom-input-type imageList for MODx Revolution 2.0.
  *
- * @version 1.2
+ * @version 1.3
  * @author Bruno Perner <b.perner@gmx.de>
- * @copyright Copyright &copy; 2009-2010
+ * @copyright Copyright &copy; 2009-2011
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
  * version 2 or (at your option) any later version.
  * @package migx
@@ -46,10 +46,12 @@ $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
 $randomize = $modx->getOption('randomize', $scriptProperties, false);
 $preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
+$where = $modx->getOption('where', $scriptProperties, '');
+$where = !empty($where) ? $modx->fromJSON($where) : array();
 
 /*
 if (empty($tpl)) {
-    return 'empty property: &tpl';
+return 'empty property: &tpl';
 }
 */
 if (!empty($tvname)) {
@@ -96,61 +98,156 @@ if (substr($tpl, 0, 6) == "@FILE:") {
             $template = false;
         }
 
-
-        if (count($items) > 0) {
-            $items = $offset > 0 ? array_slice($items, $offset) : $items;
-            $count = count($items);
-            $limit = $limit == 0 || $limit > $count ? $count : $limit;
-            $preselectLimit = $preselectLimit > $count ? $count : $preselectLimit;
-            //preselect important items
-            if ($randomize && $preselectLimit > 0) {
-                $tempitems = array();
-                for ($i = 0; $i < $preselectLimit; $i++) {
-                    $tempitems[] = $items[$i];
-                    unset($items[$i]);
-                }
-                shuffle($items);
-                $items = array_merge($tempitems, $items);
-            }
-
+        // where filter
+        if (is_array($where) && count($where) > 0) {
+            print_r($where);
             $tempitems = array();
-            for ($i = 0; $i < $limit; $i++) {
-                $tempitems[] = $items[$i];
+            foreach ($items as $item) {
+                $include = true;
+                foreach ($where as $key => $operand) {
+                    $key = explode(':', $key);
+                    $field = $key[0];
+                    $then = $include;
+                    $else = false;
+                    $subject = $item[$field];
+                    
+                    $operator = isset($key[1]) ? $key[1] : '=';
+                    $operator = strtolower($operator);
+                    switch ($operator) {
+                        case '!=':
+                        case 'neq':
+                        case 'not':
+                        case 'isnot':
+                        case 'isnt':
+                        case 'unequal':
+                        case 'notequal':
+                            $output = (($subject != $operand) ? $then : (isset($else) ? $else : ''));
+                            break;
+                        case '<':
+                        case 'lt':
+                        case 'less':
+                        case 'lessthan':
+                            $output = (($subject < $operand) ? $then : (isset($else) ? $else : ''));
+                            break;
+                        case '>':
+                        case 'gt':
+                        case 'greater':
+                        case 'greaterthan':
+                            $output = (($subject > $operand) ? $then : (isset($else) ? $else : ''));
+                            break;
+                        case '<=':
+                        case 'lte':
+                        case 'lessthanequals':
+                        case 'lessthanorequalto':
+                            $output = (($subject <= $operand) ? $then : (isset($else) ? $else : ''));
+                            break;
+                        case '>=':
+                        case 'gte':
+                        case 'greaterthanequals':
+                        case 'greaterthanequalto':
+                            $output = (($subject >= $operand) ? $then : (isset($else) ? $else : ''));
+                            break;
+                        case 'isempty':
+                        case 'empty':
+                            $output = empty($subject) ? $then:
+                            (isset($else) ? $else : '');
+                            break;
+                        case '!empty':
+                        case 'notempty':
+                        case 'isnotempty':
+                            $output = !empty($subject) && $subject != '' ? $then:
+                            (isset($else) ? $else : '');
+                            break;
+                        case 'isnull':
+                        case 'null':
+                            $output = $subject == null || strtolower($subject) == 'null' ? $then:
+                            (isset($else) ? $else : '');
+                            break;
+                        case 'inarray':
+                        case 'in_array':
+                        case 'ia':
+                        case 'in':
+                            $operand = is_array($operand) ? $operand : explode(',', $operand);
+                            $output = in_array($subject, $operand) ? $then:
+                            (isset($else) ? $else : '');
+                            break;
+                        case '==':
+                        case '=':
+                        case 'eq':
+                        case 'is':
+                        case 'equal':
+                        case 'equals':
+                        case 'equalto':
+                        default:
+                            $output = (($subject == $operand) ? $then : (isset($else) ? $else : ''));
+                            break;
+                    }
+                    
+                    $include = $output ? $output : false;
+
+                }
+                if ($include) {
+                    $tempitems[] = $item;
+                }
+
             }
             $items = $tempitems;
-            if ($randomize) {
-                shuffle($items);
-            }
+        }
 
-            $idx = 0;
-            foreach ($items as $key => $item) {
+if (count($items) > 0) {
+    $items = $offset > 0 ? array_slice($items, $offset) : $items;
+    $count = count($items);
+    $limit = $limit == 0 || $limit > $count ? $count : $limit;
+    $preselectLimit = $preselectLimit > $count ? $count : $preselectLimit;
+    //preselect important items
+    if ($randomize && $preselectLimit > 0) {
+        $tempitems = array();
+        for ($i = 0; $i < $preselectLimit; $i++) {
+            $tempitems[] = $items[$i];
+            unset($items[$i]);
+        }
+        shuffle($items);
+        $items = array_merge($tempitems, $items);
+    }
 
-                $fields = array();
-                foreach ($item as $field => $value) {
-                    if (isset($inputTvs[$field])) {
-                        if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
-                            $tv->set('default_text', $value);
-                            $fields[$field] = $tv->renderOutput($docid);
-                        }
-                    } else {
-                        $fields[$field] = $value;
-                    }
+    $tempitems = array();
+    for ($i = 0; $i < $limit; $i++) {
+        $tempitems[] = $items[$i];
+    }
+    $items = $tempitems;
+    if ($randomize) {
+        shuffle($items);
+    }
+
+    $idx = 0;
+    foreach ($items as $key => $item) {
+
+        $fields = array();
+        foreach ($item as $field => $value) {
+            if (isset($inputTvs[$field])) {
+                if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
+                    $tv->set('default_text', $value);
+                    $fields[$field] = $tv->renderOutput($docid);
                 }
-                $fields['_alt'] = $idx % 2;
-                $idx++;
-                $fields['_first'] = $idx == 1 ? true : '';
-                $fields['_last'] = $idx == $limit ? true : '';
-                $fields['idx'] = $idx;
-                if ($template) {
-                    $chunk = $modx->newObject('modChunk');
-                    $chunk->setCacheable(false);
-                    $chunk->setContent($template);
-                    $output .= $chunk->process($fields);
-                } else {
-                    $output .= '<pre>' . print_r($fields, 1) . '</pre>';
-                }
+            } else {
+                $fields[$field] = $value;
             }
         }
+        $fields['_alt'] = $idx % 2;
+        $idx++;
+        $fields['_first'] = $idx == 1 ? true : '';
+        $fields['_last'] = $idx == $limit ? true : '';
+        $fields['idx'] = $idx;
+        if ($template) {
+            $chunk = $modx->newObject('modChunk');
+            $chunk->setCacheable(false);
+            $chunk->setContent($template);
+            $output .= $chunk->process($fields);
+        } else {
+            $output .= '<pre>' . print_r($fields, 1) . '</pre>';
+        }
+    }
+}
 
 
 return $output;
