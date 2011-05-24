@@ -100,7 +100,6 @@ if (substr($tpl, 0, 6) == "@FILE:") {
 
         // where filter
         if (is_array($where) && count($where) > 0) {
-            print_r($where);
             $tempitems = array();
             foreach ($items as $item) {
                 $include = true;
