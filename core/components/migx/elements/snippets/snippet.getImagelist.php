@@ -48,6 +48,9 @@ $randomize = $modx->getOption('randomize', $scriptProperties, false);
 $preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
 $where = $modx->getOption('where', $scriptProperties, '');
 $where = !empty($where) ? $modx->fromJSON($where) : array();
+$toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
+$toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
+$outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
 
 /*
 if (empty($tpl)) {
@@ -219,7 +222,7 @@ if (count($items) > 0) {
     }
 
     $idx = 0;
-    $output = '';
+    $output = array();
     foreach ($items as $key => $item) {
 
         $fields = array();
@@ -242,12 +245,28 @@ if (count($items) > 0) {
             $chunk = $modx->newObject('modChunk');
             $chunk->setCacheable(false);
             $chunk->setContent($template);
-            $output .= $chunk->process($fields);
+            $output[] = $chunk->process($fields);
         } else {
-            $output .= '<pre>' . print_r($fields, 1) . '</pre>';
+            $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
         }
     }
 }
 
 
-return $output;
+if (!empty($toSeparatePlaceholders)) {
+    $modx->setPlaceholders($output, $toSeparatePlaceholders);
+    return '';
+}
+/*
+if (!empty($outerTpl))
+   $o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
+else 
+*/
+$o=implode($outputSeparator, $output);   
+
+if (!empty($toPlaceholder)) {
+    $modx->setPlaceholder($toPlaceholder, $o);
+    return '';
+}
+
+return $o;
