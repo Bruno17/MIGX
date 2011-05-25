@@ -85,7 +85,7 @@ if (empty($outputvalue)) {
 
 $items = $modx->fromJSON($outputvalue);
 $modx->setPlaceholder($totalVar, count($items));
-$output = '';
+
 if (substr($tpl, 0, 6) == "@FILE:") {
     $template = file_get_contents($modx->config['base_path'] . substr($tpl, 6));
 } else
@@ -219,6 +219,7 @@ if (count($items) > 0) {
     }
 
     $idx = 0;
+    $output = '';
     foreach ($items as $key => $item) {
 
         $fields = array();
