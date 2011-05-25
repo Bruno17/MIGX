@@ -51,6 +51,7 @@ $where = !empty($where) ? $modx->fromJSON($where) : array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
+$placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, false);
 
 /*
 if (empty($tpl)) {
@@ -112,7 +113,7 @@ if (substr($tpl, 0, 6) == "@FILE:") {
                     $then = $include;
                     $else = false;
                     $subject = $item[$field];
-                    
+
                     $operator = isset($key[1]) ? $key[1] : '=';
                     $operator = strtolower($operator);
                     switch ($operator) {
@@ -169,7 +170,8 @@ if (substr($tpl, 0, 6) == "@FILE:") {
                         case 'in_array':
                         case 'ia':
                         case 'in':
-                            $operand = is_array($operand) ? $operand : explode(',', $operand);
+                            $operand = is_array($operand) ? $operand:
+                            explode(',', $operand);
                             $output = in_array($subject, $operand) ? $then:
                             (isset($else) ? $else : '');
                             break;
@@ -184,7 +186,7 @@ if (substr($tpl, 0, 6) == "@FILE:") {
                             $output = (($subject == $operand) ? $then : (isset($else) ? $else : ''));
                             break;
                     }
-                    
+
                     $include = $output ? $output : false;
 
                 }
@@ -245,24 +247,32 @@ if (count($items) > 0) {
             $chunk = $modx->newObject('modChunk');
             $chunk->setCacheable(false);
             $chunk->setContent($template);
-            $output[] = $chunk->process($fields);
+            if (!empty($placeholdersKeyField)) {
+                $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
+            } else {
+                $output[] = $chunk->process($fields);
+            }
         } else {
-            $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
+            if (!empty($placeholdersKeyField)) {
+                $output[$fields[$placeholdersKeyField]] = '<pre>' . print_r($fields, 1) . '</pre>';
+            } else {
+                $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
+            }
         }
     }
 }
 
 
 if (!empty($toSeparatePlaceholders)) {
-    $modx->setPlaceholders($output, $toSeparatePlaceholders);
+    $modx->toPlaceholders($output, $toSeparatePlaceholders);
     return '';
 }
 /*
 if (!empty($outerTpl))
-   $o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
+$o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
 else 
 */
-$o=implode($outputSeparator, $output);   
+$o = implode($outputSeparator, $output);
 
 if (!empty($toPlaceholder)) {
     $modx->setPlaceholder($toPlaceholder, $o);
