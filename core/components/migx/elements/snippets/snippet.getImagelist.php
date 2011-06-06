@@ -103,113 +103,101 @@ if (empty($outputvalue)) {
 $items = $modx->fromJSON($outputvalue);
 $modx->setPlaceholder($totalVar, count($items));
 
-if (substr($tpl, 0, 6) == "@FILE:") {
-    $template = file_get_contents($modx->config['base_path'] . substr($tpl, 6));
-} else
-    if (substr($tpl, 0, 6) == "@CODE:") {
-        $template = substr($tpl, 6);
-    } else
-        if ($chunk = $modx->getObject('modChunk', array('name' => $tpl), true)) {
-            $template = $chunk->getContent();
-        } else {
-            $template = false;
-        }
+// where filter
+if (is_array($where) && count($where) > 0) {
+    $tempitems = array();
+    foreach ($items as $item) {
+        $include = true;
+        foreach ($where as $key => $operand) {
+            $key = explode(':', $key);
+            $field = $key[0];
+            $then = $include;
+            $else = false;
+            $subject = $item[$field];
 
-        // where filter
-        if (is_array($where) && count($where) > 0) {
-            $tempitems = array();
-            foreach ($items as $item) {
-                $include = true;
-                foreach ($where as $key => $operand) {
-                    $key = explode(':', $key);
-                    $field = $key[0];
-                    $then = $include;
-                    $else = false;
-                    $subject = $item[$field];
-
-                    $operator = isset($key[1]) ? $key[1] : '=';
-                    $operator = strtolower($operator);
-                    switch ($operator) {
-                        case '!=':
-                        case 'neq':
-                        case 'not':
-                        case 'isnot':
-                        case 'isnt':
-                        case 'unequal':
-                        case 'notequal':
-                            $output = (($subject != $operand) ? $then : (isset($else) ? $else : ''));
-                            break;
-                        case '<':
-                        case 'lt':
-                        case 'less':
-                        case 'lessthan':
-                            $output = (($subject < $operand) ? $then : (isset($else) ? $else : ''));
-                            break;
-                        case '>':
-                        case 'gt':
-                        case 'greater':
-                        case 'greaterthan':
-                            $output = (($subject > $operand) ? $then : (isset($else) ? $else : ''));
-                            break;
-                        case '<=':
-                        case 'lte':
-                        case 'lessthanequals':
-                        case 'lessthanorequalto':
-                            $output = (($subject <= $operand) ? $then : (isset($else) ? $else : ''));
-                            break;
-                        case '>=':
-                        case 'gte':
-                        case 'greaterthanequals':
-                        case 'greaterthanequalto':
-                            $output = (($subject >= $operand) ? $then : (isset($else) ? $else : ''));
-                            break;
-                        case 'isempty':
-                        case 'empty':
-                            $output = empty($subject) ? $then:
-                            (isset($else) ? $else : '');
-                            break;
-                        case '!empty':
-                        case 'notempty':
-                        case 'isnotempty':
-                            $output = !empty($subject) && $subject != '' ? $then:
-                            (isset($else) ? $else : '');
-                            break;
-                        case 'isnull':
-                        case 'null':
-                            $output = $subject == null || strtolower($subject) == 'null' ? $then:
-                            (isset($else) ? $else : '');
-                            break;
-                        case 'inarray':
-                        case 'in_array':
-                        case 'ia':
-                        case 'in':
-                            $operand = is_array($operand) ? $operand:
-                            explode(',', $operand);
-                            $output = in_array($subject, $operand) ? $then:
-                            (isset($else) ? $else : '');
-                            break;
-                        case '==':
-                        case '=':
-                        case 'eq':
-                        case 'is':
-                        case 'equal':
-                        case 'equals':
-                        case 'equalto':
-                        default:
-                            $output = (($subject == $operand) ? $then : (isset($else) ? $else : ''));
-                            break;
-                    }
-
-                    $include = $output ? $output : false;
-
-                }
-                if ($include) {
-                    $tempitems[] = $item;
-                }
-
+            $operator = isset($key[1]) ? $key[1] : '=';
+            $operator = strtolower($operator);
+            switch ($operator) {
+                case '!=':
+                case 'neq':
+                case 'not':
+                case 'isnot':
+                case 'isnt':
+                case 'unequal':
+                case 'notequal':
+                    $output = (($subject != $operand) ? $then : (isset($else) ? $else : ''));
+                    break;
+                case '<':
+                case 'lt':
+                case 'less':
+                case 'lessthan':
+                    $output = (($subject < $operand) ? $then : (isset($else) ? $else : ''));
+                    break;
+                case '>':
+                case 'gt':
+                case 'greater':
+                case 'greaterthan':
+                    $output = (($subject > $operand) ? $then : (isset($else) ? $else : ''));
+                    break;
+                case '<=':
+                case 'lte':
+                case 'lessthanequals':
+                case 'lessthanorequalto':
+                    $output = (($subject <= $operand) ? $then : (isset($else) ? $else : ''));
+                    break;
+                case '>=':
+                case 'gte':
+                case 'greaterthanequals':
+                case 'greaterthanequalto':
+                    $output = (($subject >= $operand) ? $then : (isset($else) ? $else : ''));
+                    break;
+                case 'isempty':
+                case 'empty':
+                    $output = empty($subject) ? $then:
+                    (isset($else) ? $else : '');
+                    break;
+                case '!empty':
+                case 'notempty':
+                case 'isnotempty':
+                    $output = !empty($subject) && $subject != '' ? $then:
+                    (isset($else) ? $else : '');
+                    break;
+                case 'isnull':
+                case 'null':
+                    $output = $subject == null || strtolower($subject) == 'null' ? $then:
+                    (isset($else) ? $else : '');
+                    break;
+                case 'inarray':
+                case 'in_array':
+                case 'ia':
+                case 'in':
+                    $operand = is_array($operand) ? $operand:
+                    explode(',', $operand);
+                    $output = in_array($subject, $operand) ? $then:
+                    (isset($else) ? $else : '');
+                    break;
+                case '==':
+                case '=':
+                case 'eq':
+                case 'is':
+                case 'equal':
+                case 'equals':
+                case 'equalto':
+                default:
+                    $output = (($subject == $operand) ? $then : (isset($else) ? $else : ''));
+                    break;
             }
-            $items = $tempitems;
+
+            $include = $output ? $output : false;
+
         }
+        if ($include) {
+            $tempitems[] = $item;
+        }
+
+    }
+    $items = $tempitems;
+}
 
 if (count($items) > 0) {
     $items = $offset > 0 ? array_slice($items, $offset) : $items;
@@ -256,10 +244,29 @@ if (count($items) > 0) {
         $fields['_first'] = $idx == 1 ? true : '';
         $fields['_last'] = $idx == $limit ? true : '';
         $fields['idx'] = $idx;
-        if ($template) {
+        $rowtpl = $tpl;
+        //get changing tpls from field
+        if (substr($tpl, 0, 7) == "@FIELD:") {
+            $tplField = substr($tpl, 7);
+            $rowtpl = $fields[$tplField];
+        }
+
+        if (!isset($template[$rowtpl])) {
+            if (substr($rowtpl, 0, 6) == "@FILE:") {
+                $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
+            } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
+                $template[$rowtpl] = substr($tpl, 6);
+            } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
+                $template[$rowtpl] = $chunk->getContent();
+            } else {
+                $template[$rowtpl] = false;
+            }
+        }
+
+        if ($template[$rowtpl]) {
             $chunk = $modx->newObject('modChunk');
             $chunk->setCacheable(false);
-            $chunk->setContent($template);
+            $chunk->setContent($template[$rowtpl]);
             if (!empty($placeholdersKeyField)) {
                 $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
             } else {
