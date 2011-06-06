@@ -487,8 +487,8 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
         
         //this.popwindow.width='1000px';
 		//this.width='1000px';
-		this.syncSize();
-		this.popwindow.syncSize();
+		//this.syncSize();
+		//this.popwindow.syncSize();
 		return '';
 	 }
 });

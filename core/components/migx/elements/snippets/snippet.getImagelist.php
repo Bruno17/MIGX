@@ -69,6 +69,19 @@ if (!empty($tvname)) {
         $formtabs = $modx->fromJSON($properties['formtabs']);
         $inputTvs = array();
         if (is_array($formtabs)) {
+
+            //multiple different Forms
+            // Note: use same field-names and inputTVs in all forms
+            if (isset($formtabs[0]['formtabs'])) {
+                $forms = $formtabs;
+                $formtabs = array();
+                foreach ($forms as $form) {
+                    foreach ($form['formtabs'] as $tab) {
+                        $formtabs[] = $tab;
+                    }
+                }
+            }
+
             foreach ($formtabs as $tab) {
                 if (isset($tab['fields'])) {
                     foreach ($tab['fields'] as $field) {

@@ -45,16 +45,19 @@ if (isset($formtabs[0]['formtabs'])) {
     $forms = $formtabs;
     $tabs = array();
     foreach ($forms as $form) {
+        $formname = array();
         $formname['value'] = $form['formname'];
         $formname['text'] = $form['formname'];
+        $formname['selected'] = 0;
         if ($form['formname'] == $record['MIGX_formname']) {
-            $formname['selected'] = true;
+            $formname['selected'] = 1;
         }
         $formnames[] = $formname;
         foreach ($form['formtabs'] as $tab) {
             $tabs[$form['formname']][] = $tab;
         }
     }
+    
     $modx->smarty->assign('formnames', $formnames);
 
     if (isset($record['MIGX_formname'])) {
