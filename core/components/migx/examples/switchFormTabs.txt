@@ -1,0 +1,19 @@
+[
+{"formname":"image_description", "formtabs": 
+[
+{"caption":"Info", "fields": [
+{"field":"title","caption":"Title"},
+{"field":"tpl","caption":"Tpl","inputTV":"tplDropdown"},  {"field":"description","caption":"Description","inputTV":"richtext"}
+]}, 
+{"caption":"Image", "fields":[
+{"field":"image","caption":"Image","inputTV":"image"}
+]}
+]
+},{"formname":"textonly", "formtabs": 
+[
+{"caption":"Info", "fields": [
+{"field":"title","caption":"Title"},
+{"field":"tpl","caption":"Tpl","inputTV":"tplDropdown"}, {"field":"description","caption":"Description","inputTV":"richtext"}
+]}
+]
+}] 
