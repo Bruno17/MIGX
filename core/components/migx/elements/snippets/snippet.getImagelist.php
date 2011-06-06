@@ -52,6 +52,7 @@ $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProp
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
 $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, false);
+$toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
 
 /*
 if (empty($tpl)) {
@@ -99,6 +100,10 @@ if (!empty($tvname)) {
 if (empty($outputvalue)) {
     return '';
 }
+
+//echo $outputvalue.'<br/><br/>';
+
+
 
 $items = $modx->fromJSON($outputvalue);
 $modx->setPlaceholder($totalVar, count($items));
@@ -239,49 +244,59 @@ if (count($items) > 0) {
                 $fields[$field] = $value;
             }
         }
-        $fields['_alt'] = $idx % 2;
-        $idx++;
-        $fields['_first'] = $idx == 1 ? true : '';
-        $fields['_last'] = $idx == $limit ? true : '';
-        $fields['idx'] = $idx;
-        $rowtpl = $tpl;
-        //get changing tpls from field
-        if (substr($tpl, 0, 7) == "@FIELD:") {
-            $tplField = substr($tpl, 7);
-            $rowtpl = $fields[$tplField];
-        }
-
-        if (!isset($template[$rowtpl])) {
-            if (substr($rowtpl, 0, 6) == "@FILE:") {
-                $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
-            } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
-                $template[$rowtpl] = substr($tpl, 6);
-            } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
-                $template[$rowtpl] = $chunk->getContent();
-            } else {
-                $template[$rowtpl] = false;
-            }
-        }
-
-        if ($template[$rowtpl]) {
-            $chunk = $modx->newObject('modChunk');
-            $chunk->setCacheable(false);
-            $chunk->setContent($template[$rowtpl]);
-            if (!empty($placeholdersKeyField)) {
-                $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
-            } else {
-                $output[] = $chunk->process($fields);
-            }
+        if ($toJsonPlaceholder) {
+            $output[] = $fields;
         } else {
-            if (!empty($placeholdersKeyField)) {
-                $output[$fields[$placeholdersKeyField]] = '<pre>' . print_r($fields, 1) . '</pre>';
+            $fields['_alt'] = $idx % 2;
+            $idx++;
+            $fields['_first'] = $idx == 1 ? true : '';
+            $fields['_last'] = $idx == $limit ? true : '';
+            $fields['idx'] = $idx;
+            $rowtpl = $tpl;
+            //get changing tpls from field
+            if (substr($tpl, 0, 7) == "@FIELD:") {
+                $tplField = substr($tpl, 7);
+                $rowtpl = $fields[$tplField];
+            }
+
+            if (!isset($template[$rowtpl])) {
+                if (substr($rowtpl, 0, 6) == "@FILE:") {
+                    $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
+                } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
+                    $template[$rowtpl] = substr($tpl, 6);
+                } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
+                    $template[$rowtpl] = $chunk->getContent();
+                } else {
+                    $template[$rowtpl] = false;
+                }
+            }
+
+            if ($template[$rowtpl]) {
+                $chunk = $modx->newObject('modChunk');
+                $chunk->setCacheable(false);
+                $chunk->setContent($template[$rowtpl]);
+                if (!empty($placeholdersKeyField)) {
+                    $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
+                } else {
+                    $output[] = $chunk->process($fields);
+                }
             } else {
-                $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
+                if (!empty($placeholdersKeyField)) {
+                    $output[$fields[$placeholdersKeyField]] = '<pre>' . print_r($fields, 1) . '</pre>';
+                } else {
+                    $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
+                }
             }
         }
+
+
     }
 }
 
+if ($toJsonPlaceholder){
+    $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
+    return '';    
+}
 
 if (!empty($toSeparatePlaceholders)) {
     $modx->toPlaceholders($output, $toSeparatePlaceholders);
