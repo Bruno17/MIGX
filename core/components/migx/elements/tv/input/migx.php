@@ -19,6 +19,19 @@ $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "da
 $formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
 $formtabs = empty($properties['formtabs'])?$modx->fromJSON($default_formtabs):$formtabs;
 
+//multiple different Forms
+// Note: use same field-names and inputTVs in all forms
+if (isset($formtabs[0]['formtabs'])){
+    $forms = $formtabs;
+    $formtabs = array();
+    foreach ($forms as $form){
+        foreach ($form['formtabs'] as $tab){
+             $formtabs[] = $tab;   
+        }
+    }
+}
+
+
 $inputTvs = array();
 if (is_array($formtabs)) {
     foreach ($formtabs as $tab) {

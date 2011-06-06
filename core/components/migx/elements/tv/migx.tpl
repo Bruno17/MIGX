@@ -85,6 +85,9 @@ MODx.grid.multiTVgrid = function(config) {
 		,tbar: [{
             text: '{/literal}{$i18n.mig_add}{literal}',
 			handler: this.addItem
+        },{
+            text: '{/literal}Preview{literal}',
+			handler: this.preview
         }]        
 		,viewConfig: {
             forceFit:true
@@ -153,7 +156,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	,addItem: function(btn,e) {
 		var s=this.getStore();
 		this.loadWin(btn,e,s.getCount(),'a');
-	}	
+	}
+	,preview: function(btn,e) {
+		var s=this.getStore();
+		this.loadPreviewWin(btn,e,s.getCount(),'a');
+	}    	
 	,remove: function() {
         var _this=this;
 		Ext.Msg.confirm(_('warning') || '','{/literal}{$i18n.mig_remove_confirm}{literal}' || '',function(e) {
@@ -204,7 +211,27 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 				itemid : index
 			}
         });
-    }	
+    }
+	,loadPreviewWin: function(btn,e,index,action) {
+        var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
+		//console.log((items));
+        
+        var win_xtype = 'modx-window-mi-preview';
+		if (this.windows[win_xtype]){
+			//this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
+			//this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
+		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
+            //this.windows[win_xtype].fp.autoLoad.params.record_json=json;
+			//this.windows[win_xtype].grid=this;
+            this.windows[win_xtype].action=action;
+		}
+		this.loadWindow(btn,e,{
+            xtype: win_xtype
+            ,src: 'xxx/index.php?id=13&test='+items
+			,grid: this
+            ,action: action
+        });
+    }    	
     ,getMenu: function() {
 		var n = this.menu.record; 
         var m = [];
@@ -235,6 +262,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     }
 });
 Ext.reg('modx-grid-multitvgrid',MODx.grid.multiTVgrid);
+
 
 MODx.window.UpdateTvItem = function(config) {
     config = config || {};
@@ -275,13 +303,13 @@ MODx.window.UpdateTvItem = function(config) {
     this.options = config;
     this.config = config;
 
-    this.on('show',this.onShow,this);
+    //this.on('show',this.onShow,this);
     this.addEvents({
         success: true
         ,failure: true
         ,beforeSubmit: true
 		,hide:true
-		,show:true
+		//,show:true
     });
     this._loadForm();	
 };
@@ -327,12 +355,13 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     },
     _loadForm: function() {
         //if (this.checkIfLoaded(this.config.record || null)) { return false; }
-		this.fp = this.createForm({
+        this.fp = this.createForm({
             url: this.config.url
             ,baseParams: this.config.baseParams || { action: this.config.action || '' }
             ,items: this.config.fields || []
         });
-        this.renderForm();
+		//console.log('renderForm');
+        this.add(this.fp);
     }	
     ,createForm: function(config){
         config = config || {};
@@ -351,11 +380,25 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         });
         return new MODx.panel.MiGridUpdate(config);
     }
-    ,renderForm: function() {
-		this.add(this.fp);
-		
-    }		
+    ,switchForm: function() {
+        var v = this.fp.getForm().getValues();
+        //console.log(v);
+        var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
+        var item = {};
+        var tvid = '';
+        if (fields.length>0){
+            for (var i = 0; i < fields.length; i++) {
+                tvid = (fields[i].tv_id);
+                item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
+            }
+        }
+        //console.log(item);			        
+        this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(item);
+        this.fp.doAutoLoad();        
+    }
+    
     ,onShow: function() {
+        //console.log('onshow');
         if (this.fp.isloading) return;
         this.fp.isloading=true;
         this.fp.autoLoad.params.record_json=this.baseParams.record_json;
@@ -379,8 +422,8 @@ MODx.panel.MiGridUpdate = function(config) {
         ,width: '1000px'
         ,listeners: {
             //'beforeSubmit': {fn:this.beforeSubmit,scope:this},
-            'success': {fn:this.success,scope:this}
-			,'load': {fn:this.load,scope:this}
+            //'success': {fn:this.success,scope:this}
+			'load': {fn:this.load,scope:this}
         }		
     });
  	MODx.panel.MiGridUpdate.superclass.constructor.call(this,config);
@@ -414,14 +457,9 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
     ,beforeSubmit: function(o) {
         //tinyMCE.triggerSave(); 
     }
-    ,success: function(o) {
-		this.doAutoLoad();
-		var gf = Ext.getCmp('xdbedit-grid-objects');
-		gf.isModified = true;
-		gf.refresh();
-     },
-	 load: function() {
+	 ,load: function() {
 		//MODx.loadRTE();
+        //console.log('load');
 		
         if (typeof(Tiny) != 'undefined') {
 		    var s={};
@@ -455,6 +493,110 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
 	 }
 });
 Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate);
+
+/*
+Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
+     onRender : function(ct, position){
+          this.el = ct.createChild({tag: 'iframe', id: 'iframe-'+ this.id, frameBorder: 0, src: this.url});
+     }
+});
+*/
+/*
+var MiPreviewPanel = new Ext.Panel({
+     id: 'MiPreviewPanel',
+     title: 'MIGX - Preview',
+     closable:true,
+     // layout to fit child component
+     layout:'fit', 
+     // add iframe as the child component
+     items: [ new Ext.ux.IFrameComponent({ id: id, url: 'http://www.gitrevo.webcmsolutions.de/manager' }) ]
+});
+*/
+/*
+Ext.ux.IFrameComponent = function(config) {
+    config = config || {};
+    Ext.applyIf(config,{
+        layout:'fit'
+        ,id: 'modx-iframe-mi-preview'
+        ,url: 'http://www.gitrevo.webcmsolutions.de/manager' 
+    });
+    Ext.ux.IFrameComponent.superclass.constructor.call(this,config);
+};
+Ext.extend(Ext.ux.IFrameComponent,Ext.BoxComponent,{
+     onRender : function(ct, position){
+          this.el = ct.createChild({tag: 'iframe', id: 'iframe-'+ this.id, frameBorder: 0, src: this.url});
+     }
+});
+Ext.reg('modx-iframe-mi-preview',Ext.ux.IFrameComponent);
+*/     
+
+MODx.window.MiPreview = function(config) {
+    config = config || {};
+    Ext.applyIf(config,{
+        title: _('property_update')
+        ,id: 'modx-window-mi-preview' 
+        ,width: '1000px'
+        ,height: '800px'
+		,closeAction: 'hide'
+        //,src: 'http://www.gitrevo.webcmsolutions.de/index.php?id=13&test=huhu'
+        ,shadow: true
+        ,resizable: true
+        ,collapsible: true
+        ,maximizable: true
+        ,autoScroll: true
+        ,items: [
+        {
+            html:'<form method="post" target="preview_iframe"><textarea name="preview_json" style="width:500px; height:200px">'+config.src+'</textarea></form>'
+            
+        },
+        
+        {
+            xtype: 'container'
+            ,width: '900px'
+            ,height: '600px'
+            ,autoEl: {
+            tag: 'iframe'
+            ,src: config.src
+            }
+         }]
+        //,saveBtnText: _('done')
+        ,forceLayout: true
+        ,buttons: [{
+            text: config.cancelBtnText || _('close')
+            ,scope: this
+            ,handler: function() { this.hide(); }
+        }]
+        ,action: 'u'
+		,record_json: ''
+        ,keys: [{
+            key: Ext.EventObject.ENTER
+            ,fn: this.submit
+            ,scope: this
+        }]		
+    });
+    MODx.window.MiPreview.superclass.constructor.call(this,config);
+    this.options = config;
+    this.config = config;
+
+    //this.on('show',this.onShow,this);
+    this.addEvents({
+        success: true
+        ,failure: true
+		//,hide:true
+		//,show:true
+    });
+    //this.renderIframe();	
+};
+Ext.extend(MODx.window.MiPreview,Ext.Window,{
+
+    renderIframe: function() {
+		this.add(this.iframe);
+		
+    }
+
+});
+Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
+
 
         MODx.load({
             xtype: 'modx-grid-multitvgrid'
