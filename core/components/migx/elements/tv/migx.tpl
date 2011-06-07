@@ -222,12 +222,13 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			//this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
             //this.windows[win_xtype].fp.autoLoad.params.record_json=json;
-			//this.windows[win_xtype].grid=this;
+			this.windows[win_xtype].json=items;
             this.windows[win_xtype].action=action;
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
-            ,src: 'xxx/index.php?id=13&test='+items
+            ,src: 'http://www.gitrevo.webcmsolutions.de/preview1.html'
+            ,json: items
 			,grid: this
             ,action: action
         });
@@ -269,16 +270,18 @@ MODx.window.UpdateTvItem = function(config) {
     Ext.applyIf(config,{
         title: _('property_update')
         ,id: 'modx-window-mi-grid-update' 
-        ,width: '1000px'
+        ,width: '1000'
 		,closeAction: 'hide'
-        ,shadow: true
+        ,shadow: false
         ,resizable: true
         ,collapsible: true
         ,maximizable: true
-        ,autoHeight: true
         ,allowDrop: true
+        ,height: '600'
         //,saveBtnText: _('done')
         ,forceLayout: true
+        ,boxMaxHeight: '700'
+        ,autoScroll: true
         ,buttons: [{
             text: config.cancelBtnText || _('cancel')
             ,scope: this
@@ -358,7 +361,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         this.fp = this.createForm({
             url: this.config.url
             ,baseParams: this.config.baseParams || { action: this.config.action || '' }
-            ,items: this.config.fields || []
+            //,items: this.config.fields || []
         });
 		//console.log('renderForm');
         this.add(this.fp);
@@ -372,7 +375,6 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             ,popwindow : this
 			,border: false
             ,bodyBorder: false
-            ,autoHeight: true
             ,errorReader: MODx.util.JSONReader
             ,url: this.config.url
             ,baseParams: this.config.baseParams || {}
@@ -417,9 +419,9 @@ MODx.panel.MiGridUpdate = function(config) {
         ,baseParams: config.baseParams	
         ,class_key: ''
         ,bodyStyle: 'padding: 15px;'
-        ,autoSize: true
+        //,autoSize: true
         ,autoLoad: this.autoload(config)
-        ,width: '1000px'
+        ,width: '950'
         ,listeners: {
             //'beforeSubmit': {fn:this.beforeSubmit,scope:this},
             //'success': {fn:this.success,scope:this}
@@ -518,7 +520,7 @@ Ext.ux.IFrameComponent = function(config) {
     Ext.applyIf(config,{
         layout:'fit'
         ,id: 'modx-iframe-mi-preview'
-        ,url: 'http://www.gitrevo.webcmsolutions.de/manager' 
+        ,url: 'http://www.gitrevo.webcmsolutions.de/preview1.html' 
     });
     Ext.ux.IFrameComponent.superclass.constructor.call(this,config);
 };
@@ -535,27 +537,37 @@ MODx.window.MiPreview = function(config) {
     Ext.applyIf(config,{
         title: _('property_update')
         ,id: 'modx-window-mi-preview' 
-        ,width: '1000px'
-        ,height: '800px'
+        ,width: '1050'
+        ,height: '700'
 		,closeAction: 'hide'
-        //,src: 'http://www.gitrevo.webcmsolutions.de/index.php?id=13&test=huhu'
         ,shadow: true
         ,resizable: true
         ,collapsible: true
         ,maximizable: true
         ,autoScroll: true
         ,items: [
-        {
-            html:'<form method="post" target="preview_iframe"><textarea name="preview_json" style="width:500px; height:200px">'+config.src+'</textarea></form>'
+           {
+            xtype: 'form'
+            ,id:'migx_preview_form'
+            ,target: 'preview_iframe'
+            ,standardSubmit: true
+            ,url: config.src
+            ,items:[{
+                xtype:'hidden'
+                ,name:'migx_outputvalue'
+                ,id:'migx_preview_json'
+            }
             
+            ]
         },
         
         {
             xtype: 'container'
-            ,width: '900px'
-            ,height: '600px'
+            ,width: '980'
+            ,height: '620'
             ,autoEl: {
             tag: 'iframe'
+            ,name: 'migx_preview_iframe'
             ,src: config.src
             }
          }]
@@ -592,6 +604,19 @@ Ext.extend(MODx.window.MiPreview,Ext.Window,{
     renderIframe: function() {
 		this.add(this.iframe);
 		
+    }
+    ,onShow: function() {
+     Ext.getCmp('migx_preview_json').setValue(this.json);
+     var form = Ext.getCmp('migx_preview_form').getForm(); 
+     form.getEl().dom.target='migx_preview_iframe';
+     form.submit();  
+     /*
+     var form = Ext.getCmp('customerWidget').getForm();
+	 
+	 //On Submit we set this variable to true, you'll understand why in the event handler function
+	 xdm_formSubmitted = true;
+	 form.submit();
+     */        
     }
 
 });

@@ -122,10 +122,8 @@ Ext.onReady(function() {
         ,plain: true
         ,width: '900px'
         ,hideMode: 'offsets'
-        ,autoScroll: true
         ,defaults: {
             bodyStyle: 'padding: 5px;'
-            ,autoScroll: true
             ,autoHeight: true
         }
         ,deferredRender: false

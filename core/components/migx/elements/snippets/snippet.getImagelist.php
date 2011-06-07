@@ -3,7 +3,7 @@
 /**
  * getImageList
  *
- * Copyright 2009-2010 by Bruno Perner <b.perner@gmx.de>
+ * Copyright 2009-2011 by Bruno Perner <b.perner@gmx.de>
  *
  * getImageList is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -23,9 +23,9 @@
 /**
  * getImageList
  *
- * get Images from TV with custom-input-type imageList for MODx Revolution 2.0.
+ * display Items from outputvalue of TV with custom-TV-input-type MIGX or from other JSON-string for MODx Revolution 
  *
- * @version 1.3
+ * @version 1.4
  * @author Bruno Perner <b.perner@gmx.de>
  * @copyright Copyright &copy; 2009-2011
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
@@ -40,7 +40,6 @@
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
 $docid = $modx->getOption('docid', $scriptProperties, $modx->resource->get('id'));
-$outputvalue = $modx->getOption('value', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
@@ -53,15 +52,14 @@ $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
 $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, false);
 $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
+$jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
+$outputvalue = $modx->getOption('value', $scriptProperties, '');
+$outputvalue = isset ($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey]:$outputvalue;
 
-/*
-if (empty($tpl)) {
-return 'empty property: &tpl';
-}
-*/
+
 if (!empty($tvname)) {
     if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
-        $outputvalue = $tv->renderOutput($docid);
+        $outputvalue = empty($outputvalue)?$tv->renderOutput($docid):$outputvalue;
         /*
         *   get inputTvs 
         */
