@@ -85,10 +85,14 @@ MODx.grid.multiTVgrid = function(config) {
 		,tbar: [{
             text: '{/literal}{$i18n.mig_add}{literal}',
 			handler: this.addItem
-        },{
-            text: '{/literal}Preview{literal}',
+        }
+        {/literal}{if $properties.previewurl != ''}{literal}
+        ,{
+            text: '{/literal}{$i18n.mig_preview}{literal}',
 			handler: this.preview
-        }]        
+        }
+        {/literal}{/if}{literal}
+        ]        
 		,viewConfig: {
             forceFit:true
         }
@@ -215,19 +219,25 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	,loadPreviewWin: function(btn,e,index,action) {
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
 		//console.log((items));
-        
+        var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
+        if (jsonvarkey == ''){
+            jsonvarkey = 'migx_outputvalue';
+        }
         var win_xtype = 'modx-window-mi-preview';
 		if (this.windows[win_xtype]){
 			//this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			//this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
             //this.windows[win_xtype].fp.autoLoad.params.record_json=json;
+            this.windows[win_xtype].src='{/literal}{$properties.previewurl}{literal}';
 			this.windows[win_xtype].json=items;
+            this.windows[win_xtype].jsonvarkey=jsonvarkey;
             this.windows[win_xtype].action=action;
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
-            ,src: 'http://www.gitrevo.webcmsolutions.de/preview1.html'
+            ,src: '{/literal}{$properties.previewurl}{literal}'
+            ,jsonvarkey:jsonvarkey
             ,json: items
 			,grid: this
             ,action: action
@@ -268,7 +278,7 @@ Ext.reg('modx-grid-multitvgrid',MODx.grid.multiTVgrid);
 MODx.window.UpdateTvItem = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        title: _('property_update')
+        title:'MIGX'
         ,id: 'modx-window-mi-grid-update' 
         ,width: '1000'
 		,closeAction: 'hide'
@@ -414,7 +424,7 @@ MODx.panel.MiGridUpdate = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'xdbedit-panel-object-{/literal}{$tv->id}{literal}'
-		,title: _('template_variables')
+		,title: ''
         ,url: config.url
         ,baseParams: config.baseParams	
         ,class_key: ''
@@ -535,7 +545,7 @@ Ext.reg('modx-iframe-mi-preview',Ext.ux.IFrameComponent);
 MODx.window.MiPreview = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        title: _('property_update')
+        title: '{/literal}{$i18n.mig_preview}{literal}'
         ,id: 'modx-window-mi-preview' 
         ,width: '1050'
         ,height: '700'
@@ -606,17 +616,14 @@ Ext.extend(MODx.window.MiPreview,Ext.Window,{
 		
     }
     ,onShow: function() {
-     Ext.getCmp('migx_preview_json').setValue(this.json);
-     var form = Ext.getCmp('migx_preview_form').getForm(); 
+     var input = Ext.getCmp('migx_preview_json');
+     input.setValue(this.json);
+     input.getEl().dom.name = this.jsonvarkey;
+     var formpanel = Ext.getCmp('migx_preview_form');
+     var form = Ext.getCmp('migx_preview_form').getForm();
+     form.getEl().dom.action=this.src;
      form.getEl().dom.target='migx_preview_iframe';
      form.submit();  
-     /*
-     var form = Ext.getCmp('customerWidget').getForm();
-	 
-	 //On Submit we set this variable to true, you'll understand why in the event handler function
-	 xdm_formSubmitted = true;
-	 form.submit();
-     */        
     }
 
 });

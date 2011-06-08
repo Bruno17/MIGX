@@ -59,13 +59,21 @@ $outputvalue = isset ($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey]:$outputva
 
 if (!empty($tvname)) {
     if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
-        $outputvalue = empty($outputvalue)?$tv->renderOutput($docid):$outputvalue;
+        
         /*
-        *   get inputTvs 
+        *   get inputProperties
         */
         $properties = $tv->get('input_properties');
         $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
         $formtabs = $modx->fromJSON($properties['formtabs']);
+        if ($jsonVarKey == 'migx_outputvalue' && !empty($properties['jsonvarkey'])){
+           $jsonVarKey = $properties['jsonvarkey'];
+           $outputvalue = isset ($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey]:$outputvalue; 
+        }
+        $outputvalue = empty($outputvalue)?$tv->renderOutput($docid):$outputvalue;
+        /*
+        *   get inputTvs 
+        */      
         $inputTvs = array();
         if (is_array($formtabs)) {
 

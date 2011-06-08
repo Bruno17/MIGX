@@ -15,3 +15,4 @@ $_lang['mig_remove_confirm'] = 'Remove Item?';
 $_lang['mig_edit'] = 'Edit';
 $_lang['mig_remove'] = 'Remove';
 $_lang['mig_duplicate'] = 'Duplicate';
+$_lang['mig_preview'] = 'Preview';

@@ -10,3 +10,5 @@
 $_lang['mig.tabs'] = 'Form Tabs';
 $_lang['mig.columns'] = 'Grid Columns';
 $_lang['mig.btntext'] = '"Add Item" Replacement';
+$_lang['mig.previewurl'] = 'Preview Url';
+$_lang['mig.jsonvarkey'] = 'Preview JsonVarKey';

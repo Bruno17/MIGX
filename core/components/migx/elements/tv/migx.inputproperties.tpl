@@ -45,7 +45,27 @@ MODx.load({
         ,hiddenName: 'inopt_btntext'
         ,id: 'inopt_btntext{/literal}{$tv}{literal}'
         ,value: params['btntext']
-        ,width: 300
+        ,width: 600
+        ,listeners: oc
+    },{
+        xtype: 'textfield'
+        ,fieldLabel: '{/literal}{$mig.previewurl}{literal}'
+        ,description: '{/literal}{$mig.previewurl_desc}{literal}'
+        ,name: 'inopt_previewurl'
+        ,hiddenName: 'inopt_previewurl'
+        ,id: 'inopt_previewurl{/literal}{$tv}{literal}'
+        ,value: params['previewurl']
+        ,width: 600
+        ,listeners: oc
+    },{
+        xtype: 'textfield'
+        ,fieldLabel: '{/literal}{$mig.jsonvarkey}{literal}'
+        ,description: '{/literal}{$mig.jsonvarkey_desc}{literal}'
+        ,name: 'inopt_jsonvarkey'
+        ,hiddenName: 'inopt_jsonvarkey'
+        ,id: 'inopt_jsonvarkey{/literal}{$tv}{literal}'
+        ,value: params['jsonvarkey']
+        ,width: 600
         ,listeners: oc
     }]
     ,renderTo: 'tv-input-properties-form{/literal}{$tv}{literal}'
