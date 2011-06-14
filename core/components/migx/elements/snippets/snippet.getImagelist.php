@@ -243,8 +243,13 @@ if (count($items) > 0) {
         foreach ($item as $field => $value) {
             if (isset($inputTvs[$field])) {
                 if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
+                    if (is_array($value)){
+                        //handle arrays (checkboxes, multiselects)
+                        $value = implode('||',$value);
+                    }                    
                     $tv->set('default_text', $value);
                     $fields[$field] = $tv->renderOutput($docid);
+
                 }
             } else {
                 $fields[$field] = $value;
