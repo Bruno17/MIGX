@@ -119,6 +119,19 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		}
 		return val;
 	}
+    ,renderFirst : function(val, md, rec, row, col, s){
+		val = val.split(':');
+        return val[0];
+        
+        /*
+        var max = 100;
+        var count = val.length;
+		if (count>max){
+            return(val.substring(0, max));
+		}
+        */        
+		return val;
+	}        
     ,renderLimited : function(val, md, rec, row, col, s){
 		var max = 100;
         var count = val.length;
@@ -212,6 +225,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 				tv_id: '{/literal}{$tv->id}{literal}',
 				tv_name: '{/literal}{$tv->name}{literal}',
 				'class_key': 'modDocument',
+                'wctx':'{/literal}{$myctx}{literal}',
 				itemid : index
 			}
         });
@@ -639,6 +653,7 @@ Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
 			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
 			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
+            ,wctx: '{/literal}{$myctx}{literal}'
             ,width: '97%'			
         });
 

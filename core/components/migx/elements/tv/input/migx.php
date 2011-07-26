@@ -138,5 +138,6 @@ $this->xpdo->smarty->assign('columns', $this->xpdo->toJSON($cols));
 $this->xpdo->smarty->assign('fields', $this->xpdo->toJSON($fields));
 $this->xpdo->smarty->assign('newitem', $this->xpdo->toJSON($newitem));
 $this->xpdo->smarty->assign('base_url', $this->xpdo->getOption('base_url'));
+$this->xpdo->smarty->assign('myctx', $wctx);
 
 return $modx->smarty->fetch($corePath . 'elements/tv/migx.tpl');

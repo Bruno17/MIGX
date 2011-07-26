@@ -121,6 +121,8 @@ foreach ($formtabs as $tabid => $tab) {
             $tv->set('value', $v);
         }
 
+        
+
         $modx->smarty->assign('tv', $tv);
         $params = $tv->get('input_properties');
         if (!isset($params['allowBlank']))

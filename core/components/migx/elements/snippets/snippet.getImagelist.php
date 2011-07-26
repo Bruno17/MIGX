@@ -39,7 +39,6 @@
 
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
-$docid = $modx->getOption('docid', $scriptProperties, $modx->resource->get('id'));
 $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
@@ -54,26 +53,29 @@ $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperti
 $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
 $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
 $outputvalue = $modx->getOption('value', $scriptProperties, '');
-$outputvalue = isset ($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey]:$outputvalue;
-
+$outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
+$docidVarKey = $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
+$docid = $modx->getOption('docid', $scriptProperties, $modx->resource->get('id'));
+$docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
+$processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 
 if (!empty($tvname)) {
     if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
-        
+
         /*
         *   get inputProperties
         */
         $properties = $tv->get('input_properties');
         $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
         $formtabs = $modx->fromJSON($properties['formtabs']);
-        if ($jsonVarKey == 'migx_outputvalue' && !empty($properties['jsonvarkey'])){
-           $jsonVarKey = $properties['jsonvarkey'];
-           $outputvalue = isset ($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey]:$outputvalue; 
+        if ($jsonVarKey == 'migx_outputvalue' && !empty($properties['jsonvarkey'])) {
+            $jsonVarKey = $properties['jsonvarkey'];
+            $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
         }
-        $outputvalue = empty($outputvalue)?$tv->renderOutput($docid):$outputvalue;
+        $outputvalue = empty($outputvalue) ? $tv->renderOutput($docid) : $outputvalue;
         /*
         *   get inputTvs 
-        */      
+        */
         $inputTvs = array();
         if (is_array($formtabs)) {
 
@@ -108,7 +110,6 @@ if (empty($outputvalue)) {
 }
 
 //echo $outputvalue.'<br/><br/>';
-
 
 
 $items = $modx->fromJSON($outputvalue);
@@ -241,15 +242,11 @@ if (count($items) > 0) {
 
         $fields = array();
         foreach ($item as $field => $value) {
-            if (isset($inputTvs[$field])) {
+            $value = is_array($value) ? implode('||', $value) : $value; //handle arrays (checkboxes, multiselects)
+            if ($processTVs && isset($inputTvs[$field])) {
                 if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
-                    if (is_array($value)){
-                        //handle arrays (checkboxes, multiselects)
-                        $value = implode('||',$value);
-                    }                    
                     $tv->set('default_text', $value);
                     $fields[$field] = $tv->renderOutput($docid);
-
                 }
             } else {
                 $fields[$field] = $value;
@@ -304,9 +301,9 @@ if (count($items) > 0) {
     }
 }
 
-if ($toJsonPlaceholder){
+if ($toJsonPlaceholder) {
     $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
-    return '';    
+    return '';
 }
 
 if (!empty($toSeparatePlaceholders)) {
