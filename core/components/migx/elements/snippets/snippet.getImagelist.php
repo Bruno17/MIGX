@@ -236,6 +236,11 @@ if (count($items) > 0) {
         shuffle($items);
     }
 
+    $properties = array();
+    foreach ($scriptProperties as $property => $value) {
+        $properties['property.' . $property] = $value;
+    }
+
     $idx = 0;
     $output = array();
     foreach ($items as $key => $item) {
@@ -278,6 +283,8 @@ if (count($items) > 0) {
                     $template[$rowtpl] = false;
                 }
             }
+
+            $fields = array_merge($fields, $properties);
 
             if ($template[$rowtpl]) {
                 $chunk = $modx->newObject('modChunk');
