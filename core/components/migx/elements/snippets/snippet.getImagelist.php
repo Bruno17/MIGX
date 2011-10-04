@@ -55,7 +55,7 @@ $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalu
 $outputvalue = $modx->getOption('value', $scriptProperties, '');
 $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
 $docidVarKey = $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
-$docid = $modx->getOption('docid', $scriptProperties, $modx->resource->get('id'));
+$docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? $modx->resource->get('id') : 1));
 $docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
 $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 
