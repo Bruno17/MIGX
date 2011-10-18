@@ -13,13 +13,17 @@
 
 $modx->getService('smarty', 'smarty.modSmarty');
 
-if (!isset($modx->smarty)) {
-    $modx->getService('smarty', 'smarty.modSmarty', '', array('template_dir' => $modx->
-        getOption('manager_path') . 'templates/' . $modx->getOption('manager_theme', null,
-        'default') . '/', ));
+if (file_exists(MODX_CORE_PATH . 'model/modx/modmanagercontroller.class.php')) {
+    require_once MODX_CORE_PATH . 'model/modx/modmanagercontroller.class.php';
+    require_once MODX_CORE_PATH . 'model/modx/modmanagercontrollerdeprecated.class.php';
+    $c = new modManagerControllerDeprecated($modx, array());
+    $modx->controller = call_user_func_array(array($c, 'getInstance'), array($modx, 'modManagerControllerDeprecated', array()));
 }
-$modx->smarty->template_dir = $modx->getOption('manager_path') . 'templates/' .
-    $modx->getOption('manager_theme', null, 'default') . '/';
+
+if (!isset($modx->smarty)) {
+    $modx->getService('smarty', 'smarty.modSmarty', '', array('template_dir' => $modx->getOption('manager_path') . 'templates/' . $modx->getOption('manager_theme', null, 'default') . '/', ));
+}
+$modx->smarty->template_dir = $modx->getOption('manager_path') . 'templates/' . $modx->getOption('manager_theme', null, 'default') . '/';
 $modx->smarty->assign('OnResourceTVFormPrerender', $onResourceTVFormPrerender);
 $modx->smarty->assign('_config', $modx->config);
 
@@ -29,8 +33,7 @@ $properties = $tv->get('input_properties');
 $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
 $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
 $formtabs = $modx->fromJSON($modx->getOption('formtabs', $properties, $default_formtabs));
-$formtabs = empty($properties['formtabs']) ? $modx->fromJSON($default_formtabs) :
-    $formtabs;
+$formtabs = empty($properties['formtabs']) ? $modx->fromJSON($default_formtabs) : $formtabs;
 $fieldid = 0;
 $tabid = 0;
 $allfields = array();
@@ -57,7 +60,7 @@ if (isset($formtabs[0]['formtabs'])) {
             $tabs[$form['formname']][] = $tab;
         }
     }
-    
+
     $modx->smarty->assign('formnames', $formnames);
 
     if (isset($record['MIGX_formname'])) {
@@ -90,8 +93,7 @@ foreach ($formtabs as $tabid => $tab) {
         }
 
         /*insert actual value from requested record, convert arrays to ||-delimeted string */
-        $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) :
-            $record[$field['field']];
+        $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
 
         $tv->set('value', $fieldvalue);
         $tv->set('caption', htmlentities($field['caption'], ENT_QUOTES));
@@ -121,12 +123,10 @@ foreach ($formtabs as $tabid => $tab) {
             $tv->set('value', $v);
         }
 
-        
 
         $modx->smarty->assign('tv', $tv);
         $params = $tv->get('input_properties');
-        if (!isset($params['allowBlank']))
-            $params['allowBlank'] = 1;
+        if (!isset($params['allowBlank'])) $params['allowBlank'] = 1;
 
         $value = $tv->get('value');
         if ($value === null) {
@@ -135,11 +135,9 @@ foreach ($formtabs as $tabid => $tab) {
         $modx->smarty->assign('params', $params);
         /* find the correct renderer for the TV, if not one, render a textbox */
         $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
-        $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', $resourceId,
-            $tv->get('type'));
+        $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', $resourceId, $tv->get('type'));
 
-        if (empty($inputForm))
-            continue;
+        if (empty($inputForm)) continue;
 
         $tv->set('formElement', $inputForm);
 
@@ -158,7 +156,6 @@ $modx->smarty->assign('properties', $scriptProperties);
 if (!empty($_REQUEST['showCheckbox'])) {
     $modx->smarty->assign('showCheckbox', 1);
 }
-$miTVCorePath = $modx->getOption('migx.core_path', null, $modx->getOption('core_path') .
-    'components/migx/');
+$miTVCorePath = $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/');
 $modx->smarty->template_dir = $miTVCorePath . 'templates/';
 return $modx->smarty->fetch('mgr/fields.tpl');

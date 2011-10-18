@@ -67,6 +67,7 @@ MODx.grid.multiTVgrid = function(config) {
                              }
                          }
 						grid.collectItems();
+                        grid.getView().refresh();
 
  
                         // ************************************
@@ -119,6 +120,9 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		}
 		return val;
 	}
+    ,renderPlaceholder : function(val, md, rec, row, col, s){
+		return '[[+'+val+'.'+row+']]';
+	}       
     ,renderFirst : function(val, md, rec, row, col, s){
 		val = val.split(':');
         return val[0];

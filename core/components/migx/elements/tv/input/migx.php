@@ -133,6 +133,7 @@ $lang = $this->xpdo->lexicon->fetch();
 $lang['mig_add'] = !empty($properties['btntext'])?$properties['btntext']:$lang['mig_add'];
 $modx->smarty->assign('i18n', $lang);
 $this->xpdo->smarty->assign('properties', $properties);
+$this->xpdo->smarty->assign('resource', is_object($this->xpdo->resource) ? $this->xpdo->resource->toArray() : array());
 $this->xpdo->smarty->assign('pathconfigs', $this->xpdo->toJSON($pathconfigs));
 $this->xpdo->smarty->assign('columns', $this->xpdo->toJSON($cols));
 $this->xpdo->smarty->assign('fields', $this->xpdo->toJSON($fields));
