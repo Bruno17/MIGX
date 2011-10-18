@@ -286,7 +286,13 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		for(i = 0; i <  griddata.length; i++) {
  			items.push(griddata.items[i].json);
         }
-        Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
+        if (items.length >0){
+           Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items); 
+        }
+        else{
+           Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = '';  
+        }
+        
 		return;						 
     }
 });
