@@ -151,11 +151,27 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	,loadData: function(){
 	    var items_string = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
         var items = [];
+        var item = {};
         try {
             items = Ext.util.JSON.decode(items_string);
         }
         catch (e){
         }
+                
+        this.autoinc = 0;
+        for(i = 0; i <  items.length; i++) {
+ 		    item = items[i];
+            if (item.MIGX_id){
+                if (item.MIGX_id > this.autoinc){
+                    this.autoinc = item.MIGX_id;
+                }
+            }else{
+                item.MIGX_id = this.autoinc +1 ;
+                this.autoinc = item.MIGX_id;                 
+            }	
+           items[i] = item;  
+        } 
+        
 		this.getStore().sortInfo = null;
 		this.getStore().loadData(items);
 			
@@ -202,11 +218,13 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         if (action == 'a'){
            var json='{/literal}{$newitem}{literal}';
            var data=Ext.util.JSON.decode(json);
+           var isnew = '1';
         }else{
 		   var s = this.getStore();
            var rec = s.getAt(index)            
            var data = rec.data;
            var json = Ext.util.JSON.encode(rec.json);
+           var isnew = '0';
         }
 		
         var win_xtype = 'modx-window-tv-item-update';
@@ -215,6 +233,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    this.windows[win_xtype].fp.autoLoad.params.itemid=index;
             this.windows[win_xtype].fp.autoLoad.params.record_json=json;
+            this.windows[win_xtype].fp.autoLoad.params.autoinc=this.autoinc;
+            this.windows[win_xtype].fp.autoLoad.params.isnew=isnew;
 			this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
 		}
@@ -230,7 +250,9 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 				tv_name: '{/literal}{$tv->name}{literal}',
 				'class_key': 'modDocument',
                 'wctx':'{/literal}{$myctx}{literal}',
-				itemid : index
+				itemid : index,
+                autoinc : this.autoinc,
+                isnew : isnew
 			}
         });
     }
@@ -363,7 +385,8 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                 /*append record*/
                 var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
 		        s.loadData(items,true);
-                idx=s.getCount()-1;                
+                idx=s.getCount()-1;
+                this.grid.autoinc = v['tvmigxid'];               
             }
             
             var rec = s.getAt(idx);

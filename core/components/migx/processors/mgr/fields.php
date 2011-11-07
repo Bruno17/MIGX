@@ -42,6 +42,18 @@ $formnames = array();
 /*actual record */
 $record = $modx->fromJSON($scriptProperties['record_json']);
 
+$field = array();
+$field['field'] = 'MIGX_id';
+$field['tv_id'] = 'migxid';
+$allfields[] = $field;
+if ($scriptProperties['isnew'] == '1'){
+   $migxid = $scriptProperties['autoinc']+1;
+}
+else{
+   $migxid = $record['MIGX_id']; 
+}
+$modx->smarty->assign('migxid', $migxid);
+
 //multiple different Forms
 // Note: use same field-names and inputTVs in all forms
 if (isset($formtabs[0]['formtabs'])) {

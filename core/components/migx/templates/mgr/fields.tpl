@@ -3,6 +3,7 @@
 <h2>TV</h2>
 
 <input type="hidden" class="mulititems_grid_item_fields" name="mulititems_grid_item_fields" value='{$fields}' />
+<input type="hidden" class="tvmigxid" name="tvmigxid" value='{$migxid}' />
 
 <div id="modx-multiitemsgridtv-tabs">
 {foreach from=$categories item=category name=cat}
