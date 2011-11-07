@@ -220,15 +220,15 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         if (action == 'a'){
            var json='{/literal}{$newitem}{literal}';
            var data=Ext.util.JSON.decode(json);
-           var isnew = '1';
         }else{
 		   var s = this.getStore();
            var rec = s.getAt(index)            
            var data = rec.data;
            var json = Ext.util.JSON.encode(rec.json);
-           var isnew = '0';
         }
-		
+        
+        var isnew = (action == 'u') ? '0':'1';
+ 		
         var win_xtype = 'modx-window-tv-item-update';
 		if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
