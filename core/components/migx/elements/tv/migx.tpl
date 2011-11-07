@@ -65,6 +65,7 @@ MODx.grid.multiTVgrid = function(config) {
      							ds.insert(cindex,data.selections);
                                 sm.clearSelections();
                              }
+                             MODx.fireResourceFormChange();
                          }
 						grid.collectItems();
                         grid.getView().refresh();
@@ -204,7 +205,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             if (e == 'yes') {
 				_this.getStore().removeAt(_this.menu.recordIndex);
                 _this.getView().refresh();
-		        _this.collectItems();	
+		        _this.collectItems();
+                MODx.fireResourceFormChange();	
                 }
             }),this;		
 	}   
@@ -379,6 +381,9 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         var v = this.fp.getForm().getValues();
         if (this.fp.getForm().isValid()) {
             var s = this.grid.getStore();
+            if (this.action == 'd'){
+                MODx.fireResourceFormChange();     
+            }
             if (this.action == 'u'){
                 var idx = this.baseParams.itemid; 
             }else{
