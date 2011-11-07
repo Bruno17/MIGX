@@ -329,11 +329,13 @@ MODx.window.UpdateTvItem = function(config) {
 		,grid: null
         ,action: 'u'
 		,record_json: ''
+        /*
         ,keys: [{
             key: Ext.EventObject.ENTER
             ,fn: this.submit
             ,scope: this
-        }]		
+        }]
+        */		
         ,fields: []
     });
     MODx.window.UpdateTvItem.superclass.constructor.call(this,config);
@@ -380,7 +382,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             }					
             this.grid.getView().refresh();
             this.grid.collectItems();
-            //this.onDirty();			
+            //this.onDirty();
 			
             if (this.fireEvent('success',v)) {
                 this.fp.getForm().reset();
@@ -421,13 +423,28 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         //console.log(v);
         var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
         var item = {};
+        var tvs = {};        
         var tvid = '';
         if (fields.length>0){
             for (var i = 0; i < fields.length; i++) {
+                
                 tvid = (fields[i].tv_id);
+                tvs['tv'+tvid] = true;
                 item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
             }
         }
+
+            if (typeof(Tiny) != 'undefined') {
+                var ed = null;
+                for (edId in tinyMCE.editors){
+                    ed = tinyMCE.editors[edId];
+                    if (typeof (ed) == 'object'){
+                        if (tvs[ed.id]){
+                            ed.remove();
+                        }         
+                    }
+                }
+            }
         //console.log(item);			        
         this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(item);
         this.fp.doAutoLoad();        
