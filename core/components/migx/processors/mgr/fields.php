@@ -46,11 +46,10 @@ $field = array();
 $field['field'] = 'MIGX_id';
 $field['tv_id'] = 'migxid';
 $allfields[] = $field;
-if ($scriptProperties['isnew'] == '1'){
-   $migxid = $scriptProperties['autoinc']+1;
-}
-else{
-   $migxid = $record['MIGX_id']; 
+if ($scriptProperties['isnew'] == '1') {
+    $migxid = $scriptProperties['autoinc'] + 1;
+} else {
+    $migxid = $record['MIGX_id'];
 }
 $modx->smarty->assign('migxid', $migxid);
 
@@ -87,6 +86,10 @@ if (isset($formtabs[0]['formtabs'])) {
     $allfields[] = $field;
 }
 
+$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH); 
+$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+
+$basePath = $base_path.$properties['basePath'];
 
 foreach ($formtabs as $tabid => $tab) {
     /*virtual categories for tabs*/
@@ -138,6 +141,29 @@ foreach ($formtabs as $tabid => $tab) {
 
         $modx->smarty->assign('tv', $tv);
         $params = $tv->get('input_properties');
+        if (!empty($basePath)) {
+            if ($properties['autoResourceFolders'] == 'true') {
+                $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
+                $targetDir = $params['basePath'];
+
+                $cacheManager = $modx->getCacheManager();
+                /* if directory doesnt exist, create it */
+                if (!file_exists($targetDir) || !is_dir($targetDir)) {
+                    if (!$cacheManager->writeTree($targetDir)) {
+                        $modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
+                        return $modx->error->failure('Could not create directory: '. $targetDir);
+                    }
+                }
+                /* make sure directory is readable/writable */
+                if (!is_readable($targetDir) || !is_writable($targetDir)) {
+                    $modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
+                    return $modx->error->failure('Could not write to directory: '. $targetDir);
+                }
+            } else {
+                $params['basePath'] = $basePath;
+            }
+        }
+
         if (!isset($params['allowBlank'])) $params['allowBlank'] = 1;
 
         $value = $tv->get('value');

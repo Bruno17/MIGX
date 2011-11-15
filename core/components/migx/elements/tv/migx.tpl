@@ -228,11 +228,13 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         }
         
         var isnew = (action == 'u') ? '0':'1';
+        var resource_id = '{/literal}{$resource.id}{literal}';
  		
         var win_xtype = 'modx-window-tv-item-update';
 		if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
-			this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
+			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
+            this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    this.windows[win_xtype].fp.autoLoad.params.itemid=index;
             this.windows[win_xtype].fp.autoLoad.params.record_json=json;
             this.windows[win_xtype].fp.autoLoad.params.autoinc=this.autoinc;
@@ -254,7 +256,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 'wctx':'{/literal}{$myctx}{literal}',
 				itemid : index,
                 autoinc : this.autoinc,
-                isnew : isnew
+                isnew : isnew,
+                resource_id : resource_id
 			}
         });
     }

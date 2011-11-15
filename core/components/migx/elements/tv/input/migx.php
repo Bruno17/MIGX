@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -16,17 +15,18 @@ $properties = isset($params['columns']) ? $params : $this->getProperties();
 $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
 $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
 
-$formtabs = $modx->fromJSON($modx->getOption('formtabs',$properties,$default_formtabs));
-$formtabs = empty($properties['formtabs'])?$modx->fromJSON($default_formtabs):$formtabs;
+$formtabs = $modx->fromJSON($modx->getOption('formtabs', $properties, $default_formtabs));
+$formtabs = empty($properties['formtabs']) ? $modx->fromJSON($default_formtabs) : $formtabs;
 
+$resource = is_object($this->xpdo->resource) ? $this->xpdo->resource->toArray() : array();
 //multiple different Forms
 // Note: use same field-names and inputTVs in all forms
-if (isset($formtabs[0]['formtabs'])){
+if (isset($formtabs[0]['formtabs'])) {
     $forms = $formtabs;
     $formtabs = array();
-    foreach ($forms as $form){
-        foreach ($form['formtabs'] as $tab){
-             $formtabs[] = $tab;   
+    foreach ($forms as $form) {
+        foreach ($form['formtabs'] as $tab) {
+            $formtabs[] = $tab;
         }
     }
 }
@@ -72,8 +72,11 @@ $replaceValues = array_values($replacePaths);
 
 /* pasted end*/
 
-$columns = $modx->fromJSON($modx->getOption('columns',$properties,$default_columns));
-$columns = empty($properties['columns'])?$modx->fromJSON($default_columns):$columns;
+$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH); 
+$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+
+$columns = $modx->fromJSON($modx->getOption('columns', $properties, $default_columns));
+$columns = empty($properties['columns']) ? $modx->fromJSON($default_columns) : $columns;
 
 if (is_array($columns) && count($columns) > 0) {
     foreach ($columns as $key => $column) {
@@ -92,6 +95,13 @@ if (is_array($columns) && count($columns) > 0) {
             $params = $tv->get('input_properties');
             $params['wctx'] = $wctx;
             /* pasted from processors.element.tv.renders.mgr.input*/
+            if (!empty($properties['basePath'])) {
+                if ($properties['autoResourceFolders'] == 'true' && isset($resource['id'])) {
+                    $params['basePath'] = $base_path.$properties['basePath'] . $resource['id'] . '/';
+                } else {
+                    $params['basePath'] = $base_path.$properties['basePath'];
+                }
+            }
             if (empty($params['basePath'])) {
                 $params['basePath'] = $modx->fileHandler->getBasePath();
                 $params['basePath'] = str_replace($replaceKeys, $replaceValues, $params['basePath']);
@@ -130,10 +140,10 @@ if (is_array($columns) && count($columns) > 0) {
 
 $newitem[] = $item;
 $lang = $this->xpdo->lexicon->fetch();
-$lang['mig_add'] = !empty($properties['btntext'])?$properties['btntext']:$lang['mig_add'];
+$lang['mig_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['mig_add'];
 $modx->smarty->assign('i18n', $lang);
 $this->xpdo->smarty->assign('properties', $properties);
-$this->xpdo->smarty->assign('resource', is_object($this->xpdo->resource) ? $this->xpdo->resource->toArray() : array());
+$this->xpdo->smarty->assign('resource', $resource);
 $this->xpdo->smarty->assign('pathconfigs', $this->xpdo->toJSON($pathconfigs));
 $this->xpdo->smarty->assign('columns', $this->xpdo->toJSON($cols));
 $this->xpdo->smarty->assign('fields', $this->xpdo->toJSON($fields));

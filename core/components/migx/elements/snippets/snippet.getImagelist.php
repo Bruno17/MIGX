@@ -59,6 +59,9 @@ $docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? 
 $docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
 $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 
+$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH); 
+$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+
 if (!empty($tvname)) {
     if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
 
@@ -68,6 +71,15 @@ if (!empty($tvname)) {
         $properties = $tv->get('input_properties');
         $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
         $formtabs = $modx->fromJSON($properties['formtabs']);
+        if (!empty($properties['basePath'])) {
+            if ($properties['autoResourceFolders'] == 'true' ) {
+                $scriptProperties['base_path'] = $base_path.$properties['basePath'] . $docid . '/';
+                $scriptProperties['base_url'] = $base_url.$properties['basePath'] . $docid . '/';
+            } else {
+                $scriptProperties['base_path'] = $base_path.$properties['base_path'];
+                $scriptProperties['base_url'] = $base_url.$properties['basePath'];
+            }
+        }        
         if ($jsonVarKey == 'migx_outputvalue' && !empty($properties['jsonvarkey'])) {
             $jsonVarKey = $properties['jsonvarkey'];
             $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
@@ -226,15 +238,15 @@ if (count($items) > 0) {
         shuffle($items);
         $items = array_merge($tempitems, $items);
     }
-
+    if ($randomize) {
+        shuffle($items);
+    }
     $tempitems = array();
     for ($i = 0; $i < $limit; $i++) {
         $tempitems[] = $items[$i];
     }
     $items = $tempitems;
-    if ($randomize) {
-        shuffle($items);
-    }
+
 
     $properties = array();
     foreach ($scriptProperties as $property => $value) {
