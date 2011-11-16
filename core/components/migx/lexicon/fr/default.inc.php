@@ -16,3 +16,4 @@ $_lang['mig_edit'] = 'Éditer';
 $_lang['mig_remove'] = 'Supprimer';
 $_lang['mig_duplicate'] = 'Dupliquer';
 $_lang['mig_preview'] = 'Preview';
+$_lang['mig_save_resource'] = 'Before adding new items, you have to save this resource!';

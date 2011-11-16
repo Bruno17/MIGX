@@ -217,6 +217,14 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
       this.loadWin(btn,e,this.menu.recordIndex,'d');
     }    
 	,loadWin: function(btn,e,index,action) {
+	    var resource_id = '{/literal}{$resource.id}{literal}';
+        {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
+        if (resource_id == 0){
+            alert ('{/literal}{$i18n.mig_save_resource}{literal}');
+            return;
+        }
+        {/literal}{/if}{literal}        
+       
         if (action == 'a'){
            var json='{/literal}{$newitem}{literal}';
            var data=Ext.util.JSON.decode(json);
@@ -228,7 +236,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         }
         
         var isnew = (action == 'u') ? '0':'1';
-        var resource_id = '{/literal}{$resource.id}{literal}';
+        
  		
         var win_xtype = 'modx-window-tv-item-update';
 		if (this.windows[win_xtype]){
