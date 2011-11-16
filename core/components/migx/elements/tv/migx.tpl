@@ -122,7 +122,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		return val;
 	}
     ,renderPlaceholder : function(val, md, rec, row, col, s){
-		return '[[+'+val+'.'+row+']]';
+        return '[[+'+val+'.'+rec.data.MIGX_id+']]';
+        
 	}       
     ,renderFirst : function(val, md, rec, row, col, s){
 		val = val.split(':');
