@@ -122,7 +122,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		return val;
 	}
     ,renderPlaceholder : function(val, md, rec, row, col, s){
-        return '[[+'+val+'.'+rec.data.MIGX_id+']]';
+        return '[[+'+val+'.'+rec.json.MIGX_id+']]';
         
 	}       
     ,renderFirst : function(val, md, rec, row, col, s){
@@ -413,6 +413,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             if (fields.length>0){
                 for (var i = 0; i < fields.length; i++) {
                     tvid = (fields[i].tv_id);
+                    if (v['tv'+tvid+'_prefix']) v['tv'+tvid]=v['tv'+tvid+'_prefix']+v['tv'+tvid];//url-TV support
                     item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
                     //set defined record-fields to its new value
                     rec.set(fields[i].field,item[fields[i].field])

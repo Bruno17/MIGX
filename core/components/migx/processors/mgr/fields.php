@@ -86,6 +86,8 @@ if (isset($formtabs[0]['formtabs'])) {
     $allfields[] = $field;
 }
 
+$_GET['wctx'] = $modx->sanitizeString($_REQUEST['wctx']);
+
 $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH); 
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
@@ -141,7 +143,7 @@ foreach ($formtabs as $tabid => $tab) {
 
         $modx->smarty->assign('tv', $tv);
         $params = $tv->get('input_properties');
-        if (!empty($basePath)) {
+        if (!empty($properties['basePath'])) {
             if ($properties['autoResourceFolders'] == 'true') {
                 $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
                 $targetDir = $params['basePath'];
