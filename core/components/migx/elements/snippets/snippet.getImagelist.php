@@ -59,8 +59,13 @@ $docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? 
 $docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
 $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 
-$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH); 
+$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+
+$migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
+if (!($migx instanceof Migx)) return '';
+$migx->working_context = $modx->resource->get('context_key');
+
 
 if (!empty($tvname)) {
     if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
@@ -72,14 +77,14 @@ if (!empty($tvname)) {
         $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
         $formtabs = $modx->fromJSON($properties['formtabs']);
         if (!empty($properties['basePath'])) {
-            if ($properties['autoResourceFolders'] == 'true' ) {
-                $scriptProperties['base_path'] = $base_path.$properties['basePath'] . $docid . '/';
-                $scriptProperties['base_url'] = $base_url.$properties['basePath'] . $docid . '/';
+            if ($properties['autoResourceFolders'] == 'true') {
+                $scriptProperties['base_path'] = $base_path . $properties['basePath'] . $docid . '/';
+                $scriptProperties['base_url'] = $base_url . $properties['basePath'] . $docid . '/';
             } else {
-                $scriptProperties['base_path'] = $base_path.$properties['base_path'];
-                $scriptProperties['base_url'] = $base_url.$properties['basePath'];
+                $scriptProperties['base_path'] = $base_path . $properties['base_path'];
+                $scriptProperties['base_url'] = $base_url . $properties['basePath'];
             }
-        }        
+        }
         if ($jsonVarKey == 'migx_outputvalue' && !empty($properties['jsonvarkey'])) {
             $jsonVarKey = $properties['jsonvarkey'];
             $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
@@ -93,28 +98,11 @@ if (!empty($tvname)) {
 
             //multiple different Forms
             // Note: use same field-names and inputTVs in all forms
-            if (isset($formtabs[0]['formtabs'])) {
-                $forms = $formtabs;
-                $formtabs = array();
-                foreach ($forms as $form) {
-                    foreach ($form['formtabs'] as $tab) {
-                        $formtabs[] = $tab;
-                    }
-                }
-            }
-
-            foreach ($formtabs as $tab) {
-                if (isset($tab['fields'])) {
-                    foreach ($tab['fields'] as $field) {
-                        if (isset($field['inputTV'])) {
-                            $inputTvs[$field['field']] = $field['inputTV'];
-                        }
-                    }
-                }
-            }
+            $inputTvs = $migx->extractInputTvs($formtabs);
         }
 
     }
+    $migx->source = $tv->getSource($migx->working_context, false);
 }
 
 if (empty($outputvalue)) {
@@ -129,99 +117,9 @@ $modx->setPlaceholder($totalVar, count($items));
 
 // where filter
 if (is_array($where) && count($where) > 0) {
-    $tempitems = array();
-    foreach ($items as $item) {
-        $include = true;
-        foreach ($where as $key => $operand) {
-            $key = explode(':', $key);
-            $field = $key[0];
-            $then = $include;
-            $else = false;
-            $subject = $item[$field];
-
-            $operator = isset($key[1]) ? $key[1] : '=';
-            $operator = strtolower($operator);
-            switch ($operator) {
-                case '!=':
-                case 'neq':
-                case 'not':
-                case 'isnot':
-                case 'isnt':
-                case 'unequal':
-                case 'notequal':
-                    $output = (($subject != $operand) ? $then : (isset($else) ? $else : ''));
-                    break;
-                case '<':
-                case 'lt':
-                case 'less':
-                case 'lessthan':
-                    $output = (($subject < $operand) ? $then : (isset($else) ? $else : ''));
-                    break;
-                case '>':
-                case 'gt':
-                case 'greater':
-                case 'greaterthan':
-                    $output = (($subject > $operand) ? $then : (isset($else) ? $else : ''));
-                    break;
-                case '<=':
-                case 'lte':
-                case 'lessthanequals':
-                case 'lessthanorequalto':
-                    $output = (($subject <= $operand) ? $then : (isset($else) ? $else : ''));
-                    break;
-                case '>=':
-                case 'gte':
-                case 'greaterthanequals':
-                case 'greaterthanequalto':
-                    $output = (($subject >= $operand) ? $then : (isset($else) ? $else : ''));
-                    break;
-                case 'isempty':
-                case 'empty':
-                    $output = empty($subject) ? $then:
-                    (isset($else) ? $else : '');
-                    break;
-                case '!empty':
-                case 'notempty':
-                case 'isnotempty':
-                    $output = !empty($subject) && $subject != '' ? $then:
-                    (isset($else) ? $else : '');
-                    break;
-                case 'isnull':
-                case 'null':
-                    $output = $subject == null || strtolower($subject) == 'null' ? $then:
-                    (isset($else) ? $else : '');
-                    break;
-                case 'inarray':
-                case 'in_array':
-                case 'ia':
-                case 'in':
-                    $operand = is_array($operand) ? $operand:
-                    explode(',', $operand);
-                    $output = in_array($subject, $operand) ? $then:
-                    (isset($else) ? $else : '');
-                    break;
-                case '==':
-                case '=':
-                case 'eq':
-                case 'is':
-                case 'equal':
-                case 'equals':
-                case 'equalto':
-                default:
-                    $output = (($subject == $operand) ? $then : (isset($else) ? $else : ''));
-                    break;
-            }
-
-            $include = $output ? $output : false;
-
-        }
-        if ($include) {
-            $tempitems[] = $item;
-        }
-
-    }
-    $items = $tempitems;
+    $items = $migx->filterItems($where,$items);
 }
+
 
 if (count($items) > 0) {
     $items = $offset > 0 ? array_slice($items, $offset) : $items;
@@ -229,24 +127,32 @@ if (count($items) > 0) {
     $limit = $limit == 0 || $limit > $count ? $count : $limit;
     $preselectLimit = $preselectLimit > $count ? $count : $preselectLimit;
     //preselect important items
+    $preitems = array();
     if ($randomize && $preselectLimit > 0) {
-        $tempitems = array();
         for ($i = 0; $i < $preselectLimit; $i++) {
-            $tempitems[] = $items[$i];
+            $preitems[] = $items[$i];
             unset($items[$i]);
         }
-        shuffle($items);
-        $items = array_merge($tempitems, $items);
+        $limit = $limit - count($preitems);
     }
+
+    //shuffle items
     if ($randomize) {
         shuffle($items);
     }
+
+    //limit items
     $tempitems = array();
     for ($i = 0; $i < $limit; $i++) {
         $tempitems[] = $items[$i];
     }
     $items = $tempitems;
 
+    //add preselected items and schuffle again
+    if ($randomize && $preselectLimit > 0) {
+        $items = array_merge($preitems, $items);
+        shuffle($items);
+    }
 
     $properties = array();
     foreach ($scriptProperties as $property => $value) {
@@ -261,84 +167,96 @@ if (count($items) > 0) {
         foreach ($item as $field => $value) {
             $value = is_array($value) ? implode('||', $value) : $value; //handle arrays (checkboxes, multiselects)
             if ($processTVs && isset($inputTvs[$field])) {
-                if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]))) {
+                if ($tv = $modx->getObject('modTemplateVar',array('name' => $inputTvs[$field]['inputTV']))) {
+                    $inputTV = $inputTvs[$field];
+                    $mTypes = $modx->getOption('manipulatable_url_tv_output_types', null, 'image,file');
+                    //don't manipulate any urls here
+                    $modx->setOption('manipulatable_url_tv_output_types', '');
                     $tv->set('default_text', $value);
-                    $fields[$field] = $tv->renderOutput($docid);
-                }
-            } else {
+                    $value = $tv->renderOutput($docid);
+                    //set option back
+                    $modx->setOption('manipulatable_url_tv_output_types', $mTypes);
+                    //now manipulate urls
+                    if ($mediasource = $migx->getFieldSource($inputTV, $tv)) {
+                        $mTypes = explode(',', $mTypes);
+                        if (!empty($value) && in_array($tv->get('type'), $mTypes)) {
+                            $value = $mediasource->prepareOutputUrl($value);
+                        }
+                    }
+                }}
                 $fields[$field] = $value;
-            }
-        }
-        if ($toJsonPlaceholder) {
-            $output[] = $fields;
-        } else {
-            $fields['_alt'] = $idx % 2;
-            $idx++;
-            $fields['_first'] = $idx == 1 ? true : '';
-            $fields['_last'] = $idx == $limit ? true : '';
-            $fields['idx'] = $idx;
-            $rowtpl = $tpl;
-            //get changing tpls from field
-            if (substr($tpl, 0, 7) == "@FIELD:") {
-                $tplField = substr($tpl, 7);
-                $rowtpl = $fields[$tplField];
-            }
 
-            if (!isset($template[$rowtpl])) {
-                if (substr($rowtpl, 0, 6) == "@FILE:") {
-                    $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
-                } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
-                    $template[$rowtpl] = substr($tpl, 6);
-                } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
-                    $template[$rowtpl] = $chunk->getContent();
-                } else {
-                    $template[$rowtpl] = false;
-                }
             }
-
-            $fields = array_merge($fields, $properties);
-
-            if ($template[$rowtpl]) {
-                $chunk = $modx->newObject('modChunk');
-                $chunk->setCacheable(false);
-                $chunk->setContent($template[$rowtpl]);
-                if (!empty($placeholdersKeyField)) {
-                    $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
-                } else {
-                    $output[] = $chunk->process($fields);
-                }
+            if ($toJsonPlaceholder) {
+                $output[] = $fields;
             } else {
-                if (!empty($placeholdersKeyField)) {
-                    $output[$fields[$placeholdersKeyField]] = '<pre>' . print_r($fields, 1) . '</pre>';
+                $fields['_alt'] = $idx % 2;
+                $idx++;
+                $fields['_first'] = $idx == 1 ? true : '';
+                $fields['_last'] = $idx == $limit ? true : '';
+                $fields['idx'] = $idx;
+                $rowtpl = $tpl;
+                //get changing tpls from field
+                if (substr($tpl, 0, 7) == "@FIELD:") {
+                    $tplField = substr($tpl, 7);
+                    $rowtpl = $fields[$tplField];
+                }
+
+                if (!isset($template[$rowtpl])) {
+                    if (substr($rowtpl, 0, 6) == "@FILE:") {
+                        $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
+                    } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
+                        $template[$rowtpl] = substr($tpl, 6);
+                    } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
+                        $template[$rowtpl] = $chunk->getContent();
+                    } else {
+                        $template[$rowtpl] = false;
+                    }
+                }
+
+                $fields = array_merge($fields, $properties);
+
+                if ($template[$rowtpl]) {
+                    $chunk = $modx->newObject('modChunk');
+                    $chunk->setCacheable(false);
+                    $chunk->setContent($template[$rowtpl]);
+                    if (!empty($placeholdersKeyField) && isset($fields[$placeholdersKeyField])) {
+                        $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
+                    } else {
+                        $output[] = $chunk->process($fields);
+                    }
                 } else {
-                    $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
+                    if (!empty($placeholdersKeyField)) {
+                        $output[$fields[$placeholdersKeyField]] = '<pre>' . print_r($fields, 1) . '</pre>';
+                    } else {
+                        $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
+                    }
                 }
             }
+
+
         }
-
-
     }
-}
 
-if ($toJsonPlaceholder) {
-    $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
-    return '';
-}
+    if ($toJsonPlaceholder) {
+        $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
+        return '';
+    }
 
-if (!empty($toSeparatePlaceholders)) {
-    $modx->toPlaceholders($output, $toSeparatePlaceholders);
-    return '';
-}
-/*
-if (!empty($outerTpl))
-$o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
-else 
-*/
-$o = implode($outputSeparator, $output);
+    if (!empty($toSeparatePlaceholders)) {
+        $modx->toPlaceholders($output, $toSeparatePlaceholders);
+        return '';
+    }
+    /*
+    if (!empty($outerTpl))
+    $o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
+    else 
+    */
+    $o = implode($outputSeparator, $output);
 
-if (!empty($toPlaceholder)) {
-    $modx->setPlaceholder($toPlaceholder, $o);
-    return '';
-}
+    if (!empty($toPlaceholder)) {
+        $modx->setPlaceholder($toPlaceholder, $o);
+        return '';
+    }
 
-return $o;
+    return $o;

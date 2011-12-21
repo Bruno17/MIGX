@@ -11,6 +11,9 @@
 
 //if (!$modx->hasPermission('quip.thread_view')) return $modx->error->failure($modx->lexicon('access_denied'));
 
+require_once dirname(dirname(dirname(__FILE__))) .'/model/migx/migx.class.php';
+$migx = new Migx($modx);
+
 $modx->getService('smarty', 'smarty.modSmarty');
 
 if (file_exists(MODX_CORE_PATH . 'model/modx/modmanagercontroller.class.php')) {
@@ -20,6 +23,10 @@ if (file_exists(MODX_CORE_PATH . 'model/modx/modmanagercontroller.class.php')) {
     $modx->controller = call_user_func_array(array($c, 'getInstance'), array($modx, 'modManagerControllerDeprecated', array()));
 }
 
+$modx->resource = ($modx->getObject('modResource', $scriptProperties['resource_id']));
+$migx->working_context = $modx->resource->get('context_key');
+//$_REQUEST['id']=$scriptProperties['resource_id'];
+
 if (!isset($modx->smarty)) {
     $modx->getService('smarty', 'smarty.modSmarty', '', array('template_dir' => $modx->getOption('manager_path') . 'templates/' . $modx->getOption('manager_theme', null, 'default') . '/', ));
 }
@@ -27,7 +34,10 @@ $modx->smarty->template_dir = $modx->getOption('manager_path') . 'templates/' . 
 $modx->smarty->assign('OnResourceTVFormPrerender', $onResourceTVFormPrerender);
 $modx->smarty->assign('_config', $modx->config);
 
+//get the MIGX-TV
 $tv = $modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']));
+
+$migx->source = $tv->getSource($migx->working_context, false);
 
 $properties = $tv->get('input_properties');
 $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
@@ -86,12 +96,10 @@ if (isset($formtabs[0]['formtabs'])) {
     $allfields[] = $field;
 }
 
-$_GET['wctx'] = $modx->sanitizeString($_REQUEST['wctx']);
-
-$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH); 
+$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
-$basePath = $base_path.$properties['basePath'];
+$basePath = $base_path . $properties['basePath'];
 
 foreach ($formtabs as $tabid => $tab) {
     /*virtual categories for tabs*/
@@ -113,15 +121,22 @@ foreach ($formtabs as $tabid => $tab) {
         $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
 
         $tv->set('value', $fieldvalue);
-        $tv->set('caption', htmlentities($field['caption'], ENT_QUOTES));
+        $tv->set('caption', htmlentities($field['caption'], ENT_QUOTES, $modx->getOption('modx_charset')));
         if (!empty($field['description'])) {
-            $tv->set('description', htmlentities($field['description'], ENT_QUOTES));
+            $tv->set('description', htmlentities($field['description'], ENT_QUOTES, $modx->getOption('modx_charset')));
         }
         /*generate unique tvid, must be numeric*/
         /*todo: find a better solution*/
         $field['tv_id'] = $scriptProperties['tv_id'] * 10000000 + $fieldid;
         $field['array_tv_id'] = $field['tv_id'] . '[]';
         $allfields[] = $field;
+
+        $mediasource = $migx->getFieldSource($field,$tv);
+
+
+        //$modx->setOption('default_media_source',$mediasource->get('id'));
+        //mediasource über formtabs steuerbar machen?
+        //{"mediasources":[{"web":"1"}]}
 
         $tv->set('id', $field['tv_id']);
 
@@ -153,13 +168,13 @@ foreach ($formtabs as $tabid => $tab) {
                 if (!file_exists($targetDir) || !is_dir($targetDir)) {
                     if (!$cacheManager->writeTree($targetDir)) {
                         $modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
-                        return $modx->error->failure('Could not create directory: '. $targetDir);
+                        return $modx->error->failure('Could not create directory: ' . $targetDir);
                     }
                 }
                 /* make sure directory is readable/writable */
                 if (!is_readable($targetDir) || !is_writable($targetDir)) {
                     $modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
-                    return $modx->error->failure('Could not write to directory: '. $targetDir);
+                    return $modx->error->failure('Could not write to directory: ' . $targetDir);
                 }
             } else {
                 $params['basePath'] = $basePath;

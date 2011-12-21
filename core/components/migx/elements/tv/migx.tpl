@@ -109,14 +109,14 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
     ,renderImage : function(val, md, rec, row, col, s){
-		var pc = s.pathconfigs[col];
+		var source = s.pathconfigs[col];
 		if (val.substr(0,4) == 'http'){
 			return '<img style="height:60px" src="' + val + '"/>' ;
 		}        
 		if (val != ''){
 			//return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?h=60&src=' + val + '" alt="" />';
 			
-			return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?h=60&src='+val+'&wctx={$ctx}&basePath='+pc.basePath+'&basePathRelative='+pc.basePathRelative+'&baseUrl='+pc.baseUrl+'&baseUrlRelative='+pc.baseUrlRelative+'{literal}" alt="" />';
+			return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?h=60&src='+val+'&wctx={$ctx}'+source+'{literal}" alt="" />';
 		
 		}
 		return val;

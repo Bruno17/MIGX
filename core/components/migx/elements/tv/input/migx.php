@@ -5,6 +5,10 @@
  * @subpackage elements.tv.input
  */
 
+require_once dirname(dirname(dirname(dirname(__FILE__)))) .'/model/migx/migx.class.php';
+$migx = new Migx($modx);
+
+
 $path = 'components/migx/';
 $corePath = $this->xpdo->getOption('migx.core_path', null, $this->xpdo->getOption('core_path') . $path);
 $namespace = 'migx';
@@ -21,30 +25,8 @@ $formtabs = empty($properties['formtabs']) ? $modx->fromJSON($default_formtabs) 
 $resource = is_object($this->xpdo->resource) ? $this->xpdo->resource->toArray() : array();
 //multiple different Forms
 // Note: use same field-names and inputTVs in all forms
-if (isset($formtabs[0]['formtabs'])) {
-    $forms = $formtabs;
-    $formtabs = array();
-    foreach ($forms as $form) {
-        foreach ($form['formtabs'] as $tab) {
-            $formtabs[] = $tab;
-        }
-    }
-}
 
-
-$inputTvs = array();
-if (is_array($formtabs)) {
-    foreach ($formtabs as $tab) {
-        if (isset($tab['fields'])) {
-            foreach ($tab['fields'] as $field) {
-                if (isset($field['inputTV'])) {
-                    $inputTvs[$field['field']] = $field['inputTV'];
-                }
-            }
-        }
-    }
-}
-
+$inputTvs = $migx->extractInputTvs($formtabs);
 
 /* get base path based on either TV param or filemanager_path */
 $modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->xpdo->context->get('key')));
@@ -61,6 +43,9 @@ if (!empty($wctx)) {
 } else {
     $wctx = $modx->context->get('key');
 }
+
+$migx->working_context = $wctx;
+$migx->source = $this->tv->getSource($migx->working_context, false);
 
 /* get base path based on either TV param or filemanager_path */
 
@@ -84,14 +69,17 @@ if (is_array($columns) && count($columns) > 0) {
         $field['mapping'] = $column['dataIndex'];
         $fields[] = $field;
         $col['dataIndex'] = $column['dataIndex'];
-        $col['header'] = htmlentities($column['header'], ENT_QUOTES);
+        $col['header'] = htmlentities($column['header'], ENT_QUOTES, $modx->getOption('modx_charset'));
         $col['sortable'] = $column['sortable'] == 'true' ? true : false;
         $col['width'] = $column['width'];
         $col['renderer'] = $column['renderer'];
         $cols[] = $col;
         $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
 
-        if (isset($inputTvs[$field['name']]) && $tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field['name']]))) {
+        if (isset($inputTvs[$field['name']]) && $tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field['name']]['inputTV']))) {
+            
+            $inputTV = $inputTvs[$field['name']];
+            
             $params = $tv->get('input_properties');
             $params['wctx'] = $wctx;
             /* pasted from processors.element.tv.renders.mgr.input*/
@@ -130,7 +118,10 @@ if (is_array($columns) && count($columns) > 0) {
             $params['basePathRelative'] = $params['basePathRelative'] ? 1 : 0;
             $params['baseUrlRelative'] = $params['baseUrlRelative'] ? 1 : 0;
             /* pasted end*/
-            $pathconfigs[$key] = $params;
+            
+            $mediasource = $migx->getFieldSource($inputTV,$tv);
+            $pathconfigs[$key] = '&source='.$mediasource->get('id');
+            //$pathconfigs[$key] = '&basePath='.$params['basePath'].'&basePathRelative='.$params['basePathRelative'].'&baseUrl='.$params['baseUrl'].'&baseUrlRelative='.$params['baseUrlRelative'];
 
         } else {
             $pathconfigs[$key] = array();
