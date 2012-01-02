@@ -47,18 +47,10 @@ if (!empty($wctx)) {
 $migx->working_context = $wctx;
 $migx->source = $this->tv->getSource($migx->working_context, false);
 
-/* get base path based on either TV param or filemanager_path */
-
-$replacePaths = array('[[++base_path]]' => $modx->getOption('base_path', null, MODX_BASE_PATH), '[[++core_path]]' => $modx->getOption('core_path', null, MODX_CORE_PATH), '[[++manager_path]]' => $modx->
-    getOption('manager_path', null, MODX_MANAGER_PATH), '[[++assets_path]]' => $modx->getOption('assets_path', null, MODX_ASSETS_PATH), '[[++base_url]]' => $modx->getOption('base_url', null, MODX_BASE_URL),
-    '[[++manager_url]]' => $modx->getOption('manager_url', null, MODX_MANAGER_URL), '[[++assets_url]]' => $modx->getOption('assets_url', null, MODX_ASSETS_URL), );
-$replaceKeys = array_keys($replacePaths);
-$replaceValues = array_values($replacePaths);
-
 /* pasted end*/
 
-$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH); 
-$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+//$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH); 
+//$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
 $columns = $modx->fromJSON($modx->getOption('columns', $properties, $default_columns));
 $columns = empty($properties['columns']) ? $modx->fromJSON($default_columns) : $columns;
@@ -82,7 +74,7 @@ if (is_array($columns) && count($columns) > 0) {
             
             $params = $tv->get('input_properties');
             $params['wctx'] = $wctx;
-            /* pasted from processors.element.tv.renders.mgr.input*/
+            /*
             if (!empty($properties['basePath'])) {
                 if ($properties['autoResourceFolders'] == 'true' && isset($resource['id'])) {
                     $params['basePath'] = $base_path.$properties['basePath'] . $resource['id'] . '/';
@@ -90,35 +82,7 @@ if (is_array($columns) && count($columns) > 0) {
                     $params['basePath'] = $base_path.$properties['basePath'];
                 }
             }
-            if (empty($params['basePath'])) {
-                $params['basePath'] = $modx->fileHandler->getBasePath();
-                $params['basePath'] = str_replace($replaceKeys, $replaceValues, $params['basePath']);
-                $params['basePathRelative'] = $this->xpdo->getOption('filemanager_path_relative', null, true) ? 1 : 0;
-            } else {
-                $params['basePath'] = str_replace($replaceKeys, $replaceValues, $params['basePath']);
-                $params['basePathRelative'] = !isset($params['basePathRelative']) || in_array($params['basePathRelative'], array('true', 1, '1'));
-            }
-            if (empty($params['baseUrl'])) {
-                $params['baseUrl'] = $modx->fileHandler->getBaseUrl();
-                $params['baseUrl'] = str_replace($replaceKeys, $replaceValues, $params['baseUrl']);
-                $params['baseUrlRelative'] = $this->xpdo->getOption('filemanager_url_relative', null, true) ? 1 : 0;
-            } else {
-                $params['baseUrl'] = str_replace($replaceKeys, $replaceValues, $params['baseUrl']);
-                $params['baseUrlRelative'] = !isset($params['baseUrlRelative']) || in_array($params['baseUrlRelative'], array('true', 1, '1'));
-            }
-            $modxBasePath = $modx->getOption('base_path', null, MODX_BASE_PATH);
-            if ($params['basePathRelative'] && $modxBasePath != '/') {
-                $params['basePath'] = ltrim(str_replace($modxBasePath, '', $params['basePath']), '/');
-            }
-            $modxBaseUrl = $modx->getOption('base_url', null, MODX_BASE_URL);
-            if ($params['baseUrlRelative'] && $modxBaseUrl != '/') {
-                $params['baseUrl'] = ltrim(str_replace($modxBaseUrl, '', $params['baseUrl']), '/');
-            }
-
-            $params['basePathRelative'] = $params['basePathRelative'] ? 1 : 0;
-            $params['baseUrlRelative'] = $params['baseUrlRelative'] ? 1 : 0;
-            /* pasted end*/
-            
+            */
             $mediasource = $migx->getFieldSource($inputTV,$tv);
             $pathconfigs[$key] = '&source='.$mediasource->get('id');
             //$pathconfigs[$key] = '&basePath='.$params['basePath'].'&basePathRelative='.$params['basePathRelative'].'&baseUrl='.$params['baseUrl'].'&baseUrlRelative='.$params['baseUrlRelative'];
@@ -132,14 +96,14 @@ if (is_array($columns) && count($columns) > 0) {
 $newitem[] = $item;
 $lang = $this->xpdo->lexicon->fetch();
 $lang['mig_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['mig_add'];
-$modx->smarty->assign('i18n', $lang);
-$this->xpdo->smarty->assign('properties', $properties);
-$this->xpdo->smarty->assign('resource', $resource);
-$this->xpdo->smarty->assign('pathconfigs', $this->xpdo->toJSON($pathconfigs));
-$this->xpdo->smarty->assign('columns', $this->xpdo->toJSON($cols));
-$this->xpdo->smarty->assign('fields', $this->xpdo->toJSON($fields));
-$this->xpdo->smarty->assign('newitem', $this->xpdo->toJSON($newitem));
-$this->xpdo->smarty->assign('base_url', $this->xpdo->getOption('base_url'));
-$this->xpdo->smarty->assign('myctx', $wctx);
+$modx->controller->setPlaceholder('i18n', $lang);
+$modx->controller->setPlaceholder('properties', $properties);
+$modx->controller->setPlaceholder('resource', $resource);
+$modx->controller->setPlaceholder('pathconfigs', $this->xpdo->toJSON($pathconfigs));
+$modx->controller->setPlaceholder('columns', $this->xpdo->toJSON($cols));
+$modx->controller->setPlaceholder('fields', $this->xpdo->toJSON($fields));
+$modx->controller->setPlaceholder('newitem', $this->xpdo->toJSON($newitem));
+$modx->controller->setPlaceholder('base_url', $this->xpdo->getOption('base_url'));
+$modx->controller->setPlaceholder('myctx', $wctx);
 
-return $modx->smarty->fetch($corePath . 'elements/tv/migx.tpl');
+return $modx->controller->fetchTemplate($corePath . 'elements/tv/migx.tpl');

@@ -55,7 +55,19 @@ class Migx
         $corePath = $this->modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/');
         $assetsPath = $this->modx->getOption('migx.assets_path', null, $modx->getOption('assets_path') . 'components/migx/');
         $assetsUrl = $this->modx->getOption('migx.assets_url', null, $modx->getOption('assets_url') . 'components/migx/');
-        $defaultconfig = array();
+
+        $defaultconfig ['corePath'] = $corePath;
+        $defaultconfig ['modelPath'] = $corePath.'model/';
+        $defaultconfig ['processorsPath'] = $corePath.'processors/';
+        $defaultconfig ['controllersPath'] = $corePath.'controllers/';
+        $defaultconfig ['chunksPath'] = $corePath.'elements/chunks/';
+        $defaultconfig ['snippetsPath'] = $corePath.'elements/snippets/';
+        $defaultconfig ['auto_create_tables'] = true;
+        $defaultconfig ['baseUrl'] = $assetsUrl;
+        $defaultconfig ['cssUrl'] = $assetsUrl.'css/';
+        $defaultconfig ['jsUrl'] = $assetsUrl.'js/';
+        $defaultconfig ['jsPath'] = $assetsPath.'js/';        
+        $defaultconfig ['connectorUrl'] = $assetsUrl.'connector.php';
 
         $this->config = array_merge($defaultconfig, $config);
 
@@ -76,6 +88,28 @@ class Migx
             }
         }
     }
+
+    function loadConfigs(){
+        
+		$configs = ( isset ($this->config['configs']))?explode(',', $this->config['configs']): array ();
+            //$configs = array_merge( array ('master'), $configs);
+            foreach ($configs as $config)
+            {
+                $configFile = $this->config['corePath'].'configs/'.$config.'.config.inc.php'; // [ file ]
+        
+                if (file_exists($configFile))
+                {
+                    include ($configFile);
+                }
+            }
+    }
+
+    public function getTask(){
+    	return $this->customconfigs['task'];
+    }
+    public function getTabs(){
+    	return $this->customconfigs['tabs'];
+    }    
 
     function getFieldSource($field, &$tv)
     {
@@ -107,6 +141,113 @@ class Migx
         }
         return $mediasource;
     }
+
+
+function createForm(& $tabs, & $record, & $allfields, & $categories, $scriptProperties){
+
+foreach ($tabs as $tabid => $tab) {
+    $emptycat = $this->modx->newObject('modCategory');
+    $emptycat->set('category', $tab['caption']);
+    $emptycat->id = $tabid;
+    $categories[$tabid] = $emptycat;
+
+    $fields = $tab['fields'];
+    foreach ($fields as & $field) {
+        $fieldid++;
+        if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
+
+        } else {
+            $tv = $this->modx->newObject('modTemplateVar');
+            $tv->set('type', 'text');
+        }
+
+        /*insert actual value from requested record, convert arrays to ||-delimeted string */
+        $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
+
+        $tv->set('value', $fieldvalue);
+        $tv->set('caption', htmlentities($field['caption'], ENT_QUOTES, $this->modx->getOption('modx_charset')));
+        if (!empty($field['description'])) {
+            $tv->set('description', htmlentities($field['description'], ENT_QUOTES, $this->modx->getOption('modx_charset')));
+        }
+        /*generate unique tvid, must be numeric*/
+        /*todo: find a better solution*/
+        $field['tv_id'] = $scriptProperties['tv_id'] * 10000000 + $fieldid;
+        $field['array_tv_id'] = $field['tv_id'] . '[]';
+        $allfields[] = $field;
+
+        $mediasource = $this->getFieldSource($field,$tv);
+
+
+        //$this->modx->setOption('default_media_source',$mediasource->get('id'));
+        //mediasource über formtabs steuerbar machen?
+        //{"mediasources":[{"web":"1"}]}
+
+        $tv->set('id', $field['tv_id']);
+
+        /*
+        $default = $tv->processBindings($tv->get('default_text'), $resourceId);
+        if (strpos($tv->get('default_text'), '@INHERIT') > -1 && (strcmp($default, $tv->get('value')) == 0 || $tv->get('value') == null)) {
+        $tv->set('inherited', true);
+        }
+        */
+
+        if ($tv->get('value') == null) {
+            $v = $tv->get('default_text');
+            if ($tv->get('type') == 'checkbox' && $tv->get('value') == '') {
+                $v = '';
+            }
+            $tv->set('value', $v);
+        }
+
+
+        $this->modx->smarty->assign('tv', $tv);
+        $params = $tv->get('input_properties');
+        if (!empty($properties['basePath'])) {
+            if ($properties['autoResourceFolders'] == 'true') {
+                $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
+                $targetDir = $params['basePath'];
+
+                $cacheManager = $this->modx->getCacheManager();
+                /* if directory doesnt exist, create it */
+                if (!file_exists($targetDir) || !is_dir($targetDir)) {
+                    if (!$cacheManager->writeTree($targetDir)) {
+                        $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
+                        return $this->modx->error->failure('Could not create directory: ' . $targetDir);
+                    }
+                }
+                /* make sure directory is readable/writable */
+                if (!is_readable($targetDir) || !is_writable($targetDir)) {
+                    $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
+                    return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
+                }
+            } else {
+                $params['basePath'] = $basePath;
+            }
+        }
+
+        if (!isset($params['allowBlank'])) $params['allowBlank'] = 1;
+
+        $value = $tv->get('value');
+        if ($value === null) {
+            $value = $tv->get('default_text');
+        }
+        $this->modx->smarty->assign('params', $params);
+        /* find the correct renderer for the TV, if not one, render a textbox */
+        $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
+        $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', $resourceId, $tv->get('type'));
+
+        if (empty($inputForm)) continue;
+
+        $tv->set('formElement', $inputForm);
+
+        if (!is_array($categories[$tabid]->tvs)) {
+            $categories[$tabid]->tvs = array();
+        }
+        $categories[$tabid]->tvs[] = $tv;
+
+    }
+}    
+}
 
     function extractInputTvs($formtabs)
     {

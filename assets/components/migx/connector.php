@@ -35,6 +35,10 @@ require_once MODX_CONNECTORS_PATH.'index.php';
 
 /* handle request */
 $miTVCorePath = $modx->getOption('migx.core_path',null,$modx->getOption('core_path').'components/migx/');
+require_once $miTVCorePath.'model/migx/migx.class.php';
+$modx->migx = new Migx($modx);
+$modx->migx->config['configs'] = isset($_REQUEST['configs']) ? $_REQUEST['configs'] : '';
+$modx->migx->loadConfigs();
 
 $modx->request->handleRequest(array(
     'processors_path' => $miTVCorePath.'processors/',

@@ -12,5 +12,5 @@ $_lang['mig.columns'] = 'Grid Spalten';
 $_lang['mig.btntext'] = '"Datensatz erstellen" Ersetzung';
 $_lang['mig.previewurl'] = 'Vorschau Url';
 $_lang['mig.jsonvarkey'] = 'Vorschau JsonVarKey';
-$_lang['mig.basepath'] = 'Base Path';
+$_lang['mig.configs'] = 'Config Files';
 $_lang['mig.autoResourceFolders'] = 'Auto Resource Folders';

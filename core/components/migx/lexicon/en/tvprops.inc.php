@@ -12,5 +12,5 @@ $_lang['mig.columns'] = 'Grid Columns';
 $_lang['mig.btntext'] = '"Add Item" Replacement';
 $_lang['mig.previewurl'] = 'Preview Url';
 $_lang['mig.jsonvarkey'] = 'Preview JsonVarKey';
-$_lang['mig.basepath'] = 'Base Path';
+$_lang['mig.configs'] = 'Config Files';
 $_lang['mig.autoResourceFolders'] = 'Auto Resource Folders';
