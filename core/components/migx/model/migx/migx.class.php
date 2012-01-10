@@ -251,6 +251,8 @@ foreach ($tabs as $tabid => $tab) {
 
     function extractInputTvs($formtabs)
     {
+        //multiple different Forms
+        // Note: use same field-names and inputTVs in all forms
         if (isset($formtabs[0]['formtabs'])) {
             $forms = $formtabs;
             $formtabs = array();

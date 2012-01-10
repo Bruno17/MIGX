@@ -408,21 +408,15 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     submit: function() {
         var v = this.fp.getForm().getValues();
         if (this.fp.getForm().isValid()) {
-            var s = this.grid.getStore();
             if (this.action == 'd'){
                 MODx.fireResourceFormChange();     
             }
             if (this.action == 'u'){
-                var idx = this.baseParams.itemid; 
+                /*update record*/
             }else{
                 /*append record*/
-                var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
-		        s.loadData(items,true);
-                idx=s.getCount()-1;
-                this.grid.autoinc = v['tvmigxid'];               
             }
-            
-            var rec = s.getAt(idx);
+
             var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
             var item = {};
             var tvid = '';
@@ -431,11 +425,8 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                     tvid = (fields[i].tv_id);
                     if (v['tv'+tvid+'_prefix']) v['tv'+tvid]=v['tv'+tvid+'_prefix']+v['tv'+tvid];//url-TV support
                     item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
-                    //set defined record-fields to its new value
-                    //rec.set(fields[i].field,item[fields[i].field])
                 }
                 //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
-                //rec.json=item;
             }					
 			
             console.log(this.config);
@@ -743,7 +734,6 @@ Ext.extend(MODx.window.MiPreview,Ext.Window,{
 
 });
 Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
-
 
         MODx.load({
             xtype: 'modx-grid-multitvdbgrid'

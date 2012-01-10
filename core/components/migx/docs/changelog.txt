@@ -1,0 +1,37 @@
+Changelog for MIGX.
+MIGX 2.0.0
+==============
+- new:
+  better compatibility with revo 2.2
+  working with mediasources
+
+
+MIGX 1.2.0
+==============
+- new:
+  merge scriptProperties to Placeholders 
+  basic compatibility for modx 2.2 
+  autoinc-field: MIGX_id
+  autoResourceFolders - functionality, autoCreate directory for each resource
+  
+  
+- fixed:
+  url-TV support
+  context-based base_path issues
+  remove remaining []
+  remove Tiny-instances when switching form
+  enter on textarea closes window
+  fireResourceFormChange for drag,remove,duplicate 
+
+MIGX 1.1.0
+==============
+- new:
+  &docidVarKey
+  &processTVs
+  
+- fixed:
+  context-filepath-issue
+
+MIGX 1.0.0
+==============
+- Initial release.

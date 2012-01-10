@@ -24,33 +24,45 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
         $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
 
-        $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
-        //multiple different Forms
-        // Note: use same field-names and inputTVs in all forms
+        
 
         $inputTvs = $migx->extractInputTvs($formtabs);
 
         /* get base path based on either TV param or filemanager_path */
         $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
+      
+        $resource_array = array();
+        //are we on a edit- or create-resource - managerpage?
+        if (is_object($this->modx->resource)){
+            $resource_array = $this->modx->resource->toArray();    
+            $wctx = $this->modx->resource->get('context_key');
+        }
+        else {
+            //try to get a context from REQUEST
+            $wctx = isset($_REQUEST['wctx']) && !empty($_REQUEST['wctx']) ? $this->modx->sanitizeString($_REQUEST['wctx']) : '';
+        }        
+
         
-        /* pasted from processors.element.tv.renders.mgr.input*/
-        /* get working context */
-        $wctx = isset($_GET['wctx']) && !empty($_GET['wctx']) ? $this->modx->sanitizeString($_GET['wctx']) : '';
         if (!empty($wctx)) {
-            $workingContext = $this->modx->getContext($wctx);
+            $migx->working_context = $wctx;
+            $migx->source = $this->tv->getSource($wctx, false);
+            //$workingContext = $this->modx->getContext($wctx);
+            /*
             if (!$workingContext) {
                 return $modx->error->failure($this->modx->lexicon('permission_denied'));
             }
             $wctx = $workingContext->get('key');
+            */
         } else {
-            $wctx = $this->modx->context->get('key');
+            //$wctx = $this->modx->context->get('key');
         }
-
-        $migx->working_context = $wctx;
-        $migx->source = $this->tv->getSource($migx->working_context, false);
-
-        /* pasted end*/
-
+        
+        /* from image-TV do we need this somehow here?
+        $source->setRequestProperties($_REQUEST);
+        $source->initialize();
+        $this->modx->controller->setPlaceholder('source',$source->get('id'));     
+        */
+         
         //$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
         //$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
@@ -100,7 +112,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         $lang['mig_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['mig_add'];
         $this->setPlaceholder('i18n', $lang);
         $this->setPlaceholder('properties', $properties);
-        $this->setPlaceholder('resource', $resource);
+        $this->setPlaceholder('resource', $resource_array);
         $this->setPlaceholder('pathconfigs', $this->modx->toJSON($pathconfigs));
         $this->setPlaceholder('columns', $this->modx->toJSON($cols));
         $this->setPlaceholder('fields', $this->modx->toJSON($fields));
