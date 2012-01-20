@@ -40,15 +40,14 @@ if (empty($scriptProperties['object_id'])){
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
 $packageName = $config['packageName'];
-$tablename = $config['tablename'];
 
 $packagepath = $modx->getOption('core_path') . 'components/'.$packageName.'/';
 $modelpath = $packagepath.'model/';
 
 $modx->addPackage($packageName,$modelpath,$prefix);
-//$classname = $modx->xdbedit->getClassName($tablename);
+$classname = $config['classname'];
 
-$classname = 'modResource';
+$modx->setOption(xPDO::OPT_AUTO_CREATE_TABLES,$config['auto_create_tables']);
 
 if ($modx->lexicon)
 {
