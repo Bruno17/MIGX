@@ -5,7 +5,7 @@
 <input type="hidden" class="mulititems_grid_item_fields" name="mulititems_grid_item_fields" value='{$fields}' />
 <input type="hidden" class="tvmigxid" name="tvmigxid" value='{$migxid}' />
 
-<div id="{$id_update_window}-tabs">
+<div id="modx-window-mi-grid-update-{$properties.tv_id}-tabs">
 {foreach from=$categories item=category name=cat}
 {if count($category->tvs) > 0}
 
@@ -56,7 +56,7 @@ MODx.combo.FormnameDropdown = function(config) {
 };
 Ext.extend(MODx.combo.FormnameDropdown,Ext.form.ComboBox,{
 	selectForm: function() {
-		var win = Ext.getCmp('{/literal}{$id_update_window}{literal}');
+		var win = Ext.getCmp('{/literal}modx-window-mi-grid-update-{$properties.tv_id}{literal}');
         //win.fp.autoLoad.params.record_json=this.baseParams.record_json;
         win.switchForm();
 		//panel.autoLoad.params['context']=this.getValue();
@@ -116,7 +116,7 @@ Ext.onReady(function() {
 
     MODx.load({
         xtype: 'modx-tabs'
-        ,applyTo: '{/literal}{$id_update_window}-tabs{literal}'
+        ,applyTo: '{/literal}modx-window-mi-grid-update-{$properties.tv_id}-tabs{literal}'
         ,activeTab: 0
         ,autoTabs: true
         ,border: false
