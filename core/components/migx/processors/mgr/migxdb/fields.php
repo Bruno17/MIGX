@@ -90,7 +90,7 @@ $modx->smarty->assign('fields', $modx->toJSON($allfields));
 $modx->smarty->assign('customconfigs', $modx->migx->customconfigs);
 $modx->smarty->assign('object', $object);
 $modx->smarty->assign('categories', $categories);   
-$modx->smarty->assign('id_update_window', 'modx-window-midb-grid-update');
+//$modx->smarty->assign('id_update_window', 'modx-window-midb-grid-update');
 
 if (!empty($_REQUEST['showCheckbox'])) {
     $modx->smarty->assign('showCheckbox', 1);

@@ -17,3 +17,6 @@ $_lang['mig_remove'] = 'Entfernen';
 $_lang['mig_duplicate'] = 'Duplizieren';
 $_lang['mig_preview'] = 'Vorschau';
 $_lang['mig_save_resource'] = 'Bevor neue Datensätze erstellt werden können, muß diese Resource gespeichert sein.';
+
+$_lang['mig_show_trash'] = 'Papierkorbansicht';
+$_lang['mig_show_normal'] = 'Normalansicht';

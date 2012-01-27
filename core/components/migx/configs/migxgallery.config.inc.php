@@ -76,6 +76,34 @@
                         'caption'=>'Created on',
 						'inputTV'=>'overwrite'
                     ))));
+                    
+$columns = '
+[
+{
+  "header": "ID"
+, "width": "10"
+, "dataIndex": "id"
+},
+{
+  "header": "Title"
+, "width": "10"
+, "dataIndex": "title"
+},  
+{
+  "header": "Description"
+, "width": "10"
+, "dataIndex": "description"
+},{
+    "header": "Image"
+    ,"width": "160"
+    ,"sortable": "false"
+    ,"dataIndex": "image"
+    ,"renderer": "this.renderImage"
+}]
+';                    
+                    
+$this->customconfigs['columns'] = $this->modx->fromJson($columns);   
+                    
 /*);
 
 /*

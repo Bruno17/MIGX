@@ -3,17 +3,8 @@
 //if (!$modx->hasPermission('quip.thread_list')) return $modx->error->failure($modx->lexicon('access_denied'));
 
 $config=$modx->migx->customconfigs;
-$prefix = $config['prefix'];
-$packageName = $config['packageName'];
-$tablename = $config['tablename'];
 
-$packagepath = $modx->getOption('core_path') . 'components/'.$packageName.'/';
-$modelpath = $packagepath.'model/';
-
-
-
-$modx->addPackage($packageName,$modelpath,$prefix);
-//$classname = $modx->xdbedit->getClassName($tablename);
+$includeTVs = isset($config['includeTVs']) ? explode(',', $config['includeTVs']) : array();
 
 $classname = 'modResource';
 
@@ -31,13 +22,18 @@ $sort = $modx->getOption('sort',$scriptProperties,'id');
 $dir = $modx->getOption('dir',$scriptProperties,'ASC');
 $year = $modx->getOption('year',$scriptProperties,'all');
 $month = $modx->getOption('month',$scriptProperties,'all');
-$region = $modx->getOption('region',$scriptProperties,'all');
 $showtrash = $modx->getOption('showtrash',$scriptProperties,'');
+$resource_id = $modx->getOption('resource_id',$scriptProperties,false);
 
 $c = $modx->newQuery($classname);
-if ($region != 'all'){
-    $c->where(array($classname.'.region' => $region));
-}	
+
+//example for tvFilters
+$status = $modx->getOption('status',$scriptProperties,'all');
+if ($status != 'all'){
+    $filter = 'auftrag_status=='.$status;
+    $modx->migx->tvFilters($filter,$c);
+}
+//example for filtering by year/month in createdon	
 if ($year != 'all'){
     $c->where("YEAR(" . $modx->escape($classname) . '.' . $modx->escape('createdon') . ") = " .$year, xPDOQuery::SQL_AND);		
 }
@@ -49,21 +45,51 @@ if (!empty($showtrash)){
 }else{
 	$c->where(array($classname.'.deleted' => '0'));	
 }
+
+if ($resource_id){
+    $c->where(array($classname.'.parent' => $resource_id));		
+}
+
 $count = $modx->getCount($classname,$c);
 
 $c->select('
     `'.$classname.'`.*
 ');
-$c->sortby($sort,$dir);
+
+//sortbyTV, if sortfield is given in includeTVs TV-List
+if (in_array($sort,$includeTVs)){
+    $modx->migx->sortTV($sort,$c,$dir);
+}
+else{
+    $c->sortby($sort,$dir);
+}
+
+
 if ($isCombo || $isLimit) {
     $c->limit($limit,$start);
 }
-//$c->sortby($sort,$dir);
+
 //$c->prepare(); echo $c->toSql();
 $collection = $modx->getCollection($classname, $c);
+$tvPrefix = '';
 
 $rows=array();
-foreach ($collection as $row){
-	$rows[]=$row->toArray();
+foreach ($collection as $resourceId => $resource) {
+    $tvs = $resource->ToArray();
+    if (!empty($includeTVs)) {
+        if (empty($includeTVList)) {
+            $templateVars = $resource->getMany('TemplateVars');
+        }
+        foreach ($templateVars as $tvId => $templateVar) {
+            if (!empty($includeTVList) && !in_array($templateVar->get('name'), $includeTVList)) continue;
+            if ($processTVs && (empty($processTVList) || in_array($templateVar->get('name'), $processTVList))) {
+                $tvs[$tvPrefix . $templateVar->get('name')] = $templateVar->renderOutput($resource->get('id'));
+            } else {
+                $tvs[$tvPrefix . $templateVar->get('name')] = $templateVar->getValue($resource->get('id'));
+            }
+        }
+    }    
+    
+	$rows[]=$tvs;
 }
 

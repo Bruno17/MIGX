@@ -7,5 +7,8 @@ if (file_exists($getObject)) {
        // return;
     }
 }
+
+$rows = is_array($rows) ? $rows : array();
+
 return $this->outputArray($rows,$count);
 

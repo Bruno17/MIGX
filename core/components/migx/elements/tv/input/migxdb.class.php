@@ -25,9 +25,11 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
       
         $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
         $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
+        
+        $formtabs = $this->migx->getTabs();
 
-        $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
-        $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
+        //$formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
+        //$formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
 
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
         //multiple different Forms
@@ -59,8 +61,10 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
         //$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
         //$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
-        $columns = $this->modx->fromJSON($this->modx->getOption('columns', $properties, $default_columns));
-        $columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
+        //$columns = $this->modx->fromJSON($this->modx->getOption('columns', $properties, $default_columns));
+        //$columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
+        
+        $columns = $this->migx->getColumns();
 
         if (is_array($columns) && count($columns) > 0) {
             foreach ($columns as $key => $column) {
@@ -113,8 +117,13 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
         $this->setPlaceholder('base_url', $this->modx->getOption('base_url'));
         $this->setPlaceholder('myctx', $wctx);
         $this->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
-        //$gridfile = $this->migx->config['jsPath'].'widgets/grids/'.$this->migx->getTask().'.grid.js';
-        //$this->setPlaceholder('grid', file_get_contents($gridfile));
+        $this->setPlaceholder('customconfigs', $this->migx->customconfigs);
+        
+        $grid = isset ($this->migx->customconfigs['grid']) ? $this->migx->customconfigs['grid'] : 'default';
+        $path = 'components/migx/';
+        $corePath = $this->modx->getOption('migx.core_path', null, $this->modx->getOption('core_path') . $path);  
+        $gridfile = $corePath.'elements/tv/grids/'.$grid.'.grid.tpl';
+        $this->setPlaceholder('grid', $this->modx->controller->fetchTemplate($gridfile));
         
          
     }
