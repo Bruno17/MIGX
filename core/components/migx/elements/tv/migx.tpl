@@ -164,7 +164,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         for(i = 0; i <  items.length; i++) {
  		    item = items[i];
             if (item.MIGX_id){
-                if (item.MIGX_id > this.autoinc){
+                if (parseInt(item.MIGX_id)  > this.autoinc){
                     this.autoinc = item.MIGX_id;
                 }
             }else{
@@ -239,8 +239,9 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         var isnew = (action == 'u') ? '0':'1';
         
  		
-        var win_xtype = 'modx-window-tv-item-update';
+        var win_xtype = 'modx-window-tv-item-update-{/literal}{$tv->id}{literal}';
 		if (this.windows[win_xtype]){
+		    console.log(this.windows[win_xtype]);
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
@@ -337,6 +338,7 @@ Ext.reg('modx-grid-multitvgrid',MODx.grid.multiTVgrid);
 
 MODx.window.UpdateTvItem = function(config) {
     config = config || {};
+    
     Ext.applyIf(config,{
         title:'MIGX'
         ,id: '{/literal}modx-window-mi-grid-update-{$tv->id}{literal}' 
@@ -457,7 +459,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             ,baseParams: this.config.baseParams || {}
             ,fileUpload: this.config.fileUpload || false
         });
-        return new MODx.panel.MiGridUpdate(config);
+        return new MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal}(config);
     }
     ,switchForm: function() {
         var v = this.fp.getForm().getValues();
@@ -500,9 +502,9 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     }
 
 });
-Ext.reg('modx-window-tv-item-update',MODx.window.UpdateTvItem);
+Ext.reg('modx-window-tv-item-update-{/literal}{$tv->id}{literal}',MODx.window.UpdateTvItem);
 
-MODx.panel.MiGridUpdate = function(config) {
+MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal} = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'xdbedit-panel-object-{/literal}{$tv->id}{literal}'
@@ -520,11 +522,11 @@ MODx.panel.MiGridUpdate = function(config) {
 			'load': {fn:this.load,scope:this}
         }		
     });
- 	MODx.panel.MiGridUpdate.superclass.constructor.call(this,config);
+ 	MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal}.superclass.constructor.call(this,config);
 	
 	//this.addEvents({ load: true });
 };
-Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
+Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
 		var a = {
@@ -586,7 +588,7 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
 		return '';
 	 }
 });
-Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate);
+Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal});
 
 /*
 Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
