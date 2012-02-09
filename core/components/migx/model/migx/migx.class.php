@@ -410,7 +410,7 @@ class Migx
 
     }
 
-    function filterItems($items)
+    function filterItems($where,$items)
     {
 
         $tempitems = array();
@@ -484,6 +484,16 @@ class Migx
                         $output = in_array($subject, $operand) ? $then:
                         (isset($else) ? $else : '');
                         break;
+                    case 'find':
+                    case 'find_in_set':
+                        $subject = explode(',', $subject);
+                        $output = in_array($operand , $subject) ? $then : (isset($else) ? $else : '');
+                        break;
+                    case 'find_pd':
+                    case 'find_in_pipesdelimited_set':
+                        $subject = explode('||', $subject);
+                        $output = in_array($operand , $subject) ? $then : (isset($else) ? $else : '');
+                        break;                                                 
                     case '==':
                     case '=':
                     case 'eq':

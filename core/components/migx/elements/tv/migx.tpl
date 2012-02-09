@@ -241,7 +241,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
  		
         var win_xtype = 'modx-window-tv-item-update-{/literal}{$tv->id}{literal}';
 		if (this.windows[win_xtype]){
-		    console.log(this.windows[win_xtype]);
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
