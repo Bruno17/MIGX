@@ -68,15 +68,6 @@ MODx.load({
         ,width: 600
         ,listeners: oc
     },{
-        xtype: 'textfield'
-        ,fieldLabel: '{/literal}{$mig.basepath}{literal}'
-        ,description: '{/literal}{$mig.basepath_desc}{literal}'
-        ,name: 'inopt_basePath'
-        ,id: 'inopt_basePath{/literal}{$tv}{literal}'
-        ,value: params['basePath'] || ''
-        ,width: 600
-        ,listeners: oc
-    },{
         xtype: 'combo-boolean'
         ,fieldLabel: '{/literal}{$mig.autoResourceFolders}{literal}'
         ,name: 'inopt_autoResourceFolders'
