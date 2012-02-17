@@ -195,12 +195,7 @@ class Migx
                 $allfields[] = $field;
 
                 $mediasource = $this->getFieldSource($field, $tv);
-
-
-                //$this->modx->setOption('default_media_source',$mediasource->get('id'));
-                //mediasource über formtabs steuerbar machen?
-                //{"mediasources":[{"web":"1"}]}
-
+                $tv->setSource($mediasource);
                 $tv->set('id', $field['tv_id']);
 
                 /*
@@ -221,20 +216,24 @@ class Migx
 
                 $this->modx->smarty->assign('tv', $tv);
                 $params = $tv->get('input_properties');
+                
+                /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
+                 * may be performancewise its better todo that here?
+               
                 if (!empty($properties['basePath'])) {
                     if ($properties['autoResourceFolders'] == 'true') {
                         $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
                         $targetDir = $params['basePath'];
 
                         $cacheManager = $this->modx->getCacheManager();
-                        /* if directory doesnt exist, create it */
+                        // if directory doesnt exist, create it 
                         if (!file_exists($targetDir) || !is_dir($targetDir)) {
                             if (!$cacheManager->writeTree($targetDir)) {
                                 $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
                                 return $this->modx->error->failure('Could not create directory: ' . $targetDir);
                             }
                         }
-                        /* make sure directory is readable/writable */
+                        // make sure directory is readable/writable 
                         if (!is_readable($targetDir) || !is_writable($targetDir)) {
                             $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
                             return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
@@ -243,6 +242,7 @@ class Migx
                         $params['basePath'] = $basePath;
                     }
                 }
+                */
 
                 if (!isset($params['allowBlank'])) $params['allowBlank'] = 1;
 

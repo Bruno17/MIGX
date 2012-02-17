@@ -28,8 +28,10 @@ class migxFormProcessor extends modProcessor
         }
 
         $migx->working_context = 'web';
-        if ($this->modx->resource = ($this->modx->getObject('modResource', $scriptProperties['resource_id']))){
+        
+        if ($this->modx->resource = $this->modx->getObject('modResource', $scriptProperties['resource_id'])){
             $migx->working_context = $this->modx->resource->get('context_key');
+            
             //$_REQUEST['id']=$scriptProperties['resource_id'];            
         }
 
@@ -103,13 +105,13 @@ class migxFormProcessor extends modProcessor
             $allfields[] = $field;
         }
 
-        $base_path = $this->modx->getOption('base_path', null, MODX_BASE_PATH);
-        $base_url = $this->modx->getOption('base_url', null, MODX_BASE_URL);
+        //$base_path = $this->modx->getOption('base_path', null, MODX_BASE_PATH);
+        //$base_url = $this->modx->getOption('base_url', null, MODX_BASE_URL);
 
-        $basePath = $base_path . $properties['basePath'];
+        //$basePath = $base_path . $properties['basePath'];
         
         $categories = array();
-        $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
+        $migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
 
         $this->modx->smarty->assign('fields', $this->modx->toJSON($allfields));
         $this->modx->smarty->assign('categories', $categories);
