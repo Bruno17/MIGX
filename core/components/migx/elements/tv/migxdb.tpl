@@ -395,6 +395,26 @@ Ext.extend(MODx.window.MiPreview,Ext.Window,{
 });
 Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
 
+
+MODx.loadMIGXdbGridButton = function(config) {
+    config = config || {};
+    Ext.applyIf(config,{
+        handler: function() { this.loadGrid(); }
+    });
+    MODx.loadMIGXdbGridButton.superclass.constructor.call(this,config);
+    this.options = config;
+    this.config = config;
+};
+
+Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
+
+    loadGrid: function() {
+	    var resource_id = '{/literal}{$resource.id}{literal}';
+        
+        if (resource_id == 0){
+            alert ('{/literal}{$i18n.mig_save_resource}{literal}');
+            return;
+        }
         MODx.load({
             xtype: 'modx-grid-multitvdbgrid'
             ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
@@ -411,6 +431,37 @@ Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
             ,resource_id: '{/literal}{$resource.id}{literal}' 
             ,pageSize: 10			
         });
+        this.hide();
+    }	
+
+});
+Ext.reg('modx-button-load-migxdb-grid',MODx.loadMIGXdbGridButton);
+
+
+MODx.load({
+            xtype: 'modx-button-load-migxdb-grid'
+            ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
+            ,text: '{/literal}{$i18n.mig_loadgrid}{literal}'		
+        });
+
+        /*
+        MODx.load({
+            xtype: 'modx-grid-multitvdbgrid'
+            ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
+            ,tv: '{/literal}{$tv->id}{literal}'
+            ,cls:'tv{/literal}{$tv->id}{literal}_items'
+            ,id:'tv{/literal}{$tv->id}{literal}_items'
+			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
+			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
+            ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
+            ,wctx: '{/literal}{$myctx}{literal}'
+            ,url: MODx.config.assets_url+'components/migx/connector.php'
+            ,configs: '{/literal}{$properties.configs}{literal}'
+            ,auth: '{/literal}{$auth}{literal}'
+            ,resource_id: '{/literal}{$resource.id}{literal}' 
+            ,pageSize: 10			
+        });
+        */
 
 
 {/literal}

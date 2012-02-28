@@ -117,7 +117,7 @@ $modx->setPlaceholder($totalVar, count($items));
 
 // where filter
 if (is_array($where) && count($where) > 0) {
-    $items = $migx->filterItems($where,$items);
+    $items = $migx->filterItems($where, $items);
 }
 
 
@@ -167,7 +167,7 @@ if (count($items) > 0) {
         foreach ($item as $field => $value) {
             $value = is_array($value) ? implode('||', $value) : $value; //handle arrays (checkboxes, multiselects)
             if ($processTVs && isset($inputTvs[$field])) {
-                if ($tv = $modx->getObject('modTemplateVar',array('name' => $inputTvs[$field]['inputTV']))) {
+                if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]['inputTV']))) {
                     $inputTV = $inputTvs[$field];
                     $mTypes = $modx->getOption('manipulatable_url_tv_output_types', null, 'image,file');
                     //don't manipulate any urls here
@@ -183,80 +183,85 @@ if (count($items) > 0) {
                             $value = $mediasource->prepareOutputUrl($value);
                         }
                     }
-                }}
-                $fields[$field] = $value;
-
-            }
-            if ($toJsonPlaceholder) {
-                $output[] = $fields;
-            } else {
-                $fields['_alt'] = $idx % 2;
-                $idx++;
-                $fields['_first'] = $idx == 1 ? true : '';
-                $fields['_last'] = $idx == $limit ? true : '';
-                $fields['idx'] = $idx;
-                $rowtpl = $tpl;
-                //get changing tpls from field
-                if (substr($tpl, 0, 7) == "@FIELD:") {
-                    $tplField = substr($tpl, 7);
-                    $rowtpl = $fields[$tplField];
-                }
-
-                if (!isset($template[$rowtpl])) {
-                    if (substr($rowtpl, 0, 6) == "@FILE:") {
-                        $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
-                    } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
-                        $template[$rowtpl] = substr($tpl, 6);
-                    } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
-                        $template[$rowtpl] = $chunk->getContent();
-                    } else {
-                        $template[$rowtpl] = false;
-                    }
-                }
-
-                $fields = array_merge($fields, $properties);
-
-                if ($template[$rowtpl]) {
-                    $chunk = $modx->newObject('modChunk');
-                    $chunk->setCacheable(false);
-                    $chunk->setContent($template[$rowtpl]);
-                    if (!empty($placeholdersKeyField) && isset($fields[$placeholdersKeyField])) {
-                        $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
-                    } else {
-                        $output[] = $chunk->process($fields);
-                    }
-                } else {
-                    if (!empty($placeholdersKeyField)) {
-                        $output[$fields[$placeholdersKeyField]] = '<pre>' . print_r($fields, 1) . '</pre>';
-                    } else {
-                        $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
-                    }
                 }
             }
-
+            $fields[$field] = $value;
 
         }
-    }
+        if ($toJsonPlaceholder) {
+            $output[] = $fields;
+        } else {
+            $fields['_alt'] = $idx % 2;
+            $idx++;
+            $fields['_first'] = $idx == 1 ? true : '';
+            $fields['_last'] = $idx == $limit ? true : '';
+            $fields['idx'] = $idx;
+            $rowtpl = $tpl;
+            //get changing tpls from field
+            if (substr($tpl, 0, 7) == "@FIELD:") {
+                $tplField = substr($tpl, 7);
+                $rowtpl = $fields[$tplField];
+            }
 
-    if ($toJsonPlaceholder) {
-        $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
-        return '';
-    }
+            if (!isset($template[$rowtpl])) {
+                if (substr($rowtpl, 0, 6) == "@FILE:") {
+                    $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
+                } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
+                    $template[$rowtpl] = substr($tpl, 6);
+                } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
+                    $template[$rowtpl] = $chunk->getContent();
+                } else {
+                    $template[$rowtpl] = false;
+                }
+            }
 
-    if (!empty($toSeparatePlaceholders)) {
-        $modx->toPlaceholders($output, $toSeparatePlaceholders);
-        return '';
+            $fields = array_merge($fields, $properties);
+
+            if ($template[$rowtpl]) {
+                $chunk = $modx->newObject('modChunk');
+                $chunk->setCacheable(false);
+                $chunk->setContent($template[$rowtpl]);
+                if (!empty($placeholdersKeyField) && isset($fields[$placeholdersKeyField])) {
+                    $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
+                } else {
+                    $output[] = $chunk->process($fields);
+                }
+            } else {
+                if (!empty($placeholdersKeyField)) {
+                    $output[$fields[$placeholdersKeyField]] = '<pre>' . print_r($fields, 1) . '</pre>';
+                } else {
+                    $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
+                }
+            }
+        }
+
+
     }
-    /*
-    if (!empty($outerTpl))
-    $o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
-    else 
-    */
+}
+
+if ($toJsonPlaceholder) {
+    $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
+    return '';
+}
+
+if (!empty($toSeparatePlaceholders)) {
+    $modx->toPlaceholders($output, $toSeparatePlaceholders);
+    return '';
+}
+/*
+if (!empty($outerTpl))
+$o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
+else 
+*/
+if (is_array($output)) {
     $o = implode($outputSeparator, $output);
+} else {
+    $o = $output;
+}
 
-    if (!empty($toPlaceholder)) {
-        $modx->setPlaceholder($toPlaceholder, $o);
-        return '';
-    }
+if (!empty($toPlaceholder)) {
+    $modx->setPlaceholder($toPlaceholder, $o);
+    return '';
+}
 
-    return $o;
+return $o;

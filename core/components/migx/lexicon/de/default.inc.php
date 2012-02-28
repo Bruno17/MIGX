@@ -20,3 +20,4 @@ $_lang['mig_save_resource'] = 'Bevor neue Datensätze erstellt werden können, m
 
 $_lang['mig_show_trash'] = 'Papierkorbansicht';
 $_lang['mig_show_normal'] = 'Normalansicht';
+$_lang['mig_loadgrid'] = 'Tabelle laden';

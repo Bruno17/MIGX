@@ -21,3 +21,4 @@ $_lang['mig_save_resource'] = 'Before adding new items, you have to save this re
 $_lang['mig_show_trash'] = 'Trash View';
 $_lang['mig_show_normal'] = 'Normal View';
 
+$_lang['mig_loadgrid'] = 'Load Grid';
