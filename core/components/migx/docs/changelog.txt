@@ -4,6 +4,7 @@ MIGX 2.0.0
 - new:
   better compatibility with revo 2.2
   working with mediasources
+  introduced MIGXdb
 
 
 MIGX 1.2.0

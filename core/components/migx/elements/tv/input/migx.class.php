@@ -110,6 +110,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         $newitem[] = $item;
         $lang = $this->modx->lexicon->fetch();
         $lang['mig_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['mig_add'];
+        $lang['mig_add'] = str_replace("'","\'",$lang['mig_add']);
         $this->setPlaceholder('i18n', $lang);
         $this->setPlaceholder('properties', $properties);
         $this->setPlaceholder('resource', $resource_array);

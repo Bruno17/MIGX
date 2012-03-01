@@ -180,10 +180,11 @@ if (count($items) > 0) {
                     if ($mediasource = $migx->getFieldSource($inputTV, $tv)) {
                         $mTypes = explode(',', $mTypes);
                         if (!empty($value) && in_array($tv->get('type'), $mTypes)) {
-                            $value = $mediasource->prepareOutputUrl($value);
+                            //$value = $mediasource->prepareOutputUrl($value);
+                            $value = str_replace('/./','/',$mediasource->prepareOutputUrl($value));
                         }
                     }
-                }
+                 }
             }
             $fields[$field] = $value;
 
