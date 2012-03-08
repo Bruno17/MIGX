@@ -57,6 +57,7 @@ $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputv
 $docidVarKey = $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
 $docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? $modx->resource->get('id') : 1));
 $docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
+$emptydocid = $modx->getOption('emptyDocId', $scriptProperties, $docid);
 $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 
 $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
@@ -90,6 +91,7 @@ if (!empty($tvname)) {
             $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
         }
         $outputvalue = empty($outputvalue) ? $tv->renderOutput($docid) : $outputvalue;
+        $outputvalue = empty($outputvalue) ? $tv->renderOutput($emptydocid) : $outputvalue;
         /*
         *   get inputTvs 
         */
