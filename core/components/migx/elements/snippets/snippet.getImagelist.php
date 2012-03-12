@@ -1,5 +1,4 @@
 <?php
-
 /**
  * getImageList
  *
@@ -25,7 +24,10 @@
  *
  * display Items from outputvalue of TV with custom-TV-input-type MIGX or from other JSON-string for MODx Revolution 
  *
- * @version 1.4
+ * @version 1.4.1
+ * Changes in 1.4.1
+ * added &sortDir amnd &sortBy paramteres as well as sort features.
+ *
  * @author Bruno Perner <b.perner@gmx.de>
  * @copyright Copyright &copy; 2009-2011
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
@@ -61,6 +63,9 @@ $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 
 $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+
+$sortBy = $modx->getOption('sortBy', $scriptProperties, false);
+$sortOrder = $modx->getOption('sortOrder', $scriptProperties, 'asc');
 
 $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
 if (!($migx instanceof Migx)) return '';
@@ -160,6 +165,34 @@ if (count($items) > 0) {
     }
 
     $idx = 0;
+  
+  // add sort features
+  
+             if( $sortBy !== FALSE && array_search( $sortBy , array_Keys($items) ) !== FALSE ) {          
+                foreach($items as $k=>$v) {
+                    $b[$k] = $v[$sortBy];
+                }
+                    switch( $sortDir ) {
+                    case'asc':
+                        asort( $b );
+                        break;
+                    case'desc':
+                        arsort( $b );
+                        break;
+                    default:
+                        asort( $b );
+                        break;
+                    }
+ 
+                foreach($b as $key=>$val) {
+                    $c[$key] = $items[$key];
+                }               
+                $items = $c;
+            }
+  
+  // /
+  
+  
     $output = array();
     foreach ($items as $key => $item) {
 
