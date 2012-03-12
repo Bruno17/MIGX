@@ -24,7 +24,7 @@
  *
  * display Items from outputvalue of TV with custom-TV-input-type MIGX or from other JSON-string for MODx Revolution 
  *
- * @version 1.4.ppb1
+ * @version 1.4
  * @author Bruno Perner <b.perner@gmx.de>
  * @copyright Copyright &copy; 2009-2011
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
@@ -33,17 +33,6 @@
  */
 
 /*example: <ul>[[!getImageList? &tvname=`myTV`&tpl=`@CODE:<li>[[+idx]]<img src="[[+imageURL]]"/><p>[[+imageAlt]]</p></li>`]]</ul>*/
-
-/**
- * New parameters:
- * ----------------------------------------
- * &sortOrder=`asc` asc or desc
- * &sortBy=`title` add a field name here
- * This one is by bruno17, but undocumented...
- * &aCustomParameter=`` Use [[++property.aCustomParameter]] insed template to use a custom parameter of your choice. 
- * The parametername is up to your choice...
- */
-
 /* get default properties */
 
 
@@ -72,7 +61,7 @@ $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
-$sortBy = $modx->getOption('sortBy', $scriptProperties, '');
+$sortBy = $modx->getOption('sortBy', $scriptProperties, false);
 $sortOrder = $modx->getOption('sortOrder', $scriptProperties, 'asc');
 
 $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
@@ -176,7 +165,7 @@ if (count($items) > 0) {
   
   // add sort features
   
-             if( array_search( $sortBy , array_Keys($items) ) !== FALSE ) {          
+             if( $sortBy !== FALSE && array_search( $sortBy , array_Keys($items) ) !== FALSE ) {          
                 foreach($items as $k=>$v) {
                     $b[$k] = $v[$sortBy];
                 }
