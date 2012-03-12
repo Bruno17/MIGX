@@ -24,7 +24,7 @@
  *
  * display Items from outputvalue of TV with custom-TV-input-type MIGX or from other JSON-string for MODx Revolution 
  *
- * @version 1.4
+ * @version 1.4.ppb1
  * @author Bruno Perner <b.perner@gmx.de>
  * @copyright Copyright &copy; 2009-2011
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
@@ -34,10 +34,12 @@
 
 /*example: <ul>[[!getImageList? &tvname=`myTV`&tpl=`@CODE:<li>[[+idx]]<img src="[[+imageURL]]"/><p>[[+imageAlt]]</p></li>`]]</ul>*/
 
-/* Parameters:
+/**
+ * New parameters:
  * ----------------------------------------
  * &sortOrder=`asc` asc or desc
  * &sortBy=`title` add a field name here
+ * This one is by bruno17, but undocumented...
  * &aCustomParameter=`` Use [[++property.aCustomParameter]] insed template to use a custom parameter of your choice. 
  * The parametername is up to your choice...
  */
