@@ -1,5 +1,4 @@
 <?php
-
 /**
  * getImageList
  *
@@ -34,6 +33,15 @@
  */
 
 /*example: <ul>[[!getImageList? &tvname=`myTV`&tpl=`@CODE:<li>[[+idx]]<img src="[[+imageURL]]"/><p>[[+imageAlt]]</p></li>`]]</ul>*/
+
+/* Parameters:
+ * ----------------------------------------
+ * &sortOrder=`asc` asc or desc
+ * &sortBy=`title` add a field name here
+ * &aCustomParameter=`` Use [[++property.aCustomParameter]] insed template to use a custom parameter of your choice. 
+ * The parametername is up to your choice...
+ */
+
 /* get default properties */
 
 
@@ -61,6 +69,9 @@ $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 
 $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+
+$sortBy = $modx->getOption('sortBy', $scriptProperties, '');
+$sortOrder = $modx->getOption('sortOrder', $scriptProperties, 'asc');
 
 $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
 if (!($migx instanceof Migx)) return '';
@@ -160,6 +171,34 @@ if (count($items) > 0) {
     }
 
     $idx = 0;
+  
+  // add sort features
+  
+             if( array_search( $sortBy , array_Keys($items) ) !== FALSE ) {          
+                foreach($items as $k=>$v) {
+                    $b[$k] = $v[$sortBy];
+                }
+                    switch( $sortDir ) {
+                    case'asc':
+                        asort( $b );
+                        break;
+                    case'desc':
+                        arsort( $b );
+                        break;
+                    default:
+                        asort( $b );
+                        break;
+                    }
+ 
+                foreach($b as $key=>$val) {
+                    $c[$key] = $items[$key];
+                }               
+                $items = $c;
+            }
+  
+  // /
+  
+  
     $output = array();
     foreach ($items as $key => $item) {
 
