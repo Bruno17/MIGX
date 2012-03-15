@@ -24,10 +24,7 @@
  *
  * display Items from outputvalue of TV with custom-TV-input-type MIGX or from other JSON-string for MODx Revolution 
  *
- * @version 1.4.1
- * Changes in 1.4.1
- * added &sortDir amnd &sortBy paramteres as well as sort features.
- *
+ * @version 1.4
  * @author Bruno Perner <b.perner@gmx.de>
  * @copyright Copyright &copy; 2009-2011
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
@@ -39,33 +36,35 @@
 /* get default properties */
 
 
-$tvname = $modx->getOption('tvname', $scriptProperties, '');
-$tpl = $modx->getOption('tpl', $scriptProperties, '');
-$limit = $modx->getOption('limit', $scriptProperties, '0');
-$offset = $modx->getOption('offset', $scriptProperties, 0);
-$totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
-$randomize = $modx->getOption('randomize', $scriptProperties, false);
-$preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
-$where = $modx->getOption('where', $scriptProperties, '');
-$where = !empty($where) ? $modx->fromJSON($where) : array();
+$tvname     	= $modx->getOption('tvname', $scriptProperties, '');
+$tpl 			= $modx->getOption('tpl', $scriptProperties, '');
+$limit 			= $modx->getOption('limit', $scriptProperties, '0');
+$offset 		= $modx->getOption('offset', $scriptProperties, 0);
+$totalVar 		= $modx->getOption('totalVar', $scriptProperties, 'total');
+$randomize 		= $modx->getOption('randomize', $scriptProperties, false);
+$preselectLimit 	= $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
+$where 			= $modx->getOption('where', $scriptProperties, '');
+$where 			= !empty($where) ? $modx->fromJSON($where) : array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
-$toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
-$outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
-$placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
-$toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
-$jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
-$outputvalue = $modx->getOption('value', $scriptProperties, '');
-$outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
-$docidVarKey = $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
-$docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? $modx->resource->get('id') : 1));
-$docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
-$processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
+$toPlaceholder 		= $modx->getOption('toPlaceholder', $scriptProperties, false);
+$outputSeparator 	= $modx->getOption('outputSeparator', $scriptProperties, '');
+$placeholdersKeyField 	= $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
+$toJsonPlaceholder 	= $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
+$jsonVarKey 		= $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
+$outputvalue 		= $modx->getOption('value', $scriptProperties, '');
+$outputvalue 		= isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
+$docidVarKey 		= $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
+$docid 			= $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? $modx->resource->get('id') : 1));
+$docid 			= isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
+$processTVs 		= $modx->getOption('processTVs', $scriptProperties, '1');
 
-$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
-$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+$base_path 		= $modx->getOption('base_path', null, MODX_BASE_PATH);
+$base_url 		= $modx->getOption('base_url', null, MODX_BASE_URL);
 
-$sortBy = $modx->getOption('sortBy', $scriptProperties, false);
-$sortOrder = $modx->getOption('sortOrder', $scriptProperties, 'asc');
+$sortBy    		= $modx->getOption('sortBy',    $scriptProperties, false);
+$sortOrder 		= $modx->getOption('sortOrder', $scriptProperties, 'asc');
+// sortType is inactive. It will be used in the future to sort by things like "date"
+$sortType 		= $modx->getOption('sortType', $scriptProperties, 'string');
 
 $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
 if (!($migx instanceof Migx)) return '';
@@ -172,7 +171,7 @@ if (count($items) > 0) {
                 foreach($items as $k=>$v) {
                     $b[$k] = $v[$sortBy];
                 }
-                    switch( $sortDir ) {
+                    switch( $sortOrder ) {
                     case'asc':
                         asort( $b );
                         break;
