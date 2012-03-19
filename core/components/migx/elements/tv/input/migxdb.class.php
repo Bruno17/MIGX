@@ -11,7 +11,6 @@
 class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
     public function process($value, array $params = array()) {
 
-
         $namespace = 'migx';
         $this->modx->lexicon->load('tv_widget', $namespace . ':default');
         //$properties = isset($params['columns']) ? $params : $this->getProperties();
@@ -32,6 +31,8 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
         //$formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
 
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
+        $this->migx->debug('resource',$resource);
+        
         //multiple different Forms
         // Note: use same field-names and inputTVs in all forms
 
@@ -50,7 +51,7 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
             }
             $wctx = $workingContext->get('key');
         } else {
-            $wctx = $modx->context->get('key');
+            $wctx = $this->modx->context->get('key');
         }
 
         $this->migx->working_context = $wctx;
@@ -110,6 +111,8 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
         $this->setPlaceholder('i18n', $lang);
         $this->setPlaceholder('properties', $properties);
         $this->setPlaceholder('resource', $resource);
+        $this->setPlaceholder('object_id', $this->modx->getOption('object_id',$_REQUEST,''));
+        $this->setPlaceholder('connected_object_id', $this->modx->getOption('object_id',$_REQUEST,''));
         $this->setPlaceholder('pathconfigs', $this->modx->toJSON($pathconfigs));
         $this->setPlaceholder('columns', $this->modx->toJSON($cols));
         $this->setPlaceholder('fields', $this->modx->toJSON($fields));
@@ -118,6 +121,7 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
         $this->setPlaceholder('myctx', $wctx);
         $this->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
         $this->setPlaceholder('customconfigs', $this->migx->customconfigs);
+        $this->setPlaceholder('win_id', isset ($this->migx->customconfigs['win_id']) ? $this->migx->customconfigs['win_id'] : $this->tv->get('id'));
         
         $grid = isset ($this->migx->customconfigs['grid']) ? $this->migx->customconfigs['grid'] : 'default';
         $path = 'components/migx/';

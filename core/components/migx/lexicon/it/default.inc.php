@@ -22,6 +22,7 @@ $_lang['mig_remove'] = 'Rimuovi';
 $_lang['mig_duplicate'] = 'Duplica';
 $_lang['mig_preview'] = 'Anteprima';
 $_lang['mig_save_resource'] = 'Prima di aggiungere nuovi elementi, devi salvare questa risorsa!';
+$_lang['mig_save_resource'] = 'Prima di aggiungere nuovi elementi, devi salvare questa risorsa!';
 
 $_lang['mig_show_trash'] = 'Trash View';
 $_lang['mig_show_normal'] = 'Normal View';

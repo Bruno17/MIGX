@@ -146,15 +146,16 @@ class Migx
         return $mediasource;
     }
 
-    function generateTvTab($tvnames){
-        $tvnames = !empty($tvnames) ? explode(',',$tvnames): array();
+    function generateTvTab($tvnames)
+    {
+        $tvnames = !empty($tvnames) ? explode(',', $tvnames) : array();
         $fields = array();
-        foreach ($tvnames as $tvname){
+        foreach ($tvnames as $tvname) {
             $field['field'] = $tvname;
             $field['inputTV'] = $tvname;
             $fields[] = $field;
         }
-        return $fields;       
+        return $fields;
     }
 
 
@@ -168,7 +169,7 @@ class Migx
             $categories[$tabid] = $emptycat;
 
             $fields = $tab['fields'];
-            foreach ($fields as & $field) {
+            foreach ($fields as &$field) {
                 $fieldid++;
                 if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
 
@@ -181,12 +182,14 @@ class Migx
                 $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
 
                 $tv->set('value', $fieldvalue);
-                if (!empty($field['caption'])){
-                    $tv->set('caption', htmlentities($field['caption'], ENT_QUOTES, $this->modx->getOption('modx_charset')));
+                if (!empty($field['caption'])) {
+                    $field['caption'] = htmlentities($field['caption'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                    $tv->set('caption', $field['caption']);
                 }
-                
+
                 if (!empty($field['description'])) {
-                    $tv->set('description', htmlentities($field['description'], ENT_QUOTES, $this->modx->getOption('modx_charset')));
+                    $field['description'] = htmlentities($field['description'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                    $tv->set('description', $field['description']);
                 }
                 /*generate unique tvid, must be numeric*/
                 /*todo: find a better solution*/
@@ -216,31 +219,31 @@ class Migx
 
                 $this->modx->smarty->assign('tv', $tv);
                 $params = $tv->get('input_properties');
-                
-                /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
-                 * may be performancewise its better todo that here?
-               
-                if (!empty($properties['basePath'])) {
-                    if ($properties['autoResourceFolders'] == 'true') {
-                        $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
-                        $targetDir = $params['basePath'];
 
-                        $cacheManager = $this->modx->getCacheManager();
-                        // if directory doesnt exist, create it 
-                        if (!file_exists($targetDir) || !is_dir($targetDir)) {
-                            if (!$cacheManager->writeTree($targetDir)) {
-                                $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
-                                return $this->modx->error->failure('Could not create directory: ' . $targetDir);
-                            }
-                        }
-                        // make sure directory is readable/writable 
-                        if (!is_readable($targetDir) || !is_writable($targetDir)) {
-                            $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
-                            return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
-                        }
-                    } else {
-                        $params['basePath'] = $basePath;
-                    }
+                /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
+                * may be performancewise its better todo that here?
+                
+                if (!empty($properties['basePath'])) {
+                if ($properties['autoResourceFolders'] == 'true') {
+                $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
+                $targetDir = $params['basePath'];
+
+                $cacheManager = $this->modx->getCacheManager();
+                // if directory doesnt exist, create it 
+                if (!file_exists($targetDir) || !is_dir($targetDir)) {
+                if (!$cacheManager->writeTree($targetDir)) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
+                return $this->modx->error->failure('Could not create directory: ' . $targetDir);
+                }
+                }
+                // make sure directory is readable/writable 
+                if (!is_readable($targetDir) || !is_writable($targetDir)) {
+                $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
+                return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
+                }
+                } else {
+                $params['basePath'] = $basePath;
+                }
                 }
                 */
 
@@ -298,7 +301,7 @@ class Migx
         return $inputTvs;
     }
 
-    function sortTV($sort, & $c , $dir='ASC' , $sortbyTVType='')
+    function sortTV($sort, &$c, $dir = 'ASC', $sortbyTVType = '')
     {
         $c->leftJoin('modTemplateVar', 'tvDefault', array("tvDefault.name" => $sort));
         $c->leftJoin('modTemplateVarResource', 'tvSort', array("tvSort.contentid = modResource.id", "tvSort.tmplvarid = tvDefault.id"));
@@ -321,7 +324,7 @@ class Migx
             }
         }
         $c->sortby("sortTV", $dir);
-        
+
         return true;
     }
 
@@ -332,7 +335,19 @@ class Migx
             $tmplVarTbl = $this->modx->getTableName('modTemplateVar');
             $tmplVarResourceTbl = $this->modx->getTableName('modTemplateVarResource');
             $conditions = array();
-            $operators = array('<=>' => '<=>', '===' => '=', '!==' => '!=', '<>' => '<>', '==' => 'LIKE', '!=' => 'NOT LIKE', '<<' => '<', '<=' => '<=', '=<' => '=<', '>>' => '>', '>=' => '>=', '=>' => '=>');
+            $operators = array(
+                '<=>' => '<=>',
+                '===' => '=',
+                '!==' => '!=',
+                '<>' => '<>',
+                '==' => 'LIKE',
+                '!=' => 'NOT LIKE',
+                '<<' => '<',
+                '<=' => '<=',
+                '=<' => '=<',
+                '>>' => '>',
+                '>=' => '>=',
+                '=>' => '=>');
             foreach ($tvFilters as $fGroup => $tvFilter) {
                 $filterGroup = array();
                 $filters = explode(',', $tvFilter);
@@ -410,7 +425,17 @@ class Migx
 
     }
 
-    function filterItems($where,$items)
+    public function debug($key, $value, $reset = false)
+    {
+
+        $debug[$key] = $value;
+        $chunk = $this->modx->getObject('modChunk', array('name' => 'debug'));
+        $oldContent = $reset ? '' : $chunk->getContent();
+        $chunk->setContent($oldContent . print_r($debug, 1));
+        $chunk->save();
+    }
+
+    function filterItems($where, $items)
     {
 
         $tempitems = array();
@@ -461,39 +486,34 @@ class Migx
                         break;
                     case 'isempty':
                     case 'empty':
-                        $output = empty($subject) ? $then:
-                        (isset($else) ? $else : '');
+                        $output = empty($subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case '!empty':
                     case 'notempty':
                     case 'isnotempty':
-                        $output = !empty($subject) && $subject != '' ? $then:
-                        (isset($else) ? $else : '');
+                        $output = !empty($subject) && $subject != '' ? $then : (isset($else) ? $else : '');
                         break;
                     case 'isnull':
                     case 'null':
-                        $output = $subject == null || strtolower($subject) == 'null' ? $then:
-                        (isset($else) ? $else : '');
+                        $output = $subject == null || strtolower($subject) == 'null' ? $then : (isset($else) ? $else : '');
                         break;
                     case 'inarray':
                     case 'in_array':
                     case 'ia':
                     case 'in':
-                        $operand = is_array($operand) ? $operand:
-                        explode(',', $operand);
-                        $output = in_array($subject, $operand) ? $then:
-                        (isset($else) ? $else : '');
+                        $operand = is_array($operand) ? $operand : explode(',', $operand);
+                        $output = in_array($subject, $operand) ? $then : (isset($else) ? $else : '');
                         break;
                     case 'find':
                     case 'find_in_set':
                         $subject = explode(',', $subject);
-                        $output = in_array($operand , $subject) ? $then : (isset($else) ? $else : '');
+                        $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case 'find_pd':
                     case 'find_in_pipesdelimited_set':
                         $subject = explode('||', $subject);
-                        $output = in_array($operand , $subject) ? $then : (isset($else) ? $else : '');
-                        break;                                                 
+                        $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
+                        break;
                     case '==':
                     case '=':
                     case 'eq':

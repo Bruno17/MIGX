@@ -15,7 +15,7 @@ MODx.window.UpdateTvdbItem = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         title:'MIGX'
-        ,id: '{/literal}modx-window-mi-grid-update-{$tv->id}{literal}'
+        ,id: '{/literal}modx-window-mi-grid-update-{$win_id}{literal}'
         ,width: '1000'
 		,closeAction: 'hide'
         ,shadow: false
@@ -97,6 +97,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                 ,data: Ext.util.JSON.encode(item)
 				,configs: this.grid.configs
                 ,resource_id: this.grid.resource_id
+                ,co_id: this.grid.co_id
                 ,object_id: this.baseParams.object_id
                 ,tv_id: this.baseParams.tv_id
                 ,wctx: this.baseParams.wctx
@@ -141,7 +142,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
             ,baseParams: this.config.baseParams || {}
             ,fileUpload: this.config.fileUpload || false
         });
-        return new MODx.panel.MidbGridUpdate(config);
+        return new MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal}(config);
     }
     ,switchForm: function() {
         var v = this.fp.getForm().getValues();
@@ -184,9 +185,9 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     }
 
 });
-Ext.reg('modx-window-tv-dbitem-update',MODx.window.UpdateTvdbItem);
+Ext.reg('modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}',MODx.window.UpdateTvdbItem);
 
-MODx.panel.MidbGridUpdate = function(config) {
+MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal} = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'migxdb-panel-object-{/literal}{$tv->id}{literal}'
@@ -204,11 +205,11 @@ MODx.panel.MidbGridUpdate = function(config) {
 			'load': {fn:this.load,scope:this}
         }		
     });
- 	MODx.panel.MidbGridUpdate.superclass.constructor.call(this,config);
+ 	MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal}.superclass.constructor.call(this,config);
 	
 	//this.addEvents({ load: true });
 };
-Ext.extend(MODx.panel.MidbGridUpdate,MODx.FormPanel,{
+Ext.extend(MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal},MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
 		var a = {
@@ -270,7 +271,7 @@ Ext.extend(MODx.panel.MidbGridUpdate,MODx.FormPanel,{
 		return '';
 	 }
 });
-Ext.reg('migxdb-panel-object',MODx.panel.MidbGridUpdate);
+Ext.reg('migxdb-panel-object',MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal});
 
 /*
 Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
@@ -410,10 +411,18 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
 
     loadGrid: function() {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
-        
-        if (resource_id == 0){
-            alert ('{/literal}{$i18n.mig_save_resource}{literal}');
-            return;
+        var object_id = '{/literal}{$object_id}{literal}';
+        if (object_id != ''){
+            if (object_id == 'new'){
+                alert ('{/literal}{$i18n.mig_save_object}{literal}');
+                return;
+            }
+        }        
+        else{
+            if (resource_id == 0){
+                alert ('{/literal}{$i18n.mig_save_resource}{literal}');
+                return;
+            }            
         }
         MODx.load({
             xtype: 'modx-grid-multitvdbgrid'
@@ -429,7 +438,9 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
             ,configs: '{/literal}{$properties.configs}{literal}'
             ,auth: '{/literal}{$auth}{literal}'
             ,resource_id: '{/literal}{$resource.id}{literal}' 
-            ,pageSize: 10			
+            ,co_id: '{/literal}{$connected_object_id}{literal}' 
+            ,pageSize: 10
+            ,object_id : '{/literal}{$object_id}{literal}' 		
         });
         this.hide();
     }	

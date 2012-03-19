@@ -316,6 +316,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		return m;
     }
 	,collectItems: function(){
+	   console.log('huhu');
 		var items=[];
 		// read jsons from grid-store-items 
         var griddata=this.store.data;

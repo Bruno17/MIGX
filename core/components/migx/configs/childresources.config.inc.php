@@ -22,7 +22,7 @@
 		$this->customconfigs['task']='childresources';
         
         /* create your own grid and set it here */
-        $this->customconfigs['grid']= 'dragdrop';
+        //$this->customconfigs['grid']= 'markt';
         
         
         /*

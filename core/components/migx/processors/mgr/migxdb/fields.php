@@ -89,7 +89,9 @@ $modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperti
 $modx->smarty->assign('fields', $modx->toJSON($allfields));
 $modx->smarty->assign('customconfigs', $modx->migx->customconfigs);
 $modx->smarty->assign('object', $object);
-$modx->smarty->assign('categories', $categories);   
+$modx->smarty->assign('categories', $categories);
+$modx->smarty->assign('win_id', $scriptProperties['tv_id']); 
+$modx->smarty->assign('win_id', isset ($modx->migx->customconfigs['win_id']) ? $modx->migx->customconfigs['win_id'] :  $scriptProperties['tv_id']);  
 //$modx->smarty->assign('id_update_window', 'modx-window-midb-grid-update');
 
 if (!empty($_REQUEST['showCheckbox'])) {

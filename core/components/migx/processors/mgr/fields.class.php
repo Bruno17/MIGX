@@ -116,6 +116,7 @@ class migxFormProcessor extends modProcessor
         $this->modx->smarty->assign('fields', $this->modx->toJSON($allfields));
         $this->modx->smarty->assign('categories', $categories);
         $this->modx->smarty->assign('properties', $scriptProperties);
+        $this->modx->smarty->assign('win_id', $scriptProperties['tv_id']);
 
         if (!empty($_REQUEST['showCheckbox'])) {
             $this->modx->smarty->assign('showCheckbox', 1);

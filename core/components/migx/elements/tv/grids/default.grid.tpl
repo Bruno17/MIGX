@@ -32,6 +32,7 @@ MODx.grid.multiTVdbgrid = function(config) {
         action: 'mgr/migxdb/getList',
         configs: config.configs,
         resource_id: config.resource_id,
+        object_id: config.object_id,
         'HTTP_MODAUTH': config.auth
     },
     fields: ['id','pagetitle','createdon','published','deleted'],    
@@ -103,7 +104,8 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
     ,renderPlaceholder : function(val, md, rec, row, col, s){
         return '[[+'+val+'.'+rec.json.MIGX_id+']]';
         
-	}       
+	}
+    {/literal}{$customconfigs.gridfunctions}{literal}
     ,renderFirst : function(val, md, rec, row, col, s){
 		val = val.split(':');
         return val[0];
@@ -206,6 +208,34 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
         s.removeAll();
         this.refresh();
     }
+	,publishObject: function() {
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/migxdb/update'
+				,task: 'publish'
+                ,object_id: this.menu.record.id
+				,configs: this.config.configs
+            }
+            ,listeners: {
+                'success': {fn:this.refresh,scope:this}
+            }
+        });
+    }	
+    ,unpublishObject: function() {
+ 		MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/migxdb/update'
+				,task: 'unpublish'
+                ,object_id: this.menu.record.id
+				,configs: this.config.configs
+            }
+            ,listeners: {
+                'success': {fn:this.refresh,scope:this}
+            }
+        });
+    }    
     ,publishSelected: function(btn,e) {
         var cs = this.getSelectedAsList();
         if (cs === false) return false;
@@ -308,6 +338,7 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
     }                	     
 	,loadWin: function(btn,e,index,action) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
+        var co_id = '{/literal}{$connected_object_id}{literal}';
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
             alert ('{/literal}{$i18n.mig_save_resource}{literal}');
@@ -331,10 +362,11 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
         var isnew = (action == 'u') ? '0':'1';
         
  		
-        var win_xtype = 'modx-window-tv-dbitem-update';
+        var win_xtype = 'modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}';
 		if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
+            this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
             this.windows[win_xtype].fp.autoLoad.params.configs=this.config.configs;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
@@ -362,7 +394,8 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
                 object_id: object_id,
                 configs: this.config.configs,
                 //isnew : isnew,
-                resource_id : resource_id
+                resource_id : resource_id,
+                co_id : co_id
 			}
         });
     }
@@ -395,12 +428,24 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
     }    	
     ,getMenu: function() {
 		var n = this.menu.record;
-        console.log(this.menu); 
+        //console.log(this.menu); 
         var m = [];
         m.push({
             text: '{/literal}{$i18n.mig_edit}{literal}'
             ,handler: this.update
         });
+        m.push('-');
+        if (n.published == 0) {
+            m.push({
+                text: 'veröffentlichen'
+                ,handler: this.publishObject
+            })
+        } else if (n.published == 1) {
+            m.push({
+                text: 'zurückziehen'
+                ,handler: this.unpublishObject
+            });
+        }        
         m.push('-');
         if (n.deleted == 1) {
         m.push({
@@ -417,7 +462,8 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
             text: 'löschen'
             ,handler: this.deleteObject
         });		
-        }	        
+        }
+        {/literal}{$customconfigs.gridcontextmenus}{literal}        	        
 		return m;
     }
 	,collectItems: function(){
