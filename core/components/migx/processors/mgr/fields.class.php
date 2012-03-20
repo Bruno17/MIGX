@@ -14,39 +14,49 @@ class migxFormProcessor extends modProcessor
 
     public function process()
     {
-        require_once dirname(dirname(dirname(__file__))) . '/model/migx/migx.class.php';
-        $migx = new Migx($this->modx);
-        $scriptProperties = $this->getProperties();
+        //require_once dirname(dirname(dirname(__file__))) . '/model/migx/migx.class.php';
+        //$migx = new Migx($this->modx);
         
-        $this->modx->getService('smarty', 'smarty.modSmarty');
+        
+        require_once dirname(dirname(dirname(__file__))) . '/model/migx/migxformcontroller.class.php';
+        $c = new MigxFormController($this->modx);
+        $this->modx->controller = & $c;
 
+        $this->modx->getService('smarty', 'smarty.modSmarty');
+        /*
         if (file_exists(MODX_CORE_PATH . 'model/modx/modmanagercontroller.class.php')) {
             require_once MODX_CORE_PATH . 'model/modx/modmanagercontroller.class.php';
             require_once MODX_CORE_PATH . 'model/modx/modmanagercontrollerdeprecated.class.php';
             $c = new modManagerControllerDeprecated($this->modx, array());
             $this->modx->controller = call_user_func_array(array($c, 'getInstance'), array($this->modx, 'modManagerControllerDeprecated', array()));
         }
-
-        $migx->working_context = 'web';
+        */
+        $scriptProperties = $this->getProperties();
+        
+        $this->modx->migx->working_context = 'web';
         
         if ($this->modx->resource = $this->modx->getObject('modResource', $scriptProperties['resource_id'])){
-            $migx->working_context = $this->modx->resource->get('context_key');
+            $this->modx->migx->working_context = $this->modx->resource->get('context_key');
             
             //$_REQUEST['id']=$scriptProperties['resource_id'];            
         }
 
-
+        /*
         if (!isset($this->modx->smarty)) {
             $this->modx->getService('smarty', 'smarty.modSmarty', '', array('template_dir' => $this->modx->getOption('manager_path') . 'templates/' . $this->modx->getOption('manager_theme', null, 'default') . '/', ));
         }
-        $this->modx->smarty->template_dir = $this->modx->getOption('manager_path') . 'templates/' . $this->modx->getOption('manager_theme', null, 'default') . '/';
-        $this->modx->smarty->assign('OnResourceTVFormPrerender', $onResourceTVFormPrerender);
-        $this->modx->smarty->assign('_config', $this->modx->config);
+        */
+        //$this->loadControllersPath();
+        $c->loadTemplatesPath();        
+        
+        //$this->modx->smarty->template_dir = $this->modx->getOption('manager_path') . 'templates/' . $this->modx->getOption('manager_theme', null, 'default') . '/';
+        //$this->modx->smarty->assign('OnResourceTVFormPrerender', $onResourceTVFormPrerender);
+        $c->setPlaceholder('_config', $this->modx->config);
 
         //get the MIGX-TV
         $tv = $this->modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']));
 
-        $migx->source = $tv->getSource($migx->working_context, false);
+        $this->modx->migx->source = $tv->getSource($this->modx->migx->working_context, false);
 
         $properties = $tv->get('input_properties');
         $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
@@ -70,7 +80,7 @@ class migxFormProcessor extends modProcessor
         } else {
             $migxid = $record['MIGX_id'];
         }
-        $this->modx->smarty->assign('migxid', $migxid);
+        $c->setPlaceholder('migxid', $migxid);
         
         //multiple different Forms
         // Note: use same field-names and inputTVs in all forms
@@ -91,7 +101,7 @@ class migxFormProcessor extends modProcessor
                 }
             }
 
-            $this->modx->smarty->assign('formnames', $formnames);
+            $c->setPlaceholder('formnames', $formnames);
 
             if (isset($record['MIGX_formname'])) {
                 $formtabs = $tabs[$record['MIGX_formname']];
@@ -105,26 +115,25 @@ class migxFormProcessor extends modProcessor
             $allfields[] = $field;
         }
 
-        //$base_path = $this->modx->getOption('base_path', null, MODX_BASE_PATH);
-        //$base_url = $this->modx->getOption('base_url', null, MODX_BASE_URL);
-
-        //$basePath = $base_path . $properties['basePath'];
-        
         $categories = array();
-        $migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
+        $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
 
-        $this->modx->smarty->assign('fields', $this->modx->toJSON($allfields));
-        $this->modx->smarty->assign('categories', $categories);
-        $this->modx->smarty->assign('properties', $scriptProperties);
-        $this->modx->smarty->assign('win_id', $scriptProperties['tv_id']);
+        $c->setPlaceholder('fields', $this->modx->toJSON($allfields));
+        $c->setPlaceholder('categories', $categories);
+        $c->setPlaceholder('properties', $scriptProperties);
+        $c->setPlaceholder('win_id', $scriptProperties['tv_id']);
 
         if (!empty($_REQUEST['showCheckbox'])) {
-            $this->modx->smarty->assign('showCheckbox', 1);
+            $this->setPlaceholder('showCheckbox', 1);
         }
+        /*
         $miTVCorePath = $this->modx->getOption('migx.core_path', null, $this->modx->getOption('core_path') . 'components/migx/');
         $this->modx->smarty->template_dir = $miTVCorePath . 'templates/';
-        return $this->modx->smarty->fetch('mgr/fields.tpl');
-
+        return $this->modx->smarty->fetch('mgr/fields.tpl');        
+        */        
+        
+        return $c->process($scriptProperties);
+                
     }
 }
 return 'migxFormProcessor';

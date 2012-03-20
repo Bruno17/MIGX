@@ -26,11 +26,6 @@ $onResourceTVFormPrerender = implode('',$onResourceTVFormPrerender);
 }
 */
 
-//print_r($modx->boerse->config);
-
-
-//print_r($tabs);
-
 $modx->getService('smarty', 'smarty.modSmarty');
 
 if (!isset($modx->smarty)) {
