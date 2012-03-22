@@ -39,10 +39,10 @@
 
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
-$outertpl = $modx->getOption('outertpl', $scriptProperties, '');
-$limit = $modx->getOption('limit', $scriptProperties, '0');
+$splittpl = $modx->getOption('splittpl', $scriptProperties, '');
+$limit = $modx->getOption('limit', $scriptProperties, 0);
 $offset = $modx->getOption('offset', $scriptProperties, 0);
-$split = $modx->getOption('split', $scriptProperties, '1');
+$split = $modx->getOption('split', $scriptProperties, 1);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
 $randomize = $modx->getOption('randomize', $scriptProperties, false);
 $preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
@@ -51,6 +51,7 @@ $where = !empty($where) ? $modx->fromJSON($where) : array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
+$splitSeparator = $modx->getOption('splitSeparator', $scriptProperties, '');
 $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
 $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
 $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
@@ -257,14 +258,13 @@ $o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
 else 
 */
 if ($split > 1) {
-	if (isset($outertpl)) {
+	if (isset($splittpl)) {
 		$sections = array_chunk($output,$split);
 		unset($output);
 		$output = array();
 		foreach ($sections as $section) {
-			$imploded = implode($section);
-			//$output[] = "<div>" . $imploded . "</div>";
-			$output[] = $modx->getChunk($outertpl,array('wrapper' => $imploded)); 
+			$imploded = implode($splitSeparator,$section);
+			$output[] = $modx->getChunk($splittpl,array('wrapper' => $imploded)); 
 		}
 	}
 }
