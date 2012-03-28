@@ -38,7 +38,7 @@ class migxFormProcessor extends modProcessor
 
 
         //$object = $this->modx->getObject('Angebote',$scriptProperties['angebot']);
-        if (empty($object)) return $this->modx->error->failure($this->modx->lexicon('quip.thread_err_nf'));
+        //if (empty($object)) return $this->modx->error->failure($this->modx->lexicon('quip.thread_err_nf'));
         //if (!$thread->checkPolicy('view')) return $this->modx->error->failure($this->modx->lexicon('access_denied'));
 
         //return $this->modx->error->success('',$angebot);
