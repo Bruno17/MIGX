@@ -425,7 +425,7 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
             }            
         }
         MODx.load({
-            xtype: 'modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}'
+            xtype: 'modx-grid-multitvdbgrid'
             ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
             ,tv: '{/literal}{$tv->id}{literal}'
             ,cls:'tv{/literal}{$tv->id}{literal}_items'

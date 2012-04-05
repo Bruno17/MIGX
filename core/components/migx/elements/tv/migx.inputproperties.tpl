@@ -16,6 +16,16 @@ MODx.load({
     ,labelWidth: 150
     ,border: false
     ,items: [{
+        xtype: 'textfield'
+        ,fieldLabel: '{/literal}{$mig.configs}{literal}'
+        ,description: '{/literal}{$mig.configs_desc}{literal}'
+        ,name: 'inopt_configs'
+        ,hiddenName: 'inopt_configs'
+        ,id: 'inopt_configs{/literal}{$tv}{literal}'
+        ,value: params['configs']
+        ,width: 600
+        ,listeners: oc
+    },{
         xtype: 'textarea'
         ,fieldLabel: '{/literal}{$mig.tabs}{literal}'
         ,description: '{/literal}{$mig.tabs_desc}{literal}'

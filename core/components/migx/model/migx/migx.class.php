@@ -49,6 +49,12 @@ class Migx
     {
         $this->modx = &$modx;
 
+        $packageName = 'migx';
+        $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+        $modelpath = $packagepath . 'model/';
+        $this->modx->addPackage($packageName, $modelpath, $prefix);
+
+
         /* allows you to set paths in different environments
         * this allows for easier SVN management of files
         */
@@ -97,7 +103,12 @@ class Migx
         foreach ($configs as $config) {
             $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
 
-            if (file_exists($configFile)) {
+            if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config))) {
+                $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $cfObject->toArray()) : $cfObject->toArray();
+                $this->customconfigs['tabs'] = $this->modx->fromJson($cfObject->get('formtabs'));
+                //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
+                $this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
+            } elseif (file_exists($configFile)) {
                 include ($configFile);
             }
         }
@@ -168,15 +179,19 @@ class Migx
             $emptycat->id = $tabid;
             $categories[$tabid] = $emptycat;
 
-            $fields = $tab['fields'];
+            $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
             foreach ($fields as &$field) {
                 $fieldid++;
                 if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
-
+                    $params = $tv->get('input_properties');
                 } else {
                     $tv = $this->modx->newObject('modTemplateVar');
-                    $tv->set('type', 'text');
+                    $tv->set('type', !empty($field['inputTVtype']) ? $field['inputTVtype'] : 'text');
                 }
+
+                if (!empty($field['configs'])){
+                    $params['configs'] = $field['configs'];    
+                } 
 
                 /*insert actual value from requested record, convert arrays to ||-delimeted string */
                 $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
@@ -193,7 +208,7 @@ class Migx
                 }
                 /*generate unique tvid, must be numeric*/
                 /*todo: find a better solution*/
-                $field['tv_id'] = $scriptProperties['tv_id'] * 10000000 + $fieldid;
+                $field['tv_id'] = ($scriptProperties['tv_id'] * 10) . $fieldid;
                 $field['array_tv_id'] = $field['tv_id'] . '[]';
                 $allfields[] = $field;
 
@@ -218,7 +233,7 @@ class Migx
 
 
                 $this->modx->smarty->assign('tv', $tv);
-                $params = $tv->get('input_properties');
+                
 
                 /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
                 * may be performancewise its better todo that here?

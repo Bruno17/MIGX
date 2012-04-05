@@ -16,17 +16,6 @@ MODx.load({
     ,labelWidth: 150
     ,border: false
     ,items: [{
-        xtype: 'textarea'
-        ,fieldLabel: '{/literal}{$mig.columns}{literal}'
-        ,description: '{/literal}{$mig.columns_desc}{literal}'
-        ,name: 'inopt_columns'
-        ,hiddenName: 'inopt_columns'
-        ,id: 'inopt_columns{/literal}{$tv}{literal}'
-        ,value: params['columns']
-        ,width: 600
-        ,height: 150
-        ,listeners: oc
-    },{
         xtype: 'textfield'
         ,fieldLabel: '{/literal}{$mig.configs}{literal}'
         ,description: '{/literal}{$mig.configs_desc}{literal}'

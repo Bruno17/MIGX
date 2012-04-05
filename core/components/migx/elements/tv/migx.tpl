@@ -244,6 +244,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
+            this.windows[win_xtype].fp.autoLoad.params.configs='{/literal}{$properties.configs}{literal}';
 		    this.windows[win_xtype].fp.autoLoad.params.itemid=index;
             this.windows[win_xtype].fp.autoLoad.params.record_json=json;
             this.windows[win_xtype].fp.autoLoad.params.autoinc=this.autoinc;
@@ -261,6 +262,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			    action: 'mgr/fields',
 				tv_id: '{/literal}{$tv->id}{literal}',
 				tv_name: '{/literal}{$tv->name}{literal}',
+                configs: '{/literal}{$properties.configs}{literal}',
 				'class_key': 'modDocument',
                 'wctx':'{/literal}{$myctx}{literal}',
 				itemid : index,
@@ -316,7 +318,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		return m;
     }
 	,collectItems: function(){
-	   console.log('huhu');
 		var items=[];
 		// read jsons from grid-store-items 
         var griddata=this.store.data;
@@ -721,6 +722,7 @@ Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
             ,cls:'tv{/literal}{$tv->id}{literal}_items'
             ,id:'tv{/literal}{$tv->id}{literal}_items'
 			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
+            ,configs: '{/literal}{$properties.configs}{literal}'
 			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'

@@ -25,7 +25,8 @@ class migxFormProcessor extends modProcessor
         $this->modx->getService('smarty', 'smarty.modSmarty');
         $scriptProperties = $this->getProperties();
         //$controller->loadControllersPath();
-        $controller->loadTemplatesPath();             
+        $controller->loadTemplatesPath();
+        $controller->setPlaceholder('_config', $this->modx->config);             
 
         $task = $this->modx->migx->getTask();
         $getObject = dirname(dirname(__file__)) . '/' . $task . '/' . str_replace('.class','',basename(__file__));
@@ -38,12 +39,13 @@ class migxFormProcessor extends modProcessor
 
 
         //$object = $this->modx->getObject('Angebote',$scriptProperties['angebot']);
-        //if (empty($object)) return $this->modx->error->failure($this->modx->lexicon('quip.thread_err_nf'));
+        if (empty($object)) return $this->modx->error->failure($this->modx->lexicon('quip.thread_err_nf'));
         //if (!$thread->checkPolicy('view')) return $this->modx->error->failure($this->modx->lexicon('access_denied'));
 
         //return $this->modx->error->success('',$angebot);
 
         //echo '<pre>'.print_r($angebot->toArray(),1).'</pre>';
+
 
         $this->modx->migx->loadConfigs();
         $tabs = $this->modx->migx->getTabs();

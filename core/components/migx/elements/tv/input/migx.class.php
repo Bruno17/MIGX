@@ -12,22 +12,33 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
 {
     public function process($value, array $params = array())
     {
-        require_once dirname(dirname(dirname(dirname(__file__)))) . '/model/migx/migx.class.php';
-        $migx = new Migx($this->modx);
+
 
         $namespace = 'migx';
         $this->modx->lexicon->load('tv_widget', $namespace . ':default');
-        $properties = isset($params['columns']) ? $params : $this->getProperties();
-
+        //$properties = isset($params['columns']) ? $params : $this->getProperties();
+        $properties = $params;
+        
+        require_once dirname(dirname(dirname(dirname(__file__)))) . '/model/migx/migx.class.php';
+        $this->migx = new Migx($this->modx,$properties);
         /* get input-tvs */
+        $this->migx->loadConfigs();
+      
         $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
         $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
+        
+        // get tabs from file or migx-config-table
+        $formtabs = $this->migx->getTabs();
 
-        $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
-        $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
+        if (empty($formtabs)){
+            // get them from input-properties
+            $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
+            $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;            
+        }
 
 
-        $inputTvs = $migx->extractInputTvs($formtabs);
+
+        $inputTvs = $this->migx->extractInputTvs($formtabs);
 
         /* get base path based on either TV param or filemanager_path */
         $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
@@ -65,9 +76,14 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
 
         //$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
         //$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+        
+        $columns = $this->migx->getColumns();
+        
+        if (empty($columns)){
+            $columns = $this->modx->fromJSON($this->modx->getOption('columns', $properties, $default_columns));
+            $columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;            
+        }
 
-        $columns = $this->modx->fromJSON($this->modx->getOption('columns', $properties, $default_columns));
-        $columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
 
         if (is_array($columns) && count($columns) > 0) {
             foreach ($columns as $key => $column) {

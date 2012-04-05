@@ -31,7 +31,7 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
         //$formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
 
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
-        $this->migx->debug('resource',$resource);
+        //$this->migx->debug('resource',$resource);
         
         //multiple different Forms
         // Note: use same field-names and inputTVs in all forms
