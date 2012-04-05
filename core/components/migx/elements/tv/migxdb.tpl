@@ -89,7 +89,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                 //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
             }					
 			
-            console.log(this.config);
+            //console.log(this.config);
             MODx.Ajax.request({
             url: this.grid.url
             ,params: {
@@ -425,7 +425,7 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
             }            
         }
         MODx.load({
-            xtype: 'modx-grid-multitvdbgrid'
+            xtype: 'modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}'
             ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
             ,tv: '{/literal}{$tv->id}{literal}'
             ,cls:'tv{/literal}{$tv->id}{literal}_items'

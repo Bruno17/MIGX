@@ -1,6 +1,6 @@
 {literal}
 
-MODx.grid.multiTVdbgrid = function(config) {
+MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     config = config || {};
 	//console.log(config);
     this.sm = new Ext.grid.CheckboxSelectionModel();
@@ -50,7 +50,7 @@ MODx.grid.multiTVdbgrid = function(config) {
         ,{
             xtype: 'buttongroup',
             title: 'Aktionen',
-            columns: 2,
+            columns: 4,
             defaults: {
                 scale: 'large'
             },
@@ -74,17 +74,18 @@ MODx.grid.multiTVdbgrid = function(config) {
                     ,handler: this.toggleDeleted
                     ,enableToggle: true
                     ,scope: this
-                }]
-			
-			}         
+                }
+                {/literal}{$customconfigs.gridactionbuttons}{literal}
+                ]
+    		}         
         ]        
     });
 	
-    MODx.grid.multiTVdbgrid.superclass.constructor.call(this,config)
+    MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal}.superclass.constructor.call(this,config)
     this.getStore().pathconfigs=config.pathconfigs;
 	//this.loadData();
 };
-Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
+Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
     _renderUrl: function(v,md,rec) {
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
@@ -483,6 +484,6 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
 		return;						 
     }
 });
-Ext.reg('modx-grid-multitvdbgrid',MODx.grid.multiTVdbgrid);
+Ext.reg('modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}',MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal});
 
 {/literal}
