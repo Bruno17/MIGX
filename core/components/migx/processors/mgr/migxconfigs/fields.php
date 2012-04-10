@@ -32,3 +32,16 @@ else
 }
 
 $record = $object->toArray();
+
+if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams']=='raw'){
+
+    
+}else{
+    $tabs = $modx->fromJson($record['formtabs']);
+    foreach ($tabs as $tab){
+       $fields = is_array($tab['fields']) ? $modx->toJson($tab['fields']) : $tab['fields'];
+       $tab['fields'] = $fields;
+       $formtabs[]=$tab;     
+    }
+    $record['formtabs'] = $modx->toJson($formtabs);    
+}

@@ -55,8 +55,8 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
 
 
         if (!empty($wctx)) {
-            $migx->working_context = $wctx;
-            $migx->source = $this->tv->getSource($wctx, false);
+            $this->migx->working_context = $wctx;
+            $this->migx->source = $this->tv->getSource($wctx, false);
             //$workingContext = $this->modx->getContext($wctx);
             /*
             if (!$workingContext) {
@@ -113,7 +113,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
                     }
                     }
                     */
-                    $mediasource = $migx->getFieldSource($inputTV, $tv);
+                    $mediasource = $this->migx->getFieldSource($inputTV, $tv);
                     $pathconfigs[$key] = '&source=' . $mediasource->get('id');
                     //$pathconfigs[$key] = '&basePath='.$params['basePath'].'&basePathRelative='.$params['basePathRelative'].'&baseUrl='.$params['baseUrl'].'&baseUrlRelative='.$params['baseUrlRelative'];
 

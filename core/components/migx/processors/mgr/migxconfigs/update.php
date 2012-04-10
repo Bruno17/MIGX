@@ -145,23 +145,15 @@ switch ($scriptProperties['task']) {
             $tempvalues['publishedon'] = $object->get('publishedon');
         }
 
-        //handle basket
-        $postvalues['id'] = $object->get('id');
-        include_once $modx->getOption('fakturax.core_path', null, $modx->getOption('core_path') . 'components/fakturax/model/fakturax/') . 'fakturax.class.php';
-        $properties = array();
-        $fx = new FakturaX($modx, $scriptProperties);
-
-        if (!($fx instanceof FakturaX)) return '';
-        $postvalues = $fx->calculateItems($postvalues);
-
-        //handle generate_number
-
-        if (!empty($postvalues['generate_number'])) {
-            $counter = '1';
-            $datestring = strftime('%Y%m%d', strtotime($postvalues['date']));
-            $postvalues['nr'] = 'web' . $datestring . $counter;
+        if (isset($postvalues['formtabs'])){
+            $formtabs = $modx->fromJson($postvalues['formtabs']);
+            foreach ($formtabs as $tab){
+                $fields = is_array($tab['fields']) ? $fields : $modx->fromJson($tab['fields']);
+                $tab['fields'] = $fields;
+                $newtabs[]=$tab;
+            }
+            $postvalues['formtabs']=$modx->toJson($newtabs);
         }
-
 
         //handle published
         $postvalues['published'] = isset($postvalues['published']) ? $postvalues['published'] : '1';

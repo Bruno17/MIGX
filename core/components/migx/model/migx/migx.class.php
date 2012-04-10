@@ -65,6 +65,7 @@ class Migx
         $defaultconfig['corePath'] = $corePath;
         $defaultconfig['modelPath'] = $corePath . 'model/';
         $defaultconfig['processorsPath'] = $corePath . 'processors/';
+        $defaultconfig['templatesPath'] = $corePath . 'templates/';
         $defaultconfig['controllersPath'] = $corePath . 'controllers/';
         $defaultconfig['chunksPath'] = $corePath . 'elements/chunks/';
         $defaultconfig['snippetsPath'] = $corePath . 'elements/snippets/';
@@ -74,6 +75,7 @@ class Migx
         $defaultconfig['jsUrl'] = $assetsUrl . 'js/';
         $defaultconfig['jsPath'] = $assetsPath . 'js/';
         $defaultconfig['connectorUrl'] = $assetsUrl . 'connector.php';
+        $defaultconfig['request'] = $_REQUEST;
 
         $this->config = array_merge($defaultconfig, $config);
 
@@ -126,6 +128,131 @@ class Migx
     {
         return $this->customconfigs['columns'];
     }
+    public function getGrid(){
+        return !empty ($this->customconfigs['grid']) ? $this->customconfigs['grid'] : 'default';
+    }
+    
+    public function prepareGrid($properties, & $controller, & $tv){
+        $this->loadConfigs();
+      
+        $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
+        $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
+        
+        $formtabs = $this->getTabs();
+
+        //$formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
+        //$formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
+
+        $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
+        //$this->migx->debug('resource',$resource);
+        
+        //multiple different Forms
+        // Note: use same field-names and inputTVs in all forms
+
+        $inputTvs = $this->extractInputTvs($formtabs);
+
+        /* get base path based on either TV param or filemanager_path */
+        $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
+        
+        /* pasted from processors.element.tv.renders.mgr.input*/
+        /* get working context */
+        $wctx = isset($_GET['wctx']) && !empty($_GET['wctx']) ? $this->modx->sanitizeString($_GET['wctx']) : '';
+        if (!empty($wctx)) {
+            $workingContext = $this->modx->getContext($wctx);
+            if (!$workingContext) {
+                return $modx->error->failure($this->modx->lexicon('permission_denied'));
+            }
+            $wctx = $workingContext->get('key');
+        } else {
+            $wctx = $this->modx->context->get('key');
+        }
+
+        $this->working_context = $wctx;
+        
+        if (is_object($tv)){
+            $this->source = $tv->getSource($this->working_context, false);
+        }
+        
+
+        /* pasted end*/
+
+        //$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
+        //$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+
+        //$columns = $this->modx->fromJSON($this->modx->getOption('columns', $properties, $default_columns));
+        //$columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
+        
+        $columns = $this->getColumns();
+
+        if (is_array($columns) && count($columns) > 0) {
+            foreach ($columns as $key => $column) {
+                $field['name'] = $column['dataIndex'];
+                $field['mapping'] = $column['dataIndex'];
+                $fields[] = $field;
+                $col['dataIndex'] = $column['dataIndex'];
+                $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                $col['sortable'] = $column['sortable'] == 'true' ? true : false;
+                $col['width'] = $column['width'];
+                $col['renderer'] = $column['renderer'];
+                $cols[] = $col;
+                $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
+
+                if (isset($inputTvs[$field['name']]) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $inputTvs[$field['name']]['inputTV']))) {
+
+                    $inputTV = $inputTvs[$field['name']];
+
+                    $params = $tv->get('input_properties');
+                    $params['wctx'] = $wctx;
+                    /*
+                    if (!empty($properties['basePath'])) {
+                    if ($properties['autoResourceFolders'] == 'true' && isset($resource['id'])) {
+                    $params['basePath'] = $base_path.$properties['basePath'] . $resource['id'] . '/';
+                    } else {
+                    $params['basePath'] = $base_path.$properties['basePath'];
+                    }
+                    }
+                    */
+                    $mediasource = $this->getFieldSource($inputTV, $tv);
+                    $pathconfigs[$key] = '&source=' . $mediasource->get('id');
+                    //$pathconfigs[$key] = '&basePath='.$params['basePath'].'&basePathRelative='.$params['basePathRelative'].'&baseUrl='.$params['baseUrl'].'&baseUrlRelative='.$params['baseUrlRelative'];
+
+                } else {
+                    $pathconfigs[$key] = array();
+                }
+            }
+        }
+        
+        $tv_id = is_object($tv) ? $tv->get('id') : 'migxdb';
+        
+        $newitem[] = $item;
+        $lang = $this->modx->lexicon->fetch();
+        $lang['mig_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['mig_add'];
+        $controller->setPlaceholder('i18n', $lang);
+        $controller->setPlaceholder('properties', $properties);
+        $controller->setPlaceholder('resource', $resource);
+        $controller->setPlaceholder('configs', $this->config['configs']);
+        $controller->setPlaceholder('object_id', $this->modx->getOption('object_id',$_REQUEST,''));
+        $controller->setPlaceholder('connected_object_id', $this->modx->getOption('object_id',$_REQUEST,''));
+        $controller->setPlaceholder('pathconfigs', $this->modx->toJSON($pathconfigs));
+        $controller->setPlaceholder('columns', $this->modx->toJSON($cols));
+        $controller->setPlaceholder('fields', $this->modx->toJSON($fields));
+        $controller->setPlaceholder('newitem', $this->modx->toJSON($newitem));
+        $controller->setPlaceholder('base_url', $this->modx->getOption('base_url'));
+        $controller->setPlaceholder('myctx', $wctx);
+        $controller->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
+        $controller->setPlaceholder('customconfigs', $this->customconfigs);
+        $controller->setPlaceholder('win_id', isset ($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $tv_id);
+        
+        $grid = $this->getGrid();
+        $path = 'components/migx/';
+        $corePath = $this->modx->getOption('migx.core_path', null, $this->modx->getOption('core_path') . $path);  
+        $gridfile = $corePath.'elements/tv/grids/'.$grid.'.grid.tpl';
+        $controller->setPlaceholder('grid', $this->modx->controller->fetchTemplate($gridfile));
+        
+        $windowfile = $this->config['templatesPath'].'mgr/updatewindow.tpl';
+        $controller->setPlaceholder('updatewindow', $this->modx->controller->fetchTemplate($windowfile));         
+    }
+    
     function getFieldSource($field, &$tv)
     {
         //set media_source for this TV before changing the id
@@ -208,7 +335,7 @@ class Migx
                 }
                 /*generate unique tvid, must be numeric*/
                 /*todo: find a better solution*/
-                $field['tv_id'] = ($scriptProperties['tv_id'] * 10) . $fieldid;
+                $field['tv_id'] = (($scriptProperties['tv_id'] * 10) . $fieldid) * 1;
                 $field['array_tv_id'] = $field['tv_id'] . '[]';
                 $allfields[] = $field;
 

@@ -62,6 +62,9 @@ class migxFormProcessor extends modProcessor
         /*actual record */
         $record = $this->modx->fromJSON($scriptProperties['record_json']);
 
+        $allfields = array();
+        $formnames = array();        
+
         $field = array();
         $field['field'] = 'MIGX_id';
         $field['tv_id'] = 'migxid';
@@ -72,7 +75,8 @@ class migxFormProcessor extends modProcessor
             $migxid = $record['MIGX_id'];
         }
         $controller->setPlaceholder('migxid', $migxid);
-
+        
+ 
 
         if (empty($formtabs)) {
 
@@ -82,8 +86,6 @@ class migxFormProcessor extends modProcessor
             $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
             $fieldid = 0;
             $tabid = 0;
-            $allfields = array();
-            $formnames = array();
 
             //multiple different Forms
             // Note: use same field-names and inputTVs in all forms

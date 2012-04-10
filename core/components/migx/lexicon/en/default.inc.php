@@ -8,6 +8,9 @@
 
 //$_lang['mig_'] = '';
 
+$_lang['migx'] = 'MIGX';
+$_lang['migx.management'] = 'MIGX Management';
+$_lang['migx.management_desc'] = 'Manage your doodles here. You can edit them by either double-clicking on the grid or right-clicking on the respective row.';
 
 $_lang['mig_noitems'] = 'No items found';
 $_lang['mig_add'] = 'Add Item';

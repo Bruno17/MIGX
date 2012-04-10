@@ -337,8 +337,9 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             }
         });
     }                	     
-	,loadWin: function(btn,e,index,action) {
+	,loadWin: function(btn,e,index,action,tempParams) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
+        var tempParams = tempParams || null;
         var co_id = '{/literal}{$connected_object_id}{literal}';
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
@@ -375,14 +376,17 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             //this.windows[win_xtype].fp.autoLoad.params.autoinc=this.autoinc;
             //this.windows[win_xtype].fp.autoLoad.params.isnew=isnew;
             this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
+            this.windows[win_xtype].fp.autoLoad.params.tempParams=tempParams;
 			this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
+           
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
             //,record: data
 			,grid: this
             ,action: action
+            
             ,baseParams : {
 				//record_json:json,
 			    action: 'mgr/migxdb/fields',
@@ -396,7 +400,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
                 configs: this.config.configs,
                 //isnew : isnew,
                 resource_id : resource_id,
-                co_id : co_id
+                co_id : co_id,
+                tempParams: tempParams
 			}
         });
     }
