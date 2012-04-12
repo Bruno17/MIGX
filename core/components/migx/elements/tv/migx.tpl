@@ -85,12 +85,12 @@ MODx.grid.multiTVgrid = function(config) {
 }
 
 		,tbar: [{
-            text: '{/literal}{$i18n.mig_add}{literal}',
+            text: _('migx.add'),
 			handler: this.addItem
         }
         {/literal}{if $properties.previewurl != ''}{literal}
         ,{
-            text: '{/literal}{$i18n.mig_preview}{literal}',
+            text: _('migx.preview'),
 			handler: this.preview
         }
         {/literal}{/if}{literal}
@@ -202,7 +202,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	}    	
 	,remove: function() {
         var _this=this;
-		Ext.Msg.confirm(_('warning') || '','{/literal}{$i18n.mig_remove_confirm}{literal}' || '',function(e) {
+		Ext.Msg.confirm(_('warning') || '',_('migx.remove_confirm') || '',function(e) {
             if (e == 'yes') {
 				_this.getStore().removeAt(_this.menu.recordIndex);
                 _this.getView().refresh();
@@ -221,7 +221,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
-            alert ('{/literal}{$i18n.mig_save_resource}{literal}');
+            alert (_('migx.save_resource'));
             return;
         }
         {/literal}{/if}{literal}        
@@ -303,16 +303,16 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		var n = this.menu.record; 
         var m = [];
         m.push({
-            text: '{/literal}{$i18n.mig_edit}{literal}'
+            text: _('migx.edit')
             ,handler: this.update
         });
         m.push({
-            text: '{/literal}{$i18n.mig_duplicate}{literal}'
+            text: _('migx.duplicate')
             ,handler: this.duplicate
         });        
         m.push('-');
         m.push({
-            text: '{/literal}{$i18n.mig_remove}{literal}'
+            text: _('migx.remove')
             ,handler: this.remove
         });
 		return m;
@@ -630,7 +630,7 @@ Ext.reg('modx-iframe-mi-preview',Ext.ux.IFrameComponent);
 MODx.window.MiPreview = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        title: '{/literal}{$i18n.mig_preview}{literal}'
+        title: _('migx.preview')
         ,id: 'modx-window-mi-preview' 
         ,width: '1050'
         ,height: '700'
@@ -714,6 +714,11 @@ Ext.extend(MODx.window.MiPreview,Ext.Window,{
 });
 Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
 
+Ext.onReady(function() {
+var lang = '{/literal}{$migx_lang}{literal}';
+  for (var name in lang) {
+    MODx.lang[name] = lang[name];
+  }
 
         MODx.load({
             xtype: 'modx-grid-multitvgrid'
@@ -728,6 +733,10 @@ Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
             ,wctx: '{/literal}{$myctx}{literal}'
             ,width: '97%'			
         });
+  
+});
+
+
 
 
 {/literal}

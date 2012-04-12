@@ -6,6 +6,10 @@ $xpdo_meta_map['migxConfig']= array (
   array (
     'name' => '',
     'formtabs' => '',
+    'contextmenus' => '',
+    'actionbuttons' => '',
+    'filters' => '',
+    'configs' => '',
     'columns' => '',
     'createdby' => 0,
     'createdon' => NULL,
@@ -17,9 +21,6 @@ $xpdo_meta_map['migxConfig']= array (
     'published' => 0,
     'publishedon' => NULL,
     'publishedby' => 0,
-    'paymentdata' => '',
-    'basket' => '',
-    'status' => '',
   ),
   'fieldMeta' => 
   array (
@@ -32,6 +33,34 @@ $xpdo_meta_map['migxConfig']= array (
       'default' => '',
     ),
     'formtabs' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
+    'contextmenus' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
+    'actionbuttons' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
+    'filters' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
+    'configs' => 
     array (
       'dbtype' => 'text',
       'phptype' => 'string',
@@ -118,28 +147,6 @@ $xpdo_meta_map['migxConfig']= array (
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
-    ),
-    'paymentdata' => 
-    array (
-      'dbtype' => 'text',
-      'phptype' => 'json',
-      'null' => false,
-      'default' => '',
-    ),
-    'basket' => 
-    array (
-      'dbtype' => 'text',
-      'phptype' => 'string',
-      'null' => false,
-      'default' => '',
-    ),
-    'status' => 
-    array (
-      'dbtype' => 'varchar',
-      'phptype' => 'string',
-      'precision' => '10',
-      'null' => false,
-      'default' => '',
     ),
   ),
   'aggregates' => 

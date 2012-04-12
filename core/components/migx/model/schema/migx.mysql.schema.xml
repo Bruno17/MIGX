@@ -5,6 +5,10 @@
     <object class="migxConfig" table="migx_configs" extends="xPDOSimpleObject">
     	<field key="name" dbtype="varchar" phptype="string" precision="100" null="false" default="" />
         <field key="formtabs" dbtype="text" phptype="string" null="false" default="" />
+        <field key="contextmenus" dbtype="text" phptype="string" null="false" default="" />
+        <field key="actionbuttons" dbtype="text" phptype="string" null="false" default="" />
+        <field key="filters" dbtype="text" phptype="string" null="false" default="" />
+        <field key="configs" dbtype="text" phptype="string" null="false" default="" />
         <field key="columns" dbtype="text" phptype="string" null="false" default="" />
 		<field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />	
     	<field key="createdon" dbtype="datetime" phptype="datetime" null="false" />
@@ -16,9 +20,7 @@
         <field key="published" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />        
 		<field key="publishedon" dbtype="datetime" phptype="datetime" null="false" />
 		<field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />        
-    	<field key="paymentdata" dbtype="text" phptype="json" null="false" default="" />
-        <field key="basket" dbtype="text" phptype="string" null="false" default="" />
-    	<field key="status" dbtype="varchar" phptype="string" precision="10" null="false" default="" />
+
         <aggregate alias="ConfigElements" class="migxConfigElement" local="id" foreign="config_id" cardinality="many" owner="local" /> 
     </object>
 

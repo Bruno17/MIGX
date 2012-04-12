@@ -41,7 +41,14 @@ $this->customconfigs['auto_create_tables'] = true;
 */
 
 $inputType = !empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'raw' ? 'textarea' : 'migx';
-
+$menus = array();
+foreach ($gridcontextmenus as $key=>$value){
+    $menus[] = $key;
+}
+$actionbuttons = array();
+foreach ($gridactionbuttons as $key=>$value){
+    $actionbuttons[] = $key;
+}
 
 $tabs = '
 [
@@ -54,6 +61,12 @@ $tabs = '
 ]},
 {"caption":"Columns", "fields": [
     {"field":"columns","caption":"Columns","inputTVtype":"' . $inputType . '","configs":"migxcolumns"}
+]},
+{"caption":"Contextmenues", "fields": [
+    {"field":"contextmenus","caption":"Contextmenues","inputTVtype":"checkbox","inputOptionValues":"'.implode('||',$menus).'"}
+]},
+{"caption":"Actionbuttons", "fields": [
+    {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"'.implode('||',$actionbuttons).'"}
 ]}
 ]
 ';
@@ -122,19 +135,6 @@ $columns = '
 
 $this->customconfigs['columns'] = $this->modx->fromJson($columns);
 
-$gridfunctions['this.editRaw']="
-    editRaw: function(btn,e) {
-      this.loadWin(btn,e,this.menu.recordIndex,'u','raw');
-    }  
-";
-
-$gridcontextmenus['editraw']['code'] = "
-        m.push({
-            text: 'Edit raw'
-            ,handler: this.editRaw
-        });
-";
-$gridcontextmenus['editraw']['handler'] = 'this.editRaw';
 $gridcontextmenus['editraw']['active'] = 1; 
 
 $gridcontextmenus['update']['active'] = 1;
@@ -146,9 +146,7 @@ $gridactionbuttons['addItem']['active'] = 1;
 $gridactionbuttons['bulk']['active'] = 1;
 $gridactionbuttons['toggletrash']['active'] = 1;
 
-$this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
-$this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
-$this->customconfigs['gridfunctions'] = $gridfunctions;
+
 
 /*);
 

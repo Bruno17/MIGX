@@ -100,6 +100,11 @@ class Migx
     function loadConfigs()
     {
 
+        $gridactionbuttons = array();
+        $gridcontextmenus = array();
+        $gridfunctions = array();
+        $renderer = array();
+
         $configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
         //$configs = array_merge( array ('master'), $configs);
         $config = 'grid';
@@ -107,20 +112,49 @@ class Migx
         if (file_exists($configFile)) {
             include ($configFile);
         }
+        //custom collection of grid-functions......
+        $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.custom.config.inc.php'; // [ file ]
+        if (file_exists($configFile)) {
+            include ($configFile);
+        }        
         foreach ($configs as $config) {
-            $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
-            //first try to find config-object
+            //first try to find custom-grid-configurations (buttons,context-menus,functions)
+            $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.config.inc.php'; // [ file ]
+            if (file_exists($configFile)) {
+                include ($configFile);
+            }
+            //second try to find config-object
             if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config))) {
                 $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $cfObject->toArray()) : $cfObject->toArray();
                 $this->customconfigs['tabs'] = $this->modx->fromJson($cfObject->get('formtabs'));
                 //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
                 $this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
+                $menus = $cfObject->get('contextmenus');
+                if (!empty($menus)){
+                    $menus = explode('||',$menus);
+                    foreach ($menus as $menu){
+                        $gridcontextmenus[$menu]['active'] = 1;    
+                    }
+                }
+                $actionbuttons = $cfObject->get('actionbuttons');
+                if (!empty($actionbuttons)){
+                    $actionbuttons = explode('||',$actionbuttons);
+                    foreach ($actionbuttons as $button){
+                        $gridactionbuttons[$button]['active'] = 1;    
+                    }
+                }                
             }
-            //second add configs from file, if exists
+            //third add configs from file, if exists
+            $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]            
             if (file_exists($configFile)) {
                 include ($configFile);
             }
         }
+        $this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
+        $this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
+        $this->customconfigs['gridfunctions'] = array_merge($gridfunctions,$renderer);
+        
+        
     }
 
     public function getTask()
@@ -153,12 +187,12 @@ class Migx
                     if (!in_array($button['handler'], $handlers)) {
                         $handlers[] = $button['handler'];
                     }
-                    if (is_array($button['menu'])){
+                    if (is_array($button['menu'])) {
                         foreach ($button['menu'] as $menu) {
                             if (!in_array($menu['handler'], $handlers)) {
                                 $handlers[] = $menu['handler'];
                             }
-                        }                        
+                        }
 
                     }
 
@@ -211,16 +245,8 @@ class Migx
         }
         $this->customconfigs['gridcontextmenus'] = $menues;
 
-        //print_r($handlers);
         $gridfunctions = array();
-        if (count($handlers > 0)) {
-            foreach ($handlers as $handler) {
-                if (isset($this->customconfigs['gridfunctions'][$handler])) {
-                    $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
-                }
-            }
-        }
-        $this->customconfigs['gridfunctions'] = ',' . implode(',', $gridfunctions);
+  
 
         $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
         $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
@@ -276,18 +302,20 @@ class Migx
                 $field['name'] = $column['dataIndex'];
                 $field['mapping'] = $column['dataIndex'];
                 $fields[] = $field;
-    $field['show_in_grid'] = isset($field['show_in_grid']) ? $field['show_in_grid'] : 1;
-    			if (!empty($field['show_in_grid'])) {
+                $column['show_in_grid'] = isset($column['show_in_grid']) ? $column['show_in_grid'] : 1;
+                
+                if (!empty($column['show_in_grid'])) {
 
-                $col['dataIndex'] = $column['dataIndex'];
-                $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
-                $col['sortable'] = $column['sortable'] == 'true' ? true : false;
-                $col['width'] = $column['width'];
-                    if (isset($column['renderer'])) {
+                    $col['dataIndex'] = $column['dataIndex'];
+                    $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                    $col['sortable'] = $column['sortable'] == 'true' ? true : false;
+                    $col['width'] = $column['width'];
+                    if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
+                        $handlers[] = $column['renderer'];
                     }
-                $cols[] = $col;
-}
+                    $cols[] = $col;
+                }
 
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
 
@@ -315,6 +343,18 @@ class Migx
                 }
             }
         }
+        
+        if (count($handlers) >0 ) {
+            foreach ($handlers as $handler) {
+                if (isset($this->customconfigs['gridfunctions'][$handler])) {
+                    $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
+                }
+            }
+        $this->customconfigs['gridfunctions'] = ',' . implode(',', $gridfunctions);
+        }
+        else{
+            $this->customconfigs['gridfunctions'] = '';
+        }        
 
         $tv_id = is_object($tv) ? $tv->get('id') : 'migxdb';
 
@@ -324,7 +364,7 @@ class Migx
         $lang['mig_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['migx.add'];
         $lang['mig_add'] = str_replace("'", "\'", $lang['mig_add']);
         $controller->setPlaceholder('i18n', $lang);
-        $controller->setPlaceholder('migx_lang',  $this->modx->toJSON($migxlang));
+        $controller->setPlaceholder('migx_lang', $this->modx->toJSON($migxlang));
         $controller->setPlaceholder('properties', $properties);
         $controller->setPlaceholder('resource', $resource);
         $controller->setPlaceholder('configs', $this->config['configs']);
@@ -410,7 +450,12 @@ class Migx
                     $tv = $this->modx->newObject('modTemplateVar');
                     $tv->set('type', !empty($field['inputTVtype']) ? $field['inputTVtype'] : 'text');
                 }
-
+                if (!empty($field['inputOptionValues'])) {
+                    $tv->set('elements',$field['inputOptionValues']);
+                }
+                if (!empty($field['default'])) {
+                    $tv->set('default_text',$field['default']);
+                }              
                 if (!empty($field['configs'])) {
                     $params['configs'] = $field['configs'];
                 }

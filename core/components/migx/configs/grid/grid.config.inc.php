@@ -77,34 +77,39 @@ $gridcontextmenus['recall_remove_delete']['code']="
 $gridcontextmenus['recall_remove_delete']['handler'] = 'this.recallObject,this.removeObject,this.deleteObject';
 
 $ctx = '{$ctx}';
-$gridfunctions['this.renderImage'] = "
+$httpimg = '<img style="height:60px" src="' + val + '"/>';
+
+$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+'&wctx={/literal}{$ctx}{literal}'+source+'";
+$phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
+
+$renderer['this.renderImage'] = "
     ,renderImage : function(val, md, rec, row, col, s){
 		var source = s.pathconfigs[col];
 		if (val.substr(0,4) == 'http'){
-            return '<img style=\"height:60px\" src=\"' + val + '\"/>' ;
+            return '{$httpimg}' ;
 		}        
 		if (val != ''){
-			return '<img src=\"'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+'&wctx={/literal}{$ctx}{literal}'+source+'\" alt=\"\" />';
+			return '';
 		}
 		return val;
 	}
 ";
 
-$gridfunctions['this.renderPlaceholder'] = "
+$renderer['this.renderPlaceholder'] = "
 renderPlaceholder : function(val, md, rec, row, col, s){
         return '[[+'+val+'.'+rec.json.MIGX_id+']]';
         
 	}
 ";
 
-$gridfunctions['this.renderFirst'] = "
+$renderer['this.renderFirst'] = "
 renderFirst : function(val, md, rec, row, col, s){
 		val = val.split(':');
         return val[0];
 	}        
 ";
 
-$gridfunctions['this.renderLimited'] = "
+$renderer['this.renderLimited'] = "
 renderLimited : function(val, md, rec, row, col, s){
 		var max = 100;
         var count = val.length;
@@ -115,10 +120,22 @@ renderLimited : function(val, md, rec, row, col, s){
 	}    
 ";
 
-$gridfunctions['this.renderPreview'] = "
-renderPreview : function(val,md,rec){
-		return val;
-	}
+$img = '<img src="{0}" alt="{1}" title="{2}">';
+$renderer['this.renderCrossTick'] = "
+renderCrossTick : function(val, md, rec, row, col, s) {
+    var renderImage, altText;
+    switch (val) {
+        case 0:
+            renderImage = '/assets/components/migx/style/images/cross.png';
+            altText = 'No';
+            break;
+        case 1:
+            renderImage = '/assets/components/migx/style/images/tick.png';
+            altText = 'Yes';
+            break;
+    }
+    return String.format('{$img}', renderImage, altText, altText);
+}
 ";
 
 $gridfunctions['this.addItem'] = "
@@ -159,10 +176,10 @@ $gridfunctions['this.toggleDeleted'] = "
         var s = this.getStore();
         if (btn.pressed) {
             s.setBaseParam('showtrash',1);
-            btn.setText(_('mig.show_normal'));
+            btn.setText(_('migx.show_normal'));
         } else {
             s.setBaseParam('showtrash',0);
-            btn.setText(_('mig.show_trash'));
+            btn.setText(_('migx.show_trash'));
         }
         this.getBottomToolbar().changePage(1);
         s.removeAll();
@@ -203,6 +220,7 @@ unpublishObject: function() {
         });
     }    
 ";
+$task = '{$customconfigs.task}';
 $gridfunctions['this.publishSelected'] = "
 publishSelected: function(btn,e) {
         var cs = this.getSelectedAsList();
@@ -211,7 +229,7 @@ publishSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}\{$customconfigs.task}{literal}/bulkupdate'
+                action: 'mgr/{/literal}{$task}{literal}/bulkupdate'
 				,configs: this.config.configs
 				,task: 'publish'
                 ,objects: cs
@@ -234,7 +252,7 @@ unpublishSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}\{$customconfigs.task}{literal}/bulkupdate'
+                action: 'mgr/{/literal}{$task}{literal}/bulkupdate'
 				,configs: this.config.configs
 				,task: 'unpublish'
                 ,objects: cs
@@ -257,7 +275,7 @@ deleteSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}\{$customconfigs.task}{literal}/bulkupdate'
+                action: 'mgr/{/literal}{$task}{literal}/bulkupdate'
 				,configs: this.config.configs
 				,task: 'delete'
                 ,objects: cs
@@ -309,7 +327,7 @@ removeObject: function() {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}\{$customconfigs.task}{literal}/remove'
+                action: 'mgr/{/literal}{$task}{literal}/remove'
 				,task: 'removeone'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
