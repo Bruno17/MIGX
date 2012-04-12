@@ -23,3 +23,19 @@ $_lang['mig_show_trash'] = 'Trash View';
 $_lang['mig_show_normal'] = 'Normal View';
 
 $_lang['mig_loadgrid'] = 'load grid';
+
+$_lang['migx.create'] = 'Créer';
+$_lang['migx.publish'] = 'Publier';
+$_lang['migx.unpublish'] = 'Dépublier';
+$_lang['migx.delete'] = 'Delete';
+$_lang['migx.actions'] = 'Actions';
+$_lang['migx.bulk_actions'] = 'Actions groupées';
+$_lang['migx.publish_selected'] = 'Publier la sélection';
+$_lang['migx.unpublish_selected'] = 'Dépublier la sélection';
+$_lang['migx.delete_selected'] = 'Supprimer la sélection';
+$_lang['migx.remove_selected'] = 'Enlever la sélection';
+$_lang['migx.recall'] = 'Recall';
+$_lang['migx.remove'] = 'Remove';
+$_lang['migx.new'] = 'nouveau';
+$_lang['month'] = 'Mois';
+$_lang['year'] = 'Année';

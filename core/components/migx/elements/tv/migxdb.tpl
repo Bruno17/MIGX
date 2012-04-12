@@ -191,11 +191,20 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
 Ext.reg('modx-button-load-migxdb-grid',MODx.loadMIGXdbGridButton);
 
 
+//load migx-lang into modx-lang
+Ext.onReady(function() {
+var lang = {/literal}{$migx_lang}{literal};
+  for (var name in lang) {
+    MODx.lang[name] = lang[name];
+  }
+
 MODx.load({
-            xtype: 'modx-button-load-migxdb-grid'
-            ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
-            ,text: '{/literal}{$i18n.mig_loadgrid}{literal}'		
-        });
+        xtype: 'modx-button-load-migxdb-grid'
+        ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
+        ,text: _('migx.loadgrid')	
+});  
+  
+});
 
         /*
         MODx.load({

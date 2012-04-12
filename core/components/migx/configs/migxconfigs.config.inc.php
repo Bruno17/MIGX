@@ -1,6 +1,6 @@
 <?php
 
-//$this->config['auto_create_tables']=false; //default is true
+
 /*
 * the packageName where you have your classes
 * this can be used in processors
@@ -28,19 +28,7 @@ $this->customconfigs['formcaption'] = 'Image';
 
 $this->customconfigs['auto_create_tables'] = true;
 
-/*
-if (is_object($this->modx->resource)){
-$res_id = $this->modx->resource->get('id');
-}
-else {
-$res_id = $_REQUEST['resource_id'];
-}
 
-$container_id = '26';
-
-$is_container = $res_id == $container_id;
-$this->customconfigs['is_container'] = $is_container;
-*/
 /*
 * the tabs and input-fields for your xdbedit-page
 * outerarray: caption for Tab and fields
@@ -51,15 +39,8 @@ $this->customconfigs['is_container'] = $is_container;
 * without inputTV or if not found it uses text-type
 * 
 */
-/*
-$customer_field = '';
-if ($is_container){
-$customer_field = ',{"field":"customerid","caption":"Kunde","inputTV":"customer_resourcelist"}';    
-}  
-*/
 
-$inputType = !empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'raw' ? 'textarea' : 'migx'; 
-
+$inputType = !empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'raw' ? 'textarea' : 'migx';
 
 
 $tabs = '
@@ -68,11 +49,11 @@ $tabs = '
     {"field":"name","caption":"Name"}
 ]},
 {"caption":"formtabs", "fields": [
-    {"field":"formtabs","caption":"Formtabs","inputTVtype":"'.$inputType.'","configs":"migxformtabs"}
+    {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"}
 
 ]},
 {"caption":"Columns", "fields": [
-    {"field":"columns","caption":"Columns","inputTVtype":"'.$inputType.'","configs":"migxcolumns"}
+    {"field":"columns","caption":"Columns","inputTVtype":"' . $inputType . '","configs":"migxcolumns"}
 ]}
 ]
 ';
@@ -141,28 +122,33 @@ $columns = '
 
 $this->customconfigs['columns'] = $this->modx->fromJson($columns);
 
-if ($is_container) {
-
-    $column['header'] = 'Kunde';
-    $column['dataIndex'] = 'customerid';
-    $column['sortable'] = 'true';
-    $this->customconfigs['columns'][] = $column;
-}
-
-$this->customconfigs['gridfunctions'] = "
-	,editRaw: function(btn,e) {
+$gridfunctions['this.editRaw']="
+    editRaw: function(btn,e) {
       this.loadWin(btn,e,this.menu.recordIndex,'u','raw');
-    }  		     
+    }  
 ";
 
-$this->customconfigs['gridcontextmenus'] = "
-        m.push('-');
+$gridcontextmenus['editraw']['code'] = "
         m.push({
             text: 'Edit raw'
             ,handler: this.editRaw
         });
 ";
+$gridcontextmenus['editraw']['handler'] = 'this.editRaw';
+$gridcontextmenus['editraw']['active'] = 1; 
 
+$gridcontextmenus['update']['active'] = 1;
+$gridcontextmenus['publish']['active'] = 0;
+$gridcontextmenus['unpublish']['active'] = 0;
+$gridcontextmenus['recall_remove_delete']['active'] = 0;
+
+$gridactionbuttons['addItem']['active'] = 1;
+$gridactionbuttons['bulk']['active'] = 1;
+$gridactionbuttons['toggletrash']['active'] = 1;
+
+$this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
+$this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
+$this->customconfigs['gridfunctions'] = $gridfunctions;
 
 /*);
 
