@@ -3,7 +3,7 @@
 /**
  * xdbedit
  *
- * @author Bruno Pernerb
+ * @author Bruno Perner
  *
  *
  * @package migxdb
@@ -116,7 +116,7 @@ class Migx
         $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.custom.config.inc.php'; // [ file ]
         if (file_exists($configFile)) {
             include ($configFile);
-        }        
+        }
         foreach ($configs as $config) {
             //first try to find custom-grid-configurations (buttons,context-menus,functions)
             $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.config.inc.php'; // [ file ]
@@ -125,36 +125,49 @@ class Migx
             }
             //second try to find config-object
             if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config))) {
-                $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $cfObject->toArray()) : $cfObject->toArray();
+
+                $objectarray = $cfObject->toArray();
+                if (is_array($objectarray['extended'])) {
+                    foreach ($objectarray['extended'] as $key => $value) {
+                        if (!empty($value)) {
+                            $this->customconfigs[$key] = $value;
+                        }
+                    }
+                }
+                
+                unset($objectarray['extended']);
+
+                $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $objectarray) : $objectarray;
                 $this->customconfigs['tabs'] = $this->modx->fromJson($cfObject->get('formtabs'));
                 //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
                 $this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
                 $menus = $cfObject->get('contextmenus');
-                if (!empty($menus)){
-                    $menus = explode('||',$menus);
-                    foreach ($menus as $menu){
-                        $gridcontextmenus[$menu]['active'] = 1;    
+                if (!empty($menus)) {
+                    $menus = explode('||', $menus);
+                    foreach ($menus as $menu) {
+                        $gridcontextmenus[$menu]['active'] = 1;
                     }
                 }
                 $actionbuttons = $cfObject->get('actionbuttons');
-                if (!empty($actionbuttons)){
-                    $actionbuttons = explode('||',$actionbuttons);
-                    foreach ($actionbuttons as $button){
-                        $gridactionbuttons[$button]['active'] = 1;    
+                if (!empty($actionbuttons)) {
+                    $actionbuttons = explode('||', $actionbuttons);
+                    foreach ($actionbuttons as $button) {
+                        $gridactionbuttons[$button]['active'] = 1;
                     }
-                }                
+                }
             }
             //third add configs from file, if exists
-            $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]            
+            $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
             if (file_exists($configFile)) {
                 include ($configFile);
             }
         }
         $this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
         $this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
-        $this->customconfigs['gridfunctions'] = array_merge($gridfunctions,$renderer);
-        
-        
+        $this->customconfigs['gridfunctions'] = array_merge($gridfunctions, $renderer);
+        $this->customconfigs['task'] = empty($this->customconfigs['task']) ? 'default' : $this->customconfigs['task'];
+
+
     }
 
     public function getTask()
@@ -246,7 +259,7 @@ class Migx
         $this->customconfigs['gridcontextmenus'] = $menues;
 
         $gridfunctions = array();
-  
+
 
         $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
         $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
@@ -303,9 +316,9 @@ class Migx
                 $field['mapping'] = $column['dataIndex'];
                 $fields[] = $field;
                 $column['show_in_grid'] = isset($column['show_in_grid']) ? $column['show_in_grid'] : 1;
-                
-                if (!empty($column['show_in_grid'])) {
 
+                if (!empty($column['show_in_grid'])) {
+                    $col = array();
                     $col['dataIndex'] = $column['dataIndex'];
                     $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
                     $col['sortable'] = $column['sortable'] == 'true' ? true : false;
@@ -343,27 +356,32 @@ class Migx
                 }
             }
         }
-        
-        if (count($handlers) >0 ) {
+
+        if (count($handlers) > 0) {
             foreach ($handlers as $handler) {
                 if (isset($this->customconfigs['gridfunctions'][$handler])) {
                     $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
                 }
             }
-        $this->customconfigs['gridfunctions'] = ',' . implode(',', $gridfunctions);
-        }
-        else{
+            $this->customconfigs['gridfunctions'] = ',' . implode(',', $gridfunctions);
+        } else {
             $this->customconfigs['gridfunctions'] = '';
-        }        
+        }
 
         $tv_id = is_object($tv) ? $tv->get('id') : 'migxdb';
 
         $newitem[] = $item;
         $lang = $this->modx->lexicon->fetch();
         $migxlang = $this->modx->lexicon->fetch('migx');
+        $migxi18n = array();
+        foreach ($migxlang as $key => $value) {
+            $key = str_replace('migx.', 'migx_', $key);
+            $migxi18n[$key] = $value;
+        }
+
         $lang['mig_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['migx.add'];
         $lang['mig_add'] = str_replace("'", "\'", $lang['mig_add']);
-        $controller->setPlaceholder('i18n', $lang);
+        $controller->setPlaceholder('i18n', $migxi18n);
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($migxlang));
         $controller->setPlaceholder('properties', $properties);
         $controller->setPlaceholder('resource', $resource);
@@ -442,7 +460,7 @@ class Migx
             $categories[$tabid] = $emptycat;
 
             $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
-            foreach ($fields as &$field) {
+            foreach ($fields as & $field) {
                 $fieldid++;
                 if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
                     $params = $tv->get('input_properties');
@@ -451,11 +469,11 @@ class Migx
                     $tv->set('type', !empty($field['inputTVtype']) ? $field['inputTVtype'] : 'text');
                 }
                 if (!empty($field['inputOptionValues'])) {
-                    $tv->set('elements',$field['inputOptionValues']);
+                    $tv->set('elements', $field['inputOptionValues']);
                 }
                 if (!empty($field['default'])) {
-                    $tv->set('default_text',$field['default']);
-                }              
+                    $tv->set('default_text', $field['default']);
+                }
                 if (!empty($field['configs'])) {
                     $params['configs'] = $field['configs'];
                 }
@@ -475,7 +493,7 @@ class Migx
                 }
                 /*generate unique tvid, must be numeric*/
                 /*todo: find a better solution*/
-                $field['tv_id'] = (($scriptProperties['tv_id'] * 10) . $fieldid) * 1;
+                $field['tv_id'] = ($scriptProperties['tv_id'] . '99' . $fieldid) * 1;
                 $field['array_tv_id'] = $field['tv_id'] . '[]';
                 $allfields[] = $field;
 
@@ -617,19 +635,7 @@ class Migx
             $tmplVarTbl = $this->modx->getTableName('modTemplateVar');
             $tmplVarResourceTbl = $this->modx->getTableName('modTemplateVarResource');
             $conditions = array();
-            $operators = array(
-                '<=>' => '<=>',
-                '===' => '=',
-                '!==' => '!=',
-                '<>' => '<>',
-                '==' => 'LIKE',
-                '!=' => 'NOT LIKE',
-                '<<' => '<',
-                '<=' => '<=',
-                '=<' => '=<',
-                '>>' => '>',
-                '>=' => '>=',
-                '=>' => '=>');
+            $operators = array('<=>' => '<=>', '===' => '=', '!==' => '!=', '<>' => '<>', '==' => 'LIKE', '!=' => 'NOT LIKE', '<<' => '<', '<=' => '<=', '=<' => '=<', '>>' => '>', '>=' => '>=', '=>' => '=>');
             foreach ($tvFilters as $fGroup => $tvFilter) {
                 $filterGroup = array();
                 $filters = explode(',', $tvFilter);
@@ -768,33 +774,40 @@ class Migx
                         break;
                     case 'isempty':
                     case 'empty':
-                        $output = empty($subject) ? $then : (isset($else) ? $else : '');
+                        $output = empty($subject) ? $then:
+                        (isset($else) ? $else : '');
                         break;
                     case '!empty':
                     case 'notempty':
                     case 'isnotempty':
-                        $output = !empty($subject) && $subject != '' ? $then : (isset($else) ? $else : '');
+                        $output = !empty($subject) && $subject != '' ? $then:
+                        (isset($else) ? $else : '');
                         break;
                     case 'isnull':
                     case 'null':
-                        $output = $subject == null || strtolower($subject) == 'null' ? $then : (isset($else) ? $else : '');
+                        $output = $subject == null || strtolower($subject) == 'null' ? $then:
+                        (isset($else) ? $else : '');
                         break;
                     case 'inarray':
                     case 'in_array':
                     case 'ia':
                     case 'in':
-                        $operand = is_array($operand) ? $operand : explode(',', $operand);
-                        $output = in_array($subject, $operand) ? $then : (isset($else) ? $else : '');
+                        $operand = is_array($operand) ? $operand:
+                        explode(',', $operand);
+                        $output = in_array($subject, $operand) ? $then:
+                        (isset($else) ? $else : '');
                         break;
                     case 'find':
                     case 'find_in_set':
                         $subject = explode(',', $subject);
-                        $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
+                        $output = in_array($operand, $subject) ? $then:
+                        (isset($else) ? $else : '');
                         break;
                     case 'find_pd':
                     case 'find_in_pipesdelimited_set':
                         $subject = explode('||', $subject);
-                        $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
+                        $output = in_array($operand, $subject) ? $then:
+                        (isset($else) ? $else : '');
                         break;
                     case '==':
                     case '=':

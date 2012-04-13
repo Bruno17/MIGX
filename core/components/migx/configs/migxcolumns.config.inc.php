@@ -1,5 +1,6 @@
 <?php
 
+$renderers[] = '---==';
 foreach ($renderer as $key=>$value){
     $renderers[] = $key;
 }
@@ -9,7 +10,7 @@ $tabs ='
 {"caption":"Columns", "fields": [
 {"field":"header","caption":"Header"},
 {"field":"dataIndex","caption":"Field"},
-{"field":"renderer","caption":"Renderer","inputTVtype":"checkbox","inputOptionValues":"'.implode('||',$renderers).'"},
+{"field":"renderer","caption":"Renderer","inputTVtype":"listbox","inputOptionValues":"'.implode('||',$renderers).'"},
 {"field":"sortable","caption":"Sortable","inputTVtype":"listbox","inputOptionValues":"yes==true||no==false","default":"false"},
 {"field":"show_in_grid","caption":"Show in Grid","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0","default":"1"}
 ]}

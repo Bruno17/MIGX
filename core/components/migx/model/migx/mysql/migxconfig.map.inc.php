@@ -9,7 +9,7 @@ $xpdo_meta_map['migxConfig']= array (
     'contextmenus' => '',
     'actionbuttons' => '',
     'filters' => '',
-    'configs' => '',
+    'extended' => '',
     'columns' => '',
     'createdby' => 0,
     'createdon' => NULL,
@@ -60,10 +60,10 @@ $xpdo_meta_map['migxConfig']= array (
       'null' => false,
       'default' => '',
     ),
-    'configs' => 
+    'extended' => 
     array (
       'dbtype' => 'text',
-      'phptype' => 'string',
+      'phptype' => 'json',
       'null' => false,
       'default' => '',
     ),

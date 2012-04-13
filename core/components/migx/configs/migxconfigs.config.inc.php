@@ -67,6 +67,15 @@ $tabs = '
 ]},
 {"caption":"Actionbuttons", "fields": [
     {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"'.implode('||',$actionbuttons).'"}
+]},
+{"caption":"MIGXdb-Settings", "fields": [
+    {"field":"extended.packageName","caption":"Package"},
+    {"field":"extended.classname","caption":"Classname"},
+    {"field":"extended.task","caption":"Processors Path"},
+    {"field":"extended.prefix","caption":"Prefix"},
+    {"field":"extended.grid","caption":"Grid"},
+    {"field":"extended.check_resid","caption":"Check Resource","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0||@TV","default":"0"},
+    {"field":"extended.check_resid_TV","caption":"Check Resource TV"}
 ]}
 ]
 ';

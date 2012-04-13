@@ -83,13 +83,13 @@ $phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+'&
 $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 
 $renderer['this.renderImage'] = "
-    ,renderImage : function(val, md, rec, row, col, s){
+    renderImage : function(val, md, rec, row, col, s){
 		var source = s.pathconfigs[col];
 		if (val.substr(0,4) == 'http'){
             return '{$httpimg}' ;
 		}        
 		if (val != ''){
-			return '';
+			return '{$phpthumbimg}';
 		}
 		return val;
 	}

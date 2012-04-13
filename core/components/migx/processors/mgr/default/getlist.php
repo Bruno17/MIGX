@@ -1,0 +1,80 @@
+<?php
+
+//if (!$modx->hasPermission('quip.thread_list')) return $modx->error->failure($modx->lexicon('access_denied'));
+
+$config = $modx->migx->customconfigs;
+
+$prefix = $config['prefix'];
+$prefix = null;
+$packageName = $config['packageName'];
+
+$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+$modelpath = $packagepath . 'model/';
+
+$modx->addPackage($packageName, $modelpath, $prefix);
+$classname = $config['classname'];
+
+
+if ($this->modx->lexicon) {
+    $this->modx->lexicon->load($packageName . ':default');
+}
+
+/* setup default properties */
+$isLimit = !empty($scriptProperties['limit']);
+$isCombo = !empty($scriptProperties['combo']);
+$start = $modx->getOption('start', $scriptProperties, 0);
+$limit = $modx->getOption('limit', $scriptProperties, 20);
+$sort = $modx->getOption('sort', $scriptProperties, 'id');
+$dir = $modx->getOption('dir', $scriptProperties, 'ASC');
+$year = $modx->getOption('year', $scriptProperties, 'all');
+$month = $modx->getOption('month', $scriptProperties, 'all');
+$region = $modx->getOption('region', $scriptProperties, 'all');
+$showtrash = $modx->getOption('showtrash', $scriptProperties, '');
+$resource_id = $modx->getOption('resource_id', $scriptProperties, false);
+
+$c = $modx->newQuery($classname);
+if ($region != 'all') {
+    $c->where(array($classname . '.region' => $region));
+}
+if ($year != 'all') {
+    $c->where("YEAR(" . $modx->escape($classname) . '.' . $modx->escape('createdon') . ") = " . $year, xPDOQuery::SQL_AND);
+}
+if ($month != 'all') {
+    $c->where("MONTH(" . $modx->escape($classname) . '.' . $modx->escape('createdon') . ") = " . $month, xPDOQuery::SQL_AND);
+}
+
+if ($resource_id) {
+    if ($config['check_resid'] == '@TV' && $resource = $modx->getObject('modResource', $resource_id)) {
+        if ($check = $resource->getTvValue($config['check_resid_TV'])) {
+            $config['check_resid'] = $check;
+        }
+    }
+    if (!empty($config['check_resid'])) {
+        //$c->where("CONCAT('||',resource_ids,'||') LIKE '%||{$resource_id}||%'", xPDOQuery::SQL_AND);
+        $c->where(array($classname . '.resource_id' => $resource_id));
+    }
+}
+
+
+if (!empty($showtrash)) {
+    $c->where(array($classname . '.deleted' => '1'));
+} else {
+    $c->where(array($classname . '.deleted' => '0'));
+}
+$count = $modx->getCount($classname, $c);
+
+$c->select('
+    `' . $classname . '`.*
+');
+$c->sortby($sort, $dir);
+if ($isCombo || $isLimit) {
+    $c->limit($limit, $start);
+}
+//$c->sortby($sort,$dir);
+//$c->prepare(); echo $c->toSql();
+$collection = $modx->getCollection($classname, $c);
+
+$rows = array();
+foreach ($collection as $row) {
+    $rows[] = $row->toArray();
+}

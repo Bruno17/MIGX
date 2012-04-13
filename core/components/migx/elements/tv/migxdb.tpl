@@ -197,14 +197,14 @@ var lang = {/literal}{$migx_lang}{literal};
   for (var name in lang) {
     MODx.lang[name] = lang[name];
   }
+ 
+});
 
 MODx.load({
         xtype: 'modx-button-load-migxdb-grid'
         ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
-        ,text: _('migx.loadgrid')	
+        ,text: '{/literal}{$i18n.migx_loadgrid}{literal}'	
 });  
-  
-});
 
         /*
         MODx.load({

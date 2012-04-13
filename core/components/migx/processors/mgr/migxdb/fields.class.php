@@ -27,9 +27,14 @@ class migxFormProcessor extends modProcessor
         //$controller->loadControllersPath();
         $controller->loadTemplatesPath();
         $controller->setPlaceholder('_config', $this->modx->config);             
-
         $task = $this->modx->migx->getTask();
         $getObject = dirname(dirname(__file__)) . '/' . $task . '/' . str_replace('.class','',basename(__file__));
+
+        if (empty ($task) || !file_exists($getObject)){
+            $task = 'default';
+            $getObject = dirname(dirname(__file__)) . '/' . $task . '/' . str_replace('.class','',basename(__file__));
+        }
+                
         if (file_exists($getObject)) {
             $overridden = include_once ($getObject);
             if ($overridden !== false) {
