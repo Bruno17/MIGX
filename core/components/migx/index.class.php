@@ -5,8 +5,9 @@ abstract class MigxManagerController extends modExtraManagerController {
     public $migx;
     public function initialize() {
         $this->migx = new MIGX($this->modx);
-        
         $this->migx->config['configs'] = $_REQUEST['configs'];
+ 
+        $this->modx->migx = & $this->migx;
  
         //$this->addCss($this->migx->config['cssUrl'].'mgr.css');
         $this->addJavascript($this->migx->config['jsUrl'].'mgr/migx.js');

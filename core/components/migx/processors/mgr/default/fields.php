@@ -31,10 +31,12 @@ else
     $object = $modx->getObject($classname, $c);
 }
 
+//handle json fields
 $record = $object->toArray();
-
-if (!empty($record['extended']) && is_array($record['extended'])){
-    foreach ($record['extended'] as $key => $value){
-        $record['extended.'.$key] = $value;
+foreach ($record as $field=>$fieldvalue){
+if (!empty($fieldvalue) && is_array($fieldvalue)){
+    foreach ($fieldvalue as $key => $value){
+        $record[$field.'.'.$key] = $value;
     }
+}    
 }

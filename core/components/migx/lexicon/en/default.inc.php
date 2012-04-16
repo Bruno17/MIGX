@@ -10,7 +10,7 @@
 
 $_lang['migx'] = 'MIGX';
 $_lang['migx.management'] = 'MIGX Management';
-$_lang['migx.management_desc'] = 'Manage your doodles here. You can edit them by either double-clicking on the grid or right-clicking on the respective row.';
+$_lang['migx.management_desc'] = 'Manage your MIGX - Configs here. You can edit them by right-clicking on the respective row.';
 
 $_lang['migx.noitems'] = 'No items found';
 $_lang['migx.add'] = 'Add Item';
@@ -24,7 +24,6 @@ $_lang['migx.save_object'] = 'Before adding new items, you need to save this Obj
 
 $_lang['migx.show_trash'] = 'Trash View';
 $_lang['migx.show_normal'] = 'Normal View';
-
 $_lang['migx.loadgrid'] = 'Load Grid';
 
 $_lang['migx.create'] = 'Create';
@@ -40,5 +39,8 @@ $_lang['migx.remove_selected'] = 'Remove Selected';
 $_lang['migx.recall'] = 'Recall';
 $_lang['migx.remove'] = 'Remove';
 $_lang['migx.new'] = 'new';
+
+$_lang['migx.add_replacement'] = '\"Add Item\" Replacement';
+
 $_lang['migx.month'] = 'Month';
 $_lang['migx.year'] = 'Year';

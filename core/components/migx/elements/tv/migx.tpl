@@ -85,7 +85,7 @@ MODx.grid.multiTVgrid = function(config) {
 }
 
 		,tbar: [{
-            text: _('migx.add'),
+            text: '{/literal}{$i18n.migx_add}{literal}',
 			handler: this.addItem
         }
         {/literal}{if $properties.previewurl != ''}{literal}

@@ -1,9 +1,12 @@
 <?php
+
+/*
 $lang = $this->modx->lexicon->fetch();
-$lang['mig_add'] = !empty($this->customconfigs['btntext']) ? $this->customconfigs['btntext'] : $lang['migx.add'];
+$migx_add = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['migx_add'] : $lang['migx.add'];
+*/
+//$migx_add = $this->migxi18n['migx_add'];
 
-
-$gridactionbuttons['addItem']['text'] = "'".$lang['mig_add']."'";
+$gridactionbuttons['addItem']['text'] = "'[[%migx_add]]'";
 $gridactionbuttons['addItem']['handler'] = 'this.addItem';
 $gridactionbuttons['addItem']['scope'] = 'this';
 

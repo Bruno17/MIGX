@@ -53,7 +53,8 @@ foreach ($gridactionbuttons as $key=>$value){
 $tabs = '
 [
 {"caption":"Settings", "fields": [
-    {"field":"name","caption":"Name"}
+    {"field":"name","caption":"Name"},
+    {"field":"extended.migx_add","caption":"'.$this->modx->lexicon('migx.add_replacement').'"}
 ]},
 {"caption":"formtabs", "fields": [
     {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"}
