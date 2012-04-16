@@ -143,7 +143,12 @@ switch ($scriptProperties['task']) {
 
 
         }
-
+        
+        if (isset($postvalues['jsonexport'])){
+            $postvalues = $modx->fromJson($postvalues['jsonexport']);
+        }
+                
+        
         if ($scriptProperties['object_id'] == 'new') {
             $object = $modx->newObject($classname);
             $tempvalues['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
@@ -258,8 +263,12 @@ switch ($scriptProperties['task']) {
         if (!$config['is_container'] && !empty($postvalues['resource_id'])) {
             $postvalues['customerid'] = $postvalues['resource_id'];
         }
+        
 
-        $object->fromArray($postvalues);
+        $object->fromArray($postvalues); 
+
+
+
         //$object->set('configs',$modx->toJson($postvalues['configs']));
 }
 

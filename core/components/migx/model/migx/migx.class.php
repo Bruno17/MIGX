@@ -285,7 +285,7 @@ class Migx
                         }
 
                     }
-                    $menues .= $menue['code'];
+                    $menues .= str_replace($langSearch,$langReplace,$menue['code']);  
                 }
 
             }

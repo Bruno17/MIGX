@@ -1,6 +1,5 @@
 <?php
 
-
 /*
 * the packageName where you have your classes
 * this can be used in processors
@@ -40,21 +39,31 @@ $this->customconfigs['auto_create_tables'] = true;
 * 
 */
 
-$inputType = !empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'raw' ? 'textarea' : 'migx';
-$menus = array();
-foreach ($gridcontextmenus as $key=>$value){
-    $menus[] = $key;
-}
-$actionbuttons = array();
-foreach ($gridactionbuttons as $key=>$value){
-    $actionbuttons[] = $key;
-}
+if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import') {
+    $tabs = '
+[
+{"caption":"Json", "fields": [
+    {"field":"jsonexport","caption":"Json","inputTVtype":"textarea"}
+]}
+]
+';
+} else {
+    $inputType = !empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'raw' ? 'textarea' : 'migx';
 
-$tabs = '
+    $menus = array();
+    foreach ($gridcontextmenus as $key => $value) {
+        $menus[] = $key;
+    }
+    $actionbuttons = array();
+    foreach ($gridactionbuttons as $key => $value) {
+        $actionbuttons[] = $key;
+    }
+
+    $tabs = '
 [
 {"caption":"Settings", "fields": [
     {"field":"name","caption":"Name"},
-    {"field":"extended.migx_add","caption":"'.$this->modx->lexicon('migx.add_replacement').'"}
+    {"field":"extended.migx_add","caption":"' . $this->modx->lexicon('migx.add_replacement') . '"}
 ]},
 {"caption":"formtabs", "fields": [
     {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"}
@@ -64,10 +73,10 @@ $tabs = '
     {"field":"columns","caption":"Columns","inputTVtype":"' . $inputType . '","configs":"migxcolumns"}
 ]},
 {"caption":"Contextmenues", "fields": [
-    {"field":"contextmenus","caption":"Contextmenues","inputTVtype":"checkbox","inputOptionValues":"'.implode('||',$menus).'"}
+    {"field":"contextmenus","caption":"Contextmenues","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $menus) . '"}
 ]},
 {"caption":"Actionbuttons", "fields": [
-    {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"'.implode('||',$actionbuttons).'"}
+    {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $actionbuttons) . '"}
 ]},
 {"caption":"MIGXdb-Settings", "fields": [
     {"field":"extended.packageName","caption":"Package"},
@@ -80,6 +89,8 @@ $tabs = '
 ]}
 ]
 ';
+}
+
 
 $this->customconfigs['tabs'] = $this->modx->fromJson($tabs);
 /*
@@ -145,17 +156,17 @@ $columns = '
 
 $this->customconfigs['columns'] = $this->modx->fromJson($columns);
 
-$gridcontextmenus['editraw']['active'] = 1; 
+$gridcontextmenus['editraw']['active'] = 1;
+$gridcontextmenus['export_import']['active'] = 1;
 
 $gridcontextmenus['update']['active'] = 1;
 $gridcontextmenus['publish']['active'] = 0;
 $gridcontextmenus['unpublish']['active'] = 0;
-$gridcontextmenus['recall_remove_delete']['active'] = 0;
+$gridcontextmenus['recall_remove_delete']['active'] = 1;
 
 $gridactionbuttons['addItem']['active'] = 1;
 $gridactionbuttons['bulk']['active'] = 1;
 $gridactionbuttons['toggletrash']['active'] = 1;
-
 
 
 /*);
