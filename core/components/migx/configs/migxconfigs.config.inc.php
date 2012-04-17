@@ -97,8 +97,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 ';
 }
 
-$this->customconfigs['cmptabcaption'] = " _('migx')";
-$this->customconfigs['cmptabdescription'] = " _('migx.management_desc')";
+$this->customconfigs['cmptabcaption'] = "[[%migx]]";
+$this->customconfigs['cmptabdescription'] = "[[%migx_management_desc]]";
 
 $this->customconfigs['tabs'] = $this->modx->fromJson($tabs);
 /*

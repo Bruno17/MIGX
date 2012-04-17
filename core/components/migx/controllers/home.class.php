@@ -3,6 +3,7 @@ class MigxHomeManagerController extends MigxManagerController {
     public function process(array $scriptProperties = array()) {
         
         $tv = '';
+        $this->migx->loadLang();
         $this->panelJs = $this->migx->prepareCmpTabs($params,$this,$tv);  
     
     }

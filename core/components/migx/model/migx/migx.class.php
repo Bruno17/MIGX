@@ -203,53 +203,72 @@ class Migx
         return !empty($this->customconfigs['grid']) ? $this->customconfigs['grid'] : 'default';
     }
 
-    public function prepareCmpTabs($properties, &$controller, &$tv){
+    public function prepareCmpTabs($properties, &$controller, &$tv)
+    {
         $cmptabs = (isset($this->config['cmptabs'])) ? explode('||', $this->config['cmptabs']) : array();
         $cmptabsout = array();
         $grids = '';
         $updatewindows = '';
-        
-        
-        if (count($cmptabs)>0){
-            foreach ($cmptabs as $tab){
+
+
+        if (count($cmptabs) > 0) {
+            foreach ($cmptabs as $tab) {
                 $this->customconfigs = array();
-                $this->config['configs']=$tab;
+                $this->config['configs'] = $tab;
                 $this->prepareGrid($properties, &$controller, &$tv);
-                $controller->setPlaceholder('cmptabcaption', empty($this->customconfigs['cmptabcaption']) ? "'undefined'" : $this->customconfigs['cmptabcaption']);
-                $controller->setPlaceholder('cmptabdescription', empty($this->customconfigs['cmptabdescription']) ? "'undefined'" : $this->customconfigs['cmptabdescription']);
-                $cmptabsout[] = $controller->fetchTemplate($this->config['templatesPath'].'mgr/cmptab.tpl');
+                $tabcaption = empty($this->customconfigs['cmptabcaption']) ? "'undefined'" : $this->replaceLang($this->customconfigs['cmptabcaption']);
+                $tabdescription = empty($this->customconfigs['cmptabdescription']) ? "'undefined'" : $this->replaceLang($this->customconfigs['cmptabdescription']);
+                
+                $controller->setPlaceholder('cmptabcaption',$tabcaption);
+                $controller->setPlaceholder('cmptabdescription',$tabdescription);
+                $cmptabsout[] = $controller->fetchTemplate($this->config['templatesPath'] . 'mgr/cmptab.tpl');
                 $grid = $this->getGrid();
-                $gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';                
+                $gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
                 $grids .= $controller->fetchTemplate($gridfile);
-                $windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';  
-                $updatewindows .=  $controller->fetchTemplate($windowfile);
+                $windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';
+                $updatewindows .= $controller->fetchTemplate($windowfile);
             }
         }
 
         $controller->setPlaceholder('grids', $grids);
-        $controller->setPlaceholder('updatewindows', $updatewindows);        
-        $controller->setPlaceholder('cmptabs',implode(',',$cmptabsout));
-        return $controller->fetchTemplate($this->config['templatesPath'].'mgr/gridpanel.tpl');        
-        
+        $controller->setPlaceholder('updatewindows', $updatewindows);
+        $controller->setPlaceholder('cmptabs', implode(',', $cmptabsout));
+        return $controller->fetchTemplate($this->config['templatesPath'] . 'mgr/gridpanel.tpl');
+
+    }
+
+    public function loadLang()
+    {
+        //$lang = $this->modx->lexicon->fetch();
+        $this->migxlang = $this->modx->lexicon->fetch('migx');
+
+        $this->migxi18n = array();
+        foreach ($this->migxlang as $key => $value) {
+            $this->addLangValue($key,$value);
+        }
+    }
+
+    public function addLangValue($key, $value)
+    {
+        $key = str_replace('migx.', 'migx_', $key);
+        $this->migxi18n[$key] = $value;
+        $this->langSearch[$key] = '[[%' . $key . ']]';
+        $this->langReplace[$key] = $value;
+    }
+    
+    public function replaceLang($value){
+        return str_replace($this->langSearch, $this->langReplace, $value);
     }
 
     public function prepareGrid($properties, &$controller, &$tv)
     {
         $this->loadConfigs(false);
-
         $lang = $this->modx->lexicon->fetch();
-        $migxlang = $this->modx->lexicon->fetch('migx');
 
-        $migxlang['migx.add'] = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['migx_add'] : $migxlang['migx.add'];
-        $migxlang['migx.add'] = str_replace("'", "\'", $migxlang['migx.add']);
-        $this->migxi18n = array();
-        foreach ($migxlang as $key => $value) {
-            $key = str_replace('migx.', 'migx_', $key);
-            $this->migxi18n[$key] = $value;
-            $langSearch[$key] = '[[%' . $key . ']]';
-            $langReplace[$key] = $value;
-        }
+        $l['migx.add'] = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['migx_add'] : $this->migxlang['migx.add'];
+        $l['migx.add'] = str_replace("'", "\'", $l['migx.add']);
 
+        $this->addLangValue('migx.add',$l['migx.add']);
 
         $this->loadConfigs();
 
@@ -270,7 +289,7 @@ class Migx
                         }
 
                     }
-                    $button['text'] = str_replace($langSearch, $langReplace, $button['text']);
+                    $button['text'] = $this->replaceLang($button['text']);
                     $buttons[] = str_replace('"', '', $this->modx->toJson($button));
                 }
 
@@ -313,7 +332,7 @@ class Migx
                         }
 
                     }
-                    $menues .= str_replace($langSearch, $langReplace, $menue['code']);
+                    $menues .= $this->replaceLang($menue['code']);
                 }
 
             }
@@ -377,7 +396,7 @@ class Migx
                 $field['name'] = $column['dataIndex'];
                 $field['mapping'] = $column['dataIndex'];
                 $fields[] = $field;
-                $column['show_in_grid'] = isset($column['show_in_grid']) ? (int) $column['show_in_grid'] : 1;
+                $column['show_in_grid'] = isset($column['show_in_grid']) ? (int)$column['show_in_grid'] : 1;
 
                 if (!empty($column['show_in_grid'])) {
                     $col = array();
@@ -433,9 +452,9 @@ class Migx
         $tv_id = is_object($tv) ? $tv->get('id') : 'migxdb';
 
         $newitem[] = $item;
-        
+
         $controller->setPlaceholder('i18n', $this->migxi18n);
-        $controller->setPlaceholder('migx_lang', $this->modx->toJSON($migxlang));
+        $controller->setPlaceholder('migx_lang', $this->modx->toJSON($this->migxlang));
         $controller->setPlaceholder('properties', $properties);
         $controller->setPlaceholder('resource', $resource);
         $controller->setPlaceholder('configs', $this->config['configs']);
@@ -496,7 +515,7 @@ class Migx
         return $fields;
     }
 
-    function checkForConnectedResource($resource_id = false,& $config)
+    function checkForConnectedResource($resource_id = false, &$config)
     {
         if ($resource_id) {
             if ($config['check_resid'] == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
@@ -523,7 +542,7 @@ class Migx
             $categories[$tabid] = $emptycat;
 
             $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
-            foreach ($fields as & $field) {
+            foreach ($fields as &$field) {
                 $fieldid++;
                 if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
                     $params = $tv->get('input_properties');
@@ -703,7 +722,19 @@ class Migx
             $tmplVarTbl = $this->modx->getTableName('modTemplateVar');
             $tmplVarResourceTbl = $this->modx->getTableName('modTemplateVarResource');
             $conditions = array();
-            $operators = array('<=>' => '<=>', '===' => '=', '!==' => '!=', '<>' => '<>', '==' => 'LIKE', '!=' => 'NOT LIKE', '<<' => '<', '<=' => '<=', '=<' => '=<', '>>' => '>', '>=' => '>=', '=>' => '=>');
+            $operators = array(
+                '<=>' => '<=>',
+                '===' => '=',
+                '!==' => '!=',
+                '<>' => '<>',
+                '==' => 'LIKE',
+                '!=' => 'NOT LIKE',
+                '<<' => '<',
+                '<=' => '<=',
+                '=<' => '=<',
+                '>>' => '>',
+                '>=' => '>=',
+                '=>' => '=>');
             foreach ($tvFilters as $fGroup => $tvFilter) {
                 $filterGroup = array();
                 $filters = explode(',', $tvFilter);
@@ -842,40 +873,33 @@ class Migx
                         break;
                     case 'isempty':
                     case 'empty':
-                        $output = empty($subject) ? $then:
-                        (isset($else) ? $else : '');
+                        $output = empty($subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case '!empty':
                     case 'notempty':
                     case 'isnotempty':
-                        $output = !empty($subject) && $subject != '' ? $then:
-                        (isset($else) ? $else : '');
+                        $output = !empty($subject) && $subject != '' ? $then : (isset($else) ? $else : '');
                         break;
                     case 'isnull':
                     case 'null':
-                        $output = $subject == null || strtolower($subject) == 'null' ? $then:
-                        (isset($else) ? $else : '');
+                        $output = $subject == null || strtolower($subject) == 'null' ? $then : (isset($else) ? $else : '');
                         break;
                     case 'inarray':
                     case 'in_array':
                     case 'ia':
                     case 'in':
-                        $operand = is_array($operand) ? $operand:
-                        explode(',', $operand);
-                        $output = in_array($subject, $operand) ? $then:
-                        (isset($else) ? $else : '');
+                        $operand = is_array($operand) ? $operand : explode(',', $operand);
+                        $output = in_array($subject, $operand) ? $then : (isset($else) ? $else : '');
                         break;
                     case 'find':
                     case 'find_in_set':
                         $subject = explode(',', $subject);
-                        $output = in_array($operand, $subject) ? $then:
-                        (isset($else) ? $else : '');
+                        $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case 'find_pd':
                     case 'find_in_pipesdelimited_set':
                         $subject = explode('||', $subject);
-                        $output = in_array($operand, $subject) ? $then:
-                        (isset($else) ? $else : '');
+                        $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case '==':
                     case '=':
