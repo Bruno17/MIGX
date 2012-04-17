@@ -27,6 +27,7 @@ $this->customconfigs['formcaption'] = 'Image';
 
 $this->customconfigs['auto_create_tables'] = true;
 
+$this->customconfigs['win_id'] = 'migxconfigs';
 
 /*
 * the tabs and input-fields for your xdbedit-page
@@ -63,7 +64,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 [
 {"caption":"Settings", "fields": [
     {"field":"name","caption":"Name"},
-    {"field":"extended.migx_add","caption":"' . $this->modx->lexicon('migx.add_replacement') . '"}
+    {"field":"extended.migx_add","caption":"' . $this->modx->lexicon('migx.add_replacement') . '"},
+    {"field":"extended.win_id","caption":"unique MIX ID"}
 ]},
 {"caption":"formtabs", "fields": [
     {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"}
@@ -86,11 +88,17 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.grid","caption":"Grid"},
     {"field":"extended.check_resid","caption":"Check Resource","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0||@TV","default":"0"},
     {"field":"extended.check_resid_TV","caption":"Check Resource TV"}
+]},,
+{"caption":"CMP-Settings", "fields": [
+    {"field":"extended.cmptabcaption","caption":"Tab Caption"},
+    {"field":"extended.cmptabdescription","caption":"Tab Description"}
 ]}
 ]
 ';
 }
 
+$this->customconfigs['cmptabcaption'] = " _('migx')";
+$this->customconfigs['cmptabdescription'] = " _('migx.management_desc')";
 
 $this->customconfigs['tabs'] = $this->modx->fromJson($tabs);
 /*

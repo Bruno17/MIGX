@@ -203,6 +203,36 @@ class Migx
         return !empty($this->customconfigs['grid']) ? $this->customconfigs['grid'] : 'default';
     }
 
+    public function prepareCmpTabs($properties, &$controller, &$tv){
+        $cmptabs = (isset($this->config['cmptabs'])) ? explode('||', $this->config['cmptabs']) : array();
+        $cmptabsout = array();
+        $grids = '';
+        $updatewindows = '';
+        
+        
+        if (count($cmptabs)>0){
+            foreach ($cmptabs as $tab){
+                $this->customconfigs = array();
+                $this->config['configs']=$tab;
+                $this->prepareGrid($properties, &$controller, &$tv);
+                $controller->setPlaceholder('cmptabcaption', empty($this->customconfigs['cmptabcaption']) ? "'undefined'" : $this->customconfigs['cmptabcaption']);
+                $controller->setPlaceholder('cmptabdescription', empty($this->customconfigs['cmptabdescription']) ? "'undefined'" : $this->customconfigs['cmptabdescription']);
+                $cmptabsout[] = $controller->fetchTemplate($this->config['templatesPath'].'mgr/cmptab.tpl');
+                $grid = $this->getGrid();
+                $gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';                
+                $grids .= $controller->fetchTemplate($gridfile);
+                $windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';  
+                $updatewindows .=  $controller->fetchTemplate($windowfile);
+            }
+        }
+
+        $controller->setPlaceholder('grid', $grids);
+        $controller->setPlaceholder('updatewindow', $updatewindows);        
+        $controller->setPlaceholder('cmptabs',implode(',',$cmptabsout));
+        return $controller->fetchTemplate($this->config['templatesPath'].'mgr/gridpanel.tpl');        
+        
+    }
+
     public function prepareGrid($properties, &$controller, &$tv)
     {
         $this->loadConfigs(false);
@@ -403,7 +433,7 @@ class Migx
         $tv_id = is_object($tv) ? $tv->get('id') : 'migxdb';
 
         $newitem[] = $item;
-
+        
         $controller->setPlaceholder('i18n', $this->migxi18n);
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($migxlang));
         $controller->setPlaceholder('properties', $properties);
@@ -419,14 +449,8 @@ class Migx
         $controller->setPlaceholder('myctx', $wctx);
         $controller->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
         $controller->setPlaceholder('customconfigs', $this->customconfigs);
-        $controller->setPlaceholder('win_id', isset($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $tv_id);
+        $controller->setPlaceholder('win_id', !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $tv_id);
 
-        $grid = $this->getGrid();
-        $gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
-        $controller->setPlaceholder('grid', $this->modx->controller->fetchTemplate($gridfile));
-
-        $windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';
-        $controller->setPlaceholder('updatewindow', $this->modx->controller->fetchTemplate($windowfile));
     }
 
     function getFieldSource($field, &$tv)

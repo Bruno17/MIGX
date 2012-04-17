@@ -5,7 +5,7 @@ abstract class MigxManagerController extends modExtraManagerController {
     public $migx;
     public function initialize() {
         $this->migx = new MIGX($this->modx);
-        $this->migx->config['configs'] = $_REQUEST['configs'];
+        $this->migx->config['cmptabs'] = $_REQUEST['configs'];
  
         $this->modx->migx = & $this->migx;
  

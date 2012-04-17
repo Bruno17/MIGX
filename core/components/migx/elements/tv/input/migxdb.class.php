@@ -21,6 +21,12 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender {
         /* get input-tvs */
        
         $this->migx->prepareGrid($params,$this,$this->tv);
+        $grid = $this->migx->getGrid();
+        $gridfile = $this->migx->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
+        $this->setPlaceholder('grid', $this->modx->controller->fetchTemplate($gridfile));
+
+        $windowfile = $this->migx->config['templatesPath'] . 'mgr/updatewindow.tpl';
+        $this->setPlaceholder('updatewindow', $this->modx->controller->fetchTemplate($windowfile));        
         
          
     }

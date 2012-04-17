@@ -34,31 +34,10 @@ Migx.panel.Home = function(config) {
             xtype: 'modx-tabs'
             ,defaults: { border: false ,autoHeight: true }
             ,border: true
-            ,items: [{
-                title: _('migx')
-                ,defaults: { autoHeight: true }
-                ,items: [{
-                    html: '<p>'+_('migx.management_desc')+'</p>'
-                    ,border: false
-                    ,bodyCssClass: 'panel-desc'
-                },{
-                    xtype: 'modx-grid-multitvdbgrid-migxdb'
-                    ,preventRender: true
-			        ,id: 'modx-grid-multitvdbgrid-migxdb'
-			        ,configs: '{/literal}{$configs}{literal}'
-			        ,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
-			        ,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
-                    ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
-                    ,wctx: '{/literal}{$myctx}{literal}'
-                    ,url: MODx.config.assets_url+'components/migx/connector.php'
-                    ,auth: '{/literal}{$auth}{literal}'
-                    ,resource_id: '{/literal}{$resource.id}{literal}' 
-                    ,co_id: '{/literal}{$connected_object_id}{literal}' 
-                    ,pageSize: 10
-                    ,object_id : '{/literal}{$object_id}{literal}'             
-                }]
-            }]
-        }]
+            ,items: [
+            {/literal}{$cmptabs}{literal}
+            ]
+        },]
     });
     Migx.panel.Home.superclass.constructor.call(this,config);
 };
