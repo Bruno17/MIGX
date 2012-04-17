@@ -209,18 +209,16 @@ class Migx
 
         $lang = $this->modx->lexicon->fetch();
         $migxlang = $this->modx->lexicon->fetch('migx');
-        
+
         $migxlang['migx.add'] = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['migx_add'] : $migxlang['migx.add'];
-        $migxlang['migx.add'] = str_replace("'", "\'", $migxlang['migx.add']);        
+        $migxlang['migx.add'] = str_replace("'", "\'", $migxlang['migx.add']);
         $this->migxi18n = array();
         foreach ($migxlang as $key => $value) {
             $key = str_replace('migx.', 'migx_', $key);
             $this->migxi18n[$key] = $value;
-            $langSearch[$key] = '[[%'.$key.']]';
+            $langSearch[$key] = '[[%' . $key . ']]';
             $langReplace[$key] = $value;
         }
-
-
 
 
         $this->loadConfigs();
@@ -242,7 +240,7 @@ class Migx
                         }
 
                     }
-                    $button['text'] = str_replace($langSearch,$langReplace,$button['text']);
+                    $button['text'] = str_replace($langSearch, $langReplace, $button['text']);
                     $buttons[] = str_replace('"', '', $this->modx->toJson($button));
                 }
 
@@ -285,7 +283,7 @@ class Migx
                         }
 
                     }
-                    $menues .= str_replace($langSearch,$langReplace,$menue['code']);  
+                    $menues .= str_replace($langSearch, $langReplace, $menue['code']);
                 }
 
             }
@@ -349,7 +347,7 @@ class Migx
                 $field['name'] = $column['dataIndex'];
                 $field['mapping'] = $column['dataIndex'];
                 $fields[] = $field;
-                $column['show_in_grid'] = isset($column['show_in_grid']) ? $column['show_in_grid'] : 1;
+                $column['show_in_grid'] = isset($column['show_in_grid']) ? (int) $column['show_in_grid'] : 1;
 
                 if (!empty($column['show_in_grid'])) {
                     $col = array();
@@ -472,6 +470,22 @@ class Migx
             $fields[] = $field;
         }
         return $fields;
+    }
+
+    function checkForConnectedResource($resource_id = false,& $config)
+    {
+        if ($resource_id) {
+            if ($config['check_resid'] == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
+                if ($check = $resource->getTvValue($config['check_resid_TV'])) {
+                    $config['check_resid'] = $check;
+                }
+            }
+            if (!empty($config['check_resid'])) {
+                //$c->where("CONCAT('||',resource_ids,'||') LIKE '%||{$resource_id}||%'", xPDOQuery::SQL_AND);
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -619,7 +633,7 @@ class Migx
         $inputTvs = array();
         if (is_array($formtabs)) {
             foreach ($formtabs as $tab) {
-                if (isset($tab['fields'])) {
+                if (isset($tab['fields']) && is_array($tab['fields'])) {
                     foreach ($tab['fields'] as $field) {
                         if (isset($field['inputTV'])) {
                             $inputTvs[$field['field']] = $field;

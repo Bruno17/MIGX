@@ -107,7 +107,15 @@ switch ($scriptProperties['task']) {
                 }
                 $value = implode('||', $featureInsert);
             }
-            $postvalues[$field] = $value;
+
+            $field = explode('.', $field);
+
+            if (count($field) > 1) {
+                //extended field (json-array)
+                $postvalues[$field[0]][$field[1]] = $value;
+            } else {
+                $postvalues[$field[0]] = $value;
+            }
         }
 
         if ($scriptProperties['object_id'] == 'new') {
@@ -162,16 +170,10 @@ switch ($scriptProperties['task']) {
             $postvalues['customerid'] = $postvalues['resource_id'];
         }
 
-        if ($resource_id) {
-            if ($config['check_resid'] == '@TV' && $resource = $modx->getObject('modResource', $resource_id)) {
-                if ($check = $resource->getTvValue($config['check_resid_TV'])) {
-                    $config['check_resid'] = $check;
-                }
-            }
-            if (empty($config['check_resid'])) {
-                //$c->where("CONCAT('||',resource_ids,'||') LIKE '%||{$resource_id}||%'", xPDOQuery::SQL_AND);
-                unset($postvalues['resource_id']);
-            }
+        if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
+
+        } else {
+            unset($postvalues['resource_id']);
         }
 
         $object->fromArray($postvalues);

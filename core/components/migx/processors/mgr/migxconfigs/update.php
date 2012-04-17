@@ -164,12 +164,15 @@ switch ($scriptProperties['task']) {
 
         if (isset($postvalues['formtabs'])) {
             $formtabs = $modx->fromJson($postvalues['formtabs']);
+            if (is_array($formtabs && count($formtabs)>0)){
             foreach ($formtabs as $tab) {
                 $fields = is_array($tab['fields']) ? $fields : $modx->fromJson($tab['fields']);
                 $tab['fields'] = $fields;
                 $newtabs[] = $tab;
             }
-            $postvalues['formtabs'] = $modx->toJson($newtabs);
+            $postvalues['formtabs'] = $modx->toJson($newtabs);                
+            }
+
         }
 
         //handle published

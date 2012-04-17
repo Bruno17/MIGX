@@ -150,6 +150,12 @@ $columns = '
   "header": "Name"
 , "width": "10"
 , "dataIndex": "name"
+},
+{
+  "header": "Deleted"
+, "width": "10"
+, "dataIndex": "deleted"
+, "show_in_grid" : "false"
 }
 ]
 ';

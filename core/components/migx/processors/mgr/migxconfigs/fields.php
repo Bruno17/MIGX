@@ -33,13 +33,13 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
 $record = $object->toArray();
 if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] == 'export_import') {
     $temprecord = $record;
-    unset($temprecord['id'],$temprecord['name'],$temprecord['createdby'],$temprecord['createdon'],$temprecord['editedby'],$temprecord['editedon'],$temprecord['deleted'],$temprecord['deletedon'],$temprecord['deletedby'],$temprecord['published'],$temprecord['publishedon'],$temprecord['publishedby'],$temprecord['object_id']);
-    
+    unset($temprecord['id'], $temprecord['name'], $temprecord['createdby'], $temprecord['createdon'], $temprecord['editedby'], $temprecord['editedon'], $temprecord['deleted'], $temprecord['deletedon'], $temprecord['deletedby'],
+        $temprecord['published'], $temprecord['publishedon'], $temprecord['publishedby'], $temprecord['object_id']);
 
-    
+
     $record['jsonexport'] = $modx->toJson($temprecord);
 } else {
-    
+
     foreach ($record as $field => $fieldvalue) {
         if (!empty($fieldvalue) && is_array($fieldvalue)) {
             foreach ($fieldvalue as $key => $value) {
@@ -53,11 +53,14 @@ if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] =
 
     } else {
         $tabs = $modx->fromJson($record['formtabs']);
-        foreach ($tabs as $tab) {
-            $fields = is_array($tab['fields']) ? $modx->toJson($tab['fields']) : $tab['fields'];
-            $tab['fields'] = $fields;
-            $formtabs[] = $tab;
+        if (is_array($tabs) && count($tabs) > 0) {
+            foreach ($tabs as $tab) {
+                $fields = is_array($tab['fields']) ? $modx->toJson($tab['fields']) : $tab['fields'];
+                $tab['fields'] = $fields;
+                $formtabs[] = $tab;
+            }
         }
+
         $record['formtabs'] = $modx->toJson($formtabs);
     }
 }

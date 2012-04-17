@@ -1,6 +1,13 @@
 Changelog for MIGX.
 MIGX 2.0.0
 ==============
+- new in beta3
+
+  This is a preview-version of MIGXdb
+  MIGXdb can now also be used as configurable CMP
+  MIGX - configurator for tabs, columns, MIGXdb-TV and MIGXdb-CMP
+  Package-manager, create and edit schemas and package-tables
+
 - new:
   better compatibility with revo 2.2
   working with mediasources

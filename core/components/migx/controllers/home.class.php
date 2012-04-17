@@ -2,7 +2,8 @@
 class MigxHomeManagerController extends MigxManagerController {
     public function process(array $scriptProperties = array()) {
         
-        $this->migx->prepareGrid($params,$this);         
+        $tv = '';
+        $this->migx->prepareGrid($params,$this,$tv);         
     
     }
     public function getPageTitle() { return $this->modx->lexicon('migx'); }

@@ -43,16 +43,9 @@ if ($month != 'all') {
     $c->where("MONTH(" . $modx->escape($classname) . '.' . $modx->escape('createdon') . ") = " . $month, xPDOQuery::SQL_AND);
 }
 
-if ($resource_id) {
-    if ($config['check_resid'] == '@TV' && $resource = $modx->getObject('modResource', $resource_id)) {
-        if ($check = $resource->getTvValue($config['check_resid_TV'])) {
-            $config['check_resid'] = $check;
-        }
-    }
-    if (!empty($config['check_resid'])) {
-        //$c->where("CONCAT('||',resource_ids,'||') LIKE '%||{$resource_id}||%'", xPDOQuery::SQL_AND);
-        $c->where(array($classname . '.resource_id' => $resource_id));
-    }
+
+if ($modx->migx->checkForConnectedResource($resource_id,$config)){
+    $c->where(array($classname . '.resource_id' => $resource_id));
 }
 
 
