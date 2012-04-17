@@ -226,8 +226,8 @@ class Migx
             }
         }
 
-        $controller->setPlaceholder('grid', $grids);
-        $controller->setPlaceholder('updatewindow', $updatewindows);        
+        $controller->setPlaceholder('grids', $grids);
+        $controller->setPlaceholder('updatewindows', $updatewindows);        
         $controller->setPlaceholder('cmptabs',implode(',',$cmptabsout));
         return $controller->fetchTemplate($this->config['templatesPath'].'mgr/gridpanel.tpl');        
         

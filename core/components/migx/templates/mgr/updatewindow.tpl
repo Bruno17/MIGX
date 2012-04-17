@@ -179,7 +179,7 @@ Ext.reg('modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}',MODx.window.
 MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal} = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        id: 'migxdb-panel-object-{/literal}{$tv->id}{literal}'
+        id: 'migxdb-panel-object-{/literal}{$win_id}{literal}'
 		,title: ''
         ,url: config.url
         ,baseParams: config.baseParams	

@@ -88,7 +88,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.grid","caption":"Grid"},
     {"field":"extended.check_resid","caption":"Check Resource","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0||@TV","default":"0"},
     {"field":"extended.check_resid_TV","caption":"Check Resource TV"}
-]},,
+]},
 {"caption":"CMP-Settings", "fields": [
     {"field":"extended.cmptabcaption","caption":"Tab Caption"},
     {"field":"extended.cmptabdescription","caption":"Tab Description"}

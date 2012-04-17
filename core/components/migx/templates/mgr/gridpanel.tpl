@@ -45,8 +45,8 @@ Ext.extend(Migx.panel.Home,MODx.Panel);
 Ext.reg('migx-panel-home',Migx.panel.Home);
 
 {/literal}
-{$grid}
-{$updatewindow}
+{$grids}
+{$updatewindows}
 {literal}
 
 Migx.panel.Object = function(config) {
