@@ -334,7 +334,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		return;						 
     }
 });
-Ext.reg('modx-grid-multitvgrid',MODx.grid.multiTVgrid);
+Ext.reg('modx-grid-multitvgrid-{/literal}{$tv->id}{literal}',MODx.grid.multiTVgrid);
 
 
 MODx.window.UpdateTvItem = function(config) {
@@ -721,7 +721,7 @@ var lang = '{/literal}{$migx_lang}{literal}';
   }
 
         MODx.load({
-            xtype: 'modx-grid-multitvgrid'
+            xtype: 'modx-grid-multitvgrid-{/literal}{$tv->id}{literal}'
             ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
             ,tv: '{/literal}{$tv->id}{literal}'
             ,cls:'tv{/literal}{$tv->id}{literal}_items'

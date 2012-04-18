@@ -6,7 +6,7 @@ $migx_add = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['mig
 */
 //$migx_add = $this->migxi18n['migx_add'];
 
-$gridactionbuttons['addItem']['text'] = "'[[%migx_add]]'";
+$gridactionbuttons['addItem']['text'] = "'[[%migx.add]]'";
 $gridactionbuttons['addItem']['handler'] = 'this.addItem';
 $gridactionbuttons['addItem']['scope'] = 'this';
 

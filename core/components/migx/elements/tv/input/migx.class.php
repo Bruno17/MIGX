@@ -36,8 +36,6 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
             $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;            
         }
 
-
-
         $inputTvs = $this->migx->extractInputTvs($formtabs);
 
         /* get base path based on either TV param or filemanager_path */
@@ -90,6 +88,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
                 $field['name'] = $column['dataIndex'];
                 $field['mapping'] = $column['dataIndex'];
                 $fields[] = $field;
+                $col = array();
                 $col['dataIndex'] = $column['dataIndex'];
                 $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
                 $col['sortable'] = $column['sortable'] == 'true' ? true : false;

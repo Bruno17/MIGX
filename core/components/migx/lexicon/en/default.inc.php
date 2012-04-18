@@ -42,7 +42,7 @@ $_lang['migx.recall'] = 'Recall';
 $_lang['migx.remove'] = 'Remove';
 $_lang['migx.new'] = 'new';
 
-$_lang['migx.add_replacement'] = '\"Add Item\" Replacement';
+$_lang['migx.add_replacement'] = '"Add Item" Replacement';
 
 $_lang['migx.month'] = 'Month';
 $_lang['migx.year'] = 'Year';

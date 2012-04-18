@@ -76,8 +76,6 @@ class migxFormProcessor extends modProcessor
         }
         $controller->setPlaceholder('migxid', $migxid);
         
- 
-
         if (empty($formtabs)) {
 
             //old stuff
@@ -86,7 +84,7 @@ class migxFormProcessor extends modProcessor
             $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
             $fieldid = 0;
             $tabid = 0;
-
+            
             //multiple different Forms
             // Note: use same field-names and inputTVs in all forms
             if (isset($formtabs[0]['formtabs'])) {

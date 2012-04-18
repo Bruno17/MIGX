@@ -23,7 +23,9 @@ $this->customconfigs['task'] = 'migxconfigs';
 /*
 * the caption of xdbedit-form
 */
-$this->customconfigs['formcaption'] = 'Image';
+$this->customconfigs['formcaption'] = "[[%migx]]";
+$this->customconfigs['cmptabcaption'] = "[[%migx]]";
+$this->customconfigs['cmptabdescription'] = "[[%migx.management_desc]]";
 
 $this->customconfigs['auto_create_tables'] = true;
 
@@ -64,8 +66,9 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 [
 {"caption":"Settings", "fields": [
     {"field":"name","caption":"Name"},
-    {"field":"extended.migx_add","caption":"' . $this->modx->lexicon('migx.add_replacement') . '"},
-    {"field":"extended.win_id","caption":"unique MIX ID"}
+    {"field":"extended.migx_add","caption":"[[%migx.add_replacement]]"},
+    {"field":"extended.formcaption","caption":"Form Caption"},
+    {"field":"extended.win_id","caption":"unique MIGX ID"}
 ]},
 {"caption":"formtabs", "fields": [
     {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"}
@@ -97,8 +100,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 ';
 }
 
-$this->customconfigs['cmptabcaption'] = "[[%migx]]";
-$this->customconfigs['cmptabdescription'] = "[[%migx_management_desc]]";
+
 
 $this->customconfigs['tabs'] = $this->modx->fromJson($tabs);
 /*

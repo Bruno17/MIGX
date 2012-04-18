@@ -70,8 +70,8 @@ class migxFormProcessor extends modProcessor
         if (!empty($_REQUEST['showCheckbox'])) {
             $controller->setPlaceholder('showCheckbox', 1);
         }
-
-
+        
+        
         return $controller->process($scriptProperties);
 
     }

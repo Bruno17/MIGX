@@ -9,7 +9,7 @@ $gridfunctions['this.editRaw']="
 
 $gridcontextmenus['editraw']['code'] = "
         m.push({
-            text: '[[%migx_edit_raw]]'
+            text: '[[%migx.edit_raw]]'
             ,handler: this.editRaw
         });
 ";
@@ -24,7 +24,7 @@ $gridfunctions['this.export_import']="
 
 $gridcontextmenus['export_import']['code'] = "
         m.push({
-            text: '[[%migx_export_import]]'
+            text: '[[%migx.export_import]]'
             ,handler: this.export_import
         });
 ";

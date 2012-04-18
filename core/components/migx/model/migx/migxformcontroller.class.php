@@ -12,7 +12,9 @@ class MigxFormController extends modManagerController {
             $content = $this->fetchTemplate($tpl);
         }
         
-        return $content;        
+        $this->modx->migx->loadLang();
+        
+        return $this->modx->migx->replaceLang($content);        
         
     }
   

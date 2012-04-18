@@ -54,7 +54,7 @@ Ext.reg('modx-iframe-mi-preview',Ext.ux.IFrameComponent);
 MODx.window.MiPreview = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        title: '{/literal}{$i18n.mig_preview}{literal}'
+        title: _('migx.preview')
         ,id: 'modx-window-mi-preview' 
         ,width: '1050'
         ,height: '700'
@@ -156,13 +156,13 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
         var object_id = '{/literal}{$object_id}{literal}';
         if (object_id != ''){
             if (object_id == 'new'){
-                alert ('{/literal}{$i18n.mig_save_object}{literal}');
+                alert (_('migx.save_object'));
                 return;
             }
         }        
         else{
             if (resource_id == 0){
-                alert ('{/literal}{$i18n.mig_save_resource}{literal}');
+                alert (_('migx.save_resource'));
                 return;
             }            
         }
@@ -194,17 +194,19 @@ Ext.reg('modx-button-load-migxdb-grid',MODx.loadMIGXdbGridButton);
 //load migx-lang into modx-lang
 Ext.onReady(function() {
 var lang = {/literal}{$migx_lang}{literal};
-  for (var name in lang) {
+for (var name in lang) {
     MODx.lang[name] = lang[name];
-  }
- 
+}
+  
 });
 
 MODx.load({
         xtype: 'modx-button-load-migxdb-grid'
         ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
-        ,text: '{/literal}{$i18n.migx_loadgrid}{literal}'	
-});  
+        ,text: '{/literal}{$i18n_migx_loadgrid}{literal}'
+});   
+
+
 
         /*
         MODx.load({

@@ -42,7 +42,7 @@ $_lang['migx.recall'] = 'Wiederherstellen';
 $_lang['migx.remove'] = 'Entfernen';
 $_lang['migx.new'] = 'neu';
 
-$_lang['migx.add_replacement'] = '\"Datensatz erstellen\" Ersetzung';
+$_lang['migx.add_replacement'] = '"Datensatz erstellen" Ersetzung';
 
 $_lang['month'] = 'Monat';
 $_lang['year'] = 'Jahr';

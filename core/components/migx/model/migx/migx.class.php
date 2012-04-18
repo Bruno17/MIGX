@@ -216,17 +216,17 @@ class Migx
                 $this->customconfigs = array();
                 $this->config['configs'] = $tab;
                 $this->prepareGrid($properties, &$controller, &$tv);
-                $tabcaption = empty($this->customconfigs['cmptabcaption']) ? "'undefined'" : $this->replaceLang($this->customconfigs['cmptabcaption']);
-                $tabdescription = empty($this->customconfigs['cmptabdescription']) ? "'undefined'" : $this->replaceLang($this->customconfigs['cmptabdescription']);
+                $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->customconfigs['cmptabcaption'];
+                $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
                 
                 $controller->setPlaceholder('cmptabcaption',$tabcaption);
                 $controller->setPlaceholder('cmptabdescription',$tabdescription);
-                $cmptabsout[] = $controller->fetchTemplate($this->config['templatesPath'] . 'mgr/cmptab.tpl');
+                $cmptabsout[] = $this->replaceLang($controller->fetchTemplate($this->config['templatesPath'] . 'mgr/cmptab.tpl'));
                 $grid = $this->getGrid();
                 $gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
-                $grids .= $controller->fetchTemplate($gridfile);
+                $grids .= $this->replaceLang($controller->fetchTemplate($gridfile));
                 $windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';
-                $updatewindows .= $controller->fetchTemplate($windowfile);
+                $updatewindows .= $this->replaceLang($controller->fetchTemplate($windowfile));
             }
         }
 
@@ -242,7 +242,7 @@ class Migx
         //$lang = $this->modx->lexicon->fetch();
         $this->migxlang = $this->modx->lexicon->fetch('migx');
 
-        $this->migxi18n = array();
+        //$this->migxi18n = array();
         foreach ($this->migxlang as $key => $value) {
             $this->addLangValue($key,$value);
         }
@@ -250,8 +250,8 @@ class Migx
 
     public function addLangValue($key, $value)
     {
-        $key = str_replace('migx.', 'migx_', $key);
-        $this->migxi18n[$key] = $value;
+        //$key = str_replace('migx.', 'migx_', $key);
+        //$this->migxi18n[$key] = $value;
         $this->langSearch[$key] = '[[%' . $key . ']]';
         $this->langReplace[$key] = $value;
     }
@@ -289,7 +289,7 @@ class Migx
                         }
 
                     }
-                    $button['text'] = $this->replaceLang($button['text']);
+                    //$button['text'] = $this->replaceLang($button['text']);
                     $buttons[] = str_replace('"', '', $this->modx->toJson($button));
                 }
 
@@ -332,7 +332,8 @@ class Migx
                         }
 
                     }
-                    $menues .= $this->replaceLang($menue['code']);
+                    //$menues .= $this->replaceLang($menue['code']);
+                    $menues .= $menue['code'];
                 }
 
             }
@@ -453,7 +454,7 @@ class Migx
 
         $newitem[] = $item;
 
-        $controller->setPlaceholder('i18n', $this->migxi18n);
+        //$controller->setPlaceholder('i18n', $this->migxi18n);
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($this->migxlang));
         $controller->setPlaceholder('properties', $properties);
         $controller->setPlaceholder('resource', $resource);
