@@ -124,6 +124,14 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
             }
         }
 
+        $this->migx->loadLang();
+        //$this->migx->prepareGrid($params,$this,$this->tv);
+        //$grid = $this->migx->getGrid();
+        $grid = 'migx';
+        $gridfile = $this->migx->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
+        $this->setPlaceholder('grid', $this->migx->replaceLang($this->modx->controller->fetchTemplate($gridfile)));
+
+
         $newitem[] = $item;
         $lang = $this->modx->lexicon->fetch();
         $lang['migx_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['migx.add'];
@@ -137,6 +145,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
         $this->setPlaceholder('newitem', $this->modx->toJSON($newitem));
         $this->setPlaceholder('base_url', $this->modx->getOption('base_url'));
         $this->setPlaceholder('myctx', $wctx);
+        
     }
     public function getTemplate()
     {
