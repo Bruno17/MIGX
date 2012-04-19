@@ -94,7 +94,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 ]},
 {"caption":"CMP-Settings", "fields": [
     {"field":"extended.cmptabcaption","caption":"Tab Caption"},
-    {"field":"extended.cmptabdescription","caption":"Tab Description"}
+    {"field":"extended.cmptabdescription","caption":"Tab Description"},
+    {"field":"extended.cmptabcontroller","caption":"Custom Tab Controller"}
 ]}
 ]
 ';

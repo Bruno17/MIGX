@@ -37,11 +37,11 @@ Migx.panel.Home = function(config) {
             ,items: [
             {/literal}{$cmptabs}{literal}
             ]
-        },]
+        }]
     });
     Migx.panel.Home.superclass.constructor.call(this,config);
 };
-Ext.extend(Migx.panel.Home,MODx.Panel);
+Ext.extend(Migx.panel.Home,MODx.Panel,{{/literal}{$customHandlers}{literal}});
 Ext.reg('migx-panel-home',Migx.panel.Home);
 
 {/literal}

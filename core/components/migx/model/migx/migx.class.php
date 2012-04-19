@@ -52,6 +52,7 @@ class Migx
         $packageName = 'migx';
         $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
         $modelpath = $packagepath . 'model/';
+        $prefix = null;
         $this->modx->addPackage($packageName, $modelpath, $prefix);
 
 
@@ -188,15 +189,15 @@ class Migx
 
     public function getTask()
     {
-        return $this->customconfigs['task'];
+        return isset($this->customconfigs['task']) ? $this->customconfigs['task']:'' ;
     }
     public function getTabs()
     {
-        return $this->customconfigs['tabs'];
+        return isset($this->customconfigs['tabs']) ? $this->customconfigs['tabs']:'';
     }
     public function getColumns()
     {
-        return $this->customconfigs['columns'];
+        return isset($this->customconfigs['columns']) ? $this->customconfigs['columns'] : '';
     }
     public function getGrid()
     {
@@ -221,12 +222,33 @@ class Migx
                 
                 $controller->setPlaceholder('cmptabcaption',$tabcaption);
                 $controller->setPlaceholder('cmptabdescription',$tabdescription);
-                $cmptabsout[] = $this->replaceLang($controller->fetchTemplate($this->config['templatesPath'] . 'mgr/cmptab.tpl'));
+                
+                $cmptabfile = $this->config['templatesPath'] . 'mgr/cmptab.tpl';
+                if (!empty($this->customconfigs['cmptabcontroller'])){
+                    $controllerfile = $this->config['controllersPath'] . 'custom/' . $this->customconfigs['cmptabcontroller'].'.php';
+                    if (file_exists($controllerfile)){
+                        $tabTemplate='';
+                        $customHandlers=array();
+                        include($controllerfile);
+                        if (!empty($tabTemplate) && file_exists($tabTemplate)){
+                            $cmptabfile = $tabTemplate;   
+                        }
+                        if (count($customHandlers)>0){
+                            $customHandlers = implode(',',$customHandlers);
+                            $controller->setPlaceholder('customHandlers', $customHandlers);
+                        } 
+                    }
+                } 
+                
+                $cmptabsout[] = $this->replaceLang($controller->fetchTemplate($cmptabfile));
                 $grid = $this->getGrid();
+
                 $gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
-                $grids .= $this->replaceLang($controller->fetchTemplate($gridfile));
+                $grids .= $this->replaceLang($controller->fetchTemplate($gridfile));                    
                 $windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';
-                $updatewindows .= $this->replaceLang($controller->fetchTemplate($windowfile));
+                $updatewindows .= $this->replaceLang($controller->fetchTemplate($windowfile));                
+                
+
             }
         }
 

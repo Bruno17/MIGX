@@ -31,19 +31,21 @@ class MigxPackageManager extends xPDOGenerator_mysql
     {
         $addmissing = $this->modx->getOption('addmissing',$options,false);
         $removedeleted = $this->modx->getOption('removedeleted',$options,false);
+        $modfields = array();
         if (count($this->packageClasses) > 0) {
             foreach ($this->packageClasses as $class => $value) {
                 if ($addmissing){
-                    $this->addMissingFields($class);
+                    $this->addMissingFields($class,$modfields);
                 }
                 if ($removedeleted){
-                    $this->removeDeletedFields($class);
+                    $this->removeDeletedFields($class,$modfields);
                 }                
             }
         }
+        return $modfields;
     }
 
-    public function addMissingFields($class)
+    public function addMissingFields($class, & $modfields)
     {
         $table = $this->modx->getTableName($class);
         $fieldsStmt = $this->modx->query('SHOW COLUMNS FROM ' . $table);
@@ -57,11 +59,11 @@ class MigxPackageManager extends xPDOGenerator_mysql
         }
 
         $classfields = $this->modx->getFields($class);
-
         if (count($classfields) > 0) {
             foreach ($classfields as $field => $value) {
                 if (!in_array($field,$tablefields)){
                     $this->manager->addField($class,$field);
+                    $modfields['added'][] = $class.':'.$field;
                 }
             }
         }
@@ -71,7 +73,7 @@ class MigxPackageManager extends xPDOGenerator_mysql
             //.print_r($meta,1)
             //. '</psre>';
     }
-    public function removeDeletedFields($class)
+    public function removeDeletedFields($class, & $modfields)
     {
         $table = $this->modx->getTableName($class);
         $fieldsStmt = $this->modx->query('SHOW COLUMNS FROM ' . $table);
@@ -85,20 +87,20 @@ class MigxPackageManager extends xPDOGenerator_mysql
         }
 
         $classfields = $this->modx->getFields($class);
-
         if (count($tablefields) > 0) {
             foreach ($tablefields as $field) {
                 if (!array_key_exists($field,$classfields)){
-                    echo $class.':'.$field;
+                    $modfields['deleted'][] = $class.':'.$field;
                     $this->manager->removeField($class,$field);
                 }
             }
         }
-
+      
         //$meta = $this->modx->getFieldMeta($class);
         //echo '<psre>' . print_r($fields, 1) . print_r($classfields, 1)
             //.print_r($meta,1)
             //. '</psre>';
-    }    
+    } 
+      
 
 }
