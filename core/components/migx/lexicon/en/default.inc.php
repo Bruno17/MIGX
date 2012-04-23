@@ -41,6 +41,7 @@ $_lang['migx.remove_selected'] = 'Remove Selected';
 $_lang['migx.recall'] = 'Recall';
 $_lang['migx.remove'] = 'Remove';
 $_lang['migx.new'] = 'new';
+$_lang['migx.filters'] = 'Filters';
 
 $_lang['migx.add_replacement'] = '"Add Item" Replacement';
 

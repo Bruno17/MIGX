@@ -6,6 +6,9 @@ $migx_add = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['mig
 */
 //$migx_add = $this->migxi18n['migx_add'];
 
+$config_task = '{$customconfigs.task}';
+$config_configs = '{$customconfigs.configs}';
+
 $gridactionbuttons['addItem']['text'] = "'[[%migx.add]]'";
 $gridactionbuttons['addItem']['handler'] = 'this.addItem';
 $gridactionbuttons['addItem']['scope'] = 'this';
@@ -79,6 +82,61 @@ $gridcontextmenus['recall_remove_delete']['code']="
 ";
 $gridcontextmenus['recall_remove_delete']['handler'] = 'this.recallObject,this.removeObject,this.deleteObject';
 
+$gridfilters['textbox']['code']=
+"
+{
+    xtype: 'textfield'
+    ,id: '[[+name]]-migxdb-search-filter'
+    ,fieldLabel: 'Test'
+    ,emptyText: 'search...'
+    ,listeners: {
+        'change': {fn:this.filter[[+name]],scope:this}
+        ,'render': {fn: function(cmp) {
+            new Ext.KeyMap(cmp.getEl(), {
+                key: Ext.EventObject.ENTER
+                ,fn: function() {
+                    this.fireEvent('change',this);
+                    this.blur();
+                    return true;
+                }
+                ,scope: cmp
+            });
+        },scope:this}
+    }
+}
+";
+$gridfilters['textbox']['handler'] = 'searchtextbox';
+
+
+$gridfilters['combobox']['code'] = "
+{
+    xtype: 'modx-combo'
+    ,id: '[[+name]]-migxdb-search-filter'
+    ,name: '[[+name]]'
+    ,hiddenName: '[[+name]]'
+    ,url: '[[+config.connectorUrl]]'
+    ,fields: ['combo_id','combo_name']
+    ,displayField: 'combo_name'
+    ,valueField: 'combo_id'    
+    ,pageSize: 0
+	,value: 'all'
+    ,baseParams: { 
+        action: 'mgr/[[+config.task]]/[[+getcomboprocessor]]',
+        configs: '[[+config.configs]]',
+        searchname: '[[+name]]'
+    }			
+    ,listeners: {
+        'select': {
+            fn: this.filter[[+name]],
+            scope: this
+        }
+    }
+}
+";
+$gridfilters['combobox']['handler'] = 'searchcombobox';
+
+
+
 $ctx = '{$ctx}';
 $httpimg = '<img style="height:60px" src="' + val + '"/>';
 
@@ -140,6 +198,34 @@ renderCrossTick : function(val, md, rec, row, col, s) {
     return String.format('{$img}', renderImage, altText, altText);
 }
 ";
+
+
+$gridfunctions['searchcombobox'] ="
+filter[[+name]]: function(cb,nv,ov) {
+        //console.log(cb.getValue());
+        var s = this.getStore();
+        s.baseParams.[[+name]] = cb.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();        
+        return;
+        
+        this.setFilterParams({
+			year:cb.getValue(),
+			month:'alle'
+		});
+    }
+";
+
+
+$gridfunctions['searchtextbox'] = "
+    filter[[+name]]: function(tf,nv,ov) {
+        var s = this.getStore();
+        s.baseParams.[[+name]] = tf.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
+    }
+";
+
 
 $gridfunctions['this.addItem'] = "
 addItem: function(btn,e) {
@@ -223,7 +309,7 @@ unpublishObject: function() {
         });
     }    
 ";
-$task = '{$customconfigs.task}';
+
 $gridfunctions['this.publishSelected'] = "
 publishSelected: function(btn,e) {
         var cs = this.getSelectedAsList();
@@ -232,7 +318,7 @@ publishSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}{$task}{literal}/bulkupdate'
+                action: 'mgr/{/literal}{$config_task}{literal}/bulkupdate'
 				,configs: this.config.configs
 				,task: 'publish'
                 ,objects: cs
@@ -255,9 +341,9 @@ unpublishSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}{$task}{literal}/bulkupdate'
+                action: 'mgr/{/literal}{$config_task}{literal}/bulkupdate'
 				,configs: this.config.configs
-				,task: 'unpublish'
+				,config_task: 'unpublish'
                 ,objects: cs
             }
             ,listeners: {
@@ -278,7 +364,7 @@ deleteSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}{$task}{literal}/bulkupdate'
+                action: 'mgr/{/literal}{$config_task}{literal}/bulkupdate'
 				,configs: this.config.configs
 				,task: 'delete'
                 ,objects: cs
@@ -330,7 +416,7 @@ removeObject: function() {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}{$task}{literal}/remove'
+                action: 'mgr/{/literal}{$config_task}{literal}/remove'
 				,task: 'removeone'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs

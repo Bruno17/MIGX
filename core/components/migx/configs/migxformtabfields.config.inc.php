@@ -2,7 +2,7 @@
 
 $tabs ='
 [
-{"caption":"Fields", "fields": [
+{"caption":"Fields", "field": [
 {"field":"field","caption":"Fieldname"},
 {"field":"caption","caption":"Caption"},
 {"field":"inputTV","caption":"Input TV"},
@@ -36,6 +36,6 @@ $columns = '
 }]
 ';
 
-                    
+$this->customconfigs['win_id']= 'migxformtabfields';                         
 $this->customconfigs['tabs']= $this->modx->fromJson($tabs);                     
 $this->customconfigs['columns'] = $this->modx->fromJson($columns); 

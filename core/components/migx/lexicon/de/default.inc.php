@@ -41,6 +41,7 @@ $_lang['migx.remove_selected'] = 'Remove Selected';
 $_lang['migx.recall'] = 'Wiederherstellen';
 $_lang['migx.remove'] = 'Entfernen';
 $_lang['migx.new'] = 'neu';
+$_lang['migx.filters'] = 'Filter';
 
 $_lang['migx.add_replacement'] = '"Datensatz erstellen" Ersetzung';
 

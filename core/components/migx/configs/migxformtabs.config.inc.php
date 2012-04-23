@@ -23,6 +23,6 @@ $columns = '
 }]
 ';
 
-                    
+$this->customconfigs['win_id']= 'migxformtabs';                      
 $this->customconfigs['tabs']= $this->modx->fromJson($tabs);                     
 $this->customconfigs['columns'] = $this->modx->fromJson($columns); 

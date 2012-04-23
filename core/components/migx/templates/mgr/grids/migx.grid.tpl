@@ -297,7 +297,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             ,handler: this.update
         });
         m.push({
-            text: '[[%migx.duplicate]]' 
+            text: '[[%migx.duplicate]]'
+            ,handler: this.duplicate
         });        
         m.push('-');
         m.push({

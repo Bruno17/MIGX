@@ -83,6 +83,9 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 {"caption":"Actionbuttons", "fields": [
     {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $actionbuttons) . '"}
 ]},
+{"caption":"Db-Filters", "fields": [
+    {"field":"filters","caption":"Filters","inputTVtype":"migx","configs":"migxdbfilters"}
+]},
 {"caption":"MIGXdb-Settings", "fields": [
     {"field":"extended.packageName","caption":"Package"},
     {"field":"extended.classname","caption":"Classname"},

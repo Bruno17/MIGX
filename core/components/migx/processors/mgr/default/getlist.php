@@ -4,11 +4,12 @@
 
 $config = $modx->migx->customconfigs;
 
-$prefix = $config['prefix'];
-$prefix = null;
+$prefix = !empty($config['prefix']) ?  $config['prefix'] : null;
+
 $packageName = $config['packageName'];
 
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+$packagepath = $modx->getOption('core_path') . 'components/' . $packageName .
+    '/';
 $modelpath = $packagepath . 'model/';
 
 $modx->addPackage($packageName, $modelpath, $prefix);
@@ -26,25 +27,34 @@ $start = $modx->getOption('start', $scriptProperties, 0);
 $limit = $modx->getOption('limit', $scriptProperties, 20);
 $sort = $modx->getOption('sort', $scriptProperties, 'id');
 $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
-$year = $modx->getOption('year', $scriptProperties, 'all');
-$month = $modx->getOption('month', $scriptProperties, 'all');
-$region = $modx->getOption('region', $scriptProperties, 'all');
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
 
 $c = $modx->newQuery($classname);
-if ($region != 'all') {
-    $c->where(array($classname . '.region' => $region));
-}
-if ($year != 'all') {
-    $c->where("YEAR(" . $modx->escape($classname) . '.' . $modx->escape('createdon') . ") = " . $year, xPDOQuery::SQL_AND);
-}
-if ($month != 'all') {
-    $c->where("MONTH(" . $modx->escape($classname) . '.' . $modx->escape('createdon') . ") = " . $month, xPDOQuery::SQL_AND);
+
+//print_r($config['gridfilters']);
+
+foreach ($config['gridfilters'] as $filter) {
+
+    if (!empty($filter['getlistwhere'])) {
+
+        $requestvalue = $modx->getOption($filter['name'], $scriptProperties, 'all');
+
+        if (isset($scriptProperties[$filter['name']]) && $requestvalue != 'all') {
+            
+            $chunk = $modx->newObject('modChunk');
+            $chunk->setCacheable(false);
+            $chunk->setContent($filter['getlistwhere']);
+            $where = $chunk->process($scriptProperties);
+            $where = strpos($where, '{') === 0 ? $modx->fromJson($where) : $where ;
+       
+            $c->where($where);
+        }
+    }
 }
 
 
-if ($modx->migx->checkForConnectedResource($resource_id,$config)){
+if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
     $c->where(array($classname . '.resource_id' => $resource_id));
 }
 
