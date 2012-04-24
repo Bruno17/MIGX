@@ -17,7 +17,7 @@ $customHandlers[] = "
 
 
 $customHandlers[] = "
-    updatePackageSuccess : function(r) {
+    setupSuccess : function(r) {
         
         if (r.object.content){
             //console.log(r.object.content);

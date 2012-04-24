@@ -4,12 +4,11 @@
 
 $config = $modx->migx->customconfigs;
 
-$prefix = !empty($config['prefix']) ?  $config['prefix'] : null;
+$prefix = !empty($config['prefix']) ? $config['prefix'] : null;
 
 $packageName = $config['packageName'];
 
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName .
-    '/';
+$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
 
 $modx->addPackage($packageName, $modelpath, $prefix);
@@ -34,21 +33,23 @@ $c = $modx->newQuery($classname);
 
 //print_r($config['gridfilters']);
 
-foreach ($config['gridfilters'] as $filter) {
+if (count($config['gridfilters']) > 0) {
+    foreach ($config['gridfilters'] as $filter) {
 
-    if (!empty($filter['getlistwhere'])) {
+        if (!empty($filter['getlistwhere'])) {
 
-        $requestvalue = $modx->getOption($filter['name'], $scriptProperties, 'all');
+            $requestvalue = $modx->getOption($filter['name'], $scriptProperties, 'all');
 
-        if (isset($scriptProperties[$filter['name']]) && $requestvalue != 'all') {
-            
-            $chunk = $modx->newObject('modChunk');
-            $chunk->setCacheable(false);
-            $chunk->setContent($filter['getlistwhere']);
-            $where = $chunk->process($scriptProperties);
-            $where = strpos($where, '{') === 0 ? $modx->fromJson($where) : $where ;
-       
-            $c->where($where);
+            if (isset($scriptProperties[$filter['name']]) && $requestvalue != 'all') {
+
+                $chunk = $modx->newObject('modChunk');
+                $chunk->setCacheable(false);
+                $chunk->setContent($filter['getlistwhere']);
+                $where = $chunk->process($scriptProperties);
+                $where = strpos($where, '{') === 0 ? $modx->fromJson($where) : $where;
+
+                $c->where($where);
+            }
         }
     }
 }

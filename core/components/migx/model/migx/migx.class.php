@@ -50,8 +50,7 @@ class Migx
         $this->modx = &$modx;
 
         $packageName = 'migx';
-        $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName .
-            '/';
+        $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
         $modelpath = $packagepath . 'model/';
         $prefix = null;
         $this->modx->addPackage($packageName, $modelpath, $prefix);
@@ -60,12 +59,9 @@ class Migx
         /* allows you to set paths in different environments
         * this allows for easier SVN management of files
         */
-        $corePath = $this->modx->getOption('migx.core_path', null, $modx->getOption('core_path') .
-            'components/migx/');
-        $assetsPath = $this->modx->getOption('migx.assets_path', null, $modx->getOption
-            ('assets_path') . 'components/migx/');
-        $assetsUrl = $this->modx->getOption('migx.assets_url', null, $modx->getOption('assets_url') .
-            'components/migx/');
+        $corePath = $this->modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/');
+        $assetsPath = $this->modx->getOption('migx.assets_path', null, $modx->getOption('assets_path') . 'components/migx/');
+        $assetsUrl = $this->modx->getOption('migx.assets_url', null, $modx->getOption('assets_url') . 'components/migx/');
 
         $defaultconfig['corePath'] = $corePath;
         $defaultconfig['modelPath'] = $corePath . 'model/';
@@ -91,12 +87,10 @@ class Migx
             $this->modx->setLogTarget('HTML');
             $this->modx->setLogLevel(modX::LOG_LEVEL_ERROR);
 
-            $debugUser = $this->config['debugUser'] == '' ? $this->modx->user->get('username') :
-                'anonymous';
+            $debugUser = $this->config['debugUser'] == '' ? $this->modx->user->get('username') : 'anonymous';
             $user = $this->modx->getObject('modUser', array('username' => $debugUser));
             if ($user == null) {
-                $this->modx->user->set('id', $this->modx->getOption('debugUserId', $this->
-                    config, 1));
+                $this->modx->user->set('id', $this->modx->getOption('debugUserId', $this->config, 1));
                 $this->modx->user->set('username', $debugUser);
             } else {
                 $this->modx->user = $user;
@@ -113,19 +107,16 @@ class Migx
         $renderer = array();
         $gridfilters = array();
 
-        $configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) :
-            array();
+        $configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
         //$configs = array_merge( array ('master'), $configs);
         if ($grid) {
             $config = 'grid';
-            $configFile = $this->config['corePath'] . 'configs/grid/' . $config .
-                '.config.inc.php'; // [ file ]
+            $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.config.inc.php'; // [ file ]
             if (file_exists($configFile)) {
                 include ($configFile);
             }
             //custom collection of grid-functions......
-            $configFile = $this->config['corePath'] . 'configs/grid/' . $config .
-                '.custom.config.inc.php'; // [ file ]
+            $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.custom.config.inc.php'; // [ file ]
             if (file_exists($configFile)) {
                 include ($configFile);
             }
@@ -135,8 +126,7 @@ class Migx
         foreach ($configs as $config) {
             if ($grid) {
                 //first try to find custom-grid-configurations (buttons,context-menus,functions)
-                $configFile = $this->config['corePath'] . 'configs/grid/' . $config .
-                    '.config.inc.php'; // [ file ]
+                $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.config.inc.php'; // [ file ]
                 if (file_exists($configFile)) {
                     include ($configFile);
                 }
@@ -157,13 +147,11 @@ class Migx
 
                     unset($objectarray['extended']);
 
-                    $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->
-                        customconfigs, $objectarray) : $objectarray;
+                    $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $objectarray) : $objectarray;
                     $this->customconfigs['tabs'] = $this->modx->fromJson($cfObject->get('formtabs'));
                     $this->customconfigs['filters'] = $this->modx->fromJson($cfObject->get('filters'));
                     //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
-                    $this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->
-                        get('columns')));
+                    $this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
                     $menus = $cfObject->get('contextmenus');
 
                     if (!empty($menus)) {
@@ -181,16 +169,14 @@ class Migx
                     }
                 }
                 //third add configs from file, if exists
-                $configFile = $this->config['corePath'] . 'configs/' . $config .
-                    '.config.inc.php'; // [ file ]
+                $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
                 if (file_exists($configFile)) {
                     include ($configFile);
                 }
             }
         }
 
-        if (is_array($this->customconfigs['filters']) && count($this->customconfigs['filters']) >
-            0) {
+        if (is_array($this->customconfigs['filters']) && count($this->customconfigs['filters']) > 0) {
             foreach ($this->customconfigs['filters'] as $filter) {
                 if (is_array($gridfilters[$filter['type']])) {
                     $this->customconfigs['gridfilters'][$filter['name']] = array_merge($filter, $gridfilters[$filter['type']]);
@@ -201,8 +187,7 @@ class Migx
         $this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
         $this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
         $this->customconfigs['gridfunctions'] = array_merge($gridfunctions, $renderer);
-        $this->customconfigs['task'] = empty($this->customconfigs['task']) ? 'default' :
-            $this->customconfigs['task'];
+        $this->customconfigs['task'] = empty($this->customconfigs['task']) ? 'default' : $this->customconfigs['task'];
 
 
     }
@@ -224,51 +209,40 @@ class Migx
     }
     public function getColumns()
     {
-        return isset($this->customconfigs['columns']) ? $this->customconfigs['columns'] :
-            '';
+        return isset($this->customconfigs['columns']) ? $this->customconfigs['columns'] : '';
     }
     public function getGrid()
     {
-        return !empty($this->customconfigs['grid']) ? $this->customconfigs['grid'] :
-            'default';
+        return !empty($this->customconfigs['grid']) ? $this->customconfigs['grid'] : 'default';
     }
 
     public function prepareCmpTabs($properties, &$controller, &$tv)
     {
-        $cmptabs = (isset($this->config['cmptabs'])) ? explode('||', $this->config['cmptabs']) :
-            array();
+        $cmptabs = (isset($this->config['cmptabs'])) ? explode('||', $this->config['cmptabs']) : array();
         $cmptabsout = array();
         $grids = '';
         $updatewindows = '';
-
+        $customHandlers = array();
 
         if (count($cmptabs) > 0) {
             foreach ($cmptabs as $tab) {
                 $this->customconfigs = array();
                 $this->config['configs'] = $tab;
                 $this->prepareGrid($properties, &$controller, &$tv);
-                $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->
-                    customconfigs['cmptabcaption'];
-                $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' :
-                    $this->customconfigs['cmptabdescription'];
+                $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->customconfigs['cmptabcaption'];
+                $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
 
                 $controller->setPlaceholder('cmptabcaption', $tabcaption);
                 $controller->setPlaceholder('cmptabdescription', $tabdescription);
 
                 $cmptabfile = $this->config['templatesPath'] . 'mgr/cmptab.tpl';
                 if (!empty($this->customconfigs['cmptabcontroller'])) {
-                    $controllerfile = $this->config['controllersPath'] . 'custom/' . $this->
-                        customconfigs['cmptabcontroller'] . '.php';
+                    $controllerfile = $this->config['controllersPath'] . 'custom/' . $this->customconfigs['cmptabcontroller'] . '.php';
                     if (file_exists($controllerfile)) {
                         $tabTemplate = '';
-                        $customHandlers = array();
                         include ($controllerfile);
                         if (!empty($tabTemplate) && file_exists($tabTemplate)) {
                             $cmptabfile = $tabTemplate;
-                        }
-                        if (count($customHandlers) > 0) {
-                            $customHandlers = implode(',', $customHandlers);
-                            $controller->setPlaceholder('customHandlers', $customHandlers);
                         }
                     }
                 }
@@ -284,12 +258,14 @@ class Migx
 
             }
         }
-
+        if (count($customHandlers) > 0) {
+            $customHandlers = implode(',', $customHandlers);
+            $controller->setPlaceholder('customHandlers', $customHandlers);
+        }
         $controller->setPlaceholder('grids', $grids);
         $controller->setPlaceholder('updatewindows', $updatewindows);
         $controller->setPlaceholder('cmptabs', implode(',', $cmptabsout));
-        return $controller->fetchTemplate($this->config['templatesPath'] .
-            'mgr/gridpanel.tpl');
+        return $controller->fetchTemplate($this->config['templatesPath'] . 'mgr/gridpanel.tpl');
 
     }
 
@@ -332,8 +308,7 @@ class Migx
             $search['config_' . $key] = '[[+config.' . $key . ']]';
         }
 
-        $l['migx.add'] = !empty($this->customconfigs['migx_add']) ? $this->
-            customconfigs['migx_add'] : $this->migxlang['migx.add'];
+        $l['migx.add'] = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['migx_add'] : $this->migxlang['migx.add'];
         $l['migx.add'] = str_replace("'", "\'", $l['migx.add']);
 
         $this->addLangValue('migx.add', $l['migx.add']);
@@ -462,8 +437,7 @@ class Migx
         //$formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
         //$formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
 
-        $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() :
-            array();
+        $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
         //$this->migx->debug('resource',$resource);
 
         //multiple different Forms
@@ -472,13 +446,11 @@ class Migx
         $inputTvs = $this->extractInputTvs($formtabs);
 
         /* get base path based on either TV param or filemanager_path */
-        $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' =>
-                $this->modx->context->get('key')));
+        $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
 
         /* pasted from processors.element.tv.renders.mgr.input*/
         /* get working context */
-        $wctx = isset($_GET['wctx']) && !empty($_GET['wctx']) ? $this->modx->
-            sanitizeString($_GET['wctx']) : '';
+        $wctx = isset($_GET['wctx']) && !empty($_GET['wctx']) ? $this->modx->sanitizeString($_GET['wctx']) : '';
         if (!empty($wctx)) {
             $workingContext = $this->modx->getContext($wctx);
             if (!$workingContext) {
@@ -511,14 +483,12 @@ class Migx
                 $field['name'] = $column['dataIndex'];
                 $field['mapping'] = $column['dataIndex'];
                 $fields[] = $field;
-                $column['show_in_grid'] = isset($column['show_in_grid']) ? (int)$column['show_in_grid'] :
-                    1;
+                $column['show_in_grid'] = isset($column['show_in_grid']) ? (int)$column['show_in_grid'] : 1;
 
                 if (!empty($column['show_in_grid'])) {
                     $col = array();
                     $col['dataIndex'] = $column['dataIndex'];
-                    $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->
-                        getOption('modx_charset'));
+                    $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
                     $col['sortable'] = $column['sortable'] == 'true' ? true : false;
                     $col['width'] = $column['width'];
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
@@ -530,8 +500,7 @@ class Migx
 
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
 
-                if (isset($inputTvs[$field['name']]) && $tv = $this->modx->getObject('modTemplateVar',
-                    array('name' => $inputTvs[$field['name']]['inputTV']))) {
+                if (isset($inputTvs[$field['name']]) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $inputTvs[$field['name']]['inputTV']))) {
 
                     $inputTV = $inputTvs[$field['name']];
 
@@ -562,7 +531,7 @@ class Migx
                     $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
                 }
             }
-            $this->customconfigs['gridfunctions'] = ',' . implode(',', $gridfunctions);
+            $this->customconfigs['gridfunctions'] = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
         } else {
             $this->customconfigs['gridfunctions'] = '';
         }
@@ -576,10 +545,8 @@ class Migx
         $controller->setPlaceholder('properties', $properties);
         $controller->setPlaceholder('resource', $resource);
         $controller->setPlaceholder('configs', $this->config['configs']);
-        $controller->setPlaceholder('object_id', $this->modx->getOption('object_id', $_REQUEST,
-            ''));
-        $controller->setPlaceholder('connected_object_id', $this->modx->getOption('object_id',
-            $_REQUEST, ''));
+        $controller->setPlaceholder('object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
+        $controller->setPlaceholder('connected_object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
         $controller->setPlaceholder('pathconfigs', $this->modx->toJSON($pathconfigs));
         $controller->setPlaceholder('columns', $this->modx->toJSON($cols));
         $controller->setPlaceholder('fields', $this->modx->toJSON($fields));
@@ -588,8 +555,7 @@ class Migx
         $controller->setPlaceholder('myctx', $wctx);
         $controller->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
         $controller->setPlaceholder('customconfigs', $this->customconfigs);
-        $controller->setPlaceholder('win_id', !empty($this->customconfigs['win_id']) ? $this->
-            customconfigs['win_id'] : $tv_id);
+        $controller->setPlaceholder('win_id', !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $tv_id);
 
     }
 
@@ -606,15 +572,13 @@ class Migx
         $findSource = true;
         if (isset($sources[$this->working_context])) {
             //try using field-specific mediasource
-            if ($mediasource = $this->modx->getObject('sources.modMediaSource', $sources[$this->
-                working_context])) {
+            if ($mediasource = $this->modx->getObject('sources.modMediaSource', $sources[$this->working_context])) {
                 $findSource = false;
 
             }
         }
         if ($findSource) {
-            if ($this->source && isset($field['sourceFrom']) && $field['sourceFrom'] ==
-                'migx') {
+            if ($this->source && isset($field['sourceFrom']) && $field['sourceFrom'] == 'migx') {
                 //use global MIGX-mediasource for all TVs
                 $tv->setSource($this->source);
                 $mediasource = $this->source;
@@ -641,8 +605,7 @@ class Migx
     function checkForConnectedResource($resource_id = false, &$config)
     {
         if ($resource_id) {
-            if ($config['check_resid'] == '@TV' && $resource = $this->modx->getObject('modResource',
-                $resource_id)) {
+            if ($config['check_resid'] == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
                 if ($check = $resource->getTvValue($config['check_resid_TV'])) {
                     $config['check_resid'] = $check;
                 }
@@ -666,126 +629,124 @@ class Migx
             $categories[$tabid] = $emptycat;
 
             $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
-            foreach ($fields as &$field) {
-                $fieldid++;
-                if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
-                    $params = $tv->get('input_properties');
-                } else {
-                    $tv = $this->modx->newObject('modTemplateVar');
-                    $tv->set('type', !empty($field['inputTVtype']) ? $field['inputTVtype'] : 'text');
-                }
-                if (!empty($field['inputOptionValues'])) {
-                    $tv->set('elements', $field['inputOptionValues']);
-                }
-                if (!empty($field['default'])) {
-                    $tv->set('default_text', $field['default']);
-                }
-                if (!empty($field['configs'])) {
-                    $params['configs'] = $field['configs'];
-                }
-
-                /*insert actual value from requested record, convert arrays to ||-delimeted string */
-                $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) :
-                    $record[$field['field']];
-
-                $tv->set('value', $fieldvalue);
-                if (!empty($field['caption'])) {
-                    $field['caption'] = htmlentities($field['caption'], ENT_QUOTES, $this->modx->
-                        getOption('modx_charset'));
-                    $tv->set('caption', $field['caption']);
-                }
-
-                if (!empty($field['description'])) {
-                    $field['description'] = htmlentities($field['description'], ENT_QUOTES, $this->
-                        modx->getOption('modx_charset'));
-                    $tv->set('description', $field['description']);
-                }
-                /*generate unique tvid, must be numeric*/
-                /*todo: find a better solution*/
-                $field['tv_id'] = ($scriptProperties['tv_id'] . '99' . $fieldid) * 1;
-                $field['array_tv_id'] = $field['tv_id'] . '[]';
-
-                $allfield = array();
-                $allfield['field'] = $field['field'];
-                $allfield['tv_id'] = $field['tv_id'];
-                $allfield['array_tv_id'] = $field['array_tv_id'];
-                $allfields[] = $allfield;
-
-                $mediasource = $this->getFieldSource($field, $tv);
-                $tv->setSource($mediasource);
-                $tv->set('id', $field['tv_id']);
-
-                /*
-                $default = $tv->processBindings($tv->get('default_text'), $resourceId);
-                if (strpos($tv->get('default_text'), '@INHERIT') > -1 && (strcmp($default, $tv->get('value')) == 0 || $tv->get('value') == null)) {
-                $tv->set('inherited', true);
-                }
-                */
-
-                if ($tv->get('value') == null) {
-                    $v = $tv->get('default_text');
-                    if ($tv->get('type') == 'checkbox' && $tv->get('value') == '') {
-                        $v = '';
+            if (is_array($fields) && count($fields) > 0) {
+                foreach ($fields as &$field) {
+                    $fieldid++;
+                    if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
+                        $params = $tv->get('input_properties');
+                    } else {
+                        $tv = $this->modx->newObject('modTemplateVar');
+                        $tv->set('type', !empty($field['inputTVtype']) ? $field['inputTVtype'] : 'text');
                     }
-                    $tv->set('value', $v);
+                    if (!empty($field['inputOptionValues'])) {
+                        $tv->set('elements', $field['inputOptionValues']);
+                    }
+                    if (!empty($field['default'])) {
+                        $tv->set('default_text', $field['default']);
+                    }
+                    if (!empty($field['configs'])) {
+                        $params['configs'] = $field['configs'];
+                    }
+
+                    /*insert actual value from requested record, convert arrays to ||-delimeted string */
+                    $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
+
+                    $tv->set('value', $fieldvalue);
+                    if (!empty($field['caption'])) {
+                        $field['caption'] = htmlentities($field['caption'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                        $tv->set('caption', $field['caption']);
+                    }
+
+                    if (!empty($field['description'])) {
+                        $field['description'] = htmlentities($field['description'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                        $tv->set('description', $field['description']);
+                    }
+                    /*generate unique tvid, must be numeric*/
+                    /*todo: find a better solution*/
+                    $field['tv_id'] = ($scriptProperties['tv_id'] . '99' . $fieldid) * 1;
+                    $field['array_tv_id'] = $field['tv_id'] . '[]';
+
+                    $allfield = array();
+                    $allfield['field'] = $field['field'];
+                    $allfield['tv_id'] = $field['tv_id'];
+                    $allfield['array_tv_id'] = $field['array_tv_id'];
+                    $allfields[] = $allfield;
+
+                    $mediasource = $this->getFieldSource($field, $tv);
+                    $tv->setSource($mediasource);
+                    $tv->set('id', $field['tv_id']);
+
+                    /*
+                    $default = $tv->processBindings($tv->get('default_text'), $resourceId);
+                    if (strpos($tv->get('default_text'), '@INHERIT') > -1 && (strcmp($default, $tv->get('value')) == 0 || $tv->get('value') == null)) {
+                    $tv->set('inherited', true);
+                    }
+                    */
+
+                    if ($tv->get('value') == null) {
+                        $v = $tv->get('default_text');
+                        if ($tv->get('type') == 'checkbox' && $tv->get('value') == '') {
+                            $v = '';
+                        }
+                        $tv->set('value', $v);
+                    }
+
+
+                    $this->modx->smarty->assign('tv', $tv);
+
+
+                    /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
+                    * may be performancewise its better todo that here?
+                    
+                    if (!empty($properties['basePath'])) {
+                    if ($properties['autoResourceFolders'] == 'true') {
+                    $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
+                    $targetDir = $params['basePath'];
+
+                    $cacheManager = $this->modx->getCacheManager();
+                    // if directory doesnt exist, create it 
+                    if (!file_exists($targetDir) || !is_dir($targetDir)) {
+                    if (!$cacheManager->writeTree($targetDir)) {
+                    $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
+                    return $this->modx->error->failure('Could not create directory: ' . $targetDir);
+                    }
+                    }
+                    // make sure directory is readable/writable 
+                    if (!is_readable($targetDir) || !is_writable($targetDir)) {
+                    $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
+                    return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
+                    }
+                    } else {
+                    $params['basePath'] = $basePath;
+                    }
+                    }
+                    */
+
+                    if (!isset($params['allowBlank'])) $params['allowBlank'] = 1;
+
+                    $value = $tv->get('value');
+                    if ($value === null) {
+                        $value = $tv->get('default_text');
+                    }
+                    $this->modx->smarty->assign('params', $params);
+                    /* find the correct renderer for the TV, if not one, render a textbox */
+                    $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
+                    $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', $resourceId, $tv->get('type'));
+
+                    if (empty($inputForm)) continue;
+
+                    $tv->set('formElement', $inputForm);
+
+                    if (!is_array($categories[$tabid]->tvs)) {
+                        $categories[$tabid]->tvs = array();
+                    }
+                    $categories[$tabid]->tvs[] = $tv;
+
                 }
-
-
-                $this->modx->smarty->assign('tv', $tv);
-
-
-                /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
-                * may be performancewise its better todo that here?
-                
-                if (!empty($properties['basePath'])) {
-                if ($properties['autoResourceFolders'] == 'true') {
-                $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
-                $targetDir = $params['basePath'];
-
-                $cacheManager = $this->modx->getCacheManager();
-                // if directory doesnt exist, create it 
-                if (!file_exists($targetDir) || !is_dir($targetDir)) {
-                if (!$cacheManager->writeTree($targetDir)) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
-                return $this->modx->error->failure('Could not create directory: ' . $targetDir);
-                }
-                }
-                // make sure directory is readable/writable 
-                if (!is_readable($targetDir) || !is_writable($targetDir)) {
-                $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
-                return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
-                }
-                } else {
-                $params['basePath'] = $basePath;
-                }
-                }
-                */
-
-                if (!isset($params['allowBlank']))
-                    $params['allowBlank'] = 1;
-
-                $value = $tv->get('value');
-                if ($value === null) {
-                    $value = $tv->get('default_text');
-                }
-                $this->modx->smarty->assign('params', $params);
-                /* find the correct renderer for the TV, if not one, render a textbox */
-                $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
-                $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', $resourceId,
-                    $tv->get('type'));
-
-                if (empty($inputForm))
-                    continue;
-
-                $tv->set('formElement', $inputForm);
-
-                if (!is_array($categories[$tabid]->tvs)) {
-                    $categories[$tabid]->tvs = array();
-                }
-                $categories[$tabid]->tvs[] = $tv;
-
             }
+
         }
+
     }
 
     function extractInputTvs($formtabs)
@@ -821,10 +782,8 @@ class Migx
     function sortTV($sort, &$c, $dir = 'ASC', $sortbyTVType = '')
     {
         $c->leftJoin('modTemplateVar', 'tvDefault', array("tvDefault.name" => $sort));
-        $c->leftJoin('modTemplateVarResource', 'tvSort', array("tvSort.contentid = modResource.id",
-                "tvSort.tmplvarid = tvDefault.id"));
-        if (empty($sortbyTVType))
-            $sortbyTVType = 'string';
+        $c->leftJoin('modTemplateVarResource', 'tvSort', array("tvSort.contentid = modResource.id", "tvSort.tmplvarid = tvDefault.id"));
+        if (empty($sortbyTVType)) $sortbyTVType = 'string';
         if ($this->modx->getOption('dbtype') === 'mysql') {
             switch ($sortbyTVType) {
                 case 'integer':
@@ -925,17 +884,14 @@ class Migx
                         $first = true;
                         foreach ($c as $cond) {
                             if ($first && !$firstGroup) {
-                                $criteria->condition($criteria->query['where'][0][1], $cond, xPDOQuery::SQL_OR, null,
-                                    $cGroup);
+                                $criteria->condition($criteria->query['where'][0][1], $cond, xPDOQuery::SQL_OR, null, $cGroup);
                             } else {
-                                $criteria->condition($criteria->query['where'][0][1], $cond, xPDOQuery::SQL_AND, null,
-                                    $cGroup);
+                                $criteria->condition($criteria->query['where'][0][1], $cond, xPDOQuery::SQL_AND, null, $cGroup);
                             }
                             $first = false;
                         }
                     } else {
-                        $criteria->condition($criteria->query['where'][0][1], $c, $firstGroup ?
-                            xPDOQuery::SQL_AND : xPDOQuery::SQL_OR, null, $cGroup);
+                        $criteria->condition($criteria->query['where'][0][1], $c, $firstGroup ? xPDOQuery::SQL_AND : xPDOQuery::SQL_OR, null, $cGroup);
                     }
                     $firstGroup = false;
                 }
@@ -1013,13 +969,11 @@ class Migx
                     case '!empty':
                     case 'notempty':
                     case 'isnotempty':
-                        $output = !empty($subject) && $subject != '' ? $then : (isset($else) ? $else :
-                            '');
+                        $output = !empty($subject) && $subject != '' ? $then : (isset($else) ? $else : '');
                         break;
                     case 'isnull':
                     case 'null':
-                        $output = $subject == null || strtolower($subject) == 'null' ? $then : (isset($else) ?
-                            $else : '');
+                        $output = $subject == null || strtolower($subject) == 'null' ? $then : (isset($else) ? $else : '');
                         break;
                     case 'inarray':
                     case 'in_array':

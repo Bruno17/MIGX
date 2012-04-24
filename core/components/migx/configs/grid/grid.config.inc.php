@@ -105,7 +105,7 @@ $gridfilters['textbox']['code']=
     }
 }
 ";
-$gridfilters['textbox']['handler'] = 'searchtextbox';
+$gridfilters['textbox']['handler'] = 'gridfilter';
 
 
 $gridfilters['combobox']['code'] = "
@@ -133,7 +133,7 @@ $gridfilters['combobox']['code'] = "
     }
 }
 ";
-$gridfilters['combobox']['handler'] = 'searchcombobox';
+$gridfilters['combobox']['handler'] = 'gridfilter';
 
 
 
@@ -200,24 +200,7 @@ renderCrossTick : function(val, md, rec, row, col, s) {
 ";
 
 
-$gridfunctions['searchcombobox'] ="
-filter[[+name]]: function(cb,nv,ov) {
-        //console.log(cb.getValue());
-        var s = this.getStore();
-        s.baseParams.[[+name]] = cb.getValue();
-        this.getBottomToolbar().changePage(1);
-        this.refresh();        
-        return;
-        
-        this.setFilterParams({
-			year:cb.getValue(),
-			month:'alle'
-		});
-    }
-";
-
-
-$gridfunctions['searchtextbox'] = "
+$gridfunctions['gridfilter'] = "
     filter[[+name]]: function(tf,nv,ov) {
         var s = this.getStore();
         s.baseParams.[[+name]] = tf.getValue();

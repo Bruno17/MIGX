@@ -1,6 +1,13 @@
 Changelog for MIGX.
 MIGX 2.0.0
 ==============
+- new in beta5
+
+  Configure multiple CMP - tabs
+  packagemanager ported to extjs - tab
+  added MIGX-setup/upgrade - tab
+  added configurable text and combo - filterboxes
+
 - new in beta3
 
   This is a preview-version of MIGXdb
