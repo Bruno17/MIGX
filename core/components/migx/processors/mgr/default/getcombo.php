@@ -73,7 +73,10 @@ $rows = $stmt->fetchAll();
 
 $count = count($rows);
 
-$rows = array_merge(array(array('combo_id'=>'all','combo_name'=>'all')),$rows);
+$emtpytext = $config['gridfilters'][$scriptProperties['searchname']]['emptytext'];
+$emtpytext = empty($emtpytext) ? 'all' : $emtpytext;
+
+$rows = array_merge(array(array('combo_id'=>'all','combo_name'=>$emtpytext)),$rows);
 //$c->prepare(); echo $c->toSql();
 /*
 $collection = $modx->getCollection($classname, $c);

@@ -341,6 +341,7 @@ class Migx
 
         if (count($this->customconfigs['gridfilters']) > 0) {
             foreach ($this->customconfigs['gridfilters'] as $filter) {
+                $filter['emptytext'] = empty($filter['emptytext']) ? 'search...' : $filter['emptytext'];
                 foreach ($filter as $key => $value) {
                     $replace[$key] = $value;
                     $search[$key] = '[[+' . $key . ']]';

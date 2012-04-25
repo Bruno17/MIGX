@@ -88,7 +88,7 @@ $gridfilters['textbox']['code']=
     xtype: 'textfield'
     ,id: '[[+name]]-migxdb-search-filter'
     ,fieldLabel: 'Test'
-    ,emptyText: 'search...'
+    ,emptyText: '[[+emptytext]]'
     ,listeners: {
         'change': {fn:this.filter[[+name]],scope:this}
         ,'render': {fn: function(cmp) {

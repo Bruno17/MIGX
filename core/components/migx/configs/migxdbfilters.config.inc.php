@@ -10,6 +10,7 @@ $tabs = '
 {"caption":"Filter", "fields": [
 {"field":"name","caption":"filter Name"},
 {"field":"label","caption":"Label"},
+{"field":"emptytext","caption":"Empty Text"},
 {"field":"type","caption":"Filter Type","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $filters) . '"},
 {"field":"getlistwhere","caption":"getlist-where","inputTVtype":"textarea"},
 {"field":"getcomboprocessor","caption":"getcombo processor"},
