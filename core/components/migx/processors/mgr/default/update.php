@@ -60,6 +60,17 @@ if (isset($scriptProperties['data'])) {
 
 $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
 
+$joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
+
+if (!empty($joinalias)) {
+    if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
+        $joinclass = $fkMeta['class'];
+        $joinvalues = array();
+    } else {
+        $joinalias = '';
+    }
+}
+
 switch ($scriptProperties['task']) {
     case 'publish':
         $object = $modx->getObject($classname, $scriptProperties['object_id']);
@@ -115,6 +126,15 @@ switch ($scriptProperties['task']) {
                 $postvalues[$field[0]][$field[1]] = $value;
             } else {
                 $postvalues[$field[0]] = $value;
+            }
+
+            if (!empty($joinalias)) {
+                // check for jointable- fields
+                //$len = strlen($joinalias)+1;
+                if (substr($field[0], 0, 7) == 'Joined_') {
+                    $joinvalues[substr($field[0], 7)] = $value;
+                    unset($postvalues[$field[0]]);
+                } 
             }
         }
 
@@ -186,15 +206,42 @@ if ($object->save() == false) {
     return;
 }
 
+if (!empty($joinalias)) {
+
+    if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')) {
+        $localkey = $joinFkMeta['local'];
+    }
+    if ($joinobject = $modx->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $object->get('id')))) {
+        $joinobject->fromArray($joinvalues);
+    } else {
+        $joinobject = $modx->newObject($joinclass);
+        $joinobject->fromArray($joinvalues);
+        $joinobject->set('active', '1');
+        $joinobject->set('resource_id', $scriptProperties['resource_id']);
+        $joinobject->set($localkey, $object->get('id'));
+    }
+    $joinobject->save();
+}
 
 //clear cache
-$paths = array('config.cache.php', 'sitePublishing.idx.php', 'registry/mgr/workspace/', 'lexicon/', );
+$paths = array(
+    'config.cache.php',
+    'sitePublishing.idx.php',
+    'registry/mgr/workspace/',
+    'lexicon/',
+    );
 $contexts = $modx->getCollection('modContext');
 foreach ($contexts as $context) {
     $paths[] = $context->get('key') . '/';
 }
 
-$options = array('publishing' => 1, 'extensions' => array('.cache.php', '.msg.php', '.tpl.php'), );
+$options = array(
+    'publishing' => 1,
+    'extensions' => array(
+        '.cache.php',
+        '.msg.php',
+        '.tpl.php'),
+    );
 if ($modx->getOption('cache_db')) $options['objects'] = '*';
 $results = $modx->cacheManager->clearCache($paths, $options);
 

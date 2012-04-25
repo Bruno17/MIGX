@@ -62,6 +62,32 @@ if (n.published == 1) {
 ";
 $gridcontextmenus['unpublish']['handler'] = 'this.unpublishObject';
 
+$gridcontextmenus['activate']['code']="
+        var active = n.Joined_active || 0;
+        if (active == 0) {
+            m.push({
+                text: '[[%migx.activate]]'
+                ,handler: this.activateObject
+            })
+            m.push('-');
+        }
+        
+";
+$gridcontextmenus['activate']['handler'] = 'this.activateObject';
+
+$gridcontextmenus['deactivate']['code']="
+        if (n.Joined_active == 1) {
+            m.push({
+                text: '[[%migx.deactivate]]'
+                ,handler: this.deactivateObject
+            })
+            m.push('-');
+        }
+        
+";
+$gridcontextmenus['deactivate']['handler'] = 'this.deactivateObject';
+
+
 $gridcontextmenus['recall_remove_delete']['code']="
         if (n.deleted == 1) {
         m.push({
@@ -86,7 +112,7 @@ $gridfilters['textbox']['code']=
 "
 {
     xtype: 'textfield'
-    ,id: '[[+name]]-migxdb-search-filter'
+    ,idxxx: '[[+name]]-migxdb-search-filter'
     ,fieldLabel: 'Test'
     ,emptyText: '[[+emptytext]]'
     ,listeners: {
@@ -111,7 +137,7 @@ $gridfilters['textbox']['handler'] = 'gridfilter';
 $gridfilters['combobox']['code'] = "
 {
     xtype: 'modx-combo'
-    ,id: '[[+name]]-migxdb-search-filter'
+    ,idxxx: '[[+name]]-migxdb-search-filter'
     ,name: '[[+name]]'
     ,hiddenName: '[[+name]]'
     ,url: '[[+config.connectorUrl]]'
@@ -293,6 +319,42 @@ unpublishObject: function() {
     }    
 ";
 
+$gridfunctions['this.activateObject'] = "
+activateObject: function() {
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/[[+config.task]]/activaterelation'
+				,task: 'activate'
+                ,object_id: this.menu.record.id
+				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+            }
+            ,listeners: {
+                'success': {fn:this.refresh,scope:this}
+            }
+        });
+    }	
+";
+
+$gridfunctions['this.deactivateObject'] = "
+deactivateObject: function() {
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/[[+config.task]]/activaterelation'
+				,task: 'deactivate'
+                ,object_id: this.menu.record.id
+				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+            }
+            ,listeners: {
+                'success': {fn:this.refresh,scope:this}
+            }
+        });
+    }	
+";
+
 $gridfunctions['this.publishSelected'] = "
 publishSelected: function(btn,e) {
         var cs = this.getSelectedAsList();
@@ -301,7 +363,7 @@ publishSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}{$config_task}{literal}/bulkupdate'
+                action: 'mgr/[[+config.task]]/bulkupdate'
 				,configs: this.config.configs
 				,task: 'publish'
                 ,objects: cs
@@ -324,7 +386,7 @@ unpublishSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}{$config_task}{literal}/bulkupdate'
+                action: 'mgr/[[+config.task]]/bulkupdate'
 				,configs: this.config.configs
 				,config_task: 'unpublish'
                 ,objects: cs
@@ -347,7 +409,7 @@ deleteSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}{$config_task}{literal}/bulkupdate'
+                action: 'mgr/[[+config.task]]/bulkupdate'
 				,configs: this.config.configs
 				,task: 'delete'
                 ,objects: cs
@@ -399,7 +461,7 @@ removeObject: function() {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/{/literal}{$config_task}{literal}/remove'
+                action: 'mgr/[[+config.task]]/remove'
 				,task: 'removeone'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs

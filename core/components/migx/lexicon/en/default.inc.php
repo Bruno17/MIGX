@@ -44,6 +44,8 @@ $_lang['migx.new'] = 'new';
 $_lang['migx.filters'] = 'Filters';
 
 $_lang['migx.add_replacement'] = '"Add Item" Replacement';
+$_lang['migx.activate'] = 'Activate';
+$_lang['migx.deactivate'] = 'Deactivate';
 
 $_lang['migx.month'] = 'Month';
 $_lang['migx.year'] = 'Year';

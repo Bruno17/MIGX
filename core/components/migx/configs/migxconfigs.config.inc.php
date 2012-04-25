@@ -93,7 +93,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.prefix","caption":"Prefix"},
     {"field":"extended.grid","caption":"Grid"},
     {"field":"extended.check_resid","caption":"Check Resource","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0||@TV","default":"0"},
-    {"field":"extended.check_resid_TV","caption":"Check Resource TV"}
+    {"field":"extended.check_resid_TV","caption":"Check Resource TV"},
+    {"field":"extended.join_alias","caption":"Join Alias"}
 ]},
 {"caption":"CMP-Settings", "fields": [
     {"field":"extended.cmptabcaption","caption":"Tab Caption"},

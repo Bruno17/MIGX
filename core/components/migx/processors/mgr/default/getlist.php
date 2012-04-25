@@ -14,6 +14,16 @@ $modelpath = $packagepath . 'model/';
 $modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
 
+$joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
+
+if (!empty($joinalias)) {
+    if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)){
+        $joinclass = $fkMeta['class'];
+    }
+    else{
+        $joinalias = '';    
+    }
+}
 
 if ($this->modx->lexicon) {
     $this->modx->lexicon->load($packageName . ':default');
@@ -30,6 +40,25 @@ $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
 
 $c = $modx->newQuery($classname);
+$c->select($modx->getSelectColumns($classname, $classname));
+
+if (!empty($joinalias)) {
+    /*
+    if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
+        $localkey = $joinFkMeta['local'];
+    }    
+    */
+    $c->leftjoin($joinclass, $joinalias);
+    $c->select($modx->getSelectColumns($joinclass, $joinalias, 'Joined_'));
+}
+
+
+/*
+$c->leftjoin('poProduktFormat','ProduktFormat', 'format_id = poFormat.id AND product_id ='.$scriptProperties['object_id']);
+//$c->select($classname.'.*');
+
+$c->select('ProduktFormat.format_id,ProduktFormat.calctype,ProduktFormat.price,ProduktFormat.published AS pof_published');
+*/
 
 //print_r($config['gridfilters']);
 
@@ -56,7 +85,11 @@ if (count($config['gridfilters']) > 0) {
 
 
 if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
-    $c->where(array($classname . '.resource_id' => $resource_id));
+    if (!empty($joinalias)) {
+        $c->where(array($joinalias . '.resource_id' => $resource_id));
+    } else {
+        $c->where(array($classname . '.resource_id' => $resource_id));
+    }
 }
 
 
@@ -67,15 +100,12 @@ if (!empty($showtrash)) {
 }
 $count = $modx->getCount($classname, $c);
 
-$c->select('
-    `' . $classname . '`.*
-');
 $c->sortby($sort, $dir);
 if ($isCombo || $isLimit) {
     $c->limit($limit, $start);
 }
 //$c->sortby($sort,$dir);
-//$c->prepare(); echo $c->toSql();
+//$c->prepare();echo $c->toSql();
 $collection = $modx->getCollection($classname, $c);
 
 $rows = array();

@@ -187,7 +187,9 @@ class Migx
         $this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
         $this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
         $this->customconfigs['gridfunctions'] = array_merge($gridfunctions, $renderer);
-        $this->customconfigs['task'] = empty($this->customconfigs['task']) ? 'default' : $this->customconfigs['task'];
+        //$defaulttask = empty($this->customconfigs['join_alias']) ? 'default' : 'default_join';
+        $defaulttask = 'default';
+        $this->customconfigs['task'] = empty($this->customconfigs['task']) ? $defaulttask : $this->customconfigs['task'];
 
 
     }
@@ -525,7 +527,6 @@ class Migx
                 }
             }
         }
-
         if (count($handlers) > 0) {
             foreach ($handlers as $handler) {
                 if (isset($this->customconfigs['gridfunctions'][$handler])) {
