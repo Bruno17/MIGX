@@ -82,7 +82,6 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
             $columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;            
         }
 
-
         if (is_array($columns) && count($columns) > 0) {
             foreach ($columns as $key => $column) {
                 $field['name'] = $column['dataIndex'];
@@ -98,29 +97,10 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
                 }
                 $cols[] = $col;
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
-
-                if (isset($inputTvs[$field['name']]) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $inputTvs[$field['name']]['inputTV']))) {
-
-                    $inputTV = $inputTvs[$field['name']];
-
-                    $params = $tv->get('input_properties');
-                    $params['wctx'] = $wctx;
-                    /*
-                    if (!empty($properties['basePath'])) {
-                    if ($properties['autoResourceFolders'] == 'true' && isset($resource['id'])) {
-                    $params['basePath'] = $base_path.$properties['basePath'] . $resource['id'] . '/';
-                    } else {
-                    $params['basePath'] = $base_path.$properties['basePath'];
-                    }
-                    }
-                    */
-                    $mediasource = $this->migx->getFieldSource($inputTV, $tv);
-                    $pathconfigs[$key] = '&source=' . $mediasource->get('id');
-                    //$pathconfigs[$key] = '&basePath='.$params['basePath'].'&basePathRelative='.$params['basePathRelative'].'&baseUrl='.$params['baseUrl'].'&baseUrlRelative='.$params['baseUrlRelative'];
-
-                } else {
-                    $pathconfigs[$key] = array();
-                }
+                
+                $pathconfigs[$key] = isset($inputTvs[$field['name']]) ? $this->migx->prepareSourceForGrid($inputTvs[$field['name']]) : array();
+                
+                
             }
         }
 

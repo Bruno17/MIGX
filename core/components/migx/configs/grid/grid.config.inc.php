@@ -166,13 +166,15 @@ $gridfilters['combobox']['handler'] = 'gridfilter';
 $ctx = '{$ctx}';
 $httpimg = '<img style="height:60px" src="' + val + '"/>';
 
-$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+'&wctx={/literal}{$ctx}{literal}'+source+'";
+$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+source+'";
 $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 
 $renderer['this.renderImage'] = "
     renderImage : function(val, md, rec, row, col, s){
-		var source = s.pathconfigs[col];
-		if (val.substr(0,4) == 'http'){
+        var source = s.pathconfigs[col];
+		console.log(s.pathconfigs);
+        console.log(col);
+        if (val.substr(0,4) == 'http'){
             return '{$httpimg}' ;
 		}        
 		if (val != ''){

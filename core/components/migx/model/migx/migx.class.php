@@ -503,28 +503,7 @@ class Migx
 
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
 
-                if (isset($inputTvs[$field['name']]) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $inputTvs[$field['name']]['inputTV']))) {
-
-                    $inputTV = $inputTvs[$field['name']];
-
-                    $params = $tv->get('input_properties');
-                    $params['wctx'] = $wctx;
-                    /*
-                    if (!empty($properties['basePath'])) {
-                    if ($properties['autoResourceFolders'] == 'true' && isset($resource['id'])) {
-                    $params['basePath'] = $base_path.$properties['basePath'] . $resource['id'] . '/';
-                    } else {
-                    $params['basePath'] = $base_path.$properties['basePath'];
-                    }
-                    }
-                    */
-                    $mediasource = $this->getFieldSource($inputTV, $tv);
-                    $pathconfigs[$key] = '&source=' . $mediasource->get('id');
-                    //$pathconfigs[$key] = '&basePath='.$params['basePath'].'&basePathRelative='.$params['basePathRelative'].'&baseUrl='.$params['baseUrl'].'&baseUrlRelative='.$params['baseUrlRelative'];
-
-                } else {
-                    $pathconfigs[$key] = array();
-                }
+                $pathconfigs[$key] = isset($inputTvs[$field['name']]) ? $this->prepareSourceForGrid($inputTvs[$field['name']]) : array();
             }
         }
         if (count($handlers) > 0) {
@@ -561,34 +540,59 @@ class Migx
 
     }
 
+    function prepareSourceForGrid($inputTv)
+    {
+        if (!empty($inputTv['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $inputTv['inputTV']))) {
+
+        } else {
+            $tv = $this->modx->newObject('modTemplateVar');
+        }
+
+        $mediasource = $this->getFieldSource($inputTv, $tv);
+        return '&source=' . $mediasource->get('id');
+
+    }
+
     function getFieldSource($field, &$tv)
     {
-        //set media_source for this TV before changing the id
+        //source from config
+        
+        $sourcefrom = isset($field['sourceFrom']) && !empty($field['sourceFrom']) ? $field['sourceFrom'] : 'config';
 
-        if (isset($field['sources']) && is_array($field['sources'])) {
-            foreach ($field['sources'] as $context => $sourceid) {
-                $sources[$context] = $sourceid;
-            }
-        }
-
-        $findSource = true;
-        if (isset($sources[$this->working_context])) {
-            //try using field-specific mediasource
-            if ($mediasource = $this->modx->getObject('sources.modMediaSource', $sources[$this->working_context])) {
-                $findSource = false;
-
-            }
-        }
-        if ($findSource) {
-            if ($this->source && isset($field['sourceFrom']) && $field['sourceFrom'] == 'migx') {
-                //use global MIGX-mediasource for all TVs
-                $tv->setSource($this->source);
-                $mediasource = $this->source;
+        if ($sourcefrom == 'config' && isset($field['sources'])) {
+            if (is_array($field['sources'])) {
+                foreach ($field['sources'] as $context => $sourceid) {
+                    $sources[$context] = $sourceid;
+                }
             } else {
-                //useTV-specific mediasource
-                $mediasource = $tv->getSource($this->working_context);
+                $fsources = $this->modx->fromJson($field['sources']);
+                if (is_array($fsources)) {
+                    foreach ($fsources as $source) {
+                        if (isset($source['context']) && isset($source['sourceid'])) {
+                            $sources[$source['context']] = $source['sourceid'];
+                        }
+                    }
+                }
+            }
+
+        }
+
+        if (isset($sources[$this->working_context]) && !empty($sources[$this->working_context])) {
+            //try using field-specific mediasource from config
+            if ($mediasource = $this->modx->getObject('sources.modMediaSource', $sources[$this->working_context])) {
+                return $mediasource;
             }
         }
+
+        if ($this->source && $sourcefrom == 'migx') {
+            //use global MIGX-mediasource for all TVs
+            $tv->setSource($this->source);
+            $mediasource = $this->source;
+        } else {
+            //useTV-specific mediasource
+            $mediasource = $tv->getSource($this->working_context);
+        }
+
         return $mediasource;
     }
 
@@ -633,6 +637,7 @@ class Migx
             $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
             if (is_array($fields) && count($fields) > 0) {
                 foreach ($fields as &$field) {
+                    
                     $fieldid++;
                     if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
                         $params = $tv->get('input_properties');
@@ -769,9 +774,12 @@ class Migx
         $inputTvs = array();
         if (is_array($formtabs)) {
             foreach ($formtabs as $tab) {
-                if (isset($tab['fields']) && is_array($tab['fields'])) {
-                    foreach ($tab['fields'] as $field) {
-                        if (isset($field['inputTV'])) {
+                $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
+                if (isset($tab['fields']) && is_array($fields)) {
+                    foreach ($fields as $field) {
+                        if (isset($field['inputTV']) && !empty($field['inputTV'])) {
+                            $inputTvs[$field['field']] = $field;
+                        } elseif (isset($field['inputTVtype']) && !empty($field['inputTVtype'])) {
                             $inputTvs[$field['field']] = $field;
                         }
                     }

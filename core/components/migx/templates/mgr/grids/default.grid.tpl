@@ -7,9 +7,13 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
 
     // define grid columns in a separate variable
     var cols=[this.sm];
+    // add empty pathconfig (source) to array to match number of col in renderimage
+    var pc=[''];
 	for(i = 0; i <  config.columns.length; i++) {
  		cols.push(config.columns[i]);
-    } 
+        pc.push(config.pathconfigs[i]);
+    }
+    config.pathconfigs = pc; 
     config.columns=cols;    
     Ext.applyIf(config,{
 	autoHeight: true,

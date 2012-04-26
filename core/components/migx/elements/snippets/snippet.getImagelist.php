@@ -73,9 +73,20 @@ if (!empty($tvname)) {
         /*
         *   get inputProperties
         */
+
+
         $properties = $tv->get('input_properties');
         $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
-        $formtabs = $modx->fromJSON($properties['formtabs']);
+
+        $migx->config['configs'] = $properties['configs'];
+        $migx->loadConfigs();
+        // get tabs from file or migx-config-table
+        $formtabs = $migx->getTabs();
+        if (empty($formtabs)) {
+            //try to get formtabs and its fields from properties
+            $formtabs = $modx->fromJSON($properties['formtabs']);
+        }
+
         if (!empty($properties['basePath'])) {
             if ($properties['autoResourceFolders'] == 'true') {
                 $scriptProperties['base_path'] = $base_path . $properties['basePath'] . $docid . '/';
@@ -168,23 +179,29 @@ if (count($items) > 0) {
             $value = is_array($value) ? implode('||', $value) : $value; //handle arrays (checkboxes, multiselects)
             if ($processTVs && isset($inputTvs[$field])) {
                 if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]['inputTV']))) {
-                    $inputTV = $inputTvs[$field];
-                    $mTypes = $modx->getOption('manipulatable_url_tv_output_types', null, 'image,file');
-                    //don't manipulate any urls here
-                    $modx->setOption('manipulatable_url_tv_output_types', '');
-                    $tv->set('default_text', $value);
-                    $value = $tv->renderOutput($docid);
-                    //set option back
-                    $modx->setOption('manipulatable_url_tv_output_types', $mTypes);
-                    //now manipulate urls
-                    if ($mediasource = $migx->getFieldSource($inputTV, $tv)) {
-                        $mTypes = explode(',', $mTypes);
-                        if (!empty($value) && in_array($tv->get('type'), $mTypes)) {
-                            //$value = $mediasource->prepareOutputUrl($value);
-                            $value = str_replace('/./','/',$mediasource->prepareOutputUrl($value));
-                        }
+
+                } else {
+                    $tv = $modx->newObject('modTemplateVar');
+                    $tv->set('type',$inputTvs[$field]['inputTVtype']);
+                }
+                $inputTV = $inputTvs[$field];
+  
+                $mTypes = $modx->getOption('manipulatable_url_tv_output_types', null, 'image,file');
+                //don't manipulate any urls here
+                $modx->setOption('manipulatable_url_tv_output_types', '');
+                $tv->set('default_text', $value);
+                $value = $tv->renderOutput($docid);
+                //set option back
+                $modx->setOption('manipulatable_url_tv_output_types', $mTypes);
+                //now manipulate urls
+                if ($mediasource = $migx->getFieldSource($inputTV, $tv)) {
+                     $mTypes = explode(',', $mTypes);
+                    if (!empty($value) && in_array($tv->get('type'), $mTypes)) {
+                        //$value = $mediasource->prepareOutputUrl($value);
+                        $value = str_replace('/./', '/', $mediasource->prepareOutputUrl($value));
                     }
-                 }
+                }
+
             }
             $fields[$field] = $value;
 

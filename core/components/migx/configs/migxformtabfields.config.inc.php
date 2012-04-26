@@ -8,6 +8,14 @@ $tabs ='
 {"field":"inputTV","caption":"Input TV"},
 {"field":"inputTVtype","caption":"Input TV type"},
 {"field":"configs","caption":"Configs"}
+]},
+{"caption":"Mediasources", "fields": [
+{"field":"sourceFrom","caption":"source From","inputTVtype":"listbox","inputOptionValues":"config||tv||migx"},
+{"field":"sources","caption":"Sources","inputTVtype":"migx","configs":"migxfieldsources"}
+]},
+{"caption":"Input Options", "fields": [
+{"field":"inputOptionsValues","caption":"Input Option Values"},
+{"field":"default","caption":"Default Value"}
 ]}
 ] 
 ';         

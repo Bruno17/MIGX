@@ -25,6 +25,18 @@ class migxFormProcessor extends modProcessor
         $this->modx->getService('smarty', 'smarty.modSmarty');
         $scriptProperties = $this->getProperties();
         //$controller->loadControllersPath();
+        
+        // we will need a way to get a context-key, if in CMP-mode, from config, from dataset..... thoughts??
+        // can be overridden in custom-processors for now, but whats with the preparegrid-method and working-context?
+        // ok let's see when we need this.
+        $this->modx->migx->working_context = 'web';
+
+        if ($this->modx->resource = $this->modx->getObject('modResource', $scriptProperties['resource_id'])) {
+            $this->modx->migx->working_context = $this->modx->resource->get('context_key');
+
+            //$_REQUEST['id']=$scriptProperties['resource_id'];
+        }        
+        
         $controller->loadTemplatesPath();
         $controller->setPlaceholder('_config', $this->modx->config);             
         $task = $this->modx->migx->getTask();
@@ -63,7 +75,7 @@ class migxFormProcessor extends modProcessor
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
         $controller->setPlaceholder('object', $object);
         $controller->setPlaceholder('categories', $categories);
-        $controller->setPlaceholder('win_id', $scriptProperties['tv_id']);
+        //$controller->setPlaceholder('win_id', $scriptProperties['tv_id']);
         $controller->setPlaceholder('win_id', isset($this->modx->migx->customconfigs['win_id']) ? $this->modx->migx->customconfigs['win_id'] : $scriptProperties['tv_id']);
         //$c->setPlaceholder('id_update_window', 'modx-window-midb-grid-update');
 
