@@ -1,5 +1,4 @@
 <?php
-
 /**
  * getImageList
  *
@@ -37,30 +36,35 @@
 /* get default properties */
 
 
-$tvname = $modx->getOption('tvname', $scriptProperties, '');
-$tpl = $modx->getOption('tpl', $scriptProperties, '');
-$limit = $modx->getOption('limit', $scriptProperties, '0');
-$offset = $modx->getOption('offset', $scriptProperties, 0);
-$totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
-$randomize = $modx->getOption('randomize', $scriptProperties, false);
-$preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
-$where = $modx->getOption('where', $scriptProperties, '');
-$where = !empty($where) ? $modx->fromJSON($where) : array();
+$tvname     	= $modx->getOption('tvname', $scriptProperties, '');
+$tpl 			= $modx->getOption('tpl', $scriptProperties, '');
+$limit 			= $modx->getOption('limit', $scriptProperties, '0');
+$offset 		= $modx->getOption('offset', $scriptProperties, 0);
+$totalVar 		= $modx->getOption('totalVar', $scriptProperties, 'total');
+$randomize 		= $modx->getOption('randomize', $scriptProperties, false);
+$preselectLimit 	= $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
+$where 			= $modx->getOption('where', $scriptProperties, '');
+$where 			= !empty($where) ? $modx->fromJSON($where) : array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
-$toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
-$outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
-$placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
-$toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
-$jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
-$outputvalue = $modx->getOption('value', $scriptProperties, '');
-$outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
-$docidVarKey = $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
-$docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? $modx->resource->get('id') : 1));
-$docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
-$processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
+$toPlaceholder 		= $modx->getOption('toPlaceholder', $scriptProperties, false);
+$outputSeparator 	= $modx->getOption('outputSeparator', $scriptProperties, '');
+$placeholdersKeyField 	= $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
+$toJsonPlaceholder 	= $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
+$jsonVarKey 		= $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
+$outputvalue 		= $modx->getOption('value', $scriptProperties, '');
+$outputvalue 		= isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
+$docidVarKey 		= $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
+$docid 			= $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? $modx->resource->get('id') : 1));
+$docid 			= isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
+$processTVs 		= $modx->getOption('processTVs', $scriptProperties, '1');
 
-$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
-$base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
+$base_path 		= $modx->getOption('base_path', null, MODX_BASE_PATH);
+$base_url 		= $modx->getOption('base_url', null, MODX_BASE_URL);
+
+$sortBy    		= $modx->getOption('sortBy',    $scriptProperties, false);
+$sortOrder 		= $modx->getOption('sortOrder', $scriptProperties, 'asc');
+// sortType is inactive. It will be used in the future to sort by things like "date"
+$sortType 		= $modx->getOption('sortType', $scriptProperties, 'string');
 
 $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
 if (!($migx instanceof Migx)) return '';
@@ -171,6 +175,34 @@ if (count($items) > 0) {
     }
 
     $idx = 0;
+  
+  // add sort features
+  
+             if( $sortBy !== FALSE && array_search( $sortBy , array_Keys($items) ) !== FALSE ) {          
+                foreach($items as $k=>$v) {
+                    $b[$k] = $v[$sortBy];
+                }
+                    switch( $sortOrder ) {
+                    case'asc':
+                        asort( $b );
+                        break;
+                    case'desc':
+                        arsort( $b );
+                        break;
+                    default:
+                        asort( $b );
+                        break;
+                    }
+ 
+                foreach($b as $key=>$val) {
+                    $c[$key] = $items[$key];
+                }               
+                $items = $c;
+            }
+  
+  // /
+  
+  
     $output = array();
     foreach ($items as $key => $item) {
 
