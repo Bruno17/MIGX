@@ -7,9 +7,9 @@
 
 <div id="modx-window-mi-grid-update-{$win_id}-tabs">
 {foreach from=$categories item=category name=cat}
-{if count($category->tvs) > 0}
+{if count($category.tvs) > 0}
 
-    <div id="modx-tv-tab{$category->id}" class="x-tab" title="{$category->category|default:$_lang.uncategorized|ucfirst}">
+    <div id="modx-tv-tab{$category.id}" class="x-tab" title="{$category.category|default:$_lang.uncategorized|ucfirst}">
 
 {if count($formnames) > 0}
 {if $smarty.foreach.cat.first}
@@ -77,7 +77,7 @@ Ext.reg('modx-combo-formnamedropdown',MODx.combo.FormnameDropdown);
 {/if}
 {/if}
     
-    {foreach from=$category->tvs item=tv name='tv'}
+    {foreach from=$category.tvs item=tv name='tv'}
 
 {if $tv->type NEQ "hidden"}
     <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr">

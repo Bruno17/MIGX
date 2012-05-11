@@ -41,6 +41,7 @@ if (empty($scriptProperties['object_id'])) {
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
 $packageName = $config['packageName'];
+$task = $modx->getOption('task', $scriptProperties, '');
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
@@ -59,7 +60,7 @@ if (isset($scriptProperties['data'])) {
 }
 
 
-switch ($scriptProperties['task']) {
+switch ($task) {
     case 'publish':
         $object = $modx->getObject($classname, $scriptProperties['object_id']);
         $object->set('publishedon', strftime('%Y-%m-%d %H:%M:%S'));
@@ -143,12 +144,12 @@ switch ($scriptProperties['task']) {
 
 
         }
-        
-        if (isset($postvalues['jsonexport'])){
+
+        if (isset($postvalues['jsonexport'])) {
             $postvalues = $modx->fromJson($postvalues['jsonexport']);
         }
-                
-        
+
+
         if ($scriptProperties['object_id'] == 'new') {
             $object = $modx->newObject($classname);
             $tempvalues['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
@@ -164,20 +165,19 @@ switch ($scriptProperties['task']) {
 
         if (isset($postvalues['formtabs'])) {
             $formtabs = $modx->fromJson($postvalues['formtabs']);
-            if (is_array($formtabs && count($formtabs)>0)){
-            foreach ($formtabs as $tab) {
-                $fields = is_array($tab['fields']) ? $fields : $modx->fromJson($tab['fields']);
-                $tab['fields'] = $fields;
-                $newtabs[] = $tab;
-            }
-            $postvalues['formtabs'] = $modx->toJson($newtabs);                
+            if (is_array($formtabs && count($formtabs) > 0)) {
+                foreach ($formtabs as $tab) {
+                    $fields = is_array($tab['fields']) ? $fields : $modx->fromJson($tab['fields']);
+                    $tab['fields'] = $fields;
+                    $newtabs[] = $tab;
+                }
+                $postvalues['formtabs'] = $modx->toJson($newtabs);
             }
 
         }
 
         //handle published
-        $postvalues['published'] = isset($postvalues['published']) ? $postvalues['published']:
-        '1';
+        $postvalues['published'] = isset($postvalues['published']) ? $postvalues['published'] : '1';
 
         /*
         if ($postvalues['published']=='1'){
@@ -210,10 +210,10 @@ switch ($scriptProperties['task']) {
         } 
         */
         //overwrites
-        if (empty($postvalues['ow_createdon'])) {
+        if (isset($tempvalues['createdon']) && empty($postvalues['ow_createdon'])) {
             $postvalues['createdon'] = $tempvalues['createdon'];
         }
-        if (empty($postvalues['ow_publishedon'])) {
+        if (isset($tempvalues['publishedon']) && empty($postvalues['ow_publishedon'])) {
             $postvalues['publishedon'] = $tempvalues['publishedon'];
         }
         /* handle alias
@@ -263,13 +263,12 @@ switch ($scriptProperties['task']) {
         */
         //$postvalues['context_key']=$scriptProperties['context_key'];
 
-        if (!$config['is_container'] && !empty($postvalues['resource_id'])) {
+        if (isset($config['is_container']) && !$config['is_container'] && !empty($postvalues['resource_id'])) {
             $postvalues['customerid'] = $postvalues['resource_id'];
         }
-        
 
-        $object->fromArray($postvalues); 
 
+        $object->fromArray($postvalues);
 
 
         //$object->set('configs',$modx->toJson($postvalues['configs']));
@@ -284,13 +283,24 @@ if ($object->save() == false) {
 
 
 //clear cache
-$paths = array('config.cache.php', 'sitePublishing.idx.php', 'registry/mgr/workspace/', 'lexicon/', );
+$paths = array(
+    'config.cache.php',
+    'sitePublishing.idx.php',
+    'registry/mgr/workspace/',
+    'lexicon/',
+    );
 $contexts = $modx->getCollection('modContext');
 foreach ($contexts as $context) {
     $paths[] = $context->get('key') . '/';
 }
 
-$options = array('publishing' => 1, 'extensions' => array('.cache.php', '.msg.php', '.tpl.php'), );
+$options = array(
+    'publishing' => 1,
+    'extensions' => array(
+        '.cache.php',
+        '.msg.php',
+        '.tpl.php'),
+    );
 if ($modx->getOption('cache_db')) $options['objects'] = '*';
 $results = $modx->cacheManager->clearCache($paths, $options);
 

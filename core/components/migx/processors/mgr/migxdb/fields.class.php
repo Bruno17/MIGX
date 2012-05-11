@@ -70,7 +70,7 @@ class migxFormProcessor extends modProcessor
         $allfields[] = array();
         $categories = array();
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
-
+       
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
         $controller->setPlaceholder('object', $object);

@@ -164,7 +164,8 @@ $gridfilters['combobox']['handler'] = 'gridfilter';
 
 
 $ctx = '{$ctx}';
-$httpimg = '<img style="height:60px" src="' + val + '"/>';
+$val = "' + val + '";
+$httpimg = '<img style="height:60px" src="'.$val.'"/>';
 
 $phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+source+'";
 $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
@@ -172,8 +173,6 @@ $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 $renderer['this.renderImage'] = "
     renderImage : function(val, md, rec, row, col, s){
         var source = s.pathconfigs[col];
-		console.log(s.pathconfigs);
-        console.log(col);
         if (val.substr(0,4) == 'http'){
             return '{$httpimg}' ;
 		}        
@@ -296,6 +295,7 @@ publishObject: function() {
 				,task: 'publish'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -313,6 +313,7 @@ unpublishObject: function() {
 				,task: 'unpublish'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -475,7 +476,64 @@ removeObject: function() {
     }
 ";
 
+$gridcontextmenus['publishtarget']['code']="
+        if (n.published == 0) {
+            m.push({
+                text: _('migx.publish')
+                ,handler: this.publishTargetObject
+            })
+            m.push('-');
+        }
+        
+";
+$gridcontextmenus['publishtarget']['handler'] = 'this.publishTargetObject';
 
+$gridcontextmenus['unpublishtarget']['code']="
+if (n.published == 1) {
+            m.push({
+                text: _('migx.unpublish')
+                ,handler: this.unpublishTargetObject
+            });
+            m.push('-');
+        }      
+";
+$gridcontextmenus['unpublishtarget']['handler'] = 'this.unpublishTargetObject';
+
+$gridfunctions['this.publishTargetObject'] = "
+publishTargetObject: function() {
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/[[+config.task]]/publishtarget'
+				,task: 'publish'
+                ,object_id: this.menu.record.id
+				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+            }
+            ,listeners: {
+                'success': {fn:this.refresh,scope:this}
+            }
+        });
+    }	
+";
+
+$gridfunctions['this.unpublishTargetObject'] = "
+unpublishTargetObject: function() {
+ 		MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/[[+config.task]]/publishtarget'
+				,task: 'unpublish'
+                ,object_id: this.menu.record.id
+				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+            }
+            ,listeners: {
+                'success': {fn:this.refresh,scope:this}
+            }
+        });
+    }    
+";
 
 
 

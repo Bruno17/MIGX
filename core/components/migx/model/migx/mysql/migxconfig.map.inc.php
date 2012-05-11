@@ -1,7 +1,9 @@
 <?php
 $xpdo_meta_map['migxConfig']= array (
   'package' => 'migx',
+  'version' => NULL,
   'table' => 'migx_configs',
+  'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'name' => '',

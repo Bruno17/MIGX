@@ -35,7 +35,7 @@ switch ($scriptProperties['task']) {
 	case 'unpublish':
         $object->set('unpublishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '0');
-		$object->set('unpublishedby',$modx->user->get('id'));//feld fehlt noch	    
+		$object->set('unpublishedby',$modx->user->get('id'));//feld fehlt noch  
 	    break;		
     default:
 	break;
@@ -45,5 +45,17 @@ switch ($scriptProperties['task']) {
         return $modx->error->failure($modx->lexicon('quip.comment_err_save'));
     }
 }
+
+//clear cache for all contexts
+$collection = $modx->getCollection('modContext');
+foreach ($collection as $context) {
+    $contexts = $context->get('key');
+}
+$modx->cacheManager->refresh(array(
+    'db' => array(),
+    'auto_publish' => array('contexts' => $contexts),
+    'context_settings' => array('contexts' => $contexts),
+    'resource' => array('contexts' => $contexts),
+    ));
 
 return $modx->error->success();

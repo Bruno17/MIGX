@@ -99,7 +99,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
     ,renderImage : function(val, md, rec, row, col, s){
-		console.log(s.pathconfigs);
+		//console.log(s.pathconfigs);
         var source = s.pathconfigs[col];
 		if (val.substr(0,4) == 'http'){
 			return '<img style="height:60px" src="' + val + '"/>' ;

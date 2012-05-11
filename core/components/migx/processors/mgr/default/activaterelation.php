@@ -59,27 +59,17 @@ switch ($scriptProperties['task']) {
         break;
 }
 
-//clear cache
-$paths = array(
-    'config.cache.php',
-    'sitePublishing.idx.php',
-    'registry/mgr/workspace/',
-    'lexicon/',
-    );
-$contexts = $modx->getCollection('modContext');
-foreach ($contexts as $context) {
-    $paths[] = $context->get('key') . '/';
+//clear cache for all contexts
+$collection = $modx->getCollection('modContext');
+foreach ($collection as $context) {
+    $contexts = $context->get('key');
 }
-
-$options = array(
-    'publishing' => 1,
-    'extensions' => array(
-        '.cache.php',
-        '.msg.php',
-        '.tpl.php'),
-    );
-if ($modx->getOption('cache_db')) $options['objects'] = '*';
-$results = $modx->cacheManager->clearCache($paths, $options);
+$modx->cacheManager->refresh(array(
+    'db' => array(),
+    'auto_publish' => array('contexts' => $contexts),
+    'context_settings' => array('contexts' => $contexts),
+    'resource' => array('contexts' => $contexts),
+    ));
 
 return $modx->error->success();
 

@@ -87,14 +87,17 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
                 $field['name'] = $column['dataIndex'];
                 $field['mapping'] = $column['dataIndex'];
                 $fields[] = $field;
-                $col = array();
+                //$col = array();
+                $col = $column;
                 $col['dataIndex'] = $column['dataIndex'];
                 $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
-                $col['sortable'] = $column['sortable'] == 'true' ? true : false;
-                $col['width'] = $column['width'];
+                $col['sortable'] = isset( $column['sortable']) && $column['sortable'] == 'true' ? true : false;
+                //$col['width'] = $column['width'];
+                /*
                 if (isset($column['renderer'])){
                     $col['renderer'] = $column['renderer'];
                 }
+                */
                 $cols[] = $col;
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
                 

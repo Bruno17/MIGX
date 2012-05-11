@@ -1,16 +1,16 @@
 <?php
 
 /**
- * xdbedit
+ * migx
  *
  * @author Bruno Perner
  *
  *
- * @package migxdb
+ * @package migx
  */
 /**
- * @package migxdb
- * @subpackage xdbedit
+ * @package migx
+ * @subpackage migx
  */
 class Migx
 {
@@ -63,6 +63,7 @@ class Migx
         $assetsPath = $this->modx->getOption('migx.assets_path', null, $modx->getOption('assets_path') . 'components/migx/');
         $assetsUrl = $this->modx->getOption('migx.assets_url', null, $modx->getOption('assets_url') . 'components/migx/');
 
+        $defaultconfig['debugUser'] = '';
         $defaultconfig['corePath'] = $corePath;
         $defaultconfig['modelPath'] = $corePath . 'model/';
         $defaultconfig['processorsPath'] = $corePath . 'processors/';
@@ -176,7 +177,7 @@ class Migx
             }
         }
 
-        if (is_array($this->customconfigs['filters']) && count($this->customconfigs['filters']) > 0) {
+        if (isset($this->customconfigs['filters']) && is_array($this->customconfigs['filters']) && count($this->customconfigs['filters']) > 0) {
             foreach ($this->customconfigs['filters'] as $filter) {
                 if (is_array($gridfilters[$filter['type']])) {
                     $this->customconfigs['gridfilters'][$filter['name']] = array_merge($filter, $gridfilters[$filter['type']]);
@@ -230,7 +231,7 @@ class Migx
             foreach ($cmptabs as $tab) {
                 $this->customconfigs = array();
                 $this->config['configs'] = $tab;
-                $this->prepareGrid($properties, &$controller, &$tv);
+                $this->prepareGrid($properties, $controller, $tv);
                 $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->customconfigs['cmptabcaption'];
                 $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
 
@@ -301,13 +302,18 @@ class Migx
         //$lang = $this->modx->lexicon->fetch();
 
         foreach ($this->config as $key => $value) {
-            $replace['config_' . $key] = $value;
-            $search['config_' . $key] = '[[+config.' . $key . ']]';
+            if (!is_array($value)) {
+                $replace['config_' . $key] = $value;
+                $search['config_' . $key] = '[[+config.' . $key . ']]';
+            }
+
         }
 
         foreach ($this->customconfigs as $key => $value) {
-            $replace['config_' . $key] = $value;
-            $search['config_' . $key] = '[[+config.' . $key . ']]';
+            if (!is_array($value)) {
+                $replace['config_' . $key] = $value;
+                $search['config_' . $key] = '[[+config.' . $key . ']]';
+            }
         }
 
         $l['migx.add'] = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['migx_add'] : $this->migxlang['migx.add'];
@@ -323,10 +329,10 @@ class Migx
             foreach ($this->customconfigs['gridactionbuttons'] as $button) {
                 if (!empty($button['active'])) {
                     unset($button['active']);
-                    if (!in_array($button['handler'], $handlers)) {
+                    if (isset($button['handler']) && !in_array($button['handler'], $handlers)) {
                         $handlers[] = $button['handler'];
                     }
-                    if (is_array($button['menu'])) {
+                    if (isset($button['menu']) && is_array($button['menu'])) {
                         foreach ($button['menu'] as $menu) {
                             if (!in_array($menu['handler'], $handlers)) {
                                 $handlers[] = $menu['handler'];
@@ -341,7 +347,8 @@ class Migx
             }
         }
 
-        if (count($this->customconfigs['gridfilters']) > 0) {
+        $filters = array();
+        if (isset($this->customconfigs['gridfilters']) && count($this->customconfigs['gridfilters']) > 0) {
             foreach ($this->customconfigs['gridfilters'] as $filter) {
                 $filter['emptytext'] = empty($filter['emptytext']) ? 'search...' : $filter['emptytext'];
                 foreach ($filter as $key => $value) {
@@ -480,7 +487,10 @@ class Migx
         //$columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
 
         $columns = $this->getColumns();
-
+        $item = array();
+        $pathconfigs = array();
+        $cols = array();
+        $fields = array();
         if (is_array($columns) && count($columns) > 0) {
             foreach ($columns as $key => $column) {
                 $field['name'] = $column['dataIndex'];
@@ -492,7 +502,7 @@ class Migx
                     $col = array();
                     $col['dataIndex'] = $column['dataIndex'];
                     $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
-                    $col['sortable'] = $column['sortable'] == 'true' ? true : false;
+                    $col['sortable'] = isset($column['sortable']) && $column['sortable'] == 'true' ? true : false;
                     $col['width'] = $column['width'];
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
@@ -506,7 +516,9 @@ class Migx
                 $pathconfigs[$key] = isset($inputTvs[$field['name']]) ? $this->prepareSourceForGrid($inputTvs[$field['name']]) : array();
             }
         }
+
         if (count($handlers) > 0) {
+            $gridfunctions = array();
             foreach ($handlers as $handler) {
                 if (isset($this->customconfigs['gridfunctions'][$handler])) {
                     $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
@@ -517,7 +529,14 @@ class Migx
             $this->customconfigs['gridfunctions'] = '';
         }
 
-        $tv_id = is_object($tv) ? $tv->get('id') : 'migxdb';
+        if (is_object($tv)) {
+            $tv_id = $tv->get('id');
+        } else {
+            $tv_id = 'migxdb';
+            $tv = $this->modx->newObject('modTemplateVar');
+            $controller->setPlaceholder('tv', $tv);
+        }
+
 
         $newitem[] = $item;
 
@@ -556,7 +575,7 @@ class Migx
     function getFieldSource($field, &$tv)
     {
         //source from config
-        
+
         $sourcefrom = isset($field['sourceFrom']) && !empty($field['sourceFrom']) ? $field['sourceFrom'] : 'config';
 
         if ($sourcefrom == 'config' && isset($field['sources'])) {
@@ -627,19 +646,16 @@ class Migx
 
     function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties)
     {
-
+        $fieldid = 0;
         foreach ($tabs as $tabid => $tab) {
-            $emptycat = $this->modx->newObject('modCategory');
-            $emptycat->set('category', $tab['caption']);
-            $emptycat->id = $tabid;
-            $categories[$tabid] = $emptycat;
-
+            $tvs = array();
             $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
             if (is_array($fields) && count($fields) > 0) {
+
                 foreach ($fields as &$field) {
-                    
+
                     $fieldid++;
-                    if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
+                    if (isset($field['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
                         $params = $tv->get('input_properties');
                     } else {
                         $tv = $this->modx->newObject('modTemplateVar');
@@ -656,7 +672,11 @@ class Migx
                     }
 
                     /*insert actual value from requested record, convert arrays to ||-delimeted string */
-                    $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
+                    $fieldvalue = '';
+                    if (isset($record[$field['field']])) {
+                        $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
+                    }
+
 
                     $tv->set('value', $fieldvalue);
                     if (!empty($field['caption'])) {
@@ -738,19 +758,21 @@ class Migx
                     $this->modx->smarty->assign('params', $params);
                     /* find the correct renderer for the TV, if not one, render a textbox */
                     $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
-                    $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', $resourceId, $tv->get('type'));
+                    $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
 
                     if (empty($inputForm)) continue;
 
                     $tv->set('formElement', $inputForm);
-
-                    if (!is_array($categories[$tabid]->tvs)) {
-                        $categories[$tabid]->tvs = array();
-                    }
-                    $categories[$tabid]->tvs[] = $tv;
-
+                    $tvs[] = $tv;
                 }
             }
+
+            $cat = array();
+            $cat['category'] = $tab['caption'];
+            $cat['id'] = $tabid;
+            $cat['tvs'] = $tvs;
+            $categories[] = $cat;
+
 
         }
 
@@ -760,7 +782,7 @@ class Migx
     {
         //multiple different Forms
         // Note: use same field-names and inputTVs in all forms
-        if (isset($formtabs[0]['formtabs'])) {
+        if (is_array($formtabs) && isset($formtabs[0]['formtabs'])) {
             $forms = $formtabs;
             $formtabs = array();
             foreach ($forms as $form) {

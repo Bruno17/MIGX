@@ -53,6 +53,7 @@ if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] =
 
     } else {
         $tabs = $modx->fromJson($record['formtabs']);
+        $formtabs = array();
         if (is_array($tabs) && count($tabs) > 0) {
             foreach ($tabs as $tab) {
                 $fields = is_array($tab['fields']) ? $modx->toJson($tab['fields']) : $tab['fields'];

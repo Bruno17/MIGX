@@ -46,24 +46,26 @@ class migxFormProcessor extends modProcessor
         $controller->setPlaceholder('_config', $this->modx->config);
 
         //get the MIGX-TV
-        if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']))){
+        $properties = array();
+        
+        if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']))) {
             $this->modx->migx->source = $tv->getSource($this->modx->migx->working_context, false);
             $properties = $tv->get('input_properties');
             //$properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
         }
 
-        
+        if (isset($properties['configs']) && !empty($properties['configs'])) {
+            $this->modx->migx->config['configs'] = $properties['configs'];
+            $this->modx->migx->loadConfigs();
+        }
 
-
-        $this->modx->migx->config['configs'] = $properties['configs'];
-        $this->modx->migx->loadConfigs();
         $formtabs = $this->modx->migx->getTabs();
         $fieldid = 0;
         /*actual record */
         $record = $this->modx->fromJSON($scriptProperties['record_json']);
 
         $allfields = array();
-        $formnames = array();        
+        $formnames = array();
 
         $field = array();
         $field['field'] = 'MIGX_id';
@@ -75,16 +77,18 @@ class migxFormProcessor extends modProcessor
             $migxid = $record['MIGX_id'];
         }
         $controller->setPlaceholder('migxid', $migxid);
-        
+
         if (empty($formtabs)) {
 
             //old stuff
             $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
-            $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
-            $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
+            $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties,
+                $default_formtabs));
+            $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) :
+                $formtabs;
             $fieldid = 0;
             $tabid = 0;
-            
+
             //multiple different Forms
             // Note: use same field-names and inputTVs in all forms
             if (isset($formtabs[0]['formtabs'])) {

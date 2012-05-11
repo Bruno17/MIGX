@@ -14,7 +14,8 @@ $tabs = '
 {"field":"type","caption":"Filter Type","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $filters) . '"},
 {"field":"getlistwhere","caption":"getlist-where","inputTVtype":"textarea"},
 {"field":"getcomboprocessor","caption":"getcombo processor"},
-{"field":"combotextfield","caption":"getcombo textfield"}
+{"field":"combotextfield","caption":"getcombo textfield"},
+{"field":"comboidfield","caption":"getcombo idfield (optional)"}
 ]}
 ] 
 ';

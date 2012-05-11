@@ -13,7 +13,7 @@ class MigxFormController extends modManagerController {
         }
         
         $this->modx->migx->loadLang();
-        
+       
         return $this->modx->migx->replaceLang($content);        
         
     }
