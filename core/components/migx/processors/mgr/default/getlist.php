@@ -62,7 +62,7 @@ $c->select('ProduktFormat.format_id,ProduktFormat.calctype,ProduktFormat.price,P
 
 //print_r($config['gridfilters']);
 
-if (count($config['gridfilters']) > 0) {
+if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
     foreach ($config['gridfilters'] as $filter) {
 
         if (!empty($filter['getlistwhere'])) {
