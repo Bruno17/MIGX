@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<model package="migx" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" phpdoc-package="" phpdoc-subpackage="">
+<model package="migx" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" phpdoc-package="" phpdoc-subpackage="" version="1.1">
 
     <object class="migxConfig" table="migx_configs" extends="xPDOSimpleObject">
     	<field key="name" dbtype="varchar" phptype="string" precision="100" null="false" default="" />
         <field key="formtabs" dbtype="text" phptype="string" null="false" default="" />
         <field key="contextmenus" dbtype="text" phptype="string" null="false" default="" />
         <field key="actionbuttons" dbtype="text" phptype="string" null="false" default="" />
+        <field key="columnbuttons" dbtype="text" phptype="string" null="false" default="" />
         <field key="filters" dbtype="text" phptype="string" null="false" default="" />
         <field key="extended" dbtype="text" phptype="json" null="false" default="" />
         <field key="columns" dbtype="text" phptype="string" null="false" default="" />

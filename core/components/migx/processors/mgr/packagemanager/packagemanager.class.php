@@ -16,7 +16,7 @@ class migxCreatePackageProcessor extends modProcessor
     {
 
         $properties = $this->getProperties();  
-        $prefix = $properties['prefix'];
+        $prefix = isset($properties['prefix']) && !empty($properties['prefix']) ? $properties['prefix'] : null;
         $packageName = $properties['packageName'];
         //$tablename = $properties['tablename'];
         $tableList = isset($properties['tableList']) && !empty($properties['tableList']) ? $properties['tableList'] : null;

@@ -4,7 +4,7 @@
 
 $config = $modx->migx->customconfigs;
 
-$prefix = !empty($config['prefix']) ? $config['prefix'] : null;
+$prefix = isset ($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 
 $packageName = $config['packageName'];
 
@@ -62,7 +62,7 @@ $c->select('ProduktFormat.format_id,ProduktFormat.calctype,ProduktFormat.price,P
 
 //print_r($config['gridfilters']);
 
-if (count($config['gridfilters']) > 0) {
+if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
     foreach ($config['gridfilters'] as $filter) {
 
         if (!empty($filter['getlistwhere'])) {
@@ -109,6 +109,7 @@ if ($isCombo || $isLimit) {
 $collection = $modx->getCollection($classname, $c);
 
 $rows = array();
-foreach ($collection as $row) {
-    $rows[] = $row->toArray();
+foreach ($collection as $object) {
+    $row = $object->toArray();
+    $rows[] = $row;
 }

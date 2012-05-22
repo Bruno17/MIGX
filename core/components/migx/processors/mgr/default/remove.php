@@ -40,7 +40,7 @@ if (empty($scriptProperties['object_id'])) {
 }
 
 $config = $modx->migx->customconfigs;
-$prefix = $config['prefix'];
+$prefix = isset ($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 $packageName = $config['packageName'];
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
@@ -68,7 +68,7 @@ switch ($scriptProperties['task']) {
 //clear cache for all contexts
 $collection = $modx->getCollection('modContext');
 foreach ($collection as $context) {
-    $contexts = $context->get('key');
+    $contexts[] = $context->get('key');
 }
 $modx->cacheManager->refresh(array(
     'db' => array(),

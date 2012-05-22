@@ -32,8 +32,9 @@ $gridactionbuttons['toggletrash']['enableToggle'] = 'true';
 
 $gridcontextmenus['update']['code']="
         m.push({
-            text: _('migx.edit')
-            ,handler: this.update
+            className : 'update', 
+            text: _('migx.edit'),
+            handler: 'this.update'
         });
         m.push('-');
 ";
@@ -42,20 +43,21 @@ $gridcontextmenus['update']['handler'] = 'this.update';
 $gridcontextmenus['publish']['code']="
         if (n.published == 0) {
             m.push({
-                text: _('migx.publish')
-                ,handler: this.publishObject
+                className : 'publish', 
+                text: _('migx.publish'),
+                handler: 'this.publishObject'
             })
             m.push('-');
         }
-        
 ";
 $gridcontextmenus['publish']['handler'] = 'this.publishObject';
 
 $gridcontextmenus['unpublish']['code']="
 if (n.published == 1) {
             m.push({
+                className : 'unpublish', 
                 text: _('migx.unpublish')
-                ,handler: this.unpublishObject
+                ,handler: 'this.unpublishObject'
             });
             m.push('-');
         }      
@@ -66,8 +68,9 @@ $gridcontextmenus['activate']['code']="
         var active = n.Joined_active || 0;
         if (active == 0) {
             m.push({
-                text: '[[%migx.activate]]'
-                ,handler: this.activateObject
+                className : 'activate', 
+                text: '[[%migx.activate]]',
+                handler: 'this.activateObject'
             })
             m.push('-');
         }
@@ -78,8 +81,9 @@ $gridcontextmenus['activate']['handler'] = 'this.activateObject';
 $gridcontextmenus['deactivate']['code']="
         if (n.Joined_active == 1) {
             m.push({
-                text: '[[%migx.deactivate]]'
-                ,handler: this.deactivateObject
+                className : 'deactivate', 
+                text: '[[%migx.deactivate]]',
+                handler: 'this.deactivateObject'
             })
             m.push('-');
         }
@@ -91,18 +95,21 @@ $gridcontextmenus['deactivate']['handler'] = 'this.deactivateObject';
 $gridcontextmenus['recall_remove_delete']['code']="
         if (n.deleted == 1) {
         m.push({
-            text: _('migx.recall')
-            ,handler: this.recallObject
+            className : 'recall', 
+            text: _('migx.recall'),
+            handler: 'this.recallObject'
         });
 		m.push('-');
         m.push({
-            text: _('migx.remove')
-            ,handler: this.removeObject
+            className : 'remove', 
+            text: _('migx.remove'),
+            handler: 'this.removeObject'
         });						
         } else if (n.deleted == 0) {
         m.push({
-            text: _('migx.delete')
-            ,handler: this.deleteObject
+            className : 'delete', 
+            text: _('migx.delete'),
+            handler: 'this.deleteObject'
         });		
         }
 ";
@@ -226,6 +233,11 @@ renderCrossTick : function(val, md, rec, row, col, s) {
 }
 ";
 
+$renderer['this.renderRowActions'] = "
+	dummy:function(v,md,rec) {
+        // this function is fixed in the grid
+	} 
+";
 
 $gridfunctions['gridfilter'] = "
     filter[[+name]]: function(tf,nv,ov) {

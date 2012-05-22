@@ -103,6 +103,7 @@ class Migx
     {
 
         $gridactionbuttons = array();
+        $gridcolumnbuttons = array();
         $gridcontextmenus = array();
         $gridfunctions = array();
         $renderer = array();
@@ -161,6 +162,16 @@ class Migx
                             $gridcontextmenus[$menu]['active'] = 1;
                         }
                     }
+                    $columnbuttons = $cfObject->get('columnbuttons');
+
+                    if (!empty($columnbuttons)) {
+                        $columnbuttons = explode('||', $columnbuttons);
+                        foreach ($columnbuttons as $button) {
+                            $gridcolumnbuttons[$button] = $gridcontextmenus[$button];
+                            $gridcolumnbuttons[$button]['active'] = 1;
+                        }
+                    } 
+                    
                     $actionbuttons = $cfObject->get('actionbuttons');
                     if (!empty($actionbuttons)) {
                         $actionbuttons = explode('||', $actionbuttons);
@@ -179,7 +190,7 @@ class Migx
 
         if (isset($this->customconfigs['filters']) && is_array($this->customconfigs['filters']) && count($this->customconfigs['filters']) > 0) {
             foreach ($this->customconfigs['filters'] as $filter) {
-                if (is_array($gridfilters[$filter['type']])) {
+                if (isset($gridfilters[$filter['type']]) && is_array($gridfilters[$filter['type']])) {
                     $this->customconfigs['gridfilters'][$filter['name']] = array_merge($filter, $gridfilters[$filter['type']]);
                 }
             }
@@ -187,6 +198,7 @@ class Migx
 
         $this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
         $this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
+        $this->customconfigs['gridcolumnbuttons'] = $gridcolumnbuttons;
         $this->customconfigs['gridfunctions'] = array_merge($gridfunctions, $renderer);
         //$defaulttask = empty($this->customconfigs['join_alias']) ? 'default' : 'default_join';
         $defaulttask = 'default';
@@ -436,8 +448,30 @@ class Migx
         }
         $this->customconfigs['gridcontextmenus'] = $menues;
 
-        $gridfunctions = array();
+        $columnbuttons = '';
 
+        if (count($this->customconfigs['gridcolumnbuttons']) > 0) {
+            foreach ($this->customconfigs['gridcolumnbuttons'] as $button) {
+                if (!empty($button['active'])) {
+                    unset($button['active']);
+                    if (!empty($button['handler'])) {
+                        $handlerarr = explode(',', $button['handler']);
+                        foreach ($handlerarr as $handler) {
+                            if (!in_array($handler, $handlers)) {
+                                $handlers[] = $handler;
+                            }
+                        }
+
+                    }
+                    //$menues .= $this->replaceLang($menue['code']);
+                    $columnbuttons .= $button['code'];
+                }
+
+            }
+        }
+        $this->customconfigs['gridcolumnbuttons'] = $columnbuttons;
+        
+        $gridfunctions = array();
 
         $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
         $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
@@ -503,7 +537,7 @@ class Migx
                     $col['dataIndex'] = $column['dataIndex'];
                     $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
                     $col['sortable'] = isset($column['sortable']) && $column['sortable'] == 'true' ? true : false;
-                    $col['width'] = $column['width'];
+                    $col['width'] = isset($column['width']) ? $column['width'] : '';
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
                         $handlers[] = $column['renderer'];

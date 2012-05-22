@@ -1,7 +1,7 @@
 <?php
 $xpdo_meta_map['migxConfig']= array (
   'package' => 'migx',
-  'version' => NULL,
+  'version' => '1.1',
   'table' => 'migx_configs',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
@@ -10,6 +10,7 @@ $xpdo_meta_map['migxConfig']= array (
     'formtabs' => '',
     'contextmenus' => '',
     'actionbuttons' => '',
+    'columnbuttons' => '',
     'filters' => '',
     'extended' => '',
     'columns' => '',
@@ -49,6 +50,13 @@ $xpdo_meta_map['migxConfig']= array (
       'default' => '',
     ),
     'actionbuttons' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
+    'columnbuttons' => 
     array (
       'dbtype' => 'text',
       'phptype' => 'string',

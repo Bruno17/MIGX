@@ -4,6 +4,7 @@ class MigxPackageManager extends xPDOGenerator_mysql
     function __construct(modX & $modx, array $config = array())
     {
         $this->modx = &$modx;
+        $this->maps = array();
 
         $defaultconfig = array();
         $this->config = array_merge($defaultconfig, $config);

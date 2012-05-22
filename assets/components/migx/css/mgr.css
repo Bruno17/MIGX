@@ -1,0 +1,38 @@
+ul.actions{
+    margin-top: 20px;
+    position: relative;
+    
+}
+
+.actions a {
+    background: -moz-linear-gradient(center bottom , #DCDCDC 0%, #FCFCFC 100%) repeat scroll 0 0 transparent;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    color: #888888;
+    cursor: pointer;
+    display: block;
+    font-family: helvetica,arial,freesans,clean,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 6px 8px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+.actions a:hover {
+    background: -moz-linear-gradient(center bottom , #E0E0E0 0%, #FCFCFC 100%) repeat scroll 0 0 transparent;
+    color: #5B7A98;
+}
+.actions a:active {
+    background-color: #FFFFFF;
+    background-image: none;
+    box-shadow: 0 0 3px #AAAAAA inset;
+}
+.actions a.orange {
+    background: -moz-linear-gradient(center bottom , #FEBB4A 0%, #FEDA71 100%) repeat scroll 0 0 transparent;
+    border-color: #F5B74E #E7A93F #DFA138;
+    color: #996633;
+    text-shadow: 0 1px 0 #FEE1A0;
+}
+.actions a.orange:hover {
+    background: -moz-linear-gradient(center bottom , #FEC95B 0%, #FEE1A0 100%) repeat scroll 0 0 transparent;
+}

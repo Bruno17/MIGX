@@ -9,7 +9,7 @@ abstract class MigxManagerController extends modExtraManagerController {
  
         $this->modx->migx = & $this->migx;
  
-        //$this->addCss($this->migx->config['cssUrl'].'mgr.css');
+        $this->addCss($this->migx->config['cssUrl'].'mgr.css');
         $this->addJavascript($this->migx->config['jsUrl'].'mgr/migx.js');
         $this->addHtml('<script type="text/javascript">
         Ext.onReady(function() {

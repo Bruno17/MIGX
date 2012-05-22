@@ -1,7 +1,7 @@
 <?php
 
 $config = $modx->migx->customconfigs;
-$prefix = $config['prefix'];
+$prefix = isset ($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 $packageName = $config['packageName'];
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';

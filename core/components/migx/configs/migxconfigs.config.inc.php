@@ -80,6 +80,9 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 {"caption":"Contextmenues", "fields": [
     {"field":"contextmenus","caption":"Contextmenues","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $menus) . '"}
 ]},
+{"caption":"Columnbuttons", "fields": [
+    {"field":"columnbuttons","caption":"Columnbuttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $menus) . '"}
+]},
 {"caption":"Actionbuttons", "fields": [
     {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $actionbuttons) . '"}
 ]},

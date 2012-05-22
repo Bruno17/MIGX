@@ -14,7 +14,7 @@ $tabs ='
 {"field":"sources","caption":"Sources","inputTVtype":"migx","configs":"migxfieldsources"}
 ]},
 {"caption":"Input Options", "fields": [
-{"field":"inputOptionsValues","caption":"Input Option Values"},
+{"field":"inputOptionValues","caption":"Input Option Values"},
 {"field":"default","caption":"Default Value"}
 ]}
 ] 

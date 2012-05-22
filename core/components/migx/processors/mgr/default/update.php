@@ -39,16 +39,18 @@ if (empty($scriptProperties['object_id'])) {
 }
 
 $config = $modx->migx->customconfigs;
-$prefix = $config['prefix'];
+$prefix = isset ($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 $packageName = $config['packageName'];
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
+$is_container = $modx->getOption ('is_container',$config,false);
 
 $modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
 
-$modx->setOption(xPDO::OPT_AUTO_CREATE_TABLES, $config['auto_create_tables']);
+$auto_create_tables = isset ($config['auto_create_tables']) ? $config['auto_create_tables'] : true;
+$modx->setOption(xPDO::OPT_AUTO_CREATE_TABLES, $auto_create_tables);
 
 if ($modx->lexicon) {
     $modx->lexicon->load($packageName . ':default');
@@ -71,7 +73,9 @@ if (!empty($joinalias)) {
     }
 }
 
-switch ($scriptProperties['task']) {
+$task = $modx->getOption('task',$scriptProperties,'update');
+
+switch ($task) {
     case 'publish':
         $object = $modx->getObject($classname, $scriptProperties['object_id']);
         $object->set('publishedon', strftime('%Y-%m-%d %H:%M:%S'));
@@ -154,7 +158,7 @@ switch ($scriptProperties['task']) {
         }
 
 
-        if ($postvalues['published'] == '1') {
+        if (isset($postvalues['published']) && $postvalues['published'] == '1') {
             $pub = $object->get('published');
             if (empty($pub)) {
                 $tempvalues['publishedon'] = strftime('%Y-%m-%d %H:%M:%S');
@@ -186,7 +190,7 @@ switch ($scriptProperties['task']) {
             $postvalues['publishedon'] = $tempvalues['publishedon'];
         }
 
-        if (!$config['is_container'] && !empty($postvalues['resource_id'])) {
+        if (!$is_container && !empty($postvalues['resource_id'])) {
             $postvalues['customerid'] = $postvalues['resource_id'];
         }
 
@@ -226,7 +230,7 @@ if (!empty($joinalias)) {
 //clear cache for all contexts
 $collection = $modx->getCollection('modContext');
 foreach ($collection as $context) {
-    $contexts = $context->get('key');
+    $contexts[] = $context->get('key');
 }
 $modx->cacheManager->refresh(array(
     'db' => array(),
