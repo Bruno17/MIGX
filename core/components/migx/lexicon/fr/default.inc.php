@@ -34,6 +34,7 @@ $_lang['migx.publish_selected'] = 'Publier la sélection';
 $_lang['migx.unpublish_selected'] = 'Dépublier la sélection';
 $_lang['migx.delete_selected'] = 'Supprimer la sélection';
 $_lang['migx.remove_selected'] = 'Enlever la sélection';
+$_lang['migx.export_current_view'] = 'Export Current View';
 $_lang['migx.recall'] = 'Recall';
 $_lang['migx.remove'] = 'Remove';
 $_lang['migx.new'] = 'nouveau';

@@ -26,5 +26,6 @@ $_lang['mig_save_resource'] = 'Prima di aggiungere nuovi elementi, devi salvare 
 
 $_lang['mig_show_trash'] = 'Trash View';
 $_lang['mig_show_normal'] = 'Normal View';
+$_lang['migx.export_current_view'] = 'Export Current View';
 
 $_lang['mig_loadgrid'] = 'load grid';

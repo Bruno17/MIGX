@@ -29,6 +29,11 @@ $gridactionbuttons['toggletrash']['handler'] = 'this.toggleDeleted';
 $gridactionbuttons['toggletrash']['scope'] = 'this';
 $gridactionbuttons['toggletrash']['enableToggle'] = 'true';
 
+$gridactionbuttons['exportview']['text'] = "_('migx.export_current_view')";
+$gridactionbuttons['exportview']['handler'] = 'this.csvExport';
+$gridactionbuttons['exportview']['scope'] = 'this';
+$gridactionbuttons['exportview']['enableToggle'] = 'true';
+
 
 $gridcontextmenus['update']['code']="
         m.push({
@@ -114,6 +119,15 @@ $gridcontextmenus['recall_remove_delete']['code']="
         }
 ";
 $gridcontextmenus['recall_remove_delete']['handler'] = 'this.recallObject,this.removeObject,this.deleteObject';
+
+$gridcontextmenus['remove']['code']="
+        m.push({
+            className : 'remove', 
+            text: _('migx.remove'),
+            handler: 'this.removeObject'
+        });						
+";
+$gridcontextmenus['remove']['handler'] = 'this.removeObject';
 
 $gridfilters['textbox']['code']=
 "
@@ -471,6 +485,35 @@ recallObject: function() {
         });
     }
 ";
+
+$gridfunctions['this.csvExport'] = "
+	csvExport: function(btn,e) {
+		var s = this.getStore();
+		var code, type, category, study_type, ebs_state;
+		var box = Ext.MessageBox.wait('Preparing …', _('migx.export_current_view'));
+        var params = s.baseParams;
+        params.action = 'mgr/[[+config.task]]/export';
+        params.configs = this.config.configs;     
+
+		MODx.Ajax.request({
+			url : this.config.url,
+			params: params,
+			listeners: {
+				'success': {fn:function(r) {
+					 location.href = this.config.url+'?action=mgr/[[+config.task]]/export&download='+r.message+'&id='+id+'&HTTP_MODAUTH=' + MODx.siteId;
+					 box.hide();
+				},scope:this}
+			}
+		});
+		return true;
+	}
+";
+
+
+
+
+
+
 $gridfunctions['this.removeObject'] = "
 removeObject: function() {
         MODx.Ajax.request({
@@ -491,8 +534,9 @@ removeObject: function() {
 $gridcontextmenus['publishtarget']['code']="
         if (n.published == 0) {
             m.push({
-                text: _('migx.publish')
-                ,handler: this.publishTargetObject
+                className : 'publish', 
+                text: _('migx.publish'),
+                handler: 'this.publishTargetObject'
             })
             m.push('-');
         }
@@ -503,8 +547,9 @@ $gridcontextmenus['publishtarget']['handler'] = 'this.publishTargetObject';
 $gridcontextmenus['unpublishtarget']['code']="
 if (n.published == 1) {
             m.push({
-                text: _('migx.unpublish')
-                ,handler: this.unpublishTargetObject
+                className : 'unpublish', 
+                text: _('migx.unpublish'),
+                handler: 'this.unpublishTargetObject'
             });
             m.push('-');
         }      
