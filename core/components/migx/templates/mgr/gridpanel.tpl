@@ -27,7 +27,7 @@ Migx.panel.Home = function(config) {
         ,baseCls: 'modx-formpanel'
         ,cls: 'container'
         ,items: [{
-            html: '<h2>'+_('migx.management')+'</h2>'
+            html: '<h2>'+{/literal}{$maincaption}{literal}+'</h2>'
             ,border: false
             ,cls: 'modx-page-header'
         },{

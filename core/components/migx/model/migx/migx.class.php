@@ -238,6 +238,8 @@ class Migx
         $grids = '';
         $updatewindows = '';
         $customHandlers = array();
+        
+        $maincaption = "_('migx.management')";
 
         if (count($cmptabs) > 0) {
             foreach ($cmptabs as $tab) {
@@ -246,7 +248,8 @@ class Migx
                 $this->prepareGrid($properties, $controller, $tv);
                 $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->customconfigs['cmptabcaption'];
                 $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
-
+                $maincaption = empty($this->customconfigs['cmpmaincaption']) ? $maincaption : "'".$this->customconfigs['cmpmaincaption']."'";
+     
                 $controller->setPlaceholder('cmptabcaption', $tabcaption);
                 $controller->setPlaceholder('cmptabdescription', $tabdescription);
 
@@ -277,6 +280,8 @@ class Migx
             $customHandlers = implode(',', $customHandlers);
             $controller->setPlaceholder('customHandlers', $customHandlers);
         }
+        
+        $controller->setPlaceholder('maincaption', $maincaption);              
         $controller->setPlaceholder('grids', $grids);
         $controller->setPlaceholder('updatewindows', $updatewindows);
         $controller->setPlaceholder('cmptabs', implode(',', $cmptabsout));
@@ -537,7 +542,7 @@ class Migx
                     $col['dataIndex'] = $column['dataIndex'];
                     $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
                     $col['sortable'] = isset($column['sortable']) && $column['sortable'] == 'true' ? true : false;
-                    $col['width'] = isset($column['width']) ? $column['width'] : '';
+                    $col['width'] = isset($column['width']) ? (int) $column['width'] : '';
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
                         $handlers[] = $column['renderer'];

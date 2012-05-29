@@ -100,6 +100,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.join_alias","caption":"Join Alias"}
 ]},
 {"caption":"CMP-Settings", "fields": [
+    {"field":"extended.cmpmaincaption","caption":"Main Caption"},
     {"field":"extended.cmptabcaption","caption":"Tab Caption"},
     {"field":"extended.cmptabdescription","caption":"Tab Description"},
     {"field":"extended.cmptabcontroller","caption":"Custom Tab Controller"}
