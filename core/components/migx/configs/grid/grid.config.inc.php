@@ -168,7 +168,8 @@ $gridfilters['combobox']['code'] = "
     ,pageSize: 0
 	,value: 'all'
     ,baseParams: { 
-        action: 'mgr/[[+config.task]]/[[+getcomboprocessor]]',
+        action: 'mgr/migxdb/process',
+        processaction: '[[+getcomboprocessor]]',
         configs: '[[+config.configs]]',
         searchname: '[[+name]]'
     }			
@@ -353,7 +354,8 @@ activateObject: function() {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/[[+config.task]]/activaterelation'
+                action: 'mgr/migxdb/process'
+                ,processaction: 'activaterelation'                
 				,task: 'activate'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
@@ -371,7 +373,8 @@ deactivateObject: function() {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/[[+config.task]]/activaterelation'
+                action: 'mgr/migxdb/process'
+                ,processaction: 'activaterelation'                   
 				,task: 'deactivate'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
@@ -392,7 +395,8 @@ publishSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/[[+config.task]]/bulkupdate'
+                action: 'mgr/migxdb/process'
+                ,processaction: 'bulkupdate'      
 				,configs: this.config.configs
 				,task: 'publish'
                 ,objects: cs
@@ -415,7 +419,8 @@ unpublishSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/[[+config.task]]/bulkupdate'
+                action: 'mgr/migxdb/process'
+                ,processaction: 'bulkupdate'                     
 				,configs: this.config.configs
 				,config_task: 'unpublish'
                 ,objects: cs
@@ -438,7 +443,8 @@ deleteSelected: function(btn,e) {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/[[+config.task]]/bulkupdate'
+                action: 'mgr/migxdb/process'
+                ,processaction: 'bulkupdate'                     
 				,configs: this.config.configs
 				,task: 'delete'
                 ,objects: cs
@@ -492,7 +498,8 @@ $gridfunctions['this.csvExport'] = "
 		var code, type, category, study_type, ebs_state;
 		var box = Ext.MessageBox.wait('Preparing …', _('migx.export_current_view'));
         var params = s.baseParams;
-        params.action = 'mgr/[[+config.task]]/export';
+        params.action = 'mgr/migxdb/process';
+        params.processaction = 'export';
         params.configs = this.config.configs;     
 
 		MODx.Ajax.request({
@@ -500,7 +507,7 @@ $gridfunctions['this.csvExport'] = "
 			params: params,
 			listeners: {
 				'success': {fn:function(r) {
-					 location.href = this.config.url+'?action=mgr/[[+config.task]]/export&download='+r.message+'&id='+id+'&HTTP_MODAUTH=' + MODx.siteId;
+					 location.href = this.config.url+'?action=mgr/migxdb/process&processaction=export&download='+r.message+'&id='+id+'&HTTP_MODAUTH=' + MODx.siteId;
 					 box.hide();
 				},scope:this}
 			}
@@ -519,7 +526,8 @@ removeObject: function() {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/[[+config.task]]/remove'
+                action: 'mgr/migxdb/process'
+                ,processaction: 'remove'
 				,task: 'removeone'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
@@ -561,7 +569,8 @@ publishTargetObject: function() {
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/[[+config.task]]/publishtarget'
+                action: 'mgr/migxdb/process'
+                ,processaction: 'publishtarget'
 				,task: 'publish'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
@@ -579,7 +588,8 @@ unpublishTargetObject: function() {
  		MODx.Ajax.request({
             url: this.config.url
             ,params: {
-                action: 'mgr/[[+config.task]]/publishtarget'
+                action: 'mgr/migxdb/process'
+                ,processaction: 'publishtarget'
 				,task: 'unpublish'
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs

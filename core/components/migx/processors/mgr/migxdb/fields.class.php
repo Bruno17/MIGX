@@ -25,7 +25,7 @@ class migxFormProcessor extends modProcessor
         $this->modx->getService('smarty', 'smarty.modSmarty');
         $scriptProperties = $this->getProperties();
         //$controller->loadControllersPath();
-        
+
         // we will need a way to get a context-key, if in CMP-mode, from config, from dataset..... thoughts??
         // can be overridden in custom-processors for now, but whats with the preparegrid-method and working-context?
         // ok let's see when we need this.
@@ -35,23 +35,16 @@ class migxFormProcessor extends modProcessor
             $this->modx->migx->working_context = $this->modx->resource->get('context_key');
 
             //$_REQUEST['id']=$scriptProperties['resource_id'];
-        }        
-        
-        $controller->loadTemplatesPath();
-        $controller->setPlaceholder('_config', $this->modx->config);             
-        $task = $this->modx->migx->getTask();
-        $getObject = dirname(dirname(__file__)) . '/' . $task . '/' . str_replace('.class','',basename(__file__));
-
-        if (empty ($task) || !file_exists($getObject)){
-            $task = 'default';
-            $getObject = dirname(dirname(__file__)) . '/' . $task . '/' . str_replace('.class','',basename(__file__));
         }
-                
-        if (file_exists($getObject)) {
-            $overridden = include_once ($getObject);
-            if ($overridden !== false) {
-                // return;
-            }
+
+        $controller->loadTemplatesPath();
+        $controller->setPlaceholder('_config', $this->modx->config);
+        $task = $this->modx->migx->getTask();
+        $filename = str_replace('.class', '', basename(__file__));
+        $processorspath = dirname(dirname(__file__)). '/';
+
+        if ($processor_file = $this->modx->migx->findProcessor($processorspath, $filename)) {
+            include_once ($processor_file);
         }
 
 
@@ -70,7 +63,7 @@ class migxFormProcessor extends modProcessor
         $allfields[] = array();
         $categories = array();
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
-       
+
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
         $controller->setPlaceholder('object', $object);
@@ -82,8 +75,8 @@ class migxFormProcessor extends modProcessor
         if (!empty($_REQUEST['showCheckbox'])) {
             $controller->setPlaceholder('showCheckbox', 1);
         }
-        
-        
+
+
         return $controller->process($scriptProperties);
 
     }

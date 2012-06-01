@@ -99,6 +99,44 @@ class Migx
         }
     }
 
+    function findProcessor($processorspath, $filename, & $filenames)
+    {
+        $task = $this->getTask();
+        $processor_file = $processorspath  . $task . '/' . $filename;
+        $filenames[] = $processor_file;
+        $found = false;
+        if (file_exists($processor_file)) {
+            return $processor_file;
+        }
+
+        $processor_file = $processorspath . 'default/' . $filename;
+        $filenames[] = $processor_file;
+        if (file_exists($processor_file)) {
+            return $processor_file;
+        }
+
+        $config = $this->customconfigs;
+        $packageName = $config['packageName'];
+        $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+        $processorspath = $packagepath . 'processors/mgr/';
+        
+        $processor_file = $processorspath . $task . '/' . $filename;
+        $filenames[] = $processor_file;
+        if (file_exists($processor_file)) {
+            return $processor_file;
+        }
+
+        $processor_file = $processorspath . 'default/' . $filename;
+        $filenames[] = $processor_file;
+        if (file_exists($processor_file)) {
+            return $processor_file;
+        }
+     
+        
+        return false;
+
+    }
+
     function loadConfigs($grid = true, $other = true)
     {
 
@@ -170,8 +208,8 @@ class Migx
                             $gridcolumnbuttons[$button] = $gridcontextmenus[$button];
                             $gridcolumnbuttons[$button]['active'] = 1;
                         }
-                    } 
-                    
+                    }
+
                     $actionbuttons = $cfObject->get('actionbuttons');
                     if (!empty($actionbuttons)) {
                         $actionbuttons = explode('||', $actionbuttons);
@@ -238,7 +276,7 @@ class Migx
         $grids = '';
         $updatewindows = '';
         $customHandlers = array();
-        
+
         $maincaption = "_('migx.management')";
 
         if (count($cmptabs) > 0) {
@@ -248,8 +286,8 @@ class Migx
                 $this->prepareGrid($properties, $controller, $tv);
                 $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->customconfigs['cmptabcaption'];
                 $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
-                $maincaption = empty($this->customconfigs['cmpmaincaption']) ? $maincaption : "'".$this->customconfigs['cmpmaincaption']."'";
-     
+                $maincaption = empty($this->customconfigs['cmpmaincaption']) ? $maincaption : "'" . $this->customconfigs['cmpmaincaption'] . "'";
+
                 $controller->setPlaceholder('cmptabcaption', $tabcaption);
                 $controller->setPlaceholder('cmptabdescription', $tabdescription);
 
@@ -280,8 +318,8 @@ class Migx
             $customHandlers = implode(',', $customHandlers);
             $controller->setPlaceholder('customHandlers', $customHandlers);
         }
-        
-        $controller->setPlaceholder('maincaption', $maincaption);              
+
+        $controller->setPlaceholder('maincaption', $maincaption);
         $controller->setPlaceholder('grids', $grids);
         $controller->setPlaceholder('updatewindows', $updatewindows);
         $controller->setPlaceholder('cmptabs', implode(',', $cmptabsout));
@@ -475,7 +513,7 @@ class Migx
             }
         }
         $this->customconfigs['gridcolumnbuttons'] = $columnbuttons;
-        
+
         $gridfunctions = array();
 
         $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
@@ -542,7 +580,7 @@ class Migx
                     $col['dataIndex'] = $column['dataIndex'];
                     $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
                     $col['sortable'] = isset($column['sortable']) && $column['sortable'] == 'true' ? true : false;
-                    $col['width'] = isset($column['width']) ? (int) $column['width'] : '';
+                    $col['width'] = isset($column['width']) ? (int)$column['width'] : '';
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
                         $handlers[] = $column['renderer'];

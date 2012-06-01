@@ -1,12 +1,11 @@
 <?php
 $task=$modx->migx->getTask();
-$getObject= dirname(dirname(__FILE__)) . '/' . $task . '/' . basename(__FILE__);
+$filename = basename(__file__);
+$processorspath = dirname(dirname(__file__)). '/' ;
 $updateerror=false;
-if (file_exists($getObject)) {
-    $overridden= include_once ($getObject);
-    if ($overridden !== false) {
-       // return;
-    }
+
+if ($processor_file = $modx->migx->findProcessor($processorspath,$filename)){
+    include_once ($processor_file);    
 }
 
 if ($updateerror){
