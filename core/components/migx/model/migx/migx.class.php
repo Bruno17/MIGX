@@ -99,10 +99,10 @@ class Migx
         }
     }
 
-    function findProcessor($processorspath, $filename, & $filenames)
+    function findProcessor($processorspath, $filename, &$filenames)
     {
         $task = $this->getTask();
-        $processor_file = $processorspath  . $task . '/' . $filename;
+        $processor_file = $processorspath . $task . '/' . $filename;
         $filenames[] = $processor_file;
         $found = false;
         if (file_exists($processor_file)) {
@@ -119,7 +119,7 @@ class Migx
         $packageName = $config['packageName'];
         $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
         $processorspath = $packagepath . 'processors/mgr/';
-        
+
         $processor_file = $processorspath . $task . '/' . $filename;
         $filenames[] = $processor_file;
         if (file_exists($processor_file)) {
@@ -131,13 +131,13 @@ class Migx
         if (file_exists($processor_file)) {
             return $processor_file;
         }
-     
-        
+
+
         return false;
 
     }
 
-    function loadConfigs($grid = true, $other = true)
+    function loadConfigs($grid = true, $other = true, $properties = array(), $sender = '')
     {
 
         $gridactionbuttons = array();
@@ -147,84 +147,133 @@ class Migx
         $renderer = array();
         $gridfilters = array();
 
-        $configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
-        //$configs = array_merge( array ('master'), $configs);
-        if ($grid) {
-            $config = 'grid';
-            $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.config.inc.php'; // [ file ]
-            if (file_exists($configFile)) {
-                include ($configFile);
-            }
-            //custom collection of grid-functions......
-            $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.custom.config.inc.php'; // [ file ]
-            if (file_exists($configFile)) {
-                include ($configFile);
-            }
-        }
+        if (!empty($this->config['configs'])) {
+            $configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
+            //$configs = array_merge( array ('master'), $configs);
 
-
-        foreach ($configs as $config) {
             if ($grid) {
-                //first try to find custom-grid-configurations (buttons,context-menus,functions)
-                $configFile = $this->config['corePath'] . 'configs/grid/' . $config . '.config.inc.php'; // [ file ]
+                $configFile = $this->config['corePath'] . 'configs/grid/grid.config.inc.php'; // [ file ]
+                if (file_exists($configFile)) {
+                    include ($configFile);
+                }
+                //custom collection of grid-functions...... - deprecated
+                $configFile = $this->config['corePath'] . 'configs/grid/grid.custom.config.inc.php'; // [ file ]
                 if (file_exists($configFile)) {
                     include ($configFile);
                 }
             }
 
-            if ($other) {
-                //second try to find config-object
-                if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config))) {
+            //get migxconfig-specific grid-configs
+            if ($sender == 'migxconfigs/fields') {
+                $config = $this->configsObject->get('name');
+                $configFile = $this->config['corePath'] . 'configs/grid/grid.' . $config . '.config.inc.php'; // [ file ]
+                if (file_exists($configFile)) {
+                    include ($configFile);
+                }
+                //package-specific
+                $extended = $this->configsObject->get('extended');
+                $packageName = $extended['packageName'];
+                if (!empty($packageName)) {
+                    $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/grid/grid.' . $config . '.config.inc.php'; // [ file ]
+                    if (file_exists($configFile)) {
+                        include ($configFile);
+                    }
+                    $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/grid/grid.config.inc.php'; // [ file ]
+                    if (file_exists($configFile)) {
 
-                    $objectarray = $cfObject->toArray();
-                    if (is_array($objectarray['extended'])) {
-                        foreach ($objectarray['extended'] as $key => $value) {
-                            if (!empty($value)) {
-                                $this->customconfigs[$key] = $value;
+                        include ($configFile);
+                    }
+                }
+
+            }
+
+
+            foreach ($configs as $config) {
+                if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config))) {
+                    $extended = $cfObject->get('extended');
+                    $packageName = $extended['packageName'];
+                }
+
+                if ($grid) {
+                    //first try to find custom-grid-configurations (buttons,context-menus,functions)
+                    $configFile = $this->config['corePath'] . 'configs/grid/grid.' . $config . '.config.inc.php'; // [ file ]
+                    if (file_exists($configFile)) {
+                        include ($configFile);
+                    }
+                    if (!empty($packageName)) {
+                        $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/grid/grid.' . $config . '.config.inc.php'; // [ file ]
+                        if (file_exists($configFile)) {
+                            include ($configFile);
+                        }
+                        $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/grid/grid.config.inc.php'; // [ file ]
+                        if (file_exists($configFile)) {
+                            include ($configFile);
+                        }
+                    }
+
+                }
+
+                if ($other) {
+                    //second try to find config-object
+                    if ($cfObject) {
+
+                        $objectarray = $cfObject->toArray();
+                        if (is_array($objectarray['extended'])) {
+                            foreach ($objectarray['extended'] as $key => $value) {
+                                if (!empty($value)) {
+                                    $this->customconfigs[$key] = $value;
+                                }
+                            }
+                        }
+
+                        unset($objectarray['extended']);
+
+                        $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $objectarray) : $objectarray;
+                        $this->customconfigs['tabs'] = $this->modx->fromJson($cfObject->get('formtabs'));
+                        $this->customconfigs['filters'] = $this->modx->fromJson($cfObject->get('filters'));
+                        //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
+                        $this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
+                        $menus = $cfObject->get('contextmenus');
+
+                        if (!empty($menus)) {
+                            $menus = explode('||', $menus);
+                            foreach ($menus as $menu) {
+                                $gridcontextmenus[$menu]['active'] = 1;
+                            }
+                        }
+                        $columnbuttons = $cfObject->get('columnbuttons');
+
+                        if (!empty($columnbuttons)) {
+                            $columnbuttons = explode('||', $columnbuttons);
+                            foreach ($columnbuttons as $button) {
+                                $gridcolumnbuttons[$button] = $gridcontextmenus[$button];
+                                $gridcolumnbuttons[$button]['active'] = 1;
+                            }
+                        }
+
+                        $actionbuttons = $cfObject->get('actionbuttons');
+                        if (!empty($actionbuttons)) {
+                            $actionbuttons = explode('||', $actionbuttons);
+                            foreach ($actionbuttons as $button) {
+                                $gridactionbuttons[$button]['active'] = 1;
                             }
                         }
                     }
-
-                    unset($objectarray['extended']);
-
-                    $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $objectarray) : $objectarray;
-                    $this->customconfigs['tabs'] = $this->modx->fromJson($cfObject->get('formtabs'));
-                    $this->customconfigs['filters'] = $this->modx->fromJson($cfObject->get('filters'));
-                    //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
-                    $this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
-                    $menus = $cfObject->get('contextmenus');
-
-                    if (!empty($menus)) {
-                        $menus = explode('||', $menus);
-                        foreach ($menus as $menu) {
-                            $gridcontextmenus[$menu]['active'] = 1;
+                    //third add configs from file, if exists
+                    $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
+                    if (file_exists($configFile)) {
+                        include ($configFile);
+                    }
+                    if (!empty($packageName)) {
+                        $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/' . $config . '.config.inc.php'; // [ file ]
+                        if (file_exists($configFile)) {
+                            include ($configFile);
                         }
                     }
-                    $columnbuttons = $cfObject->get('columnbuttons');
-
-                    if (!empty($columnbuttons)) {
-                        $columnbuttons = explode('||', $columnbuttons);
-                        foreach ($columnbuttons as $button) {
-                            $gridcolumnbuttons[$button] = $gridcontextmenus[$button];
-                            $gridcolumnbuttons[$button]['active'] = 1;
-                        }
-                    }
-
-                    $actionbuttons = $cfObject->get('actionbuttons');
-                    if (!empty($actionbuttons)) {
-                        $actionbuttons = explode('||', $actionbuttons);
-                        foreach ($actionbuttons as $button) {
-                            $gridactionbuttons[$button]['active'] = 1;
-                        }
-                    }
-                }
-                //third add configs from file, if exists
-                $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
-                if (file_exists($configFile)) {
-                    include ($configFile);
                 }
             }
         }
+
 
         if (isset($this->customconfigs['filters']) && is_array($this->customconfigs['filters']) && count($this->customconfigs['filters']) > 0) {
             foreach ($this->customconfigs['filters'] as $filter) {

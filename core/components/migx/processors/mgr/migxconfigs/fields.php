@@ -1,8 +1,10 @@
 <?php
 
+
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
 $packageName = $config['packageName'];
+$sender = 'migxconfigs/fields';
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
@@ -31,6 +33,9 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
 
 //handle json fields
 $record = $object->toArray();
+
+$modx->migx->configsObject = & $object;
+
 if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] == 'export_import') {
     $temprecord = $record;
     unset($temprecord['id'], $temprecord['name'], $temprecord['createdby'], $temprecord['createdon'], $temprecord['editedby'], $temprecord['editedon'], $temprecord['deleted'], $temprecord['deletedon'], $temprecord['deletedby'],

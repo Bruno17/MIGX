@@ -56,8 +56,9 @@ class migxFormProcessor extends modProcessor
 
         //echo '<pre>'.print_r($angebot->toArray(),1).'</pre>';
 
-
-        $this->modx->migx->loadConfigs();
+        $sender = isset ($sender) ? $sender : '';
+         
+        $this->modx->migx->loadConfigs(true,true,$scriptProperties,$sender);
         $tabs = $this->modx->migx->getTabs();
         $fieldid = 0;
         $allfields[] = array();
