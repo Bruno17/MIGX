@@ -42,9 +42,9 @@ class migxFormProcessor extends modProcessor
         $task = $this->modx->migx->getTask();
         $filename = str_replace('.class', '', basename(__file__));
         $processorspath = dirname(dirname(__file__)). '/';
-
-        if ($processor_file = $this->modx->migx->findProcessor($processorspath, $filename)) {
-            include_once ($processor_file);
+        $filenames = array();
+        if ($processor_file = $this->modx->migx->findProcessor($processorspath, $filename,$filenames)) {
+          include_once ($processor_file);
         }
 
 

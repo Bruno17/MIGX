@@ -46,6 +46,8 @@ $randomize = $modx->getOption('randomize', $scriptProperties, false);
 $preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
 $where = $modx->getOption('where', $scriptProperties, '');
 $where = !empty($where) ? $modx->fromJSON($where) : array();
+$sort = $modx->getOption('sort', $scriptProperties, '');
+$sort = !empty($sort) ? $modx->fromJSON($sort) : array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
@@ -129,6 +131,11 @@ $modx->setPlaceholder($totalVar, count($items));
 // where filter
 if (is_array($where) && count($where) > 0) {
     $items = $migx->filterItems($where, $items);
+}
+
+// sort items
+if (is_array($sort) && count($sort) > 0) {
+    $items = $migx->sortDbResult($items, $sort);
 }
 
 

@@ -3,8 +3,8 @@ $task=$modx->migx->getTask();
 $filename = basename(__file__);
 $processorspath = dirname(dirname(__file__)). '/' ;
 $updateerror=false;
-
-if ($processor_file = $modx->migx->findProcessor($processorspath,$filename)){
+$filenames = array();
+if ($processor_file = $modx->migx->findProcessor($processorspath,$filename,$filenames)){
     include_once ($processor_file);    
 }
 

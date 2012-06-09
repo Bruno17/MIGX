@@ -101,29 +101,35 @@ class Migx
 
     function findProcessor($processorspath, $filename, &$filenames)
     {
-        $task = $this->getTask();
-        $processor_file = $processorspath . $task . '/' . $filename;
-        $filenames[] = $processor_file;
-        $found = false;
-        if (file_exists($processor_file)) {
-            return $processor_file;
-        }
-
-        $processor_file = $processorspath . 'default/' . $filename;
-        $filenames[] = $processor_file;
-        if (file_exists($processor_file)) {
-            return $processor_file;
-        }
-
         $config = $this->customconfigs;
         $packageName = $config['packageName'];
-        $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
-        $processorspath = $packagepath . 'processors/mgr/';
+        $task = $this->getTask();
+        if (!empty($packageName)) {
+            $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $path = $packagepath . 'processors/mgr/';
 
-        $processor_file = $processorspath . $task . '/' . $filename;
-        $filenames[] = $processor_file;
-        if (file_exists($processor_file)) {
-            return $processor_file;
+            if (!empty($task)) {
+                $processor_file = $path . $task . '/' . $filename;
+                $filenames[] = $processor_file;
+                if (file_exists($processor_file)) {
+                    return $processor_file;
+                }
+            }
+
+            $processor_file = $path . 'default/' . $filename;
+            $filenames[] = $processor_file;
+            if (file_exists($processor_file)) {
+                return $processor_file;
+            }
+        }
+
+        if (!empty($task)) {
+            $processor_file = $processorspath . $task . '/' . $filename;
+            $filenames[] = $processor_file;
+            $found = false;
+            if (file_exists($processor_file)) {
+                return $processor_file;
+            }
         }
 
         $processor_file = $processorspath . 'default/' . $filename;
@@ -131,7 +137,6 @@ class Migx
         if (file_exists($processor_file)) {
             return $processor_file;
         }
-
 
         return false;
 
@@ -1173,6 +1178,87 @@ class Migx
         return $tempitems;
 
 
+    }
+
+    /**
+     * Sort DB result
+     *
+     * @param array $data Result of sql query as associative array
+     * 
+     * @param array $options Sortoptions as array 
+     * 
+     *
+     * <code>
+     *
+     * // You can sort data by several columns e.g.
+     * $data = array();
+     * for ($i = 1; $i <= 10; $i++) {
+     *     $data[] = array( 'id' => $i,
+     *                      'first_name' => sprintf('first_name_%s', rand(1, 9)),
+     *                      'last_name' => sprintf('last_name_%s', rand(1, 9)),
+     *                      'date' => date('Y-m-d', rand(0, time()))
+     *                  );
+     * }
+     * 
+     * $options = array(array('sortby'=>'date','sortdir'=>'DESC','sortmode'=>'numeric'));
+     * $data = sortDbResult($data, $options);
+     * printf('<pre>%s</pre>', print_r($data, true));
+     * 
+     * $options = array(array('sortby'=>'last_name','sortdir'=>'ASC','sortmode'=>'string'),array('sortby'=>'first_name','sortdir'=>'ASC','sortmode'=>'string'));
+     * $data = sortDbResult($data, $options);
+     * printf('<pre>%s</pre>', print_r($data, true));
+     *
+     * </code>
+     *
+     * @return array $data - Sorted data
+     */
+
+    function sortDbResult($_data, $options = array())
+    {
+        
+        
+        $sortmodes = array();
+        $sortmodes['numeric'] = SORT_NUMERIC;
+        $sortmodes['string'] = SORT_STRING;   
+        $sortmodes['regular'] = SORT_REGULAR;
+        
+        $sortdirs = array();
+        $sortdirs['ASC'] = SORT_ASC;
+        $sortdirs['DESC'] = SORT_DESC;            
+
+
+        $_rules = array();
+        if (count($options) > 0) {
+            foreach ($options as $option) {
+                $rule['name'] = isset($option['sortby']) ? (string )$option['sortby'] : '';
+                if (empty($rule['name']) || !in_array($rule['name'], array_keys(current($_data)))) {
+                    continue;
+                }
+                $rule['order'] = isset($option['sortdir']) && isset($sortdirs[$option['sortdir']]) ?  $sortdirs[$option['sortdir']] : $sortdirs['ASC'];
+                $rule['mode'] = isset($option['sortmode']) && isset($sortmodes[$option['sortmode']]) ?  $sortmodes[$option['sortmode']] : $sortmodes['regular'];            
+                $_rules[] = $rule;
+            }
+
+        }
+
+        $_cols = array(); 
+        foreach ($_data as $_k => $_row) {
+            foreach ($_rules as $_rule) {
+                if (!isset($_cols[$_rule['name']])) {
+                    $_cols[$_rule['name']] = array();
+                    $_params[] = &$_cols[$_rule['name']];
+                    $_params[] = $_rule['order'];
+                    $_params[] = $_rule['mode'];
+                }
+                $_cols[$_rule['name']][$_k] = $_row[$_rule['name']];
+            }
+        }
+        $_params[] = &$_data;
+        call_user_func_array('array_multisort', $_params);
+        return $_data;
+        
+        
+        
     }
 
 }
