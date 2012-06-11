@@ -1,7 +1,7 @@
 --------------------
 MIGX
 --------------------
-Version: 1.2.0
+Version: 2.1.0
 Author: Bruno Perner <b.perner@gmx.de>
 --------------------
 
@@ -39,5 +39,9 @@ This will add a new autoincrementing field MIGX_id to all your MIGX-TV-items
 The getImageList-snippet needs this field to work correctly.
 
 
+Allways after upgrading MIGX of any Version:
+go to components -> migx -> setup-tab -> setup
+
+this will upgrade the migx-configs-table and add new fields, if necessary.
 
 

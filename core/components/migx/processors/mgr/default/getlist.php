@@ -4,7 +4,7 @@
 
 $config = $modx->migx->customconfigs;
 
-$prefix = isset ($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
+$prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 
 $packageName = $config['packageName'];
 
@@ -17,16 +17,15 @@ $classname = $config['classname'];
 $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
 
 if (!empty($joinalias)) {
-    if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)){
+    if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
-    }
-    else{
-        $joinalias = '';    
+    } else {
+        $joinalias = '';
     }
 }
 
-if ($this->modx->lexicon) {
-    $this->modx->lexicon->load($packageName . ':default');
+if ($modx->lexicon) {
+    $modx->lexicon->load($packageName . ':default');
 }
 
 /* setup default properties */
@@ -38,6 +37,13 @@ $sort = $modx->getOption('sort', $scriptProperties, 'id');
 $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
+$resource_id = is_object($modx->resource) ? $modx->resource->get('id') : $resource_id;
+
+if (isset($sortConfig)) {
+    $sort = '';
+}
+
+$where = $modx->getOption('where', $scriptProperties, '');
 
 $c = $modx->newQuery($classname);
 $c->select($modx->getSelectColumns($classname, $classname));
@@ -45,7 +51,7 @@ $c->select($modx->getSelectColumns($classname, $classname));
 if (!empty($joinalias)) {
     /*
     if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
-        $localkey = $joinFkMeta['local'];
+    $localkey = $joinFkMeta['local'];
     }    
     */
     $c->leftjoin($joinclass, $joinalias);
@@ -98,18 +104,35 @@ if (!empty($showtrash)) {
 } else {
     $c->where(array($classname . '.deleted' => '0'));
 }
+
+if (!empty($where)) {
+    $c->where($modx->fromJson($where));
+}
+
 $count = $modx->getCount($classname, $c);
 
-$c->sortby($sort, $dir);
+if (empty($sort)) {
+    if (is_array($sortConfig)) {
+        foreach ($sortConfig as $sort) {
+            $sortby = $sort['sortby'];
+            $sortdir = isset($sort['sortdir']) ? $sort['sortdir'] : 'ASC';
+            $c->sortby($sortby, $sortdir);
+        }
+    }
+
+
+} else {
+    $c->sortby($sort, $dir);
+}
 if ($isCombo || $isLimit) {
     $c->limit($limit, $start);
 }
 //$c->sortby($sort,$dir);
 //$c->prepare();echo $c->toSql();
-$collection = $modx->getCollection($classname, $c);
-
 $rows = array();
-foreach ($collection as $object) {
-    $row = $object->toArray();
-    $rows[] = $row;
+if ($collection = $modx->getCollection($classname, $c)) {
+    foreach ($collection as $object) {
+        $row = $object->toArray();
+        $rows[] = $row;
+    }
 }

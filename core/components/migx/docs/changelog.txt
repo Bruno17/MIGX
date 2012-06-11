@@ -1,6 +1,31 @@
 Changelog for MIGX.
-MIGX 2.0.0
+
+MIGX 2.1.0
+
 ==============
+
+  add &sort to the getImageList - snippet
+  add new snippet 'migx' to get items from db-tables, can use the same configurations and getList - processors as the MIGXdb - manager
+  make it possible to have config-files for grids and processors in another package-folder for easier packaging together custom - packages
+  more MIGXdb - configurations
+
+
+MIGX 2.0.1
+
+==============
+
+  more E_NOTICE - Error - fixes
+  Fix Missing Add - Item - Replacement - String 
+
+MIGX 2.0.0
+
+==============
+
+- pl
+
+  fix for Revo 2.2.2
+  fix some E_NOTICE - errors
+
 - new in beta5
 
   Configure multiple CMP - tabs
