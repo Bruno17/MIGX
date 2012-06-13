@@ -36,8 +36,8 @@ $limit = $modx->getOption('limit', $scriptProperties, 20);
 $sort = $modx->getOption('sort', $scriptProperties, 'id');
 $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
-$resource_id = $modx->getOption('resource_id', $scriptProperties, false);
-$resource_id = is_object($modx->resource) ? $modx->resource->get('id') : $resource_id;
+$resource_id = $modx->getOption('resource_id', $scriptProperties, '');
+$resource_id = empty($resource_id) && is_object($modx->resource) ? $modx->resource->get('id') : $resource_id;
 
 if (isset($sortConfig)) {
     $sort = '';

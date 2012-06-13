@@ -33,7 +33,7 @@ $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
 if (!($migx instanceof Migx))
     return '';
-$modx->migx = &$migx;
+//$modx->migx = &$migx;
 $migx->working_context = $modx->resource->get('context_key');
 
 if (!empty($tvname))
@@ -95,7 +95,7 @@ $filenames = array();
 $scriptProperties['start'] = $modx->getOption('offset', $scriptProperties, 0);
 if ($processor_file = $migx->findProcessor($processorspath, $filename, $filenames))
 {
-    include_once ($processor_file);
+    include ($processor_file);
     //todo: add getlist-processor for default-MIGX-TV
 }
 
