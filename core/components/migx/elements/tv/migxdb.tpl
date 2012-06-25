@@ -151,18 +151,23 @@ MODx.loadMIGXdbGridButton = function(config) {
 
 Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
 
-    loadGrid: function() {
+    loadGrid: function(init) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         var object_id = '{/literal}{$object_id}{literal}';
         if (object_id != ''){
             if (object_id == 'new'){
-                alert (_('migx.save_object'));
+                if (!init){
+                    alert (_('migx.save_object'));
+                }
+                
                 return;
             }
         }        
         else{
             if (resource_id == 0){
-                alert (_('migx.save_resource'));
+                if (!init){
+                    alert (_('migx.save_resource'));
+                }
                 return;
             }            
         }
@@ -200,12 +205,15 @@ for (var name in lang) {
   
 });
 
-MODx.load({
+loadGridButton = MODx.load({
         xtype: 'modx-button-load-migxdb-grid'
         ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
         ,text: '{/literal}{$i18n_migx_loadgrid}{literal}'
 });   
 
+if ('{/literal}{$customconfigs.gridload_mode}{literal}' == '2'){
+    loadGridButton.loadGrid(true);
+}
 
 
         /*

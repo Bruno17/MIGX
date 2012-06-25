@@ -186,6 +186,7 @@ $this->customconfigs['columns'] = $this->modx->fromJson($columns);
 
 $gridcontextmenus['editraw']['active'] = 1;
 $gridcontextmenus['export_import']['active'] = 1;
+$gridcontextmenus['export_to_package']['active'] = 1;
 
 $gridcontextmenus['update']['active'] = 1;
 $gridcontextmenus['publish']['active'] = 0;
@@ -195,6 +196,7 @@ $gridcontextmenus['recall_remove_delete']['active'] = 1;
 $gridactionbuttons['addItem']['active'] = 1;
 $gridactionbuttons['bulk']['active'] = 1;
 $gridactionbuttons['toggletrash']['active'] = 1;
+$gridactionbuttons['import_from_package']['active'] = 1;
 
 
 /*);

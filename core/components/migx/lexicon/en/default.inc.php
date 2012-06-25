@@ -48,5 +48,8 @@ $_lang['migx.add_replacement'] = '"Add Item" Replacement';
 $_lang['migx.activate'] = 'Activate';
 $_lang['migx.deactivate'] = 'Deactivate';
 
+$_lang['migx.import_from_package'] = 'Import from package';
+$_lang['migx.export_to_package'] = 'Export to package';
+
 $_lang['migx.month'] = 'Month';
 $_lang['migx.year'] = 'Year';

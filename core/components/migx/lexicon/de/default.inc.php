@@ -48,5 +48,8 @@ $_lang['migx.add_replacement'] = '"Datensatz erstellen" Ersetzung';
 $_lang['migx.activate'] = 'Aktivieren';
 $_lang['migx.deactivate'] = 'Deaktivieren';
 
+$_lang['migx.import_from_package'] = 'Importieren aus Package';
+$_lang['migx.export_to_package'] = 'Exportieren nach Package';
+
 $_lang['month'] = 'Monat';
 $_lang['year'] = 'Jahr';
