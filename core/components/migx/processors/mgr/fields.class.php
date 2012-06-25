@@ -16,7 +16,7 @@ class migxFormProcessor extends modProcessor
     {
         //require_once dirname(dirname(dirname(__file__))) . '/model/migx/migx.class.php';
         //$migx = new Migx($this->modx);
-
+        $sender = 'mgr/fields';
 
         require_once dirname(dirname(dirname(__file__))) . '/model/migx/migxformcontroller.class.php';
         $controller = new MigxFormController($this->modx);
@@ -54,11 +54,17 @@ class migxFormProcessor extends modProcessor
             //$properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
         }
 
-        if (isset($properties['configs']) && !empty($properties['configs'])) {
-            $this->modx->migx->config['configs'] = $properties['configs'];
-            $this->modx->migx->loadConfigs();
-        }
+        $configs = !empty($this->modx->migx->config['configs']) ? $this->modx->migx->config['configs'] : '';
+        $configs = isset($properties['configs']) && !empty($properties['configs']) ? $properties['configs'] : $configs;
 
+        if (!empty($configs)) {
+            $this->modx->migx->config['configs'] = $configs;
+            $this->modx->migx->loadConfigs(true,true,$scriptProperties,$sender);
+            
+            
+
+        }
+        
         $formtabs = $this->modx->migx->getTabs();
         $fieldid = 0;
         /*actual record */

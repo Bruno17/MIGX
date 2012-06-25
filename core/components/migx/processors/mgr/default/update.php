@@ -39,41 +39,50 @@ if (empty($scriptProperties['object_id'])) {
 }
 
 $config = $modx->migx->customconfigs;
-$prefix = isset ($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
+$prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 $packageName = $config['packageName'];
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
-$is_container = $modx->getOption ('is_container',$config,false);
+$is_container = $modx->getOption('is_container', $config, false);
 
 $modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
 
-$auto_create_tables = isset ($config['auto_create_tables']) ? $config['auto_create_tables'] : true;
+$auto_create_tables = isset($config['auto_create_tables']) ? $config['auto_create_tables'] : true;
 $modx->setOption(xPDO::OPT_AUTO_CREATE_TABLES, $auto_create_tables);
 
 if ($modx->lexicon) {
     $modx->lexicon->load($packageName . ':default');
 }
 
+$co_id = $modx->getOption('co_id', $scriptProperties, '');
+
 if (isset($scriptProperties['data'])) {
     $scriptProperties = array_merge($scriptProperties, $modx->fromJson($scriptProperties['data']));
 }
 
 $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
+$resource_id = !empty($co_id) ? $co_id : $resource_id;
+
+$checkConnected = $modx->migx->checkForConnectedResource($resource_id, $config);
 
 $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
 
 if (!empty($joinalias)) {
     if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
+        if ($checkConnected && $fkMeta['owner']=='foreign') {
+            $scriptProperties[$fkMeta['local']] = $resource_id;
+        }
         $joinvalues = array();
     } else {
         $joinalias = '';
     }
 }
 
-$task = $modx->getOption('task',$scriptProperties,'update');
+
+$task = $modx->getOption('task', $scriptProperties, 'update');
 
 switch ($task) {
     case 'publish':
@@ -194,7 +203,7 @@ switch ($task) {
             $postvalues['customerid'] = $postvalues['resource_id'];
         }
 
-        if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
+        if ($checkConnected) {
 
         } else {
             unset($postvalues['resource_id']);
@@ -212,19 +221,22 @@ if ($object->save() == false) {
 
 if (!empty($joinalias)) {
 
+    //handle join-table
+    //todo make it more flexible, not only for resource-connections with joinalias 'Resource'
     if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')) {
         $localkey = $joinFkMeta['local'];
+
+        if ($joinobject = $modx->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $object->get('id')))) {
+            $joinobject->fromArray($joinvalues);
+        } else {
+            $joinobject = $modx->newObject($joinclass);
+            $joinobject->fromArray($joinvalues);
+            $joinobject->set('active', '1');
+            $joinobject->set('resource_id', $scriptProperties['resource_id']);
+            $joinobject->set($localkey, $object->get('id'));
+        }
+        $joinobject->save();
     }
-    if ($joinobject = $modx->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $object->get('id')))) {
-        $joinobject->fromArray($joinvalues);
-    } else {
-        $joinobject = $modx->newObject($joinclass);
-        $joinobject->fromArray($joinvalues);
-        $joinobject->set('active', '1');
-        $joinobject->set('resource_id', $scriptProperties['resource_id']);
-        $joinobject->set($localkey, $object->get('id'));
-    }
-    $joinobject->save();
 }
 
 //clear cache for all contexts

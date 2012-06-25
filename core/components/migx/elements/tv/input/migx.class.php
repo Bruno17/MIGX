@@ -120,6 +120,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
         $this->setPlaceholder('properties', $properties);
         $this->setPlaceholder('resource', $resource_array);
         $this->setPlaceholder('pathconfigs', $this->modx->toJSON($pathconfigs));
+        $this->setPlaceholder('connected_object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
         $this->setPlaceholder('columns', $this->modx->toJSON($cols));
         $this->setPlaceholder('fields', $this->modx->toJSON($fields));
         $this->setPlaceholder('newitem', $this->modx->toJSON($newitem));

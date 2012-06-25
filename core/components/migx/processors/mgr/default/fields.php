@@ -3,6 +3,7 @@
 $config = $modx->migx->customconfigs;
 $prefix = isset ($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 $packageName = $config['packageName'];
+$sender = 'default/fields';
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';

@@ -101,46 +101,80 @@ class Migx
 
     function findProcessor($processorspath, $filename, &$filenames)
     {
+        return $this->findCustomFile($processorspath, $filename, &$filenames);
+    }
+    
+    function findGrid($processorspath, $filename, &$filenames)
+    {
+        return $this->findCustomFile($processorspath, $filename, &$filenames, 'grids');
+    }    
+
+    function findCustomFile($defaultpath, $filename, &$filenames, $type = 'processors')
+    {
         $config = $this->customconfigs;
         $packageName = $config['packageName'];
         $task = $this->getTask();
         if (!empty($packageName)) {
             $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
-            $path = $packagepath . 'processors/mgr/';
+            switch ($type) {
+                case 'processors':
+                    $path = $packagepath . 'processors/mgr/';
+                    if (!empty($task)) {
+                        $filepath = $path . $task . '/' . $filename;
+                        $filenames[] = $filepath;
+                        if (file_exists($filepath)) {
+                            return $filepath;
+                        }
+                    }
 
-            if (!empty($task)) {
-                $processor_file = $path . $task . '/' . $filename;
-                $filenames[] = $processor_file;
-                if (file_exists($processor_file)) {
-                    return $processor_file;
+                    $filepath = $path . 'default/' . $filename;
+                    $filenames[] = $filepath;
+                    if (file_exists($filepath)) {
+                        return $filepath;
+                    }
+                    break;
+                case 'grids':
+                    $path = $packagepath . 'migxtemplates/mgr/grids/';
+                    $filepath = $path . '/' . $filename;
+                    $filenames[] = $filepath;
+                    if (file_exists($filepath)) {
+                        return $filepath;
+                    }
+
+                    break;
+            }
+
+        }
+        switch ($type) {
+            case 'processors':
+                if (!empty($task)) {
+                    $filepath = $defaultpath . $task . '/' . $filename;
+                    $filenames[] = $filepath;
+                    $found = false;
+                    if (file_exists($filepath)) {
+                        return $filepath;
+                    }
                 }
-            }
 
-            $processor_file = $path . 'default/' . $filename;
-            $filenames[] = $processor_file;
-            if (file_exists($processor_file)) {
-                return $processor_file;
-            }
+                $filepath = $defaultpath . 'default/' . $filename;
+                $filenames[] = $filepath;
+                if (file_exists($filepath)) {
+                    return $filepath;
+                }
+                break;
+            case 'grids':
+            default:
+                $filepath = $defaultpath . $filename;
+                $filenames[] = $filepath;
+                if (file_exists($filepath)) {
+                    return $filepath;
+                }
+                break;
+
         }
-
-        if (!empty($task)) {
-            $processor_file = $processorspath . $task . '/' . $filename;
-            $filenames[] = $processor_file;
-            $found = false;
-            if (file_exists($processor_file)) {
-                return $processor_file;
-            }
-        }
-
-        $processor_file = $processorspath . 'default/' . $filename;
-        $filenames[] = $processor_file;
-        if (file_exists($processor_file)) {
-            return $processor_file;
-        }
-
         return false;
-
     }
+
 
     function loadConfigs($grid = true, $other = true, $properties = array(), $sender = '')
     {
@@ -152,8 +186,10 @@ class Migx
         $renderer = array();
         $gridfilters = array();
 
-        if (!empty($this->config['configs'])) {
-            $configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
+        $configs = isset($properties['configs']) ? explode(',', $properties['configs']) : isset($this->config['configs']) ? explode(',', $this->config['configs']) : array();
+
+        if (!empty($configs)) {
+            //$configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
             //$configs = array_merge( array ('master'), $configs);
 
             if ($grid) {
@@ -169,7 +205,21 @@ class Migx
             }
 
             //get migxconfig-specific grid-configs
+            $req_configs = $this->modx->getOption('configs', $_REQUEST, '');
+
+            $preloadGridConfigs = false;
+            if ($sender == 'mgr/fields' && $req_configs == 'migxcolumns') {
+                $preloadGridConfigs = true;
+                $configs_id = $this->modx->getOption('co_id', $_REQUEST, '');
+                $this->configsObject = $this->modx->getObject('migxConfig', $configs_id);
+            }
+
             if ($sender == 'migxconfigs/fields') {
+                $preloadGridConfigs = true;
+            }
+
+            if ($preloadGridConfigs && is_Object($this->configsObject)) {
+
                 $config = $this->configsObject->get('name');
                 $configFile = $this->config['corePath'] . 'configs/grid/grid.' . $config . '.config.inc.php'; // [ file ]
                 if (file_exists($configFile)) {
@@ -185,15 +235,15 @@ class Migx
                     }
                     $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/grid/grid.config.inc.php'; // [ file ]
                     if (file_exists($configFile)) {
-
                         include ($configFile);
                     }
                 }
 
             }
 
-
             foreach ($configs as $config) {
+
+
                 if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config))) {
                     $extended = $cfObject->get('extended');
                     $packageName = $extended['packageName'];
@@ -360,10 +410,22 @@ class Migx
                 $cmptabsout[] = $this->replaceLang($controller->fetchTemplate($cmptabfile));
                 $grid = $this->getGrid();
 
-                $gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
-                $grids .= $this->replaceLang($controller->fetchTemplate($gridfile));
-                $windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';
-                $updatewindows .= $this->replaceLang($controller->fetchTemplate($windowfile));
+                $filenames = array();
+                $defaultpath = $this->config['templatesPath'] . '/mgr/grids/';
+                $filename = $grid . '.grid.tpl';
+                if ($gridfile = $this->findGrid($defaultpath, $filename, &$filenames)){
+                    $grids .= $this->replaceLang($controller->fetchTemplate($gridfile));
+                }
+                //$gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
+                //$windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';
+                //$updatewindows .= $this->replaceLang($controller->fetchTemplate($windowfile));
+                
+                $filenames = array();
+                $defaultpath = $this->config['templatesPath'] . 'mgr/';
+                $filename = 'updatewindow.tpl';
+                if ($gridfile = $this->findGrid($defaultpath, $filename, &$filenames)){
+                    $updatewindows .= $this->replaceLang($controller->fetchTemplate($gridfile));
+                }                
 
 
             }
@@ -670,6 +732,8 @@ class Migx
 
 
         $newitem[] = $item;
+
+        //print_r(array_keys($this->customconfigs));
 
         //$controller->setPlaceholder('i18n', $this->migxi18n);
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($this->migxlang));
@@ -1215,16 +1279,16 @@ class Migx
 
     function sortDbResult($_data, $options = array())
     {
-        
-        
+
+
         $sortmodes = array();
         $sortmodes['numeric'] = SORT_NUMERIC;
-        $sortmodes['string'] = SORT_STRING;   
+        $sortmodes['string'] = SORT_STRING;
         $sortmodes['regular'] = SORT_REGULAR;
-        
+
         $sortdirs = array();
         $sortdirs['ASC'] = SORT_ASC;
-        $sortdirs['DESC'] = SORT_DESC;            
+        $sortdirs['DESC'] = SORT_DESC;
 
 
         $_rules = array();
@@ -1234,14 +1298,14 @@ class Migx
                 if (empty($rule['name']) || !in_array($rule['name'], array_keys(current($_data)))) {
                     continue;
                 }
-                $rule['order'] = isset($option['sortdir']) && isset($sortdirs[$option['sortdir']]) ?  $sortdirs[$option['sortdir']] : $sortdirs['ASC'];
-                $rule['mode'] = isset($option['sortmode']) && isset($sortmodes[$option['sortmode']]) ?  $sortmodes[$option['sortmode']] : $sortmodes['regular'];            
+                $rule['order'] = isset($option['sortdir']) && isset($sortdirs[$option['sortdir']]) ? $sortdirs[$option['sortdir']] : $sortdirs['ASC'];
+                $rule['mode'] = isset($option['sortmode']) && isset($sortmodes[$option['sortmode']]) ? $sortmodes[$option['sortmode']] : $sortmodes['regular'];
                 $_rules[] = $rule;
             }
 
         }
 
-        $_cols = array(); 
+        $_cols = array();
         foreach ($_data as $_k => $_row) {
             foreach ($_rules as $_rule) {
                 if (!isset($_cols[$_rule['name']])) {
@@ -1256,9 +1320,8 @@ class Migx
         $_params[] = &$_data;
         call_user_func_array('array_multisort', $_params);
         return $_data;
-        
-        
-        
+
+
     }
 
 }

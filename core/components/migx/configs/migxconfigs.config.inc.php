@@ -93,11 +93,14 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.packageName","caption":"Package"},
     {"field":"extended.classname","caption":"Classname"},
     {"field":"extended.task","caption":"Processors Path"},
+    {"field":"extended.getlistsort","caption":"getlist defaultsort"},
     {"field":"extended.prefix","caption":"Prefix"},
     {"field":"extended.grid","caption":"Grid"},
+    {"field":"extended.gridload_mode","caption":"Load Grid","inputTVtype":"listbox","inputOptionValues":"by Button==1||auto==2","default":"1"},
     {"field":"extended.check_resid","caption":"Check Resource","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0||@TV","default":"0"},
     {"field":"extended.check_resid_TV","caption":"Check Resource TV"},
-    {"field":"extended.join_alias","caption":"Join Alias"}
+    {"field":"extended.join_alias","caption":"Join Alias"},
+    {"field":"extended.joins","caption":"Joins","inputTVtype":"textarea"}
 ]},
 {"caption":"CMP-Settings", "fields": [
     {"field":"extended.cmpmaincaption","caption":"Main Caption"},

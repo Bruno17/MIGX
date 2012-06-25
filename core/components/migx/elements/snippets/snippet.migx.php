@@ -34,7 +34,8 @@ $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', nul
 if (!($migx instanceof Migx))
     return '';
 //$modx->migx = &$migx;
-$migx->working_context = $modx->resource->get('context_key');
+$defaultcontext = 'web';
+$migx->working_context = isset($modx->resource) ? $modx->resource->get('context_key') : $defaultcontext;
 
 if (!empty($tvname))
 {
@@ -54,8 +55,8 @@ if (!empty($tvname))
 
 $configs[] = $properties['configs'];
 
-$migx->config['configs'] = implode(',',$configs);
-$migx->loadConfigs();
+//$migx->config['configs'] = implode(',',$configs);
+$migx->loadConfigs(false,true,array('configs'=>implode(',',$configs)));
 // get tabs from file or migx-config-table
 $formtabs = $migx->getTabs();
 if (empty($formtabs))
