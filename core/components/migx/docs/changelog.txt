@@ -1,5 +1,24 @@
 Changelog for MIGX.
 
+MIGX 2.2.0
+
+==============
+
+export/import configuration-objects as json to/from files in custom-package-directories 
+new configs: getlist - defaultsort, joins, gridload_mode (by button, auto) 
+grid-smarty-template now can be also in custom-package-directories
+reworked handling of joined objects in default update-php 
+add connected_object_id baseparam to migx-grid
+added snippet migxLoopCollection
+
+
+MIGX 2.1.1
+
+==============
+
+  fix for migx-snippet not working with multiple calls on one page
+  resource_id as script-property for getlist-processor when used with migx-snippet
+
 MIGX 2.1.0
 
 ==============

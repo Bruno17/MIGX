@@ -23,7 +23,10 @@
         resource_id: '{/literal}{$resource.id}{literal}',
         co_id: '{/literal}{$connected_object_id}{literal}',
         pageSize: 10,
-        object_id: '{/literal}{$object_id}{literal}'
+        object_id: '{/literal}{$object_id}{literal}',
+        bwrapCfg: {
+            cls: 'main-wrapper'
+        }       
     }]
 }
 {/literal}
