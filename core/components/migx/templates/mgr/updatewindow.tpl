@@ -250,7 +250,7 @@ Ext.extend(MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal},MODx.FormPanel,
 			s.mode = "specific_textareas";
             s.editor_selector = "modx-richtext";
 		    //s.language = "en";// de seems not to work at the moment
-            tinyMCE.init(s);				
+           tinyMCE.init(s);				
 		}
         
         //this.popwindow.width='1000px';
