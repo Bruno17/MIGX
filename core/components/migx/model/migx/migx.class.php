@@ -101,12 +101,12 @@ class Migx
 
     function findProcessor($processorspath, $filename, &$filenames)
     {
-        return $this->findCustomFile($processorspath, $filename, &$filenames);
+        return $this->findCustomFile($processorspath, $filename, $filenames);
     }
     
     function findGrid($processorspath, $filename, &$filenames)
     {
-        return $this->findCustomFile($processorspath, $filename, &$filenames, 'grids');
+        return $this->findCustomFile($processorspath, $filename, $filenames, 'grids');
     }    
 
     function findCustomFile($defaultpath, $filename, &$filenames, $type = 'processors')
@@ -413,7 +413,7 @@ class Migx
                 $filenames = array();
                 $defaultpath = $this->config['templatesPath'] . '/mgr/grids/';
                 $filename = $grid . '.grid.tpl';
-                if ($gridfile = $this->findGrid($defaultpath, $filename, &$filenames)){
+                if ($gridfile = $this->findGrid($defaultpath, $filename, $filenames)){
                     $grids .= $this->replaceLang($controller->fetchTemplate($gridfile));
                 }
                 //$gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
@@ -423,7 +423,7 @@ class Migx
                 $filenames = array();
                 $defaultpath = $this->config['templatesPath'] . 'mgr/';
                 $filename = 'updatewindow.tpl';
-                if ($gridfile = $this->findGrid($defaultpath, $filename, &$filenames)){
+                if ($gridfile = $this->findGrid($defaultpath, $filename, $filenames)){
                     $updatewindows .= $this->replaceLang($controller->fetchTemplate($gridfile));
                 }                
 
