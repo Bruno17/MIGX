@@ -15,8 +15,12 @@ class migxCreatePackageProcessor extends modProcessor
     public function process()
     {
 
-        $properties = $this->getProperties();  
+        $properties = $this->getProperties();
         $prefix = isset($properties['prefix']) && !empty($properties['prefix']) ? $properties['prefix'] : null;
+        if (isset($properties['usecustomprefix']) && !empty($properties['usecustomprefix'])) {
+            $prefix = isset($properties['prefix']) ? $properties['prefix'] : null;
+        }
+
         $packageName = $properties['packageName'];
         //$tablename = $properties['tablename'];
         $tableList = isset($properties['tableList']) && !empty($properties['tableList']) ? $properties['tableList'] : null;
@@ -68,7 +72,7 @@ class migxCreatePackageProcessor extends modProcessor
 
         if ($properties['task'] == 'addmissing' || $properties['task'] == 'removedeleted') {
             $prefix = empty($prefix) ? null : $prefix;
-            $options['addmissing'] =  0;
+            $options['addmissing'] = 0;
             $options['removedeleted'] = 0;
             $options[$properties['task']] = 1;
 
@@ -83,13 +87,13 @@ class migxCreatePackageProcessor extends modProcessor
 
         if ($properties['task'] == 'loadSchema') {
             if (file_exists($schemafile)) {
-                return $this->success('',array('content'=>@file_get_contents($schemafile)));
+                return $this->success('', array('content' => @file_get_contents($schemafile)));
                 //$this->setPlaceholder('schema', @file_get_contents($schemafile));
             }
         }
 
         if ($properties['task'] == 'createTables') {
-            $prefix = empty($prefix) ? null : $prefix;
+            //$prefix = empty($prefix) ? null : $prefix;
             $this->modx->addPackage($packageName, $modelpath, $prefix);
             $pkgman = $this->modx->migx->loadPackageManager();
             $pkgman->parseSchema($schemafile, $modelpath, true);

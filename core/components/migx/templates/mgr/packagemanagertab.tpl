@@ -21,6 +21,26 @@
             fieldLabel: 'Package Name'
         },
         {
+            xtype: 'combo',
+            name: 'use_custom_prefix',
+            id: 'migxpm_use_custom_prefix',
+            fieldLabel: 'table-prefix',
+            store: [['0', 'Default Prefix'],['1', 'Custom Prefix']],
+            typeAhead: false,
+            editable: false,
+            forceSelection: true,
+            triggerAction: 'all',
+            selectOnFocus:true,
+            mode: 'local',
+            value: '0'            
+        },        
+        {
+            xtype: 'textfield',
+            name: 'prefix',
+            id: 'migxpm_prefix',
+            fieldLabel: 'custom-prefix'
+        },
+        {
             xtype: 'modx-tabs',
             id: 'migx-tab-packagemanager',
             defaults: {
@@ -54,12 +74,6 @@
                     html: '<p>Write schema from existing tables</p>',
                     bodyCssClass: 'panel-desc',
                     border: false
-                },
-                {
-                    xtype: 'textfield',
-                    name: 'prefix',
-                    id: 'migxpm_prefix',
-                    fieldLabel: 'table-prefix'
                 },
                 {
                     xtype: 'button',

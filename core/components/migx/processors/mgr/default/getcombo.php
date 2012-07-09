@@ -8,7 +8,10 @@ $textfield = $config['gridfilters'][$scriptProperties['searchname']]['combotextf
 $idfield = $config['gridfilters'][$scriptProperties['searchname']]['comboidfield'];
 $idfield = empty($idfield) ? $textfield : $idfield;
 
-$prefix = isset ($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
+$prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
+if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])){
+    $prefix = isset($config['prefix']) ? $config['prefix'] : '';  
+}
 $packageName = $config['packageName'];
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
