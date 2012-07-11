@@ -72,7 +72,7 @@ switch ($mode) {
             $c->leftjoin($joinclass, $joinalias);
             //$c->select($modx->getSelectColumns($joinclass, $joinalias, $joinalias . '_'));
         }
-        $c->select($classname.'.id, ' . $textfield . ' as combo_id, ' . $textfield . ' as combo_name');
+        $c->select($classname.'.id, ' . $idfield . ' as combo_id, ' . $textfield . ' as combo_name');
         break;
 }
 

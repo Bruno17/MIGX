@@ -517,25 +517,26 @@ $gridfunctions['this.csvExport'] = "
 ";
 
 
-
-
-
-
 $gridfunctions['this.removeObject'] = "
 removeObject: function() {
-        MODx.Ajax.request({
-            url: this.config.url
-            ,params: {
-                action: 'mgr/migxdb/process'
-                ,processaction: 'remove'
-				,task: 'removeone'
-                ,object_id: this.menu.record.id
-				,configs: this.config.configs
+        var _this=this;
+		Ext.Msg.confirm(_('warning') || '',_('mig.remove_confirm') || '',function(e) {
+            if (e == 'yes') {
+                MODx.Ajax.request({
+                    url: _this.config.url
+                    ,params: {
+                        action: 'mgr/migxdb/process'
+                        ,processaction: 'remove'
+				        ,task: 'removeone'
+                        ,object_id: _this.menu.record.id
+				        ,configs: _this.config.configs
+                    }
+                    ,listeners: {
+                        'success': {fn:_this.refresh,scope:_this}
+                    }
+                });  
             }
-            ,listeners: {
-                'success': {fn:this.refresh,scope:this}
-            }
-        });
+        }),this;    
     }
 ";
 
