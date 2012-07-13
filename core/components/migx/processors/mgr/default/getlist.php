@@ -47,9 +47,7 @@ $sort = $modx->getOption('sort', $scriptProperties, $sort);
 $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $object_id = $modx->getOption('object_id', $scriptProperties, '');
-$resource_id = $modx->getOption('resource_id', $scriptProperties, false);
-$resource_id = is_object($modx->resource) ? $modx->resource->get('id') : $resource_id;
-
+$resource_id = $modx->getOption('resource_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
 $resource_id = !empty($object_id) ? $object_id : $resource_id;
 
 if (isset($sortConfig)) {
@@ -72,29 +70,7 @@ if (!empty($joinalias)) {
 }
 
 if ($joins) {
-    foreach ($joins as $join) {
-        $jalias = $join['alias'];
-        if (!empty($jalias)) {
-            if (!empty($join['classname'])) {
-                $joinclass = $join['classname'];
-            } elseif ($fkMeta = $modx->getFKDefinition($classname, $jalias)) {
-                $joinclass = $fkMeta['class'];
-            } else {
-                $jalias = '';
-            }
-            if (!empty($jalias)) {
-                /*
-                if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
-                $localkey = $joinFkMeta['local'];
-                }    
-                */
-                $selectfields = !empty($join['selectfields']) ? explode(',', $join['selectfields']) : null;
-                $on = !empty($join['on']) ? $join['on'] : null;
-                $c->leftjoin($joinclass, $jalias, $on);
-                $c->select($modx->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
-            }
-        }
-    }
+    $modx->migx->prepareJoins($classname,$joins,$c);
 }
 
 /*

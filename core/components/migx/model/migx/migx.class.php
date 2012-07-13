@@ -103,11 +103,11 @@ class Migx
     {
         return $this->findCustomFile($processorspath, $filename, $filenames);
     }
-    
+
     function findGrid($processorspath, $filename, &$filenames)
     {
         return $this->findCustomFile($processorspath, $filename, $filenames, 'grids');
-    }    
+    }
 
     function findCustomFile($defaultpath, $filename, &$filenames, $type = 'processors')
     {
@@ -178,15 +178,19 @@ class Migx
 
     function loadConfigs($grid = true, $other = true, $properties = array(), $sender = '')
     {
-
         $gridactionbuttons = array();
         $gridcolumnbuttons = array();
         $gridcontextmenus = array();
         $gridfunctions = array();
         $renderer = array();
         $gridfilters = array();
+        $configs = array();
+        if (isset($properties['configs'])) {
+            $configs = explode(',', $properties['configs']);
+        } elseif (isset($this->config['configs'])) {
+            $configs = explode(',', $this->config['configs']);
+        }
 
-        $configs = isset($properties['configs']) ? explode(',', $properties['configs']) : isset($this->config['configs']) ? explode(',', $this->config['configs']) : array();
 
         if (!empty($configs)) {
             //$configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
@@ -243,7 +247,6 @@ class Migx
 
             foreach ($configs as $config) {
 
-
                 if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config))) {
                     $extended = $cfObject->get('extended');
                     $packageName = $extended['packageName'];
@@ -273,6 +276,7 @@ class Migx
                     if ($cfObject) {
 
                         $objectarray = $cfObject->toArray();
+
                         if (is_array($objectarray['extended'])) {
                             foreach ($objectarray['extended'] as $key => $value) {
                                 if (!empty($value)) {
@@ -413,19 +417,19 @@ class Migx
                 $filenames = array();
                 $defaultpath = $this->config['templatesPath'] . '/mgr/grids/';
                 $filename = $grid . '.grid.tpl';
-                if ($gridfile = $this->findGrid($defaultpath, $filename, $filenames)){
+                if ($gridfile = $this->findGrid($defaultpath, $filename, $filenames)) {
                     $grids .= $this->replaceLang($controller->fetchTemplate($gridfile));
                 }
                 //$gridfile = $this->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
                 //$windowfile = $this->config['templatesPath'] . 'mgr/updatewindow.tpl';
                 //$updatewindows .= $this->replaceLang($controller->fetchTemplate($windowfile));
-                
+
                 $filenames = array();
                 $defaultpath = $this->config['templatesPath'] . 'mgr/';
                 $filename = 'updatewindow.tpl';
-                if ($gridfile = $this->findGrid($defaultpath, $filename, $filenames)){
+                if ($gridfile = $this->findGrid($defaultpath, $filename, $filenames)) {
                     $updatewindows .= $this->replaceLang($controller->fetchTemplate($gridfile));
-                }                
+                }
 
 
             }
@@ -1324,4 +1328,32 @@ class Migx
 
     }
 
+
+    public function prepareJoins($classname, $joins, &$c)
+    {
+        if (is_array($joins)) {
+            foreach ($joins as $join) {
+                print_r($join);
+                $jalias = $this->modx->getOption('alias', $join, '');
+                $joinclass = $this->modx->getOption('classname', $join, '');
+                $selectfields = $this->modx->getOption('selectfields', $join, '');
+                $on = $this->modx->getOption('on', $join, null);
+                if (!empty($jalias)) {
+                    if (empty($joinclass) && $fkMeta = $this->modx->getFKDefinition($classname, $jalias)) {
+                        $joinclass = $fkMeta['class'];
+                    } 
+                    if (!empty($joinclass)) {
+                        /*
+                        if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
+                        $localkey = $joinFkMeta['local'];
+                        }    
+                        */
+                        $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
+                        $c->leftjoin($joinclass, $jalias, $on);
+                        $c->select($this->modx->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
+                    }
+                }
+            }
+        }
+    }
 }

@@ -12,7 +12,7 @@ $where = !empty($where) ? $modx->fromJSON($where) : array();
 $sortConfig = $modx->getOption('sortConfig', $scriptProperties, '');
 $sortConfig = !empty($sortConfig) ? $modx->fromJSON($sortConfig) : array();
 $configs = $modx->getOption('configs', $scriptProperties, '');
-$configs = explode(',',$configs);
+$configs = !empty($configs) ? explode(',',$configs):array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
@@ -49,14 +49,24 @@ if (!empty($tvname))
 
         $properties = $tv->get('input_properties');
         $properties = isset($properties['configs']) ? $properties : $tv->getProperties();
-
+        $cfgs = $modx->getOption('configs',$properties,'');
+        if (!empty($cfgs)){
+            $cfgs = explode(',',$cfgs);
+            $configs = array_merge($configs,$cfgs);
+           
+        }
+        
     }
 }
 
-$configs[] = $properties['configs'];
+
 
 //$migx->config['configs'] = implode(',',$configs);
 $migx->loadConfigs(false,true,array('configs'=>implode(',',$configs)));
+$migx->customconfigs = array_merge($migx->customconfigs,$scriptProperties);
+
+
+
 // get tabs from file or migx-config-table
 $formtabs = $migx->getTabs();
 if (empty($formtabs))
