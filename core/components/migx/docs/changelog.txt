@@ -1,5 +1,19 @@
 Changelog for MIGX.
 
+MIGX 2.2.2
+
+==============
+add migxLoopCollection-snippet
+move prepareJoins into a migx-method
+confirmation before remove db-record, getcombo did not use idfield 
+allow empty prefix 
+add possibility to use tables without 'deleted' - field and default-getlist-processor
+fix Call-time pass-by-reference errors
+get tinyMCE to work on richtext-TV-inputs in MIGXdb - CMPs 
+fix prefix not sended to writeSchema
+grid add cls 'main-wrapper' to give it a bit padding, thanks to jako
+
+
 MIGX 2.2.0
 
 ==============

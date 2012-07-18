@@ -1,6 +1,5 @@
 <?php
 
-
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
 $packageName = $config['packageName'];
@@ -34,7 +33,7 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
 //handle json fields
 $record = $object->toArray();
 
-$modx->migx->configsObject = & $object;
+$modx->migx->configsObject = &$object;
 
 if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] == 'export_import') {
     $temprecord = $record;
@@ -53,20 +52,17 @@ if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] =
         }
     }
 
-    if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] == 'raw') {
 
-
-    } else {
-        $tabs = $modx->fromJson($record['formtabs']);
-        $formtabs = array();
-        if (is_array($tabs) && count($tabs) > 0) {
-            foreach ($tabs as $tab) {
-                $fields = is_array($tab['fields']) ? $modx->toJson($tab['fields']) : $tab['fields'];
-                $tab['fields'] = $fields;
-                $formtabs[] = $tab;
-            }
+    $tabs = $modx->fromJson($record['formtabs']);
+    $formtabs = array();
+    if (is_array($tabs) && count($tabs) > 0) {
+        foreach ($tabs as $tab) {
+            $fields = is_array($tab['fields']) ? $tab['fields'] :$modx->fromJson($tab['fields']) ;
+            $tab['fields'] = $fields;
+            $formtabs[] = $tab;
         }
-
-        $record['formtabs'] = $modx->toJson($formtabs);
     }
+
+    $record['formtabs'] = $modx->toJson($formtabs);
+
 }

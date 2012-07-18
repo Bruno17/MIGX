@@ -158,7 +158,7 @@ $gridfilters['textbox']['handler'] = 'gridfilter';
 $gridfilters['combobox']['code'] = "
 {
     xtype: 'modx-combo'
-    ,idxxx: '[[+name]]-migxdb-search-filter'
+    ,id: '[[+name]]-migxdb-search-filter'
     ,name: '[[+name]]'
     ,hiddenName: '[[+name]]'
     ,url: '[[+config.connectorUrl]]'
@@ -256,8 +256,26 @@ $renderer['this.renderRowActions'] = "
 
 $gridfunctions['gridfilter'] = "
     filter[[+name]]: function(tf,nv,ov) {
+        var children = Ext.util.JSON.decode('[[+combochilds]]');
         var s = this.getStore();
         s.baseParams.[[+name]] = tf.getValue();
+        var dddx_select = null;
+        for(i = 0; i <  children.length; i++) {
+ 		    child = children[i];
+            dddx_select = Ext.getCmp(child+'-migxdb-search-filter');
+            if(typeof(dddx_select) != 'undefined'){
+                dddx_select.baseParams.[[+name]] = tf.getValue();
+                s.baseParams[dddx_select.getName()] = 'all';
+                dddx_select.store.load({
+                    callback: function() {
+                        dddx_select.setValue('all');
+                        //this.refreshChildren(true);
+                    },scope:this
+               });
+            }
+
+        }
+       
         this.getBottomToolbar().changePage(1);
         this.refresh();
     }

@@ -44,7 +44,8 @@ $start = $modx->getOption('start', $scriptProperties, 0);
 $limit = $modx->getOption('limit', $scriptProperties, 20);
 $sort = !empty($config['getlistsort']) ? $config['getlistsort'] : 'id';
 $sort = $modx->getOption('sort', $scriptProperties, $sort);
-$dir = $modx->getOption('dir', $scriptProperties, 'ASC');
+$dir = !empty($config['getlistsortdir']) ? $config['getlistsortdir'] : 'ASC';
+$dir = $modx->getOption('dir', $scriptProperties, $dir);
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $object_id = $modx->getOption('object_id', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
@@ -54,7 +55,8 @@ if (isset($sortConfig)) {
     $sort = '';
 }
 
-$where = $modx->getOption('where', $scriptProperties, '');
+$where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
+$where = $modx->getOption('where', $scriptProperties, $where);
 
 $c = $modx->newQuery($classname);
 $c->select($modx->getSelectColumns($classname, $classname));
@@ -94,10 +96,10 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
                 $chunk->setContent($filter['getlistwhere']);
-                $where = $chunk->process($scriptProperties);
-                $where = strpos($where, '{') === 0 ? $modx->fromJson($where) : $where;
+                $fwhere = $chunk->process($scriptProperties);
+                $fwhere = strpos($fwhere, '{') === 0 ? $modx->fromJson($fwhere) : $fwhere;
 
-                $c->where($where);
+                $c->where($fwhere);
             }
         }
     }

@@ -98,6 +98,7 @@ $prefixes[] = 'Custom Prefix==1';
     {"field":"extended.classname","caption":"Classname"},
     {"field":"extended.task","caption":"Processors Path"},
     {"field":"extended.getlistsort","caption":"getlist defaultsort"},
+    {"field":"extended.getlistsortdir","caption":"getlist defaultsortdir"},
     {"field":"extended.use_custom_prefix","caption":"Prefix","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $prefixes) . '"},
     {"field":"extended.prefix","caption":"Custom Prefix"},
     {"field":"extended.grid","caption":"Grid"},
@@ -105,6 +106,7 @@ $prefixes[] = 'Custom Prefix==1';
     {"field":"extended.check_resid","caption":"Check Resource","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0||@TV","default":"0"},
     {"field":"extended.check_resid_TV","caption":"Check Resource TV"},
     {"field":"extended.join_alias","caption":"Join Alias"},
+    {"field":"extended.getlistwhere","caption":"Where"},
     {"field":"extended.joins","caption":"Joins","inputTVtype":"textarea"}
 ]},
 {"caption":"CMP-Settings", "fields": [

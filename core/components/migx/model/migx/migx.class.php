@@ -112,7 +112,7 @@ class Migx
     function findCustomFile($defaultpath, $filename, &$filenames, $type = 'processors')
     {
         $config = $this->customconfigs;
-        $packageName = $config['packageName'];
+        $packageName = $this->modx->getOption('packageName', $config);
         $task = $this->getTask();
         if (!empty($packageName)) {
             $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
@@ -305,8 +305,11 @@ class Migx
                         if (!empty($columnbuttons)) {
                             $columnbuttons = explode('||', $columnbuttons);
                             foreach ($columnbuttons as $button) {
-                                $gridcolumnbuttons[$button] = $gridcontextmenus[$button];
-                                $gridcolumnbuttons[$button]['active'] = 1;
+                                if (isset($gridcontextmenus[$button])) {
+                                    $gridcolumnbuttons[$button] = $gridcontextmenus[$button];
+                                    $gridcolumnbuttons[$button]['active'] = 1;
+                                }
+
                             }
                         }
 
@@ -525,7 +528,18 @@ class Migx
         $filters = array();
         if (isset($this->customconfigs['gridfilters']) && count($this->customconfigs['gridfilters']) > 0) {
             foreach ($this->customconfigs['gridfilters'] as $filter) {
+                if (isset($filter['comboparent']) && !empty($filter['comboparent'])) {
+                    $combochilds[$filter['comboparent']][$filter['name']] = $filter['name'];
+                }
+            }
+
+            foreach ($this->customconfigs['gridfilters'] as $filter) {
                 $filter['emptytext'] = empty($filter['emptytext']) ? 'search...' : $filter['emptytext'];
+                $filter['combochilds'] = '[]';
+                if (isset($combochilds[$filter['name']])) {
+                    $filter['combochilds'] = $this->modx->toJson(array_values($combochilds[$filter['name']]));
+                    //print_r($filter);
+                }
                 foreach ($filter as $key => $value) {
                     $replace[$key] = $value;
                     $search[$key] = '[[+' . $key . ']]';
@@ -1333,7 +1347,6 @@ class Migx
     {
         if (is_array($joins)) {
             foreach ($joins as $join) {
-                print_r($join);
                 $jalias = $this->modx->getOption('alias', $join, '');
                 $joinclass = $this->modx->getOption('classname', $join, '');
                 $selectfields = $this->modx->getOption('selectfields', $join, '');
@@ -1341,7 +1354,7 @@ class Migx
                 if (!empty($jalias)) {
                     if (empty($joinclass) && $fkMeta = $this->modx->getFKDefinition($classname, $jalias)) {
                         $joinclass = $fkMeta['class'];
-                    } 
+                    }
                     if (!empty($joinclass)) {
                         /*
                         if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
