@@ -93,6 +93,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
                 	     
 	,loadWin: function(btn,e,action,tempParams) {
         
+        var storeParams = Ext.util.JSON.encode(this.store.baseParams); 
         var resource_id = '{/literal}{$resource.id}{literal}';
         var tempParams = tempParams || null;
         var co_id = '{/literal}{$connected_object_id}{literal}';
@@ -121,8 +122,10 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
             this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
             this.windows[win_xtype].fp.autoLoad.params.tempParams=tempParams;
+            this.windows[win_xtype].fp.autoLoad.params.storeParams=storeParams;
 			this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
+            
            
 		}
 		this.loadWindow(btn,e,{
@@ -140,7 +143,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
                 configs: this.config.configs,
                 resource_id : resource_id,
                 co_id : co_id,
-                tempParams: tempParams
+                tempParams: tempParams,
+                storeParams: storeParams
 			}
         });
     }
