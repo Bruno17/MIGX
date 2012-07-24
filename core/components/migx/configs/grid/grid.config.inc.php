@@ -236,10 +236,14 @@ renderCrossTick : function(val, md, rec, row, col, s) {
     var renderImage, altText;
     switch (val) {
         case 0:
+        case '0':
+        case false:
             renderImage = '/assets/components/migx/style/images/cross.png';
             altText = 'No';
             break;
         case 1:
+        case '1':
+        case true:
             renderImage = '/assets/components/migx/style/images/tick.png';
             altText = 'Yes';
             break;
@@ -252,6 +256,14 @@ $renderer['this.renderRowActions'] = "
 	dummy:function(v,md,rec) {
         // this function is fixed in the grid
 	} 
+";
+
+$renderer['this.renderDate'] = "
+renderDate : function(val, md, rec, row, col, s) {
+    var date;
+    date = Date.parseDate(val, 'Y-m-d H:i: s');
+    return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
+}
 ";
 
 $gridfunctions['gridfilter'] = "

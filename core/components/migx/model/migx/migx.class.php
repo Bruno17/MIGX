@@ -843,12 +843,13 @@ class Migx
     function checkForConnectedResource($resource_id = false, &$config)
     {
         if ($resource_id) {
-            if ($config['check_resid'] == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
+            $check_resid = $this->modx->getOption('check_resid',$config);
+            if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
                 if ($check = $resource->getTvValue($config['check_resid_TV'])) {
-                    $config['check_resid'] = $check;
+                    $check_resid = $check;
                 }
             }
-            if (!empty($config['check_resid'])) {
+            if (!empty($check_resid)) {
                 //$c->where("CONCAT('||',resource_ids,'||') LIKE '%||{$resource_id}||%'", xPDOQuery::SQL_AND);
                 return true;
             }
@@ -887,7 +888,12 @@ class Migx
                     /*insert actual value from requested record, convert arrays to ||-delimeted string */
                     $fieldvalue = '';
                     if (isset($record[$field['field']])) {
-                        $fieldvalue = is_array($record[$field['field']]) ? implode('||', $record[$field['field']]) : $record[$field['field']];
+                        $fieldvalue = $record[$field['field']];
+                        if (is_array($fieldvalue)){
+                            $fieldvalue = is_array($fieldvalue[0]) ? $this->modx->toJson($fieldvalue) : implode('||', $fieldvalue);
+                        } 
+                        
+                        
                     }
 
 
