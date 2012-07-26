@@ -42,6 +42,19 @@ $this->customconfigs['win_id'] = 'migxconfigs';
 * 
 */
 
+$mf_options = array();
+$mf_options[] = '---==0';
+$classname = 'migxConfig';
+$c = $this->modx->newQuery($classname);
+$c->select($this->modx->getSelectColumns($classname,$classname,'',array('id','name')));
+$c->sortby('name');
+if ($collection = $this->modx->getCollection($classname,$c)){
+    foreach ($collection as $object){
+        $mf_options[] = $object->get('name') . '==' . $object->get('id');            
+    }
+}
+
+
 if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import') {
     $tabs = '
 [
@@ -75,8 +88,8 @@ $prefixes[] = 'Custom Prefix==1';
     {"field":"extended.win_id","caption":"unique MIGX ID"}
 ]},
 {"caption":"formtabs", "fields": [
-    {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"}
-
+    {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"},
+    {"field":"extended.multiple_formtabs","caption":"Multiple Formtabs","inputTVtype":"listbox-multiple","inputOptionValues":"' . implode('||', $mf_options) . '"}
 ]},
 {"caption":"Columns", "fields": [
     {"field":"columns","caption":"Columns","inputTVtype":"' . $inputType . '","configs":"migxcolumns"}
@@ -118,7 +131,6 @@ $prefixes[] = 'Custom Prefix==1';
 ]
 ';
 }
-
 
 
 $this->customconfigs['tabs'] = $this->modx->fromJson($tabs);

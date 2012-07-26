@@ -175,6 +175,53 @@ class Migx
         return false;
     }
 
+    function checkMultipleForms($formtabs, & $controller, & $allfields, $record)
+    {
+        $multiple_formtabs = $this->modx->getOption('multiple_formtabs', $this->customconfigs, '');
+        if (!empty($multiple_formtabs)) {
+            $mf_configs = explode('||', $multiple_formtabs);
+            $classname = 'migxConfig';
+            $c = $this->modx->newQuery($classname);
+            $c->select($this->modx->getSelectColumns($classname, $classname));
+            $c->where(array('id:IN' => $mf_configs));
+            $c->sortby('name');
+            if ($collection = $this->modx->getCollection($classname, $c)) {
+                $idx = 0;
+                $formtabs = false;
+                foreach ($collection as $object) {
+                    $formname = array();
+                    $formname['value'] = $object->get('name');
+                    $formname['text'] = $object->get('name');
+                    $formname['selected'] = 0;
+                    if ($idx == 0) {
+                        $firstformtabs = $this->modx->fromJson($object->get('formtabs'));
+                    }
+                    if ($record['MIGX_formname'] == $object->get('name')) {
+                        $formname['selected'] = 1;
+                        $formtabs = $this->modx->fromJson($object->get('formtabs'));
+                    }
+                    $formnames[] = $formname;
+                    $idx++;
+                    /*
+                    foreach ($form['formtabs'] as $tab) {
+                    $tabs[$form['formname']][] = $tab;
+                    }
+                    */
+                }
+
+                $formtabs = $formtabs ? $formtabs : $firstformtabs;
+
+                $controller->setPlaceholder('formnames', $formnames);
+
+                $field = array();
+                $field['field'] = 'MIGX_formname';
+                $field['tv_id'] = 'Formname';
+                $allfields[] = $field;
+            }
+        }
+        return $formtabs;
+    }
+
 
     function loadConfigs($grid = true, $other = true, $properties = array(), $sender = '')
     {
@@ -843,7 +890,7 @@ class Migx
     function checkForConnectedResource($resource_id = false, &$config)
     {
         if ($resource_id) {
-            $check_resid = $this->modx->getOption('check_resid',$config);
+            $check_resid = $this->modx->getOption('check_resid', $config);
             if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
                 if ($check = $resource->getTvValue($config['check_resid_TV'])) {
                     $check_resid = $check;
@@ -889,11 +936,11 @@ class Migx
                     $fieldvalue = '';
                     if (isset($record[$field['field']])) {
                         $fieldvalue = $record[$field['field']];
-                        if (is_array($fieldvalue)){
+                        if (is_array($fieldvalue)) {
                             $fieldvalue = is_array($fieldvalue[0]) ? $this->modx->toJson($fieldvalue) : implode('||', $fieldvalue);
-                        } 
-                        
-                        
+                        }
+
+
                     }
 
 
