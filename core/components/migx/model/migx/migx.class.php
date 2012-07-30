@@ -222,7 +222,6 @@ class Migx
         return $formtabs;
     }
 
-
     function loadConfigs($grid = true, $other = true, $properties = array(), $sender = '')
     {
         $gridactionbuttons = array();
@@ -890,7 +889,7 @@ class Migx
     function checkForConnectedResource($resource_id = false, &$config)
     {
         if ($resource_id) {
-            $check_resid = $this->modx->getOption('check_resid', $config);
+            $check_resid = $this->modx->getOption('check_resid',$config);
             if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
                 if ($check = $resource->getTvValue($config['check_resid_TV'])) {
                     $check_resid = $check;
@@ -936,11 +935,11 @@ class Migx
                     $fieldvalue = '';
                     if (isset($record[$field['field']])) {
                         $fieldvalue = $record[$field['field']];
-                        if (is_array($fieldvalue)) {
+                        if (is_array($fieldvalue)){
                             $fieldvalue = is_array($fieldvalue[0]) ? $this->modx->toJson($fieldvalue) : implode('||', $fieldvalue);
-                        }
-
-
+                        } 
+                        
+                        
                     }
 
 
@@ -1106,6 +1105,10 @@ class Migx
 
     function tvFilters($tvFilters = '', &$criteria)
     {
+        
+        //tvFilter::categories=inArray=[[+category]]
+        
+        
         $tvFilters = !empty($tvFilters) ? explode('||', $tvFilters) : array();
         if (!empty($tvFilters)) {
             $tmplVarTbl = $this->modx->getTableName('modTemplateVar');
@@ -1123,7 +1126,8 @@ class Migx
                 '=<' => '=<',
                 '>>' => '>',
                 '>=' => '>=',
-                '=>' => '=>');
+                '=>' => '=>',
+                '=inArray=' => '=inArray=');
             foreach ($tvFilters as $fGroup => $tvFilter) {
                 $filterGroup = array();
                 $filters = explode(',', $tvFilter);
@@ -1152,6 +1156,11 @@ class Migx
                                 $tvValueField = "CAST({$tvValueField} AS DECIMAL)";
                                 $tvDefaultField = "CAST({$tvDefaultField} AS DECIMAL)";
                             }
+                        } elseif ($sqlOperator == '=inArray='){
+                                $sqlOperator = 'LIKE';
+                                $tvValueField = "CONCAT('||',{$tvValueField},'||')";
+                                $tvDefaultField = "CONCAT('||',{$tvDefaultField},'||')";
+                                $tvValue = $this->modx->quote('%||'.$f[1].'||%');                            
                         } else {
                             $tvValue = $this->modx->quote($f[1]);
                         }

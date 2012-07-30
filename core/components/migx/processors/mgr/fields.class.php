@@ -47,7 +47,7 @@ class migxFormProcessor extends modProcessor
 
         //get the MIGX-TV
         $properties = array();
-
+        
         if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']))) {
             $this->modx->migx->source = $tv->getSource($this->modx->migx->working_context, false);
             $properties = $tv->get('input_properties');
@@ -59,9 +59,12 @@ class migxFormProcessor extends modProcessor
 
         if (!empty($configs)) {
             $this->modx->migx->config['configs'] = $configs;
-            $this->modx->migx->loadConfigs(true, true, $scriptProperties, $sender);
-        }
+            $this->modx->migx->loadConfigs(true,true,$scriptProperties,$sender);
+            
+            
 
+        }
+        
         $formtabs = $this->modx->migx->getTabs();
         $fieldid = 0;
         /*actual record */
@@ -81,14 +84,14 @@ class migxFormProcessor extends modProcessor
         }
         $controller->setPlaceholder('migxid', $migxid);
 
-        //$formtabs = $this->modx->migx->checkMultipleForms($formtabs,$controller,$allfields,$record); 
-
         if (empty($formtabs)) {
 
             //old stuff
             $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
-            $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
-            $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
+            $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties,
+                $default_formtabs));
+            $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) :
+                $formtabs;
             $fieldid = 0;
             $tabid = 0;
 

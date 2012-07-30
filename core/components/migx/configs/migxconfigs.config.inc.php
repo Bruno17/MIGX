@@ -54,7 +54,6 @@ if ($collection = $this->modx->getCollection($classname,$c)){
     }
 }
 
-
 if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import') {
     $tabs = '
 [
@@ -131,6 +130,7 @@ $prefixes[] = 'Custom Prefix==1';
 ]
 ';
 }
+
 
 
 $this->customconfigs['tabs'] = $this->modx->fromJson($tabs);

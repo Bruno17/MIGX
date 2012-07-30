@@ -62,7 +62,6 @@ class migxFormProcessor extends modProcessor
         $tabs = $this->modx->migx->getTabs();
         $fieldid = 0;
         $allfields[] = array();
-        $tabs = $this->modx->migx->checkMultipleForms($tabs,$controller,$allfields,$record);         
         $categories = array();
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
 

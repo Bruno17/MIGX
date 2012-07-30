@@ -1,7 +1,9 @@
 <?php
 
 $config = $modx->migx->customconfigs;
-$includeTVs = isset($config['includeTVs']) ? explode(',', $config['includeTVs']) : array();
+$includeTVList = $modx->getOption('includeTVList', $config, '');
+$includeTVList = !empty($includeTVList) ? explode(',', $includeTVList) : array();
+$includeTVs = $modx->getOption('includeTVs', $config, false);
 
 $classname = 'modResource';
 
@@ -24,6 +26,9 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
 
 $record = $object->toArray();
 
-foreach ($includeTVs as $tvname) {
-    $record[$tvname] = $object->getTVValue($tvname);
+if ($includeTVs) {
+    foreach ($includeTVList as $tvname) {
+        $tv = $this->modx->getObject('modTemplateVar', array('name' => $tvname));
+        $record[$tvname] = $tv->getValue($object->get('id'));
+    }
 }
