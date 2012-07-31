@@ -1,4 +1,16 @@
 Changelog for MIGX.
+MIGX 2.2.3
+
+==============
+confirmation before overriding schema-files
+some additions for childresources-management by MIGXdb
+switch between multiple forms - configurations
+add renderDate - renderer , thanks to Jako
+additional send all store-baseParams when opening the form-window. This way we can have different forms depending on filters for example.
+add parent-property for dynamic filter-comboboxes
+add getliste-where for default getlist-processor
+export formtabs as clean json in editraw-mode
+
 
 MIGX 2.2.2
 
