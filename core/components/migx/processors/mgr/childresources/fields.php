@@ -14,6 +14,7 @@ if ($this->modx->lexicon) {
 if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == 'new') {
     $object = $modx->newObject($classname);
     $object->set('object_id', 'new');
+    $object->set('show_in_tree',0);
 } else {
     $c = $modx->newQuery($classname, $scriptProperties['object_id']);
 
@@ -28,7 +29,9 @@ $record = $object->toArray();
 
 if ($includeTVs) {
     foreach ($includeTVList as $tvname) {
-        $tv = $this->modx->getObject('modTemplateVar', array('name' => $tvname));
-        $record[$tvname] = $tv->getValue($object->get('id'));
+        if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $tvname))){
+            $record[$tvname] = $tv->getValue($object->get('id'));
+        }
+        
     }
 }

@@ -13,6 +13,8 @@ $processTVs = $modx->getOption('processTVs', $config, false);
 
 $classname = 'modResource';
 
+$joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
+
 if ($this->modx->lexicon) {
     $this->modx->lexicon->load($packageName . ':default');
 }
@@ -22,7 +24,7 @@ $isLimit = !empty($scriptProperties['limit']);
 $isCombo = !empty($scriptProperties['combo']);
 $start = $modx->getOption('start', $scriptProperties, 0);
 $limit = $modx->getOption('limit', $scriptProperties, 20);
-$sort = $modx->getOption('sort', $scriptProperties, 'id');
+$sort = !empty($config['getlistsort']) ? $config['getlistsort'] : 'modResource.id';
 $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
 $year = $modx->getOption('year', $scriptProperties, 'all');
 $month = $modx->getOption('month', $scriptProperties, 'all');
@@ -30,6 +32,8 @@ $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
 
 $c = $modx->newQuery($classname);
+
+$c->select($modx->getSelectColumns($classname, $classname));
 
 //example for tvFilters
 $status = $modx->getOption('status', $scriptProperties, 'all');
@@ -43,6 +47,10 @@ if ($year != 'all') {
 }
 if ($month != 'all') {
     $c->where("MONTH(" . $modx->escape($classname) . '.' . $modx->escape('createdon') . ") = " . $month, xPDOQuery::SQL_AND);
+}
+
+if ($joins) {
+    $modx->migx->prepareJoins($classname,$joins,$c);
 }
 
 if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
@@ -85,9 +93,6 @@ if ($resource_id) {
 
 $count = $modx->getCount($classname, $c);
 
-$c->select('
-    `' . $classname . '`.*
-');
 
 //sortbyTV, if sortfield is given in includeTVs TV-List
 if (in_array($sort, $includeTVList)) {
@@ -101,7 +106,7 @@ if ($isCombo || $isLimit) {
     $c->limit($limit, $start);
 }
 
-//$c->prepare(); echo $c->toSql();
+$c->prepare(); echo $c->toSql();
 $collection = $modx->getCollection($classname, $c);
 $tvPrefix = '';
 
