@@ -106,7 +106,7 @@ if ($isCombo || $isLimit) {
     $c->limit($limit, $start);
 }
 
-$c->prepare(); echo $c->toSql();
+//$c->prepare(); echo $c->toSql();
 $collection = $modx->getCollection($classname, $c);
 $tvPrefix = '';
 
