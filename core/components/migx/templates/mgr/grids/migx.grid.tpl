@@ -98,24 +98,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     _renderUrl: function(v,md,rec) {
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
-    ,renderImage : function(val, md, rec, row, col, s){
-		//console.log(s.pathconfigs);
-        var source = s.pathconfigs[col];
-		if (val.substr(0,4) == 'http'){
-			return '<img style="height:60px" src="' + val + '"/>' ;
-		}        
-		if (val != ''){
-			//return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?h=60&src=' + val + '" alt="" />';
-			
-			return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?h=60&src='+val+'&wctx={$ctx}'+source+'{literal}" alt="" />';
-		
-		}
-		return val;
-	}
-    ,renderPlaceholder : function(val, md, rec, row, col, s){
-        return '[[+'+val+'.'+rec.json.MIGX_id+']]';
-        
-	}       
     ,renderFirst : function(val, md, rec, row, col, s){
 		val = val.split(':');
         return val[0];
@@ -140,7 +122,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     ,renderPreview : function(val,md,rec){
 		return val;
 	}
-
+    {/literal}{$customconfigs.gridfunctions}{literal}
 	,loadData: function(){
 	    var items_string = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
         var items = [];

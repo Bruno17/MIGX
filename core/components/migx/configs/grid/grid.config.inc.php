@@ -260,8 +260,7 @@ $renderer['this.renderRowActions'] = "
 
 $renderer['this.renderDate'] = "
 renderDate : function(val, md, rec, row, col, s) {
-    var date;
-    date = Date.parseDate(val, 'Y-m-d H:i: s');
+    var date = Date.parseDate(val, 'Y-m-d H:i:s');
     return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
 }
 ";
@@ -310,7 +309,7 @@ preview: function(btn,e) {
 $gridfunctions['this.remove'] = "
 remove: function() {
         var _this=this;
-		Ext.Msg.confirm(_('warning') || '',_('mig.remove_confirm') || '',function(e) {
+		Ext.Msg.confirm(_('warning') || '','[[%migx.remove_confirm]]',function(e) {
             if (e == 'yes') {
 				_this.getStore().removeAt(_this.menu.recordIndex);
                 _this.getView().refresh();
@@ -550,7 +549,7 @@ $gridfunctions['this.csvExport'] = "
 $gridfunctions['this.removeObject'] = "
 removeObject: function() {
         var _this=this;
-		Ext.Msg.confirm(_('warning') || '',_('mig.remove_confirm') || '',function(e) {
+		Ext.Msg.confirm(_('warning') || '','[[%migx.remove_confirm]]',function(e) {
             if (e == 'yes') {
                 MODx.Ajax.request({
                     url: _this.config.url

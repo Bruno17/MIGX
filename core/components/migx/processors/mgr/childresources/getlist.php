@@ -10,6 +10,7 @@ $includeTVs = $modx->getOption('includeTVs', $config, false);
 $processTVList = $modx->getOption('processTVList', $config, '');
 $processTVList = !empty($processTVList) ? explode(',', $processTVList) : array();
 $processTVs = $modx->getOption('processTVs', $config, false);
+$commentsEnabled = $modx->getOption('commentsEnabled', $config, false);
 
 $classname = 'modResource';
 
@@ -50,7 +51,7 @@ if ($month != 'all') {
 }
 
 if ($joins) {
-    $modx->migx->prepareJoins($classname,$joins,$c);
+    $modx->migx->prepareJoins($classname, $joins, $c);
 }
 
 if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
@@ -68,7 +69,7 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
                 $filter = explode('::', $fwhere);
                 if ($filter[0] == 'tvFilter') {
                     //tvFilter::categories=inArray=[[+category]]
-                    $modx->migx->tvFilters($filter[1], $c);    
+                    $modx->migx->tvFilters($filter[1], $c);
                 } else {
                     $fwhere = strpos($fwhere, '{') === 0 ? $modx->fromJson($fwhere) : $fwhere;
                     $c->where($fwhere);
@@ -93,6 +94,14 @@ if ($resource_id) {
 
 $count = $modx->getCount($classname, $c);
 
+if ($commentsEnabled) {
+    $commentsQuery = $modx->newQuery('quipComment');
+    $commentsQuery->innerJoin('quipThread', 'Thread');
+    $commentsQuery->where(array('Thread.resource = modResource.id', ));
+    $commentsQuery->select(array('COUNT(' . $modx->getSelectColumns('quipComment', 'quipComment', '', array('id')) . ')', ));
+    $commentsQuery->construct();
+    $c->select(array('(' . $commentsQuery->toSQL() . ') AS ' . $modx->escape('comments'), ));
+}
 
 //sortbyTV, if sortfield is given in includeTVs TV-List
 if (in_array($sort, $includeTVList)) {

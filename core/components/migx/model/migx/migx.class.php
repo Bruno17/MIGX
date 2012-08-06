@@ -520,7 +520,7 @@ class Migx
         return str_replace($this->langSearch, $this->langReplace, $value);
     }
 
-    public function prepareGrid($properties, &$controller, &$tv)
+    public function prepareGrid($properties, &$controller, &$tv, $columns=array())
     {
         $this->loadConfigs(false);
         //$lang = $this->modx->lexicon->fetch();
@@ -743,7 +743,7 @@ class Migx
         //$columns = $this->modx->fromJSON($this->modx->getOption('columns', $properties, $default_columns));
         //$columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
 
-        $columns = $this->getColumns();
+        $columns = empty($columns) ? $this->getColumns() : $columns;
         $item = array();
         $pathconfigs = array();
         $cols = array();
@@ -760,7 +760,10 @@ class Migx
                     $col['dataIndex'] = $column['dataIndex'];
                     $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
                     $col['sortable'] = isset($column['sortable']) && $column['sortable'] == 'true' ? true : false;
-                    $col['width'] = isset($column['width']) ? (int)$column['width'] : '';
+                    if (isset($column['width']) && !empty($column['width'])){
+                        $col['width'] = (int)$column['width'] ;
+                    }
+          
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
                         $handlers[] = $column['renderer'];

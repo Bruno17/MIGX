@@ -82,33 +82,8 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
             $columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;            
         }
 
-        if (is_array($columns) && count($columns) > 0) {
-            foreach ($columns as $key => $column) {
-                $field['name'] = $column['dataIndex'];
-                $field['mapping'] = $column['dataIndex'];
-                $fields[] = $field;
-                //$col = array();
-                $col = $column;
-                $col['dataIndex'] = $column['dataIndex'];
-                $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
-                $col['sortable'] = isset( $column['sortable']) && $column['sortable'] == 'true' ? true : false;
-                //$col['width'] = $column['width'];
-                /*
-                if (isset($column['renderer'])){
-                    $col['renderer'] = $column['renderer'];
-                }
-                */
-                $cols[] = $col;
-                $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
-                
-                $pathconfigs[$key] = isset($inputTvs[$field['name']]) ? $this->migx->prepareSourceForGrid($inputTvs[$field['name']]) : array();
-                
-                
-            }
-        }
-
         $this->migx->loadLang();
-        //$this->migx->prepareGrid($params,$this,$this->tv);
+        $this->migx->prepareGrid($params,$this,$this->tv,$columns);
         //$grid = $this->migx->getGrid();
 
         $newitem[] = $item;
@@ -119,11 +94,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
         $this->setPlaceholder('i18n', $lang);
         $this->setPlaceholder('properties', $properties);
         $this->setPlaceholder('resource', $resource_array);
-        $this->setPlaceholder('pathconfigs', $this->modx->toJSON($pathconfigs));
         $this->setPlaceholder('connected_object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
-        $this->setPlaceholder('columns', $this->modx->toJSON($cols));
-        $this->setPlaceholder('fields', $this->modx->toJSON($fields));
-        $this->setPlaceholder('newitem', $this->modx->toJSON($newitem));
         $this->setPlaceholder('base_url', $this->modx->getOption('base_url'));
         $this->setPlaceholder('myctx', $wctx);
         $grid = 'migx';
