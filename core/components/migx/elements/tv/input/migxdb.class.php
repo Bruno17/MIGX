@@ -39,7 +39,13 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender
         if ($windowfile = $this->migx->findGrid($defaultpath, $filename, &$filenames)) {
             $this->setPlaceholder('updatewindow', $this->migx->replaceLang($this->modx->controller->fetchTemplate($windowfile)));
         }
-
+        
+        $filenames = array();
+        $filename = 'iframewindow.tpl';
+        if ($windowfile = $this->migx->findGrid($defaultpath, $filename, &$filenames)) {
+            $this->setPlaceholder('iframewindow', $this->migx->replaceLang($this->modx->controller->fetchTemplate($windowfile)));
+        }        
+        
         $this->setPlaceholder('i18n_migx_loadgrid', $this->migx->migxlang['migx.loadgrid']);
 
 

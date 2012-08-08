@@ -265,6 +265,10 @@ Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
 });
 Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal});
 
+{/literal}
+{$iframewindow}
+{literal}
+
 /*
 Ext.ux.IFrameComponent = Ext.extend(Ext.BoxComponent, {
      onRender : function(ct, position){
@@ -305,7 +309,7 @@ MODx.window.MiPreview = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         title: _('migx.preview')
-        ,id: 'modx-window-mi-preview' 
+        ,id: 'modx-window-mi-preview'
         ,width: '1050'
         ,height: '700'
 		,closeAction: 'hide'

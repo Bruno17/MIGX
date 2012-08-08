@@ -13,14 +13,14 @@ $gridactionbuttons['addItem']['text'] = "'[[%migx.add]]'";
 $gridactionbuttons['addItem']['handler'] = 'this.addItem';
 $gridactionbuttons['addItem']['scope'] = 'this';
 
-$gridactionbuttons['bulk']['text'] = "_('migx.bulk_actions')";
-$gridactionbuttons['bulk']['menu'][0]['text'] = "_('migx.publish_selected')";
+$gridactionbuttons['bulk']['text'] = "'[[%migx.bulk_actions]]'";
+$gridactionbuttons['bulk']['menu'][0]['text'] = "'[[%migx.publish_selected]]'";
 $gridactionbuttons['bulk']['menu'][0]['handler'] = 'this.publishSelected';
 $gridactionbuttons['bulk']['menu'][0]['scope'] = 'this';
-$gridactionbuttons['bulk']['menu'][1]['text'] = "_('migx.unpublish_selected')";
+$gridactionbuttons['bulk']['menu'][1]['text'] = "'[[%migx.unpublish_selected]]'";
 $gridactionbuttons['bulk']['menu'][1]['handler'] = 'this.unpublishSelected';
 $gridactionbuttons['bulk']['menu'][1]['scope'] = 'this';
-$gridactionbuttons['bulk']['menu'][2]['text'] = "_('migx.delete_selected')";
+$gridactionbuttons['bulk']['menu'][2]['text'] = "'[[%migx.delete_selected]]'";
 $gridactionbuttons['bulk']['menu'][2]['handler'] = 'this.deleteSelected';
 $gridactionbuttons['bulk']['menu'][2]['scope'] = 'this';
 
@@ -34,6 +34,10 @@ $gridactionbuttons['exportview']['handler'] = 'this.csvExport';
 $gridactionbuttons['exportview']['scope'] = 'this';
 $gridactionbuttons['exportview']['enableToggle'] = 'true';
 
+$gridactionbuttons['upload']['text'] = "'[[%migx.upload_images]]'";
+$gridactionbuttons['upload']['handler'] = 'this.uploadImages';
+$gridactionbuttons['upload']['scope'] = 'this';
+$gridactionbuttons['upload']['standalone'] = '1';
 
 $gridcontextmenus['update']['code']="
         m.push({
@@ -207,7 +211,7 @@ $renderer['this.renderImage'] = "
 
 $renderer['this.renderPlaceholder'] = "
 renderPlaceholder : function(val, md, rec, row, col, s){
-        return '[[+'+val+'.'+rec.json.MIGX_id+']]';
+         return '[[+'+val+'.'+rec.json.MIGX_id+']]';
         
 	}
 ";
@@ -303,6 +307,13 @@ $gridfunctions['this.preview'] = "
 preview: function(btn,e) {
 		var s=this.getStore();
 		this.loadPreviewWin(btn,e,s.getCount(),'a');
+	}    	
+";
+
+$gridfunctions['this.uploadImages'] = "
+uploadImages: function(btn,e) {
+		var s=this.getStore();
+		this.loadIframeWin(btn,e,s.getCount(),'a');
 	}    	
 ";
 

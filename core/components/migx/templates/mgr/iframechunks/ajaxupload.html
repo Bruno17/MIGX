@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Ajax - Upload</title>
+<meta charset="utf-8" />
+<base href="[[++site_url]]" />
+
+
+<link rel="stylesheet" type="text/css" href="assets/components/AjaxImageUpload/AjaxImageUpload.css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="assets/components/AjaxImageUpload/fileuploader.js" type="text/javascript"></script>
+</head>
+[[+scriptSettings]]
+<script src="assets/components/AjaxImageUpload/AjaxImageUpload.js" type="text/javascript"></script>
+<body>
+<h2>Ajax-Upload</h2>
+
+<p>ein Test</p>
+
+[[+migx_config.connectorUrl]]<br />
+[[+request.HTTP_MODAUTH]]<br />
+[[+request.resource_id]]<br />
+
+[[AjaxImageUpload? 
+&mode=`form` 
+&ajaxUrl=`[[+migx_config.connectorUrl]]?HTTP_MODAUTH=[[+request.HTTP_MODAUTH]]&resource_id=[[+request.resource_id]]&action=[[+request.action]]&processaction=imageupload&configs=[[+request.configs]]` 
+&uid=`uniqueid` 
+&language=`english` 
+&allowedExtensions=`jpg,jpeg,png,gif` 
+&thumbX=`75` 
+&thumbY=`75`
+&addJquery=`0`
+]]
+
+</body>
+</html>

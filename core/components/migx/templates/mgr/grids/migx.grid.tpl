@@ -84,6 +84,8 @@ MODx.grid.multiTVgrid = function(config) {
 			handler: this.preview
         }
         {/literal}{/if}{literal}
+        
+        {/literal}{if $customconfigs.tbar != ''},{$customconfigs.tbar}{/if}{literal}
         ]        
 		,viewConfig: {
             forceFit:true
@@ -273,7 +275,41 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			,grid: this
             ,action: action
         });
-    }    	
+    }
+	,loadIframeWin: function(btn,e,index,action) {
+        var resource_id = '{/literal}{$resource.id}{literal}';
+        var co_id = '{/literal}{$connected_object_id}{literal}';
+        var url = MODx.config.assets_url+'components/migx/connector.php';
+        var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
+		//console.log((items));
+        var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
+        if (jsonvarkey == ''){
+            jsonvarkey = 'migx_outputvalue';
+        }
+        var win_xtype = 'modx-window-mi-iframe-{/literal}{$win_id}{literal}';
+		if (this.windows[win_xtype]){
+			//this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
+			//this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
+		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
+            //this.windows[win_xtype].fp.autoLoad.params.record_json=json;
+            this.windows[win_xtype].src = url;
+			this.windows[win_xtype].json=items;
+            this.windows[win_xtype].jsonvarkey=jsonvarkey;
+            this.windows[win_xtype].action=action;
+            this.windows[win_xtype].resource_id=resource_id;
+            this.windows[win_xtype].co_id=co_id;
+		}
+		this.loadWindow(btn,e,{
+            xtype: win_xtype
+            ,src: url
+            ,jsonvarkey:jsonvarkey
+            ,json: items
+			,grid: this
+            ,action: action
+            ,resource_id: resource_id
+            ,co_id: co_id
+        });
+    }    	    
     ,getMenu: function() {
 		var n = this.menu.record; 
         var m = [];

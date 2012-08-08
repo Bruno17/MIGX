@@ -85,7 +85,14 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
         $this->migx->loadLang();
         $this->migx->prepareGrid($params,$this,$this->tv,$columns);
         //$grid = $this->migx->getGrid();
-
+        
+        $filenames = array();
+        $defaultpath = $this->migx->config['templatesPath'] . 'mgr/';
+        $filename = 'iframewindow.tpl';
+        if ($windowfile = $this->migx->findGrid($defaultpath, $filename, &$filenames)) {
+            $this->setPlaceholder('iframewindow', $this->migx->replaceLang($this->modx->controller->fetchTemplate($windowfile)));
+        }         
+        
         $newitem[] = $item;
         $lang = $this->modx->lexicon->fetch();
         $lang['migx_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['migx.add'];

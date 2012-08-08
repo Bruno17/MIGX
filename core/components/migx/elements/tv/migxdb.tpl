@@ -10,6 +10,8 @@
     {$grid}
     
     {$updatewindow}
+    
+    {$iframewindow}
 
     {literal}
 
@@ -50,93 +52,6 @@ Ext.extend(Ext.ux.IFrameComponent,Ext.BoxComponent,{
 });
 Ext.reg('modx-iframe-mi-preview',Ext.ux.IFrameComponent);
 */     
-
-MODx.window.MiPreview = function(config) {
-    config = config || {};
-    Ext.applyIf(config,{
-        title: _('migx.preview')
-        ,id: 'modx-window-mi-preview' 
-        ,width: '1050'
-        ,height: '700'
-		,closeAction: 'hide'
-        ,shadow: true
-        ,resizable: true
-        ,collapsible: true
-        ,maximizable: true
-        ,autoScroll: true
-        ,items: [
-           {
-            xtype: 'form'
-            ,id:'migx_preview_form'
-            ,target: 'preview_iframe'
-            ,standardSubmit: true
-            ,url: config.src
-            ,items:[{
-                xtype:'hidden'
-                ,name:'migx_outputvalue'
-                ,id:'migx_preview_json'
-            }
-            
-            ]
-        },
-        
-        {
-            xtype: 'container'
-            ,width: '980'
-            ,height: '620'
-            ,autoEl: {
-            tag: 'iframe'
-            ,name: 'migx_preview_iframe'
-            ,src: config.src
-            }
-         }]
-        //,saveBtnText: _('done')
-        ,forceLayout: true
-        ,buttons: [{
-            text: config.cancelBtnText || _('close')
-            ,scope: this
-            ,handler: function() { this.hide(); }
-        }]
-        ,action: 'u'
-		,record_json: ''
-        ,keys: [{
-            key: Ext.EventObject.ENTER
-            ,fn: this.submit
-            ,scope: this
-        }]		
-    });
-    MODx.window.MiPreview.superclass.constructor.call(this,config);
-    this.options = config;
-    this.config = config;
-
-    //this.on('show',this.onShow,this);
-    this.addEvents({
-        success: true
-        ,failure: true
-		//,hide:true
-		//,show:true
-    });
-    //this.renderIframe();	
-};
-Ext.extend(MODx.window.MiPreview,Ext.Window,{
-
-    renderIframe: function() {
-		this.add(this.iframe);
-		
-    }
-    ,onShow: function() {
-     var input = Ext.getCmp('migx_preview_json');
-     input.setValue(this.json);
-     input.getEl().dom.name = this.jsonvarkey;
-     var formpanel = Ext.getCmp('migx_preview_form');
-     var form = Ext.getCmp('migx_preview_form').getForm();
-     form.getEl().dom.action=this.src;
-     form.getEl().dom.target='migx_preview_iframe';
-     form.submit();  
-    }
-
-});
-Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
 
 
 MODx.loadMIGXdbGridButton = function(config) {

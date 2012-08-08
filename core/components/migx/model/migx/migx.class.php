@@ -175,7 +175,7 @@ class Migx
         return false;
     }
 
-    function checkMultipleForms($formtabs, & $controller, & $allfields, $record)
+    function checkMultipleForms($formtabs, &$controller, &$allfields, $record)
     {
         $multiple_formtabs = $this->modx->getOption('multiple_formtabs', $this->customconfigs, '');
         if (!empty($multiple_formtabs)) {
@@ -515,12 +515,15 @@ class Migx
         $this->langReplace[$key] = $value;
     }
 
-    public function replaceLang($value)
+    public function replaceLang($value, $debug = false)
     {
+        if ($debug) {
+            echo str_replace($this->langSearch, $this->langReplace, $value);
+        }
         return str_replace($this->langSearch, $this->langReplace, $value);
     }
 
-    public function prepareGrid($properties, &$controller, &$tv, $columns=array())
+    public function prepareGrid($properties, &$controller, &$tv, $columns = array())
     {
         $this->loadConfigs(false);
         //$lang = $this->modx->lexicon->fetch();
@@ -565,7 +568,14 @@ class Migx
 
                     }
                     //$button['text'] = $this->replaceLang($button['text']);
-                    $buttons[] = str_replace('"', '', $this->modx->toJson($button));
+                    $standalone = $this->modx->getOption('standalone', $button, '');
+                    if (!empty($standalone)) {
+                        $gridbuttons[] = str_replace('"', '', $this->modx->toJson($button));
+                    } else {
+                        $buttons[] = str_replace('"', '', $this->modx->toJson($button));
+                    }
+
+
                 }
 
             }
@@ -605,12 +615,19 @@ class Migx
         $tbaritems = array();
 
         $tbaractions = array();
+
+        if (count($gridbuttons) > 0) {
+            $gridbuttons = implode(',', $gridbuttons);
+            $tbaractions[] = $gridbuttons;
+        }
+
+
         if (count($buttons) > 0) {
             $gridactionbuttons = implode(',', $buttons);
             $tbaractions[] = "
           {
             xtype: 'buttongroup',
-            title: _('migx.actions'),
+            title: '[[%migx.actions]]',
             columns: 4,
             defaults: {
                 scale: 'large'
@@ -760,10 +777,10 @@ class Migx
                     $col['dataIndex'] = $column['dataIndex'];
                     $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
                     $col['sortable'] = isset($column['sortable']) && $column['sortable'] == 'true' ? true : false;
-                    if (isset($column['width']) && !empty($column['width'])){
-                        $col['width'] = (int)$column['width'] ;
+                    if (isset($column['width']) && !empty($column['width'])) {
+                        $col['width'] = (int)$column['width'];
                     }
-          
+
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
                         $handlers[] = $column['renderer'];
@@ -892,7 +909,7 @@ class Migx
     function checkForConnectedResource($resource_id = false, &$config)
     {
         if ($resource_id) {
-            $check_resid = $this->modx->getOption('check_resid',$config);
+            $check_resid = $this->modx->getOption('check_resid', $config);
             if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
                 if ($check = $resource->getTvValue($config['check_resid_TV'])) {
                     $check_resid = $check;
@@ -938,11 +955,11 @@ class Migx
                     $fieldvalue = '';
                     if (isset($record[$field['field']])) {
                         $fieldvalue = $record[$field['field']];
-                        if (is_array($fieldvalue)){
+                        if (is_array($fieldvalue)) {
                             $fieldvalue = is_array($fieldvalue[0]) ? $this->modx->toJson($fieldvalue) : implode('||', $fieldvalue);
-                        } 
-                        
-                        
+                        }
+
+
                     }
 
 
@@ -1079,6 +1096,37 @@ class Migx
         return $inputTvs;
     }
 
+    function parseChunk($tpl, $fields = array())
+    {
+
+        $output = '';
+
+        if ($chunk = $this->modx->getObject('modChunk', array('name' => $tpl), true)) {
+            $tpl = $chunk->getContent();
+        } elseif (file_exists($tpl)) {
+            $tpl = file_get_contents($tpl);
+        } elseif (file_exists($this->modx->getOption('base_path') . $tpl)) {
+            $tpl = file_get_contents($this->modx->getOption('base_path') . $tpl);
+        } else {
+            $tpl = false;
+        }
+
+
+        if ($tpl) {
+            $chunk = $this->modx->newObject('modChunk');
+            $chunk->setCacheable(false);
+            $chunk->setContent($tpl);
+
+            $output = $chunk->process($fields);
+
+        } else {
+            $output = '<pre>' . print_r($fields, 1) . '</pre>';
+        }
+
+        return $output;
+
+    }
+
     function sortTV($sort, &$c, $dir = 'ASC', $sortbyTVType = '')
     {
         $c->leftJoin('modTemplateVar', 'tvDefault', array("tvDefault.name" => $sort));
@@ -1108,10 +1156,10 @@ class Migx
 
     function tvFilters($tvFilters = '', &$criteria)
     {
-        
+
         //tvFilter::categories=inArray=[[+category]]
-        
-        
+
+
         $tvFilters = !empty($tvFilters) ? explode('||', $tvFilters) : array();
         if (!empty($tvFilters)) {
             $tmplVarTbl = $this->modx->getTableName('modTemplateVar');
@@ -1159,11 +1207,11 @@ class Migx
                                 $tvValueField = "CAST({$tvValueField} AS DECIMAL)";
                                 $tvDefaultField = "CAST({$tvDefaultField} AS DECIMAL)";
                             }
-                        } elseif ($sqlOperator == '=inArray='){
-                                $sqlOperator = 'LIKE';
-                                $tvValueField = "CONCAT('||',{$tvValueField},'||')";
-                                $tvDefaultField = "CONCAT('||',{$tvDefaultField},'||')";
-                                $tvValue = $this->modx->quote('%||'.$f[1].'||%');                            
+                        } elseif ($sqlOperator == '=inArray=') {
+                            $sqlOperator = 'LIKE';
+                            $tvValueField = "CONCAT('||',{$tvValueField},'||')";
+                            $tvDefaultField = "CONCAT('||',{$tvDefaultField},'||')";
+                            $tvValue = $this->modx->quote('%||' . $f[1] . '||%');
                         } else {
                             $tvValue = $this->modx->quote($f[1]);
                         }
