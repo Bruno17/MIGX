@@ -48,6 +48,8 @@ $ajaxUrl = isset($ajaxUrl) ? $ajaxUrl : '';
 $addJquery = isset($addJquery) ? intval($addJquery) : 1;
 $addJscript = isset($addJscript) ? intval($addJscript) : 1;
 $addCss = isset($addCss) ? intval($addJquery) : 1;
+$show_clearbutton = false;
+$show_oldfiles_deletebutton = 1 ;
 
 if (!function_exists('includeFile')) {
     function includeFile($name, $type = 'config', $defaultName = 'default', $fileType = '.inc.php')
@@ -89,7 +91,7 @@ if ($ajaxId || $ajaxUrl) {
         $placeholder['ajaxId'] = !empty($ajaxUrl) ? $ajaxUrl : $modx->makeUrl($ajaxId);
         $placeholder['dropArea'] = $language['dropArea'];
         $placeholder['uploadButton'] = $language['uploadButton'];
-        $placeholder['clearButton'] = $language['clearButton'];
+        $placeholder['clearButton'] = $show_clearbutton ? '<div class="qq-clear-button">'.$language['clearButton'].'</div>' : '';
         $placeholder['cancel'] = $language['cancel'];
         $placeholder['failed'] = $language['failed'];
         $placeholder['thumbX'] = $thumbX;
@@ -119,16 +121,18 @@ if ($ajaxId || $ajaxUrl) {
     $placeholder = array();
     $placeholder['thumbX'] = $thumbX;
     $placeholder['thumbY'] = $thumbY;
-    $placeholder['deleteButton'] = '';
+    $placeholder['deleteButton'] = $show_oldfiles_deletebutton ? '<div class="delete-button"><a>' . $language['deleteButton'] . '</a></div>' : '';
 
     $source->initialize();
-    $files = $source->getObjectsInContainer('thumbs');
+    $thumbscontainer = 'thumbs/';
+    $files = $source->getObjectsInContainer($thumbscontainer);
     $i = 1;
     foreach ($files as $file) {
         if (isset($limit) && $i > $limit) {
             break;
         }
         //$imageElement = $imageTpl;
+        $file['url'] = str_replace($thumbscontainer,'',$file['url']);
         $placeholder = array_merge($placeholder,$file);
         /*        
         foreach ($placeholder as $key => $value) {

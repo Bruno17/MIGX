@@ -22,7 +22,6 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
 }
 
 
-
 define('AIU_BASE_PATH', $modx->getOption('core_path') . 'components/AjaxImageUpload/');
 define('AIU_CACHE_PATH', $cachepath);
 
@@ -42,6 +41,7 @@ $formUid = isset($uid) ? $uid : md5($modx->config['site_url']);
 $maxFiles = isset($maxFiles) ? $maxFiles : '20';
 $thumbX = isset($thumbX) ? $thumbX : '100';
 $thumbY = isset($thumbY) ? $thumbY : '100';
+$thumbscontainer = 'thumbs/';
 
 
 if (!function_exists('includeFile')) {
@@ -95,16 +95,38 @@ if (isset($_GET['delete'])) {
         $result['session'] = $_SESSION['AjaxImageUpload'][$formUid];
     } else {
         // delete one uploaded file/thumb & remove session entry
-        $fileId = intval($_GET['delete']);
-        if (isset($_SESSION['AjaxImageUpload'][$formUid][$fileId])) {
-            $file = $_SESSION['AjaxImageUpload'][$formUid][$fileId];
-            unlink($file['path'] . $file['uniqueName']);
-            unset($_SESSION['AjaxImageUpload'][$formUid][$fileId]);
-            $result['success'] = true;
-            $result['session'] = $_SESSION['AjaxImageUpload'][$formUid];
+        $file = $_GET['delete'];
+        $success = $source->removeObject($file);
+
+        if (empty($success)) {
+            //file could not be removed, try to remove the thumb, if that succeeds set success to true
+            $success = $source->removeObject($thumbscontainer . $file);
+            if (empty($success)) {
+                $errors = $source->getErrors();
+                $error = array();
+                foreach ($errors as $k => $msg) {
+                    $error[] = $k . ':' . $msg;
+                }
+                $result['error'] = implode('', $error);
+            } else {
+                $result['success'] = true;
+            }
         } else {
-            $result['error'] = sprintf($language['notFound'], $maxFiles);
+            $source->removeObject($thumbscontainer . $file);
+            $result['success'] = true;
         }
+
+        /*
+        if (isset($_SESSION['AjaxImageUpload'][$formUid][$fileId])) {
+        $file = $_SESSION['AjaxImageUpload'][$formUid][$fileId];
+        unlink($file['path'] . $file['uniqueName']);
+        unset($_SESSION['AjaxImageUpload'][$formUid][$fileId]);
+        $result['success'] = true;
+        $result['session'] = $_SESSION['AjaxImageUpload'][$formUid];
+        } else {
+        $result['error'] = sprintf($language['notFound'], $maxFiles);
+        }
+        */
     }
 } else {
     // upload the image(s)
@@ -135,6 +157,7 @@ if (isset($_GET['delete'])) {
             $thumb->save($path . 'thumbs/' . $uniqueName);
             rename($path . $originalName, $path . $uniqueName);
             // fill session
+            /*
             $session['originalName'] = $originalName;
             $session['uniqueName'] = $uniqueName;
             $session['thumbName'] = $thumbName;
@@ -142,9 +165,12 @@ if (isset($_GET['delete'])) {
             $session['base_url'] = $modx->getOption('assets_url') . $cachepath;
 
             $_SESSION['AjaxImageUpload'][$formUid][] = $session;
+            */
             // prepare returned values (filename & fileid)
-            $result['filename'] = $baseUrl . 'thumbs/' . $uniqueName; 
+            $result['filename'] = $baseUrl . 'thumbs/' . $uniqueName;
             $result['fileid'] = end(array_keys($_SESSION['AjaxImageUpload'][$formUid]));
+            $result['url'] = $uniqueName;
+            
         } else {
             unset($result['success']);
             // error message
