@@ -1,0 +1,25 @@
+<script type="text/javascript">
+	/* <![CDATA[ */
+	$(document).ready(function() {
+		$('.file-uploader[+uid+]').ajaxFileUpload({
+			uploadAction : '[+ajaxId+]',
+			uid: '[+uid+]',
+			uploadTemplate : '<div class="qq-uploader"><div class="qq-upload-drop-area"><span>[+dropArea+]</span></div><div class="qq-upload-button">[+uploadButton+]</div><ul class="qq-upload-list"></ul></div>',
+			fileTemplate : '<li><span class="qq-upload-file"></span><span class="qq-upload-spinner"></span><span class="qq-upload-size"></span><a class="qq-upload-cancel" href="#">[+cancel+]</a><span class="qq-upload-failed-text">[+failed+]</span></li>',
+			deleteTemplate : '[+deleteButton+]',
+			clearTemplate : '<div class="qq-clear-button">[+clearButton+]</div>',
+			thumbX : '[+thumbX+]px',
+			thumbY : '[+thumbY+]px',
+			allowedExtensions : [ [+allowedExtensions+] ],
+			sizeLimit: [+sizeLimit+],
+			messages : {
+				typeError : "[+typeError+]",
+				sizeError : "[+sizeError+]",
+				minSizeError : "[+minSizeError+]",
+				emptyError : "[+emptyError+]",
+				onLeave : "[+onLeave+]"
+			}
+		});
+	});
+	/* ]]> */
+</script>

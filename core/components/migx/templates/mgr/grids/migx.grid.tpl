@@ -191,7 +191,44 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     }
 	,duplicate: function(btn,e) {
       this.loadWin(btn,e,this.menu.recordIndex,'d');
-    }    
+    }  
+	,loadFromSource: function(btn,e) {
+        MODx.Ajax.request({
+            url: MODx.config.assets_url+'components/migx/connector.php'
+            ,params: {
+                action: 'mgr/loadfromsource'
+                ,resource_id: '{/literal}{$resource.id}{literal}'
+				,co_id: '{/literal}{$connected_object_id}{literal}'
+                ,tv_name: '{/literal}{$tv->name}{literal}'
+                ,items: Ext.get('tv{/literal}{$tv->id}{literal}').dom.value 
+            }
+            ,listeners: {
+                'success': {fn:function(res){
+                    if (res.message==''){
+                        var items = res.object;
+                        Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
+                        this.autoinc = 0;
+                        for(i = 0; i <  items.length; i++) {
+ 		                    item = items[i];
+                            if (item.MIGX_id){
+                                if (parseInt(item.MIGX_id)  > this.autoinc){
+                                    this.autoinc = item.MIGX_id;
+                                }
+                            }else{
+                                item.MIGX_id = this.autoinc +1 ;
+                                this.autoinc = item.MIGX_id;                 
+                            }	
+                            items[i] = item;  
+                        } 
+        
+		                this.getStore().sortInfo = null;
+		                this.getStore().loadData(items);                                                    
+                    }
+                    
+                },scope:this}
+            }
+        });          
+	}      
 	,loadWin: function(btn,e,index,action) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
@@ -210,6 +247,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
            var rec = s.getAt(index)            
            var data = rec.data;
            var json = Ext.util.JSON.encode(rec.json);
+           
         }
         
         var isnew = (action == 'u') ? '0':'1';

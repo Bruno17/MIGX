@@ -55,3 +55,4 @@ $_lang['migx.month'] = 'Month';
 $_lang['migx.year'] = 'Year';
 
 $_lang['migx.upload_images'] = 'Upload Images';
+$_lang['migx.load_from_source'] = 'Load from mediasource';

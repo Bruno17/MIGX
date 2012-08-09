@@ -50,6 +50,10 @@ MODx.window.MigxIframe = function(config) {
                 xtype:'hidden'
                 ,name:'co_id'
                 ,value: config.co_id
+            },{
+                xtype:'hidden'
+                ,name:'tv_name'
+                ,value: '{/literal}{$tv->name}{literal}'
             }
             
             ]

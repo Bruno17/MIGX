@@ -39,6 +39,12 @@ $gridactionbuttons['upload']['handler'] = 'this.uploadImages';
 $gridactionbuttons['upload']['scope'] = 'this';
 $gridactionbuttons['upload']['standalone'] = '1';
 
+$gridactionbuttons['loadfromsource']['text'] = "'[[%migx.load_from_source]]'";
+$gridactionbuttons['loadfromsource']['handler'] = 'this.loadFromSource';
+$gridactionbuttons['loadfromsource']['scope'] = 'this';
+$gridactionbuttons['loadfromsource']['standalone'] = '1';
+
+
 $gridcontextmenus['update']['code']="
         m.push({
             className : 'update', 
