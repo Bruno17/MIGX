@@ -40,7 +40,7 @@ class migxFormProcessor extends modProcessor
                     $sourceProperties = $source->getPropertyList();
 
                     //echo '<pre>' . print_r($sourceProperties,1) . '</pre>';
-                    $filefield = $modx->getOption('migxFileFieldname', $sourceProperties, 'image');
+                    $filefield = $this->modx->getOption('migxFileFieldname', $sourceProperties, 'image');
 
                     $files = $source->getObjectsInContainer('');
                     $i = 1;
