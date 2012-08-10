@@ -1,7 +1,5 @@
 <?php
 
-$cachepath = $modx->getOption('base_path') . 'assets/cache/AjaxImageUpload/';
-
 //$config = $modx->migx->customconfigs;
 $resource_id = $modx->getOption('resource_id', $scriptProperties, '');
 $tvname = $modx->getOption('tv_name', $scriptProperties, '');
@@ -15,14 +13,28 @@ if ($resource = $modx->getObject('modResource', $resource_id)) {
 if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
     if ($source = $tv->getSource($wctx, false)) {
         $modx->setPlaceholder('docid', $resource_id);
-        $cachepath = str_replace('/./', '/', $source->prepareOutputUrl(''));
+        $source->initialize();
+        $sourceProperties = $source->getPropertyList();
+        
+        //echo '<pre>' . print_r($sourceProperties,1) . '</pre>';
+        $basePath = $modx->getOption('basePath',$sourceProperties);
+        $baseUrl = $modx->getOption('baseUrl',$sourceProperties);
+        $allowedExtensions = $modx->getOption('allowedFileTypes',$sourceProperties,'') ;
+        $allowedExtensions = empty($allowedExtensions) ? 'jpg,jpeg,png,gif' : $allowedExtensions;
+        $maxFilesizeMb = $modx->getOption('maxFilesizeMb',$sourceProperties,'8') ;
+        $maxFiles = $modx->getOption('maxFiles',$sourceProperties,'10') ;
+        $thumbX = $modx->getOption('thumbX',$sourceProperties,'100') ;
+        $thumbY = $modx->getOption('thumbY',$sourceProperties,'100') ;
+        $thumbscontainer = $modx->getOption('thumbscontainer',$sourceProperties,'thumbs/') ;
+        $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif');
+        $imageExtensions = explode(',', $imageExtensions);        
     }
 }
 
-$baseUrl = $modx->getOption('site_url') . str_replace($modx->getOption('base_path'), '', $cachepath);
+//$baseUrl = $modx->getOption('site_url') . $baseUrl;
 
 define('AIU_BASE_PATH', $modx->getOption('core_path') . 'components/migx/model/imageupload/');
-define('AIU_CACHE_PATH', $cachepath);
+define('AIU_CACHE_PATH', $basePath);
 
 
 include_once AIU_BASE_PATH . 'includes/fileuploader/fileuploader.class.php';
@@ -36,13 +48,8 @@ include_once AIU_BASE_PATH . 'includes/fileuploader/fileuploader.class.php';
 
 $language = isset($language) ? $language : 'english';
 // comma separated list of valid extensions
-$allowedExtensions = isset($allowedExtensions) ? $allowedExtensions : 'jpg,jpeg,png,gif';
-$maxFilesizeMb = isset($maxFilesizeMb) ? $maxFilesizeMb : '8';
+
 $formUid = isset($uid) ? $uid : md5($modx->config['site_url']);
-$maxFiles = isset($maxFiles) ? $maxFiles : '3';
-$thumbX = isset($thumbX) ? $thumbX : '100';
-$thumbY = isset($thumbY) ? $thumbY : '100';
-$mode = isset($mode) ? $mode : 'form';
 $ajaxId = isset($ajaxId) ? intval($ajaxId) : 0;
 $ajaxUrl = isset($ajaxUrl) ? $ajaxUrl : '';
 $addJquery = isset($addJquery) ? intval($addJquery) : 1;
@@ -116,35 +123,52 @@ if ($ajaxId || $ajaxUrl) {
     }
     $output = file_get_contents(includeFile('uploadSection' . ucfirst($language), 'template', 'uploadSection', '.html'));
     //$imageTpl = file_get_contents(includeFile('image' . ucfirst($language), 'template', 'image', '.html'));
-    $tpl = $modx->migx->config['corePath'].'/model/imageupload/templates/image.template.html';
+    $imageTpl = $modx->migx->config['corePath'].'/model/imageupload/templates/image.template.html';
+    $fileTpl = $modx->migx->config['corePath'].'/model/imageupload/templates/file.template.html';
     $imageList = array();
+    $fileList = array();
     $placeholder = array();
     $placeholder['thumbX'] = $thumbX;
     $placeholder['thumbY'] = $thumbY;
     $placeholder['deleteButton'] = $show_oldfiles_deletebutton ? '<div class="delete-button"><a>' . $language['deleteButton'] . '</a></div>' : '';
-
-    $source->initialize();
-    $thumbscontainer = 'thumbs/';
-    $files = $source->getObjectsInContainer($thumbscontainer);
+    
+    $files = $source->getObjectsInContainer('');
     $i = 1;
     foreach ($files as $file) {
         if (isset($limit) && $i > $limit) {
             break;
         }
+        $thumbpath = str_replace($basePath,$basePath . $thumbscontainer , $file['pathname']);   
+        
+        if (file_exists($thumbpath)){
+           $file['fullRelativeUrl'] = str_replace($baseUrl,$baseUrl . $thumbscontainer , $file['fullRelativeUrl']);    
+        }        
+        
         //$imageElement = $imageTpl;
-        $file['url'] = str_replace($thumbscontainer,'',$file['url']);
         $placeholder = array_merge($placeholder,$file);
+        
+
         /*        
         foreach ($placeholder as $key => $value) {
             $imageElement = str_replace('[+' . $key . '+]', $value, $imageElement);
         }
         */
-        $imageList[] = $modx->migx->parseChunk($tpl,$placeholder);
+        
+        
+        if (in_array($file['ext'],$imageExtensions)){
+            $imageList[] = $modx->migx->parseChunk($imageTpl,$placeholder);
+        }
+        else{
+            $fileList[] = $modx->migx->parseChunk($fileTpl,$placeholder);
+        }        
+        
         $i++;
     }
 
+    //echo '<pre>' . print_r($files,1) .'</pre>'; 
 
     $output = str_replace('[+images+]', implode("\r\n", $imageList), $output);
+    $output = str_replace('[+files+]', implode("\r\n", $fileList), $output);
     $output = str_replace('[+uid+]', $formUid, $output);
     return $output;
     break;
