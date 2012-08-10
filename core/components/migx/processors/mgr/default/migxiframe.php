@@ -3,7 +3,7 @@
 $config = $modx->migx->customconfigs;
 
 //todo: make this configurable
-$tpl = 'ajaxupload.html';
+$tpl = $modx->getOption('iframeTpl',$scriptProperties,'default.html');
 
 $tpl = $modx->migx->config['templatesPath'].'mgr/iframechunks/'.$tpl;
 

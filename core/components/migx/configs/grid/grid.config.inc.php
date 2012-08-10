@@ -319,7 +319,8 @@ preview: function(btn,e) {
 $gridfunctions['this.uploadImages'] = "
 uploadImages: function(btn,e) {
 		var s=this.getStore();
-		this.loadIframeWin(btn,e,s.getCount(),'a');
+        var tpl = 'ajaxupload.html';
+		this.loadIframeWin(btn,e,tpl);
 	}    	
 ";
 

@@ -33,7 +33,7 @@ MODx.window.MigxIframe = function(config) {
             },{
                 xtype:'hidden'
                 ,name:'configs'
-                ,value:'{/literal}{$configs}{literal}'
+                ,value:'{/literal}{$properties.configs}{literal}'
             },{
                 xtype:'hidden'
                 ,name:'action'
@@ -50,6 +50,10 @@ MODx.window.MigxIframe = function(config) {
                 xtype:'hidden'
                 ,name:'co_id'
                 ,value: config.co_id
+            },{
+                xtype:'hidden'
+                ,name:'iframeTpl'
+                ,value: config.iframeTpl
             },{
                 xtype:'hidden'
                 ,name:'tv_name'

@@ -314,7 +314,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             ,action: action
         });
     }
-	,loadIframeWin: function(btn,e,index,action) {
+	,loadIframeWin: function(btn,e,tpl) {
         var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
         var url = MODx.config.assets_url+'components/migx/connector.php';
@@ -333,7 +333,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             this.windows[win_xtype].src = url;
 			this.windows[win_xtype].json=items;
             this.windows[win_xtype].jsonvarkey=jsonvarkey;
-            this.windows[win_xtype].action=action;
+            //this.windows[win_xtype].action=action;
             this.windows[win_xtype].resource_id=resource_id;
             this.windows[win_xtype].co_id=co_id;
 		}
@@ -343,9 +343,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             ,jsonvarkey:jsonvarkey
             ,json: items
 			,grid: this
-            ,action: action
+            //,action: action
             ,resource_id: resource_id
             ,co_id: co_id
+            ,title: '{/literal}{$customconfigs.iframeWindowTitle}{literal}'
+            ,iframeTpl: tpl
         });
     }    	    
     ,getMenu: function() {
