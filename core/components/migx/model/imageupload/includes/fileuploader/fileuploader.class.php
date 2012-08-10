@@ -66,6 +66,7 @@ class qqUploadedFileForm {
 
 class qqFileUploader {
 	public $filename;
+    public $filesize;
 	public $extension;
 	public $path;
 
@@ -153,7 +154,8 @@ class qqFileUploader {
 		}
 
 		if ($this->file->save($uploadDirectory.$filename.'.'.$ext)) {
-			$this->filename = $filename;
+			$this->filesize = $size;
+            $this->filename = $filename;
 			$this->extension = $ext;
 			$this->path = $uploadDirectory;
 			return array('success' => true);

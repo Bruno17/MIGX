@@ -1,12 +1,8 @@
 <?php
 
-$cachepath = $modx->getOption('base_path') . 'assets/cache/AjaxImageUpload/';
-
 $config = $modx->migx->customconfigs;
 $resource_id = $modx->getOption('resource_id', $scriptProperties, '');
 $tvname = $modx->getOption('tv_name', $scriptProperties, '');
-
-$uniqueFilenames = $modx->getOption('uniqueFilenames', $config, false);
 
 if ($resource = $modx->getObject('modResource', $resource_id)) {
     $wctx = $resource->get('context_key');
@@ -32,9 +28,10 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $thumbscontainer = $modx->getOption('thumbscontainer', $sourceProperties, 'thumbs/');
         $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif');
         $imageExtensions = explode(',', $imageExtensions);
+        $uniqueFilenames = $modx->getOption('uniqueFilenames', $sourceProperties, false);
 
 
-        define('AIU_BASE_PATH', $modx->getOption('core_path') . 'components/AjaxImageUpload/');
+        define('AIU_BASE_PATH', $modx->getOption('core_path') . 'components/migx/model/imageupload/');
         define('AIU_CACHE_PATH', $cachepath);
 
         include_once AIU_BASE_PATH . 'includes/fileuploader/fileuploader.class.php';
@@ -132,6 +129,9 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
             }
         } else {
 
+            $imageTpl = $modx->migx->config['corePath'] . '/model/imageupload/templates/image.template.html';
+            $fileTpl = $modx->migx->config['corePath'] . '/model/imageupload/templates/file.template.html';
+
             if (!file_exists(AIU_CACHE_PATH)) {
                 mkdir(AIU_CACHE_PATH, 0755);
             }
@@ -160,6 +160,17 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                     $result['filename'] = $baseUrl . $uniqueName;
                     $result['fileid'] = end(array_keys($_SESSION['AjaxImageUpload'][$formUid]));
                     $result['url'] = $uniqueName;
+                    
+                    $placeholder = array();
+                    $placeholder['fullRelativeUrl']=$result['filename'];
+                    $placeholder['url']=$result['url'];
+                    $placeholder['name']=$uniqueName;
+                    $placeholder['size']=$uploader->filesize;
+                    $placeholder['lastmod']=time();
+                    
+                    $result['microtime'] = str_replace(array(' ','.'),array('',''), microtime());
+                                        
+                    $placeholder['deleteButton'] = '<div id="'.$result['microtime'].'"  class="delete-button"><a>' . $language['deleteButton'] . '</a></div>';
 
                     if (in_array($uploader->extension, $imageExtensions)) {
                         // generate thumbname
@@ -170,6 +181,11 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                         $thumb->adaptiveResize($thumbX, $thumbY);
                         $thumb->save($path . $thumbscontainer . $uniqueName);
                         $result['filename'] = $baseUrl . $thumbscontainer . $uniqueName;
+                        $placeholder['fullRelativeUrl']=$result['filename'];
+                        $result['html'] = $modx->migx->parseChunk($imageTpl,$placeholder);
+                    }
+                    else{
+                        $result['html'] = $modx->migx->parseChunk($fileTpl,$placeholder);    
                     }
 
                 } else {
@@ -187,5 +203,5 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $result['error'] = $language['noSource'];
     }
 }
-echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+echo $modx->toJson($result);
 exit;

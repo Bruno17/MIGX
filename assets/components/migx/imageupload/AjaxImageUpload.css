@@ -1,14 +1,18 @@
 /* AjaxFileUpload */
 
-.file-uploader-buttons, .file-uploader-images {
+.file-uploader-buttons{
+    height: 50px;
+}
+
+.file-uploader-buttons, .file-uploader-images, .file-uploader-files, .file-uploader-uploads {
 	clear: left;
 }
-.file-uploader-images .image-wrap {
+.file-uploader-images .image-wrap , .file-uploader-files .image-wrap, .file-uploader-uploads .image-wrap {
 	position: relative;
 	float: left;
 	margin: 0 0.5em 0.5em 0;
 }
-.file-uploader-images .delete-button {
+.file-uploader-images .delete-button , .file-uploader-files .delete-button, .file-uploader-uploads .delete-button {
 	display: block;
 	background: url("images/delete.png");
 	width: 15px;

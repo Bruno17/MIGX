@@ -53,3 +53,6 @@ $_lang['migx.export_to_package'] = 'Exportieren nach Package';
 
 $_lang['month'] = 'Monat';
 $_lang['year'] = 'Jahr';
+
+$_lang['migx.upload_images'] = 'Dateien hochladen';
+$_lang['migx.load_from_source'] = 'Laden von Medienquelle';

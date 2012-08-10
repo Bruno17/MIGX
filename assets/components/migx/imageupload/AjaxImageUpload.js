@@ -24,7 +24,7 @@
 
 		return this.each(function() {
 			var element = $(this);
-			var imageList = element.find('.file-uploader-images');
+			var imageList = element.find('.file-uploader-uploads');
 			var uploader = new qq.FileUploader({
 				element : element.find('.file-uploader-buttons')[0],
 				action : settings.uploadAction,
@@ -38,10 +38,15 @@
 				messages : settings.messages,
 				onComplete : function(id, fileName, uploadAnswer) {
 					var fileid = uploadAnswer.url;
+                    var html = uploadAnswer.html;
+                    var mt = uploadAnswer.microtime;
 					if(uploadAnswer.success) {
-						var imageWrap = $('<div>').addClass('image-wrap').addClass('-url-' + fileid + '-url-');
-						var deleteButton = $(settings.deleteTemplate).click(function() {
-							$.get(settings.uploadAction, {
+						
+                        imageList.append(html);
+                        
+                        var deleteButton = $('#'+mt).click(function() {
+                        var imageWrap = deleteButton.parent(); 
+ 							$.get(settings.uploadAction, {
 								'delete' : fileid
                                 ,'uid' : settings.uid
 							}, function(deleteAnswer) {
@@ -55,15 +60,7 @@
 								}
 							}, 'json');
 						});
-						var image = $('<img>').attr({
-							src : uploadAnswer.filename
-						}).css({
-							width : settings.thumbX,
-							height : settings.thumbY,
-							position : 'relative'
-						}).after(deleteButton);
 
-						imageList.append(imageWrap.append(image));
 						element.find('.qq-upload-list li').eq(id).hide();
 						if(settings.debug) {
 							alert('ID:' + id + '\nResponse:' + JSON.stringify(uploadAnswer));

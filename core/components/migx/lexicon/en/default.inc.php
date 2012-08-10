@@ -54,5 +54,5 @@ $_lang['migx.export_to_package'] = 'Export to package';
 $_lang['migx.month'] = 'Month';
 $_lang['migx.year'] = 'Year';
 
-$_lang['migx.upload_images'] = 'Upload Images';
+$_lang['migx.upload_images'] = 'Upload Files';
 $_lang['migx.load_from_source'] = 'Load from mediasource';
