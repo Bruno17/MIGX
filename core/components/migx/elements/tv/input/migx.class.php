@@ -83,6 +83,12 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
         }
 
         $this->migx->loadLang();
+        $lang = $this->modx->lexicon->fetch();
+        $lang['migx_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['migx.add'];
+        $lang['migx_add'] = str_replace("'", "\'", $lang['migx_add']);
+        $this->migx->addLangValue('migx.add',$lang['migx_add']);        
+        $this->migx->migxlang['migx.add'] = $lang['migx_add'];
+        
         $this->migx->prepareGrid($params,$this,$this->tv,$columns);
         //$grid = $this->migx->getGrid();
         
@@ -94,10 +100,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
         }         
         
         $newitem[] = $item;
-        $lang = $this->modx->lexicon->fetch();
-        $lang['migx_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['migx.add'];
-        $lang['migx_add'] = str_replace("'", "\'", $lang['migx_add']);
-        $this->migx->addLangValue('migx.add',$lang['migx_add']);
+
         $this->setPlaceholder('i18n', $lang);
         $this->setPlaceholder('properties', $properties);
         $this->setPlaceholder('resource', $resource_array);

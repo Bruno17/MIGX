@@ -45,7 +45,7 @@
                         imageList.append(html);
                         
                         var deleteButton = $('#'+mt).click(function() {
-                        var imageWrap = deleteButton.parent(); 
+                            var imageWrap = deleteButton.parent(); 
  							$.get(settings.uploadAction, {
 								'delete' : fileid
                                 ,'uid' : settings.uid
@@ -82,7 +82,7 @@
 					}
 				}, 'json');
 			});
-			imageList.find('.image-wrap .delete-button').click(function() {
+			$('.image-wrap .delete-button').click(function() {
 				var imageWrap = $(this).parent();
 				var imageClass = imageWrap.attr("class");
 				
