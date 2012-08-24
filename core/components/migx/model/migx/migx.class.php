@@ -616,13 +616,13 @@ class Migx
 
         $tbaractions = array();
 
-        if (count($gridbuttons) > 0) {
+        if (isset($gridbuttons) && count($gridbuttons) > 0) {
             $gridbuttons = implode(',', $gridbuttons);
             $tbaractions[] = $gridbuttons;
         }
 
 
-        if (count($buttons) > 0) {
+        if (isset($buttons) && count($buttons) > 0) {
             $gridactionbuttons = implode(',', $buttons);
             $tbaractions[] = "
           {
@@ -767,6 +767,10 @@ class Migx
         $fields = array();
         if (is_array($columns) && count($columns) > 0) {
             foreach ($columns as $key => $column) {
+                $field = array();
+                if (isset($column['type'])){
+                    $field['type'] = $column['type'];
+                }
                 $field['name'] = $column['dataIndex'];
                 $field['mapping'] = $column['dataIndex'];
                 $fields[] = $field;

@@ -16,7 +16,9 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $source->initialize();
         $sourceProperties = $source->getPropertyList();
         
-        //echo '<pre>' . print_r($sourceProperties,1) . '</pre>';
+        $modx->setPlaceholder('debugSourceProperties','<pre>' . print_r($sourceProperties,1) . '</pre>');
+        $modx->toPlaceholders($sourceProperties,'sourceProperty');
+        
         $basePath = $modx->getOption('basePath',$sourceProperties);
         $baseUrl = $modx->getOption('baseUrl',$sourceProperties);
         $allowedExtensions = $modx->getOption('allowedFileTypes',$sourceProperties,'') ;
@@ -46,7 +48,7 @@ include_once AIU_BASE_PATH . 'includes/fileuploader/fileuploader.class.php';
 
 // default: &language=`english` &allowedExtensions=`jpg,jpeg,png,gif` &maxFilesizeMb=`8` &uid=`site-specific` &maxFiles=`3` &thumbX=`100` &=`100` &mode=`form` &ajaxId=`0`
 
-$language = isset($language) ? $language : 'english';
+$lang = $modx->getOption('manager_language');
 // comma separated list of valid extensions
 
 $formUid = isset($uid) ? $uid : md5($modx->config['site_url']);
@@ -79,7 +81,7 @@ if (!function_exists('includeFile')) {
 }
 
 
-include (includeFile($language, 'language', 'english'));
+include (includeFile($lang, 'language', 'en'));
 $allowedExtensions = explode(',', $allowedExtensions);
 $sizeLimit = intval($maxFilesizeMb) * 1024 * 1024;
 
@@ -93,7 +95,7 @@ if ($ajaxId || $ajaxUrl) {
     }
     if ($addJscript) {
         $modx->regClientStartupScript('assets/components/AjaxImageUpload/fileuploader.js');
-        $scriptSettings = file_get_contents(includeFile('script' . ucfirst($language), 'template', 'script', '.html'));
+        $scriptSettings = file_get_contents(includeFile('script' . ucfirst($lang), 'template', 'script', '.html'));
         $placeholder = array();
         $placeholder['ajaxId'] = !empty($ajaxUrl) ? $ajaxUrl : $modx->makeUrl($ajaxId);
         $placeholder['dropArea'] = $language['dropArea'];
@@ -121,7 +123,7 @@ if ($ajaxId || $ajaxUrl) {
         //$modx->regClientStartupScript($scriptSettings);
         //$modx->regClientStartupScript('assets/components/AjaxImageUpload/AjaxImageUpload.js');
     }
-    $output = file_get_contents(includeFile('uploadSection' . ucfirst($language), 'template', 'uploadSection', '.html'));
+    $output = file_get_contents(includeFile('uploadSection' . ucfirst($lang), 'template', 'uploadSection', '.html'));
     //$imageTpl = file_get_contents(includeFile('image' . ucfirst($language), 'template', 'image', '.html'));
     $imageTpl = $modx->migx->config['corePath'].'/model/imageupload/templates/image.template.html';
     $fileTpl = $modx->migx->config['corePath'].'/model/imageupload/templates/file.template.html';

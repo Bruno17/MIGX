@@ -42,7 +42,7 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
 
         // default: &language=`english` &allowedExtensions=`jpg,jpeg,png,gif` &maxFilesizeMb=`8` &uid=`site-specific` &maxFiles=`3` &thumbX=`100` &=`100` &mode=`form` &ajaxId=`0`
 
-        $language = isset($language) ? $language : 'english';
+        $language = $modx->getOption('manager_language');
         // comma separated list of valid extensions
         $formUid = isset($uid) ? $uid : md5($modx->config['site_url']);
 
@@ -66,7 +66,7 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
             }
         }
 
-        include (includeFile($language, 'language', 'english'));
+        include (includeFile($language, 'language', 'en'));
 
         $language['noSource'] = 'Mediasource missing';
 
@@ -158,7 +158,7 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                     }
                     rename($path . $originalName, $path . $uniqueName);
                     $result['filename'] = $baseUrl . $uniqueName;
-                    $result['fileid'] = end(array_keys($_SESSION['AjaxImageUpload'][$formUid]));
+                    //$result['fileid'] = end(array_keys($_SESSION['AjaxImageUpload'][$formUid]));
                     $result['url'] = $uniqueName;
                     
                     $placeholder = array();

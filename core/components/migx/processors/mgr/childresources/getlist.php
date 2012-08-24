@@ -16,9 +16,11 @@ $classname = 'modResource';
 
 $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
 
+/*
 if ($this->modx->lexicon) {
     $this->modx->lexicon->load($packageName . ':default');
 }
+*/
 
 /* setup default properties */
 $isLimit = !empty($scriptProperties['limit']);

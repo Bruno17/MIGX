@@ -270,8 +270,13 @@ $renderer['this.renderRowActions'] = "
 
 $renderer['this.renderDate'] = "
 renderDate : function(val, md, rec, row, col, s) {
-    var date = Date.parseDate(val, 'Y-m-d H:i:s');
-    return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
+    var date;
+	if (val && val != '') {
+		date = Date.parseDate(val, 'Y-m-d H:i:s');
+		return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
+	} else {
+		return '';
+	}
 }
 ";
 

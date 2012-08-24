@@ -1,4 +1,13 @@
 Changelog for MIGX.
+MIGX 2.3.0
+
+==============
+add multifile - uploader, upload to MIGX - mediasource
+add load from mediasource - button to MIGX
+add migxResourcePath - snippet
+add iframe - support - its now possible to create chunks with snippet-calls and show the result in an iframe-window. used by multifile-uploader.
+
+
 MIGX 2.2.3
 
 ==============

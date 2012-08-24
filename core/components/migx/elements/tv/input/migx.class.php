@@ -99,7 +99,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender
             $this->setPlaceholder('iframewindow', $this->migx->replaceLang($this->modx->controller->fetchTemplate($windowfile)));
         }         
         
-        $newitem[] = $item;
+        //$newitem[] = $item;
 
         $this->setPlaceholder('i18n', $lang);
         $this->setPlaceholder('properties', $properties);

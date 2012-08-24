@@ -6,11 +6,11 @@ $includeTVList = !empty($includeTVList) ? explode(',', $includeTVList) : array()
 $includeTVs = $modx->getOption('includeTVs', $config, false);
 
 $classname = 'modResource';
-
+/*
 if ($this->modx->lexicon) {
     $this->modx->lexicon->load($packageName . ':default');
 }
-
+*/
 if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == 'new') {
     $object = $modx->newObject($classname);
     $object->set('object_id', 'new');
