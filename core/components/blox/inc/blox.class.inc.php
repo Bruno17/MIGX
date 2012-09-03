@@ -15,8 +15,8 @@ class blox {
         $this->tvnames = array();
         $this->docColumnNames = array();
         $this->tvids = array();
-        $this->bloxconfig['parents'] = $this->cleanIDs($bloxconfig['parents']);
-        $this->bloxconfig['IDs'] = $this->cleanIDs($bloxconfig['IDs']);
+        //$this->bloxconfig['parents'] = $this->cleanIDs($bloxconfig['parents']);
+        //$this->bloxconfig['IDs'] = $this->cleanIDs($bloxconfig['IDs']);
 
         $this->tpls = array();
         $this->checktpls();
@@ -266,9 +266,13 @@ class blox {
         $date = $this->date;
 
         if (isset($row['tpl'])) {
-            $tplfilename = $this->bloxconfig['tplpath'] . "/" . $row['tpl'];
-            if (($row['tpl'] !== '') && (file_exists($modx->getOption('core_path') . $tplfilename))) {
-                $rowTpl = "@FILE:" . $tplfilename;
+            $tplfilename = $this->bloxconfig['tplpath'] . $row['tpl'];
+            if ($row['tpl'] !== '') {
+                if (file_exists($modx->getOption('core_path') . $tplfilename)) {
+                    $rowTpl = "@FILE:" . $tplfilename;
+                } elseif (file_exists($modx->getOption('core_path') . $tplfilename .'Tpl.html')) {
+                    $rowTpl = "@FILE:" . $tplfilename .'Tpl.html';
+                }
             }
         }
 

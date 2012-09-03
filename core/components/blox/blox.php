@@ -40,7 +40,7 @@ $bloxconfig['id_'] = isset($id) ? $id . '_' : ''; // [ string ]
 $bloxconfig['distinct'] = isset($distinct) && $distinct == '0' ? '' : 'distinct'; // 1 or 0 [ string ]
 $bloxconfig['projectname'] = (isset($project)) ? $project : 'blox';
 $bloxconfig['packagename'] = (isset($packagename)) ? $packagename : '';
-$bloxconfig['classname'] = (isset($classname)) ? $classname : '';
+$bloxconfig['classname'] = (isset($classname)) ? $classname : 'modResource';
 $bloxconfig['resourceclass'] = ($bloxconfig['classname'] !== '') ? 'modTable' : 'modDocument';
 $bloxconfig['resourceclass'] = (isset($resourceclass)) ? $resourceclass : $bloxconfig['resourceclass'];
 $bloxconfig['htmlouter'] = isset($htmlouter) ? $htmlouter : 'div';
@@ -118,7 +118,7 @@ if ($bloxconfig['debug']) {
 //Todo: make this better:
 foreach ($includes as $includeclass) {
 	if (!class_exists($includeclass)) {
-		$includefile = $bloxconfig['absolutepath'] . 'inc/' . $includeclass . '.class.inc.php';
+	    $includefile = $bloxconfig['absolutepath'] . 'inc/' . $includeclass . '.class.inc.php';
 		if (file_exists($includefile)) {
 			include_once($includefile);
 		} else {
