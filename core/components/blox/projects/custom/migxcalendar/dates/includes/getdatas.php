@@ -19,9 +19,7 @@ $this->bloxconfig['sortConfig'] = '[{"sortby":"start", "sortdir":"ASC"},{"sortby
 $this->bloxconfig['queries'] = json_encode($queries);
 $query = $this->prepareQuery($this->bloxconfig, $this->totalCount);
 
-//$query->prepare();
-//die($query->toSql());
-
+//$query->prepare(); echo($query->toSql());
 
 $collection = $modx->getCollection($this->bloxconfig['classname'], $query);
 

@@ -18,6 +18,8 @@ if (isset($_REQUEST['p4'])) {
 $this->bloxconfig['queries'] = json_encode($queries);
 $query = $this->prepareQuery($this->bloxconfig, $this->totalCount);
 
+//$query->prepare(); echo($query->toSql());
+
 $collection = $modx->getCollection($this->bloxconfig['classname'], $query);
 
 $rows = array();
