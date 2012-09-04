@@ -1,4 +1,4 @@
 <?php
 $project = 'migxcalendar';
-$task = 'termine';
+$task = 'dates';
 ?>
