@@ -28,11 +28,13 @@ $isCombo = !empty($scriptProperties['combo']);
 $start = $modx->getOption('start', $scriptProperties, 0);
 $limit = $modx->getOption('limit', $scriptProperties, 20);
 $sort = !empty($config['getlistsort']) ? $config['getlistsort'] : 'modResource.id';
-$dir = $modx->getOption('dir', $scriptProperties, 'ASC');
+$dir = !empty($config['getlistsortdir']) ? $config['getlistsortdir'] : 'ASC';
+$dir = $modx->getOption('dir', $scriptProperties, $dir);
 $year = $modx->getOption('year', $scriptProperties, 'all');
 $month = $modx->getOption('month', $scriptProperties, 'all');
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
+$where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
 
 $c = $modx->newQuery($classname);
 
@@ -92,6 +94,10 @@ if (!empty($showtrash)) {
 
 if ($resource_id) {
     $c->where(array($classname . '.parent' => $resource_id));
+}
+
+if (!empty($where)) {
+    $c->where($modx->fromJson($where));
 }
 
 $count = $modx->getCount($classname, $c);

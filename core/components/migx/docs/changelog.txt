@@ -1,4 +1,11 @@
 Changelog for MIGX.
+
+MIGX 2.3.1
+
+==============
+some eNotice - error - fixes
+add type - configuration to gridcolumns, now its possible to sort also numeric on the MIGX - grid: see https://github.com/Bruno17/MIGX/issues/41
+
 MIGX 2.3.0
 
 ==============

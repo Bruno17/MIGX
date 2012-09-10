@@ -85,7 +85,7 @@ switch ($scriptProperties['task']) {
         $data['context_key'] = $modx->getOption('context_key', $data, $scriptProperties['wctx']);
         if ($includeTVs) {
             $c = $modx->newQuery('modTemplateVar');
-            $collection = $modx->getcollection('modTemplateVar', $c);
+            $collection = $modx->getCollection('modTemplateVar', $c);
             foreach ($collection as $tv) {
                 $tvname = $tv->get('name');
                 if (isset($data[$tvname])) {
@@ -100,7 +100,9 @@ switch ($scriptProperties['task']) {
 
         if ($scriptProperties['object_id'] == 'new') {
             //$object = $modx->newObject($classname);
-            $data['parent'] = $parent;
+            if (!empty($parent)){
+                $data['parent'] = $parent;
+            }
             $response = $modx->runProcessor('resource/create', $data);
         } else {
             //$object = $modx->getObject($classname, $scriptProperties['object_id']);
