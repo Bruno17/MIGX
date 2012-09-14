@@ -148,8 +148,10 @@ if ($isCombo || $isLimit) {
 //$c->prepare();echo $c->toSql();
 $rows = array();
 if ($collection = $modx->getCollection($classname, $c)) {
+    $pk = $modx->getPK($classname);
     foreach ($collection as $object) {
         $row = $object->toArray();
+        $row['id'] = !isset($row['id']) ? $row[$pk] : $row['id'];
         $rows[] = $row;
     }
 }

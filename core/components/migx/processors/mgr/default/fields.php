@@ -34,9 +34,10 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
     $object->set('object_id', 'new');
 } else {
     $c = $modx->newQuery($classname, $scriptProperties['object_id']);
+    $pk = $modx->getPK($classname);
     $c->select('
         `' . $classname . '`.*,
-    	`' . $classname . '`.`id` AS `object_id`
+    	`' . $classname . '`.`'.$pk.'` AS `object_id`
     ');
     if (!empty($joinalias)) {
         $c->leftjoin($joinclass, $joinalias);

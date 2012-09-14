@@ -1069,16 +1069,19 @@ class Migx {
         $inputTvs = array();
         if (is_array($formtabs)) {
             foreach ($formtabs as $tab) {
-                $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
-                if (isset($tab['fields']) && is_array($fields)) {
-                    foreach ($fields as $field) {
-                        if (isset($field['inputTV']) && !empty($field['inputTV'])) {
-                            $inputTvs[$field['field']] = $field;
-                        } elseif (isset($field['inputTVtype']) && !empty($field['inputTVtype'])) {
-                            $inputTvs[$field['field']] = $field;
+                if (isset($tab['fields'])) {
+                    $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
+                    if (is_array($fields)) {
+                        foreach ($fields as $field) {
+                            if (isset($field['inputTV']) && !empty($field['inputTV'])) {
+                                $inputTvs[$field['field']] = $field;
+                            } elseif (isset($field['inputTVtype']) && !empty($field['inputTVtype'])) {
+                                $inputTvs[$field['field']] = $field;
+                            }
                         }
                     }
                 }
+
             }
         }
         return $inputTvs;
