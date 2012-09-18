@@ -28,7 +28,7 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender
         $filenames = array();
         $defaultpath = $this->migx->config['templatesPath'] . '/mgr/grids/';
         $filename = $grid . '.grid.tpl';
-        if ($gridfile = $this->migx->findGrid($defaultpath, $filename, &$filenames)) {
+        if ($gridfile = $this->migx->findGrid($defaultpath, $filename, $filenames)) {
             $this->setPlaceholder('grid', $this->migx->replaceLang($this->modx->controller->fetchTemplate($gridfile)));
         }
 
@@ -36,13 +36,13 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender
         $filenames = array();
         $defaultpath = $this->migx->config['templatesPath'] . 'mgr/';
         $filename = 'updatewindow.tpl';
-        if ($windowfile = $this->migx->findGrid($defaultpath, $filename, &$filenames)) {
+        if ($windowfile = $this->migx->findGrid($defaultpath, $filename, $filenames)) {
             $this->setPlaceholder('updatewindow', $this->migx->replaceLang($this->modx->controller->fetchTemplate($windowfile)));
         }
         
         $filenames = array();
         $filename = 'iframewindow.tpl';
-        if ($windowfile = $this->migx->findGrid($defaultpath, $filename, &$filenames)) {
+        if ($windowfile = $this->migx->findGrid($defaultpath, $filename, $filenames)) {
             $this->setPlaceholder('iframewindow', $this->migx->replaceLang($this->modx->controller->fetchTemplate($windowfile)));
         }        
         
