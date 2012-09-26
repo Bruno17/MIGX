@@ -1060,6 +1060,7 @@ class Migx {
             $formtabs = array();
             foreach ($forms as $form) {
                 foreach ($form['formtabs'] as $tab) {
+                    $tab['formname']=$form['formname'];
                     $formtabs[] = $tab;
                 }
             }
@@ -1068,15 +1069,20 @@ class Migx {
 
         $inputTvs = array();
         if (is_array($formtabs)) {
-            foreach ($formtabs as $tab) {
+            foreach ($formtabs as $tabidx => $tab) {
+                $formname = isset($tab['formname'])&&!empty($tab['formname']) ? $tab['formname'].'_' : '';
                 if (isset($tab['fields'])) {
                     $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
                     if (is_array($fields)) {
                         foreach ($fields as $field) {
+                            //$fieldkey = $formname.$field['field'];
                             if (isset($field['inputTV']) && !empty($field['inputTV'])) {
                                 $inputTvs[$field['field']] = $field;
+                                //for different inputTvs, for example with different mediasources, in multiple forms, currently not used for the grid
+                                $inputTvs[$formname.$field['field']] = $field;
                             } elseif (isset($field['inputTVtype']) && !empty($field['inputTVtype'])) {
                                 $inputTvs[$field['field']] = $field;
+                                $inputTvs[$formname.$field['field']] = $field;
                             }
                         }
                     }

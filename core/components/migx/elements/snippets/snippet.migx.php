@@ -123,22 +123,24 @@ $idx = 0;
 $output = array();
 foreach ($items as $key => $item)
 {
-
+    $formname = isset ($item['MIGX_formname']) ?  $item['MIGX_formname'].'_' : '';
     $fields = array();
     foreach ($item as $field => $value)
     {
+        
         $value = is_array($value) ? implode('||', $value) : $value; //handle arrays (checkboxes, multiselects)
-        if ($processTVs && isset($inputTvs[$field]))
+        $inputTVkey = $formname.$field;
+        if ($processTVs && isset($inputTvs[$inputTVkey]))
         {
-            if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$field]['inputTV'])))
+            if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$inputTVkey]['inputTV'])))
             {
 
             } else
             {
                 $tv = $modx->newObject('modTemplateVar');
-                $tv->set('type', $inputTvs[$field]['inputTVtype']);
+                $tv->set('type', $inputTvs[$inputTVkey]['inputTVtype']);
             }
-            $inputTV = $inputTvs[$field];
+            $inputTV = $inputTvs[$inputTVkey];
 
             $mTypes = $modx->getOption('manipulatable_url_tv_output_types', null, 'image,file');
             //don't manipulate any urls here

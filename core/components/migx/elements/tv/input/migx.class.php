@@ -22,19 +22,19 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         /* get input-tvs */
         $this->migx->loadConfigs();
 
-        $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
+        //$default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
         $default_columns = '[{"header": "Title", "width": "160", "sortable": "true", "dataIndex": "title"}]';
 
         // get tabs from file or migx-config-table
-        $formtabs = $this->migx->getTabs();
-
+        //$formtabs = $this->migx->getTabs();
+        /* 
         if (empty($formtabs)) {
             // get them from input-properties
             $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
             $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
         }
-
-        $inputTvs = $this->migx->extractInputTvs($formtabs);
+        */
+        //$inputTvs = $this->migx->extractInputTvs($formtabs);
 
         /* get base path based on either TV param or filemanager_path */
         $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
