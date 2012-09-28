@@ -17,7 +17,6 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
         }
         cols.push(config.columns[i]);
         pc.push(config.pathconfigs[i]);
-        
     }
     config.pathconfigs = pc; 
     config.columns=cols;    
@@ -201,14 +200,15 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
 	,onClick: function(e){
 		
         var t = e.getTarget();
-		var elm = t.className.split(' ')[0];
+        var elm = t.className.split(' ')[0];
 		if(elm == 'controlBtn') {
-			var handler = t.className.split(' ')[2];
+            var handler = t.className.split(' ')[2];
+            var col = t.className.split(' ')[3];
 			var record = this.getSelectionModel().getSelected();
             this.menu.record = record;
             var fn = eval(handler);
             fn = fn.createDelegate(this);
-            fn(null,e);
+            fn(null,e,col);
  		}
 	}    
 });

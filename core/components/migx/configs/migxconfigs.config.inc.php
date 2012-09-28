@@ -46,11 +46,11 @@ $mf_options = array();
 $mf_options[] = '---==0';
 $classname = 'migxConfig';
 $c = $this->modx->newQuery($classname);
-$c->select($this->modx->getSelectColumns($classname,$classname,'',array('id','name')));
+$c->select($this->modx->getSelectColumns($classname, $classname, '', array('id', 'name')));
 $c->sortby('name');
-if ($collection = $this->modx->getCollection($classname,$c)){
-    foreach ($collection as $object){
-        $mf_options[] = $object->get('name') . '==' . $object->get('id');            
+if ($collection = $this->modx->getCollection($classname, $c)) {
+    foreach ($collection as $object) {
+        $mf_options[] = $object->get('name') . '==' . $object->get('id');
     }
 }
 
@@ -73,10 +73,14 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     foreach ($gridactionbuttons as $key => $value) {
         $actionbuttons[] = $key;
     }
+    $allhandlers = array();
+    foreach ($gridfunctions as $key => $value) {
+        $allhandlers[] = $key;
+    }
 
-$prefixes = array();
-$prefixes[] = 'default Prefix==0';
-$prefixes[] = 'Custom Prefix==1';
+    $prefixes = array();
+    $prefixes[] = 'default Prefix==0';
+    $prefixes[] = 'Custom Prefix==1';
 
     $tabs = '
 [
@@ -101,6 +105,9 @@ $prefixes[] = 'Custom Prefix==1';
 ]},
 {"caption":"Actionbuttons", "fields": [
     {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $actionbuttons) . '"}
+]},
+{"caption":"Handlers", "fields": [
+    {"field":"extended.extrahandlers","caption":"Extra Handlers","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $allhandlers) . '"}
 ]},
 {"caption":"Db-Filters", "fields": [
     {"field":"filters","caption":"Filters","inputTVtype":"migx","configs":"migxdbfilters"}
@@ -130,7 +137,6 @@ $prefixes[] = 'Custom Prefix==1';
 ]
 ';
 }
-
 
 
 $this->customconfigs['tabs'] = $this->modx->fromJson($tabs);

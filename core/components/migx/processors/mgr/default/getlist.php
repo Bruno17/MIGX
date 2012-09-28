@@ -155,3 +155,6 @@ if ($collection = $modx->getCollection($classname, $c)) {
         $rows[] = $row;
     }
 }
+
+$rows = $modx->migx->checkRenderOptions($rows);
+

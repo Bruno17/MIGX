@@ -331,7 +331,8 @@ class Migx {
                             $this->customconfigs['tabs'] = $this->modx->fromJson($cfObject->get('formtabs'));
                             $this->customconfigs['filters'] = $this->modx->fromJson($cfObject->get('filters'));
                             //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
-                            $this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
+                            //$this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
+                            $this->customconfigs['columns'] = $this->modx->fromJson($cfObject->get('columns'));
                         }
 
                         $menus = $cfObject->get('contextmenus');
@@ -537,6 +538,13 @@ class Migx {
         $this->loadConfigs();
 
         $handlers = array();
+        if (isset($this->customconfigs['extrahandlers'])){
+            $extrahandlers = explode('||',$this->customconfigs['extrahandlers']);
+            foreach ($extrahandlers as $handler){
+                $handlers[] = $handler;
+            }
+        }
+
         $buttons = array();
         if (count($this->customconfigs['gridactionbuttons']) > 0) {
             foreach ($this->customconfigs['gridactionbuttons'] as $button) {
@@ -749,6 +757,7 @@ class Migx {
         //$columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
 
         $columns = empty($columns) ? $this->getColumns() : $columns;
+        
         $item = array();
         $pathconfigs = array();
         $cols = array();
@@ -781,15 +790,17 @@ class Migx {
                 }
 
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
-
+                
                 $pathconfigs[$key] = isset($inputTvs[$field['name']]) ? $this->prepareSourceForGrid($inputTvs[$field['name']]) : array();
             }
         }
 
         if (count($handlers) > 0) {
             $gridfunctions = array();
+            $collectedhandlers = array();
             foreach ($handlers as $handler) {
-                if (isset($this->customconfigs['gridfunctions'][$handler])) {
+                if (!in_array($handler,$collectedhandlers) && isset($this->customconfigs['gridfunctions'][$handler])) {
+                    $collectedhandlers[] = $handler;
                     $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
                 }
             }
@@ -828,6 +839,38 @@ class Migx {
         $controller->setPlaceholder('customconfigs', $this->customconfigs);
         $controller->setPlaceholder('win_id', !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $tv_id);
 
+    }
+
+    function getColumnRenderOptions($col, $indexfield='idx'){
+        $columns = $this->getColumns();
+        $columnrenderoptions = array();
+        $optionscolumns = array();
+        foreach($columns as $column){
+            if (isset($column['renderoptions']) && !empty($column['renderoptions'])){
+                $options = $this->modx->fromJson($column['renderoptions']);
+                foreach($options as $key => $option){
+                    $option['idx']=$key;
+                    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]]=$this->modx->toJson($option);
+                }
+            }
+        }
+        return $col=='*' ? $columnrenderoptions : $columnrenderoptions[$col];        
+    }
+
+    function checkRenderOptions($rows){
+        $columnrenderoptions = $this->getColumnRenderOptions('*','value'); 
+        $outputrows = $rows;
+        if (count($columnrenderoptions)>0){
+            $outputrows = array();
+            foreach ($rows as $row){
+                foreach ($columnrenderoptions as $column => $options){
+                    $row[$column.'_ro'] = isset($options[$row[$column]]) ? $options[$row[$column]] : '';
+                }
+                $outputrows[] = $row;    
+            }
+        }
+        return $outputrows;
+            
     }
 
     function prepareSourceForGrid($inputTv) {

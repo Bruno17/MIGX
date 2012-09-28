@@ -153,3 +153,4 @@ foreach ($collection as $resourceId => $resource) {
 
     $rows[] = $tvs;
 }
+$rows = $modx->migx->checkRenderOptions($rows);

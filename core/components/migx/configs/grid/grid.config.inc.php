@@ -243,22 +243,71 @@ renderLimited : function(val, md, rec, row, col, s){
 $img = '<img src="{0}" alt="{1}" title="{2}">';
 $renderer['this.renderCrossTick'] = "
 renderCrossTick : function(val, md, rec, row, col, s) {
-    var renderImage, altText;
+    var renderImage, altText, handler, classname;
+    
     switch (val) {
         case 0:
         case '0':
         case false:
             renderImage = '/assets/components/migx/style/images/cross.png';
+            handler = 'this.publishObject';
+            classname = 'publish';
             altText = 'No';
             break;
         case 1:
         case '1':
         case true:
             renderImage = '/assets/components/migx/style/images/tick.png';
+            handler = 'this.unpublishObject';
+            classname = 'unpublish';
             altText = 'Yes';
             break;
     }
-    return String.format('{$img}', renderImage, altText, altText);
+    return String.format('{$img}', renderImage, altText, altText, classname, handler);
+}
+";
+
+$img = '<a href="#" ><img class="controlBtn {3} {4}" src="{0}" alt="{1}" title="{2}"></a>';
+$renderer['this.renderClickCrossTick'] = "
+renderClickCrossTick : function(val, md, rec, row, col, s) {
+    var renderImage, altText, handler, classname;
+    switch (val) {
+        case 0:
+        case '0':
+        case false:
+            renderImage = '/assets/components/migx/style/images/cross.png';
+            handler = 'this.publishObject';
+            classname = 'unpublished';
+            altText = 'No';
+            break;
+        case 1:
+        case '1':
+        case true:
+            renderImage = '/assets/components/migx/style/images/tick.png';
+            handler = 'this.unpublishObject';
+            classname = 'published';
+            altText = 'Yes';
+            break;
+    }
+    return String.format('{$img}', renderImage, altText, altText, classname, handler);
+}
+";
+
+$base_url = $this->modx->getOption('base_url');
+$img = '<a href="#" ><img class="controlBtn {3} {4} {5}" src="'.$base_url.'{0}" alt="{1}" title="{2}"></a>';
+$renderer['this.renderSwitchStatusOptions'] = "
+renderSwitchStatusOptions : function(val, md, rec, row, col, s) {
+    var column = this.getColumnModel().getColumnAt(col);
+    var ro = Ext.util.JSON.decode(rec.json[column.dataIndex+'_ro']);
+    var renderImage, altText, handler, classname;
+    renderImage = ro.image;
+    handler = ro.handler;
+    if (handler == ''){
+        handler = 'this.handleColumnSwitch'
+    }
+    classname = ro.name;
+    altText = ro.name;
+    return String.format('{$img}', renderImage, altText, altText, classname, handler, col);
 }
 ";
 
@@ -363,6 +412,29 @@ $gridfunctions['this.toggleDeleted'] = "
         s.removeAll();
         this.refresh();
     }
+";
+
+$gridfunctions['this.handleColumnSwitch'] = "
+handleColumnSwitch: function(n,e,col) {
+    var column = this.getColumnModel().getColumnAt(col);
+    var ro_json = this.menu.record.json[column.dataIndex+'_ro'];
+    var ro = Ext.util.JSON.decode(ro_json);
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/migxdb/process'
+                ,processaction: 'handlecolumnswitch'
+                ,col: column.dataIndex
+                ,idx: ro.idx
+                ,object_id: this.menu.record.id
+				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+            }
+            ,listeners: {
+                'success': {fn:this.refresh,scope:this}
+            }
+        });
+    }	
 ";
 
 $gridfunctions['this.publishObject'] = "
