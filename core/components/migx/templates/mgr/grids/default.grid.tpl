@@ -40,6 +40,8 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     baseParams: { 
         action: 'mgr/migxdb/getList',
         configs: config.configs,
+        reqTempParams:'{/literal}{$reqTempParams}{literal}',
+        reqConfigs:'{/literal}{$reqConfigs}{literal}', 
         resource_id: config.resource_id,
         object_id: config.object_id,
         'HTTP_MODAUTH': config.auth
@@ -88,7 +90,12 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
     }
     
     {/literal}{$customconfigs.gridfunctions}{literal}
-	
+
+    ,setWinPosition: function(x,y){
+    var win = Ext.getCmp('{/literal}modx-window-mi-grid-update-{$win_id}{literal}');
+    win.setPosition(x,y);     
+        
+    }	
                 	     
 	,loadWin: function(btn,e,action,tempParams) {
         
@@ -125,8 +132,9 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
 			this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
             
-           
-		}
+            //this.setWinPosition(10,10);
+            
+    	}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
 			,grid: this

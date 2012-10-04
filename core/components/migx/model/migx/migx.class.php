@@ -423,6 +423,7 @@ class Migx {
         $cmptabsout = array();
         $grids = '';
         $updatewindows = '';
+        $iframewindows = '';
         $customHandlers = array();
 
         $maincaption = "_('migx.management')";
@@ -471,7 +472,11 @@ class Migx {
                     $updatewindows .= $this->replaceLang($controller->fetchTemplate($gridfile));
                 }
 
-
+                $filenames = array();
+                $filename = 'iframewindow.tpl';
+                if ($windowfile = $this->findGrid($defaultpath, $filename, $filenames)) {
+                    $iframewindows .= $this->replaceLang($controller->fetchTemplate($windowfile));
+                }
             }
         }
         if (count($customHandlers) > 0) {
@@ -482,6 +487,7 @@ class Migx {
         $controller->setPlaceholder('maincaption', $maincaption);
         $controller->setPlaceholder('grids', $grids);
         $controller->setPlaceholder('updatewindows', $updatewindows);
+        $controller->setPlaceholder('iframewindows', $iframewindows);
         $controller->setPlaceholder('cmptabs', implode(',', $cmptabsout));
         return $controller->fetchTemplate($this->config['templatesPath'] . 'mgr/gridpanel.tpl');
 
@@ -512,6 +518,7 @@ class Migx {
     }
 
     public function prepareGrid($properties, &$controller, &$tv, $columns = array()) {
+        
         $this->loadConfigs(false);
         //$lang = $this->modx->lexicon->fetch();
 
@@ -538,9 +545,9 @@ class Migx {
         $this->loadConfigs();
 
         $handlers = array();
-        if (isset($this->customconfigs['extrahandlers'])){
-            $extrahandlers = explode('||',$this->customconfigs['extrahandlers']);
-            foreach ($extrahandlers as $handler){
+        if (isset($this->customconfigs['extrahandlers'])) {
+            $extrahandlers = explode('||', $this->customconfigs['extrahandlers']);
+            foreach ($extrahandlers as $handler) {
                 $handlers[] = $handler;
             }
         }
@@ -757,7 +764,7 @@ class Migx {
         //$columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
 
         $columns = empty($columns) ? $this->getColumns() : $columns;
-        
+
         $item = array();
         $pathconfigs = array();
         $cols = array();
@@ -790,7 +797,7 @@ class Migx {
                 }
 
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
-                
+
                 $pathconfigs[$key] = isset($inputTvs[$field['name']]) ? $this->prepareSourceForGrid($inputTvs[$field['name']]) : array();
             }
         }
@@ -799,7 +806,7 @@ class Migx {
             $gridfunctions = array();
             $collectedhandlers = array();
             foreach ($handlers as $handler) {
-                if (!in_array($handler,$collectedhandlers) && isset($this->customconfigs['gridfunctions'][$handler])) {
+                if (!in_array($handler, $collectedhandlers) && isset($this->customconfigs['gridfunctions'][$handler])) {
                     $collectedhandlers[] = $handler;
                     $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
                 }
@@ -823,11 +830,14 @@ class Migx {
         //print_r(array_keys($this->customconfigs));
 
         //$controller->setPlaceholder('i18n', $this->migxi18n);
+        
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($this->migxlang));
         $controller->setPlaceholder('properties', $properties);
         $controller->setPlaceholder('resource', $resource);
         $controller->setPlaceholder('configs', $this->config['configs']);
+        $controller->setPlaceholder('reqConfigs', $this->modx->getOption('configs', $_REQUEST, ''));
         $controller->setPlaceholder('object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
+        $controller->setPlaceholder('reqTempParams', $this->modx->getOption('tempParams', $_REQUEST, ''));
         $controller->setPlaceholder('connected_object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
         $controller->setPlaceholder('pathconfigs', $this->modx->toJSON($pathconfigs));
         $controller->setPlaceholder('columns', $this->modx->toJSON($cols));
@@ -841,36 +851,36 @@ class Migx {
 
     }
 
-    function getColumnRenderOptions($col, $indexfield='idx'){
+    function getColumnRenderOptions($col, $indexfield = 'idx') {
         $columns = $this->getColumns();
         $columnrenderoptions = array();
         $optionscolumns = array();
-        foreach($columns as $column){
-            if (isset($column['renderoptions']) && !empty($column['renderoptions'])){
+        foreach ($columns as $column) {
+            if (isset($column['renderoptions']) && !empty($column['renderoptions'])) {
                 $options = $this->modx->fromJson($column['renderoptions']);
-                foreach($options as $key => $option){
-                    $option['idx']=$key;
-                    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]]=$this->modx->toJson($option);
+                foreach ($options as $key => $option) {
+                    $option['idx'] = $key;
+                    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $this->modx->toJson($option);
                 }
             }
         }
-        return $col=='*' ? $columnrenderoptions : $columnrenderoptions[$col];        
+        return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
-    function checkRenderOptions($rows){
-        $columnrenderoptions = $this->getColumnRenderOptions('*','value'); 
+    function checkRenderOptions($rows) {
+        $columnrenderoptions = $this->getColumnRenderOptions('*', 'value');
         $outputrows = $rows;
-        if (count($columnrenderoptions)>0){
+        if (count($columnrenderoptions) > 0) {
             $outputrows = array();
-            foreach ($rows as $row){
-                foreach ($columnrenderoptions as $column => $options){
-                    $row[$column.'_ro'] = isset($options[$row[$column]]) ? $options[$row[$column]] : '';
+            foreach ($rows as $row) {
+                foreach ($columnrenderoptions as $column => $options) {
+                    $row[$column . '_ro'] = isset($options[$row[$column]]) ? $options[$row[$column]] : '';
                 }
-                $outputrows[] = $row;    
+                $outputrows[] = $row;
             }
         }
         return $outputrows;
-            
+
     }
 
     function prepareSourceForGrid($inputTv) {
@@ -1103,7 +1113,7 @@ class Migx {
             $formtabs = array();
             foreach ($forms as $form) {
                 foreach ($form['formtabs'] as $tab) {
-                    $tab['formname']=$form['formname'];
+                    $tab['formname'] = $form['formname'];
                     $formtabs[] = $tab;
                 }
             }
@@ -1113,7 +1123,7 @@ class Migx {
         $inputTvs = array();
         if (is_array($formtabs)) {
             foreach ($formtabs as $tabidx => $tab) {
-                $formname = isset($tab['formname'])&&!empty($tab['formname']) ? $tab['formname'].'_' : '';
+                $formname = isset($tab['formname']) && !empty($tab['formname']) ? $tab['formname'] . '_' : '';
                 if (isset($tab['fields'])) {
                     $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
                     if (is_array($fields)) {
@@ -1122,10 +1132,10 @@ class Migx {
                             if (isset($field['inputTV']) && !empty($field['inputTV'])) {
                                 $inputTvs[$field['field']] = $field;
                                 //for different inputTvs, for example with different mediasources, in multiple forms, currently not used for the grid
-                                $inputTvs[$formname.$field['field']] = $field;
+                                $inputTvs[$formname . $field['field']] = $field;
                             } elseif (isset($field['inputTVtype']) && !empty($field['inputTVtype'])) {
                                 $inputTvs[$field['field']] = $field;
-                                $inputTvs[$formname.$field['field']] = $field;
+                                $inputTvs[$formname . $field['field']] = $field;
                             }
                         }
                     }

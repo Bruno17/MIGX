@@ -9,11 +9,9 @@
  * @subpackage processors
  */
 
-class migxFormProcessor extends modProcessor
-{
+class migxFormProcessor extends modProcessor {
 
-    public function process()
-    {
+    public function process() {
         //require_once dirname(dirname(dirname(__file__))) . '/model/migx/migx.class.php';
         //$migx = new Migx($this->modx);
         $modx = &$this->modx;
@@ -24,6 +22,22 @@ class migxFormProcessor extends modProcessor
 
         $this->modx->getService('smarty', 'smarty.modSmarty');
         $scriptProperties = $this->getProperties();
+
+        // special actions, for example the showSelector - action
+        $tempParams = $this->modx->getOption('tempParams', $scriptProperties, '');
+        $action = '';
+        if (!empty($tempParams)) {
+            $tempParams = $this->modx->fromJson($tempParams);
+            if (isset($tempParams['action']) && !empty($tempParams['action'])) {
+                $action = strtolower($tempParams['action']) ;
+                if ($action == 'showselector'){
+                    $scriptProperties['configs'] = $action;
+                }
+                $action = '_' . $action ;
+            }
+
+        }
+
         //$controller->loadControllersPath();
 
         // we will need a way to get a context-key, if in CMP-mode, from config, from dataset..... thoughts??
@@ -40,11 +54,11 @@ class migxFormProcessor extends modProcessor
         $controller->loadTemplatesPath();
         $controller->setPlaceholder('_config', $this->modx->config);
         $task = $this->modx->migx->getTask();
-        $filename = str_replace('.class', '', basename(__file__));
-        $processorspath = dirname(dirname(__file__)). '/';
+        $filename = str_replace(array('.class', '.php'), '', basename(__file__)) . $action . '.php';
+        $processorspath = dirname(dirname(__file__)) . '/';
         $filenames = array();
-        if ($processor_file = $this->modx->migx->findProcessor($processorspath, $filename,$filenames)) {
-          include_once ($processor_file);
+        if ($processor_file = $this->modx->migx->findProcessor($processorspath, $filename, $filenames)) {
+            include_once ($processor_file);
         }
 
 
@@ -56,13 +70,14 @@ class migxFormProcessor extends modProcessor
 
         //echo '<pre>'.print_r($angebot->toArray(),1).'</pre>';
 
-        $sender = isset ($sender) ? $sender : '';
-         
-        $this->modx->migx->loadConfigs(true,true,$scriptProperties,$sender);
+        $sender = isset($sender) ? $sender : '';
+
+        $this->modx->migx->loadConfigs(true, true, $scriptProperties, $sender);
         $tabs = $this->modx->migx->getTabs();
         $fieldid = 0;
         $allfields[] = array();
         $categories = array();
+        
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
 
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));

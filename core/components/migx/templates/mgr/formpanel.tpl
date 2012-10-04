@@ -27,7 +27,6 @@ Migx.page.Object = function(config) {
 			,configs: config.configs
 			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
 			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
-            ,renderoptions:Ext.util.JSON.decode('{/literal}{$renderoptions}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'
             ,url: MODx.config.assets_url+'components/migx/connector.php'

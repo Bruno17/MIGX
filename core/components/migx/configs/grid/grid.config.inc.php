@@ -416,9 +416,22 @@ $gridfunctions['this.toggleDeleted'] = "
 
 $gridfunctions['this.handleColumnSwitch'] = "
 handleColumnSwitch: function(n,e,col) {
+    var btn,params;
     var column = this.getColumnModel().getColumnAt(col);
     var ro_json = this.menu.record.json[column.dataIndex+'_ro'];
     var ro = Ext.util.JSON.decode(ro_json);
+    if (ro.clickaction == 'showSelector'){
+        console.log(ro);
+        params = {
+            action: ro.clickaction
+            ,col: column.dataIndex
+            ,idx: ro.idx            
+        }
+        
+        this.loadWin(btn,e,'u', Ext.util.JSON.encode(params));        
+    }
+
+    return;
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
