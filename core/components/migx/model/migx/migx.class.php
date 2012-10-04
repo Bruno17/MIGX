@@ -769,6 +769,7 @@ class Migx {
         $pathconfigs = array();
         $cols = array();
         $fields = array();
+        $colidx = 0;
         if (is_array($columns) && count($columns) > 0) {
             foreach ($columns as $key => $column) {
                 $field = array();
@@ -794,11 +795,13 @@ class Migx {
                         $handlers[] = $column['renderer'];
                     }
                     $cols[] = $col;
+                    $pathconfigs[$colidx] = isset($inputTvs[$field['name']]) ? $this->prepareSourceForGrid($inputTvs[$field['name']]) : array();
+                    $colidx++;
                 }
 
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
 
-                $pathconfigs[$key] = isset($inputTvs[$field['name']]) ? $this->prepareSourceForGrid($inputTvs[$field['name']]) : array();
+                
             }
         }
 
