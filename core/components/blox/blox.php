@@ -40,7 +40,7 @@ $bloxconfig['id_'] = isset($id) ? $id . '_' : ''; // [ string ]
 $bloxconfig['distinct'] = isset($distinct) && $distinct == '0' ? '' : 'distinct'; // 1 or 0 [ string ]
 $bloxconfig['projectname'] = (isset($project)) ? $project : 'blox';
 $bloxconfig['packagename'] = (isset($packagename)) ? $packagename : '';
-$bloxconfig['classname'] = (isset($classname)) ? $classname : 'modResource';
+$bloxconfig['classname'] = (isset($classname)) ? $classname : '';
 $bloxconfig['resourceclass'] = ($bloxconfig['classname'] !== '') ? 'modTable' : 'modDocument';
 $bloxconfig['resourceclass'] = (isset($resourceclass)) ? $resourceclass : $bloxconfig['resourceclass'];
 $bloxconfig['htmlouter'] = isset($htmlouter) ? $htmlouter : 'div';
@@ -80,19 +80,21 @@ $bloxconfig['custom'] = (isset($custom)) ? $custom : array();
 $bloxconfig['permissions'] = (isset($permissions)) ? $permissions : array();
 $bloxconfig['userID'] = $modx->getLoginUserID();
 
+$bloxconfig['pageVarKey'] = isset($pageVarKey) ? $pageVarKey : 'page';
+$bloxconfig['perPage'] = (isset($perPage)) ? $perPage : 10;
+$bloxconfig['numLinks'] = (isset($numLinks)) ? $numLinks : 5;
+$bloxconfig['page'] = ( isset($_GET[$bloxconfig['pageVarKey']]) && is_numeric($_GET[$bloxconfig['pageVarKey']])) ? $_GET[$bloxconfig['pageVarKey']] : '1';
+$bloxconfig['limit'] = (isset($limit)) ? $limit : $bloxconfig['perPage'];
+$bloxconfig['offset'] = isset($offset) ? $offset : '0';
+$bloxconfig['offset'] = $bloxconfig['page'] > 1 ? ($bloxconfig['page']-1) * $bloxconfig['limit'] : $bloxconfig['offset'];
 $bloxconfig['where'] = (isset($where)) ? $where : '*';
 $bloxconfig['queries'] = (isset($queries)) ? $queries : '*';
-$bloxconfig['limit'] = (isset($limit)) ? $limit : '';
-$bloxconfig['offset'] = (isset($offset)) ? $offset : '';
+
 $bloxconfig['selectfields'] = (isset($selectfields)) ? $selectfields : '';
 $bloxconfig['sortConfig'] = (isset($sortConfig)) ? $sortConfig : '';
 $bloxconfig['joins'] = (isset($joins)) ? $joins : '';
 
-$bloxconfig['perPage'] = (isset($perPage)) ? $perPage : 10;
-$bloxconfig['numLinks'] = (isset($numLinks)) ? $numLinks : 5;
-$bloxconfig['pageStart'] = (isset($pageStart)) ? $pageStart : 1;
-//Todo: pagestart+id for multiple containers with pagination
-$bloxconfig['pageStart'] = ( isset($_GET['pagestart']) && is_numeric($_GET['pagestart'])) ? $_GET['pagestart'] : $bloxconfig['pageStart'];
+
 
 //Parameter for xedit:
 $bloxconfig['keyField'] = (isset($keyField)) ? $keyField : 'id';
@@ -117,8 +119,9 @@ if ($bloxconfig['debug']) {
  * -------------------------------- */
 //Todo: make this better:
 foreach ($includes as $includeclass) {
+
 	if (!class_exists($includeclass)) {
-	    $includefile = $bloxconfig['absolutepath'] . 'inc/' . $includeclass . '.class.inc.php';
+		$includefile = $bloxconfig['absolutepath'] . 'inc/' . $includeclass . '.class.inc.php';
 		if (file_exists($includefile)) {
 			include_once($includefile);
 		} else {
@@ -151,9 +154,10 @@ foreach ($includes as $includeclass) {
 }
 
 //Output
+
 $output = $blox->displayblox();
 
 //store the blox-object for use in other scripts e.g. ajax-scripts
-$_SESSION['bloxobject'][$modx->resource->get('id')][$bloxconfig['id']] = $blox;
+//$_SESSION['bloxobject'][$modx->resource->get('id')][$bloxconfig['id']] = $blox;
 return $output;
 ?>

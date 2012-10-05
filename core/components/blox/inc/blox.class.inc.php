@@ -267,13 +267,13 @@ class blox {
 
         if (isset($row['tpl'])) {
             $tplfilename = $this->bloxconfig['tplpath'] . $row['tpl'];
-            if ($row['tpl'] !== '') {
-                if (file_exists($modx->getOption('core_path') . $tplfilename)) {
-                    $rowTpl = "@FILE:" . $tplfilename;
-                } elseif (file_exists($modx->getOption('core_path') . $tplfilename .'Tpl.html')) {
-                    $rowTpl = "@FILE:" . $tplfilename .'Tpl.html';
-                }
+            if (($row['tpl'] !== '') && (file_exists($modx->getOption('core_path') . $tplfilename))) {
+                $rowTpl = "@FILE:" . $tplfilename;
             }
+            $tplfilename = $this->bloxconfig['tplpath'] . $row['tpl'].'Tpl.html';
+            if (($row['tpl'] !== '') && (file_exists($modx->getOption('core_path') . $tplfilename))) {
+                $rowTpl = "@FILE:" . $tplfilename;
+            }            
         }
 
         if (substr($rowTpl, 0, 7) == '@FIELD:') {
@@ -291,7 +291,7 @@ class blox {
             foreach ($innerrows as $key => $innerrow) {
                 $innertpl = '';
                 if (isset($this->tpls[$key])) {
-                    $innertpl = $this->tpls[$key];
+                     $innertpl = $this->tpls[$key];
                 } else {
                     $tplfile = $this->bloxconfig['tplpath'] . "/" . $key . "Tpl.html";
                     if (file_exists($modx->getOption('core_path') . $tplfile)) {
@@ -341,12 +341,18 @@ class blox {
     function getdatas($date, $file) {
         global $modx;
         $file = $modx->getOption('core_path') . $file;
+        $classfile = str_replace('.php','.class.php',$file);
         if ($date == 'dayisempty') {
             $bloxdatas = array();
         } else {
-
+             
             if (file_exists($file)) {
-                include ($file);
+                include $file;
+            }elseif (file_exists($classfile)) {
+                $class = include $classfile;
+                $gd = new $class($this);
+                $bloxdatas = $gd->getdatas();
+                
             } else {
                 if ($this->bloxconfig['debug']) {
                     echo "<pre>File " . $file . " not found</pre>";
