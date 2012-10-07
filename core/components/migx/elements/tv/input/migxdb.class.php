@@ -47,6 +47,7 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender
         }        
         
         $this->setPlaceholder('i18n_migx_loadgrid', $this->migx->migxlang['migx.loadgrid']);
+        $this->setPlaceholder('tv_type', 'migxdb');
 
 
     }

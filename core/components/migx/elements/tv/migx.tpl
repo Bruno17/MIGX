@@ -1,4 +1,4 @@
-<input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv->get('value')|escape}"{$style} tvtype="{$tv->type}" />
+<input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv_value|escape}"{$style} tvtype="{$tv->type}" />
 <div id="tvpanel{$tv->id}" style="width:650px">
 </div>
 <div id="tvpanel2{$tv->id}">
@@ -67,6 +67,9 @@ MODx.window.UpdateTvItem = function(config) {
 };
 Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     submit: function() {
+        if (typeof(Tiny) != 'undefined') {
+            tinyMCE.triggerSave();
+        }            
         var v = this.fp.getForm().getValues();
         if (this.fp.getForm().isValid()) {
             var s = this.grid.getStore();
@@ -409,6 +412,8 @@ var lang = '{/literal}{$migx_lang}{literal}';
 			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'
+            ,tv_type: '{/literal}{$tv_type}{literal}'
+            ,url: MODx.config.assets_url+'components/migx/connector.php'
             ,width: '97%'			
         });
   

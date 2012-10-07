@@ -1,6 +1,19 @@
 {literal}
 MODx.grid.multiTVgrid = function(config) {
     config = config || {};
+    //var cols=[this.sm];
+    var cols=[];
+    // add empty pathconfig (source) to array to match number of col in renderimage
+    var renderer = null;
+	for(i = 0; i <  config.columns.length; i++) {
+        renderer = config.columns[i]['renderer'];
+        if (typeof renderer != 'undefined'){
+            config.columns[i]['renderer'] = {fn:eval(renderer),scope:this};
+        }
+        cols.push(config.columns[i]);
+    }
+    config.columns=cols;    
+        
 	Ext.applyIf(config,{
 	autoHeight: true,
     collapsible: true,
@@ -95,6 +108,7 @@ MODx.grid.multiTVgrid = function(config) {
     MODx.grid.multiTVgrid.superclass.constructor.call(this,config)
     this.getStore().pathconfigs=config.pathconfigs;
 	this.loadData();
+    this.on('click', this.onClick, this);  
 };
 Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     _renderUrl: function(v,md,rec) {
@@ -384,6 +398,20 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         
 		return;						 
     }
+	,onClick: function(e){
+		
+        var t = e.getTarget();
+        var elm = t.className.split(' ')[0];
+		if(elm == 'controlBtn') {
+            var handler = t.className.split(' ')[2];
+            var col = t.className.split(' ')[3];
+			var record = this.getSelectionModel().getSelected();
+            this.menu.record = record;
+            var fn = eval(handler);
+            fn = fn.createDelegate(this);
+            fn(null,e,col);
+ 		}
+	}       
 });
 Ext.reg('modx-grid-multitvgrid-{/literal}{$tv->id}{literal}',MODx.grid.multiTVgrid);
 {/literal}

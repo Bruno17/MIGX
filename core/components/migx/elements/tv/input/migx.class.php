@@ -98,7 +98,18 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         }
 
         //$newitem[] = $item;
-
+        $tv_value = $this->tv->processBindings($this->tv->get('value')); 
+        $default_value = $this->tv->processBindings($this->tv->get('default_text'));
+       
+        if (empty($tv_value) && !empty($default_value) ){
+           $tv_value = $default_value;
+        }
+        
+        $rows = $this->migx->checkRenderOptions($this->modx->fromJson($tv_value));
+        $tv_value = $this->modx->toJson($rows);
+        
+        $this->setPlaceholder('tv_type', 'migx');
+        $this->setPlaceholder('tv_value', $tv_value);
         $this->setPlaceholder('i18n', $lang);
         $this->setPlaceholder('properties', $properties);
         $this->setPlaceholder('resource', $resource_array);

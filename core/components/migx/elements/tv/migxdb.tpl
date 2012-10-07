@@ -98,6 +98,7 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'
             ,url: MODx.config.assets_url+'components/migx/connector.php'
+            ,tv_type: '{/literal}{$tv_type}{literal}'
             ,configs: '{/literal}{$properties.configs}{literal}'
             ,auth: '{/literal}{$auth}{literal}'
             ,resource_id: '{/literal}{$resource.id}{literal}' 

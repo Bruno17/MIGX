@@ -416,6 +416,7 @@ $gridfunctions['this.toggleDeleted'] = "
 
 $gridfunctions['this.handleColumnSwitch'] = "
 handleColumnSwitch: function(n,e,col) {
+    
     var btn,params;
     var column = this.getColumnModel().getColumnAt(col);
     var ro_json = this.menu.record.json[column.dataIndex+'_ro'];
@@ -428,10 +429,11 @@ handleColumnSwitch: function(n,e,col) {
             ,idx: ro.idx            
         }
         
-        this.loadWin(btn,e,'u', Ext.util.JSON.encode(params));        
+        this.loadWin(btn,e,'u', Ext.util.JSON.encode(params));
+        return;        
     }
 
-    return;
+   
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
@@ -439,12 +441,27 @@ handleColumnSwitch: function(n,e,col) {
                 ,processaction: 'handlecolumnswitch'
                 ,col: column.dataIndex
                 ,idx: ro.idx
+                ,tv_type: this.config.tv_type
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
             }
             ,listeners: {
-                'success': {fn:this.refresh,scope:this}
+                'success': {fn: function(res){ 
+                    
+                    res_object = res.object;
+                    if (res_object.tv_type == 'migx'){
+                        this.menu.record.json[column.dataIndex] = res_object.value;	
+                        this.menu.record.json[column.dataIndex+'_ro'] = Ext.util.JSON.encode(res_object);
+                        this.getView().refresh();
+                        this.collectItems();
+                        MODx.fireResourceFormChange();                        	                         
+                        return;
+                    }
+                    
+                    this.refresh();
+                    
+                    },scope:this }
             }
         });
     }	

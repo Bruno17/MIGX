@@ -58,6 +58,7 @@ if ($modx->lexicon) {
 
 $col = $modx->getOption('col', $scriptProperties, '');
 $idx = $modx->getOption('idx', $scriptProperties, '');
+$tv_type = $modx->getOption('tv_type', $scriptProperties, '');
 
 if (empty($col)) {
     return $modx->error->failure('no column');
@@ -70,6 +71,11 @@ $nextcolumnrenderoptions = isset($renderoptions[$idx+1]) ? $renderoptions[$idx+1
 $nextcolumnrenderoptions = $modx->fromJson($nextcolumnrenderoptions);
 
 $value = $nextcolumnrenderoptions['value']; 
+
+if ($tv_type == 'migx'){
+    $nextcolumnrenderoptions['tv_type'] = 'migx';
+    return $modx->error->success('',$nextcolumnrenderoptions);    
+}
 
 $object = $modx->getObject($classname, $scriptProperties['object_id']);
 $object->set($col, $value);
