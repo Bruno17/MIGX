@@ -858,6 +858,7 @@ class Migx {
         $columns = $this->getColumns();
         $columnrenderoptions = array();
         $optionscolumns = array();
+        if (is_array($columns)){
         foreach ($columns as $column) {
             if (isset($column['renderoptions']) && !empty($column['renderoptions'])) {
                 $options = $this->modx->fromJson($column['renderoptions']);
@@ -866,7 +867,9 @@ class Migx {
                     $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $this->modx->toJson($option);
                 }
             }
+        }            
         }
+
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 

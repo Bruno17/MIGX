@@ -16,7 +16,7 @@ if (!empty($category)){
 if ($collection = $modx->getCollection($classname,$c)){
     $i = 0;
     foreach ($collection as $object){
-        $row['MIGX_id'] = $i;
+        $row['MIGX_id'] = (string) $i;
         $row['name'] = $object->get('name');
         $row['selected'] = '0';
         $rows[] = $row;
