@@ -25,6 +25,7 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $maxFiles = $modx->getOption('maxFiles', $sourceProperties, '10');
         $thumbX = $modx->getOption('thumbX', $sourceProperties, '100');
         $thumbY = $modx->getOption('thumbY', $sourceProperties, '100');
+        $resizeConfigs = $modx->getOption('resizeconfigs', $sourceProperties, '');
         $thumbscontainer = $modx->getOption('thumbscontainer', $sourceProperties, 'thumbs/');
         $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif');
         $imageExtensions = explode(',', $imageExtensions);
@@ -47,8 +48,7 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $formUid = isset($uid) ? $uid : md5($modx->config['site_url']);
 
         if (!function_exists('includeFile')) {
-            function includeFile($name, $type = 'config', $defaultName = 'default', $fileType = '.inc.php')
-            {
+            function includeFile($name, $type = 'config', $defaultName = 'default', $fileType = '.inc.php') {
                 $folder = (substr($type, -1) != 'y') ? $type . 's/' : substr($folder, 0, -1) . 'ies/';
                 $allowedConfigs = glob(AIU_BASE_PATH . $folder . '*.' . $type . $fileType);
                 foreach ($allowedConfigs as $config) {
@@ -160,17 +160,17 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                     $result['filename'] = $baseUrl . $uniqueName;
                     //$result['fileid'] = end(array_keys($_SESSION['AjaxImageUpload'][$formUid]));
                     $result['url'] = $uniqueName;
-                    
+
                     $placeholder = array();
-                    $placeholder['fullRelativeUrl']=$result['filename'];
-                    $placeholder['url']=$result['url'];
-                    $placeholder['name']=$uniqueName;
-                    $placeholder['size']=$uploader->filesize;
-                    $placeholder['lastmod']=time();
-                    
-                    $result['microtime'] = str_replace(array(' ','.'),array('',''), microtime());
-                                        
-                    $placeholder['deleteButton'] = '<div id="'.$result['microtime'].'"  class="delete-button"><a>' . $language['deleteButton'] . '</a></div>';
+                    $placeholder['fullRelativeUrl'] = $result['filename'];
+                    $placeholder['url'] = $result['url'];
+                    $placeholder['name'] = $uniqueName;
+                    $placeholder['size'] = $uploader->filesize;
+                    $placeholder['lastmod'] = time();
+
+                    $result['microtime'] = str_replace(array(' ', '.'), array('', ''), microtime());
+
+                    $placeholder['deleteButton'] = '<div id="' . $result['microtime'] . '"  class="delete-button"><a>' . $language['deleteButton'] . '</a></div>';
 
                     if (in_array($uploader->extension, $imageExtensions)) {
                         // generate thumbname
@@ -181,11 +181,34 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                         $thumb->adaptiveResize($thumbX, $thumbY);
                         $thumb->save($path . $thumbscontainer . $uniqueName);
                         $result['filename'] = $baseUrl . $thumbscontainer . $uniqueName;
-                        $placeholder['fullRelativeUrl']=$result['filename'];
-                        $result['html'] = $modx->migx->parseChunk($imageTpl,$placeholder);
-                    }
-                    else{
-                        $result['html'] = $modx->migx->parseChunk($fileTpl,$placeholder);    
+                        $placeholder['fullRelativeUrl'] = $result['filename'];
+                        $result['html'] = $modx->migx->parseChunk($imageTpl, $placeholder);
+                        if (!empty($resizeConfigs)) {
+
+                            $resizeConfigs = $modx->fromJson($resizeConfigs);
+
+                            foreach ($resizeConfigs as $rc) {
+                                if (isset($rc['x']) && isset($rc['y'])) {
+                                    $container = isset($rc['alias']) ? $rc['alias'] . '/' : $rc['x'] . 'x' . $rc['y'] . '/';
+                                    if (!file_exists(AIU_CACHE_PATH . $container)) {
+                                        mkdir(AIU_CACHE_PATH . $container, 0755);
+                                    }
+                                    $thumb = PhpThumbFactory::create($path . $originalName);
+                                    if (isset($rc['crop'])&&!empty($rc['crop'])){
+                                        $thumb->adaptiveResize($rc['x'], $rc['y']);
+                                    }
+                                    else{
+                                        $thumb->resize($rc['x'], $rc['y']);    
+                                    }
+                                    $thumb->save($path . $container . $originalName);
+                                }
+
+                            }
+
+
+                        }
+                    } else {
+                        $result['html'] = $modx->migx->parseChunk($fileTpl, $placeholder);
                     }
 
                 } else {

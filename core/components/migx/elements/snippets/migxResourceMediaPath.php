@@ -2,8 +2,8 @@
 
 $pathTpl = $modx->getOption('pathTpl', $scriptProperties, '');
 $docid = $modx->getOption('docid', $scriptProperties, '');
-$createfolder = $modx->getOption('creatFolder', $scriptProperties, false);
-
+$createfolder = $modx->getOption('createFolder', $scriptProperties, false);
+$path = '';
 $createpath = false;
 
 if (empty($docid) && $modx->getPlaceholder('docid')) {
@@ -29,12 +29,15 @@ if (empty($docid)) {
     }
 }
 
+if ($resource = $modx->getObject('modResource', $docid)) {
+    $path = str_replace('{id}', $docid, $pathTpl);
+    $path = str_replace('{pagetitle}', $resource->get('pagetitle'), $pathTpl);
+    
+    $fullpath = $modx->getOption('base_path') . $path;
 
-$path = str_replace('{id}', $docid, $pathTpl);
-$fullpath = $modx->getOption('base_path') . $path;
+    if ($createpath && !file_exists($fullpath)) {
+        mkdir($fullpath, 0755, true);
+    }
 
-if ($createpath && !file_exists($fullpath)) {
-    mkdir($fullpath, 0755, true);
+    return $path;
 }
-
-return $path;

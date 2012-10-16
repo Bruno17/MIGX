@@ -302,7 +302,7 @@ renderSwitchStatusOptions : function(val, md, rec, row, col, s) {
     var renderImage, altText, handler, classname;
     renderImage = ro.image;
     handler = ro.handler;
-    if (handler == ''){
+    if (typeof(handler) == 'undefined' || handler == ''){
         handler = 'this.handleColumnSwitch'
     }
     classname = ro.name;
