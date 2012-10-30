@@ -27,7 +27,7 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $thumbY = $modx->getOption('thumbY', $sourceProperties, '100');
         $resizeConfigs = $modx->getOption('resizeconfigs', $sourceProperties, '');
         $thumbscontainer = $modx->getOption('thumbscontainer', $sourceProperties, 'thumbs/');
-        $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif');
+        $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif,JPG');
         $imageExtensions = explode(',', $imageExtensions);
         $uniqueFilenames = $modx->getOption('uniqueFilenames', $sourceProperties, false);
 

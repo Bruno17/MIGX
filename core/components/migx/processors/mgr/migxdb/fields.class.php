@@ -28,7 +28,7 @@ class migxFormProcessor extends modProcessor {
         $action = '';
         if (!empty($tempParams)) {
             $tempParams = $this->modx->fromJson($tempParams);
-            if (isset($tempParams['action']) && !empty($tempParams['action'])) {
+            if (array_key_exists('action',$tempParams) && !empty($tempParams['action'])) {
                 $action = strtolower($tempParams['action']) ;
                 if ($action == 'showselector'){
                     $scriptProperties['configs'] = $action;

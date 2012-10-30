@@ -1337,6 +1337,7 @@ class Migx {
                 $subject = $item[$field];
 
                 $operator = isset($key[1]) ? $key[1] : '=';
+                $params = isset($key[2]) ? $key[2] : '';
                 $operator = strtolower($operator);
                 switch ($operator) {
                     case '!=':
@@ -1402,6 +1403,13 @@ class Migx {
                         $subject = explode('||', $subject);
                         $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
                         break;
+                    case 'contains':
+                        $output = strpos($subject,$operand) !== false ? $then : (isset($else) ? $else : '');
+                        break;
+                    case 'snippet':
+                        $result = $this->modx->runSnippet($params,array('subject'=>$subject,'operand'=>$operand));
+                        $output = !empty($result) ? $then : (isset($else) ? $else : '');
+                        break;                                                    
                     case '==':
                     case '=':
                     case 'eq':
