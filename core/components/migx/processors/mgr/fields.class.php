@@ -83,6 +83,8 @@ class migxFormProcessor extends modProcessor
             $migxid = $record['MIGX_id'];
         }
         $controller->setPlaceholder('migxid', $migxid);
+        
+        $formtabs = $this->modx->migx->checkMultipleForms($formtabs,$controller,$allfields,$record);
 
         if (empty($formtabs)) {
 
