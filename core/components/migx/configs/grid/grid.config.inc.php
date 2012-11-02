@@ -55,6 +55,16 @@ $gridcontextmenus['update']['code']="
 ";
 $gridcontextmenus['update']['handler'] = 'this.update';
 
+$gridcontextmenus['duplicate']['code']="
+        m.push({
+            className : 'duplicate', 
+            text: _('migx.duplicate'),
+            handler: 'this.duplicate'
+        });
+        m.push('-');
+";
+$gridcontextmenus['duplicate']['handler'] = 'this.duplicate';
+
 $gridcontextmenus['publish']['code']="
         if (n.published == 0) {
             m.push({
@@ -395,6 +405,15 @@ remove: function() {
 $gridfunctions['this.update'] = "
 update: function(btn,e) {
       this.loadWin(btn,e,'u');
+    }
+";
+
+$gridfunctions['this.duplicate'] = "
+duplicate: function(btn,e) {
+      params = {
+          duplicate: '1'
+      }          
+      this.loadWin(btn,e,'d',Ext.util.JSON.encode(params));
     }
 ";
 

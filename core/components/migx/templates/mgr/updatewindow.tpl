@@ -56,9 +56,11 @@ MODx.window.UpdateTvdbItem = function(config) {
 Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     submit: function() {
         var v = this.fp.getForm().getValues();
+        var object_id = this.baseParams.object_id;
         if (this.fp.getForm().isValid()) {
             if (this.action == 'd'){
-                MODx.fireResourceFormChange();     
+                MODx.fireResourceFormChange();
+                object_id = 'new';     
             }
             if (this.action == 'u'){
                 /*update record*/
@@ -87,7 +89,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
 				,configs: this.grid.configs
                 ,resource_id: this.grid.resource_id
                 ,co_id: this.grid.co_id
-                ,object_id: this.baseParams.object_id
+                ,object_id: object_id
                 ,tv_id: this.baseParams.tv_id
                 ,wctx: this.baseParams.wctx
             }
