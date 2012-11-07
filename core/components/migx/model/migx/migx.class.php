@@ -885,7 +885,7 @@ class Migx {
                     $row[$column . '_ro'] = isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
                     foreach ($options as $option){
                         if ($option['_renderer']=='this.renderChunk'){
-                            $row[$column . '_rc'] = $this->modx->getChunk($option['name'],$row);
+                            $row[$column] = $this->modx->getChunk($option['name'],$row);
                         }
                         break;    
                     }

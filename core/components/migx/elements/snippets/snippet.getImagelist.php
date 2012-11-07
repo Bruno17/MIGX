@@ -60,6 +60,7 @@ $docidVarKey = $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
 $docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? $modx->resource->get('id') : 1));
 $docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
 $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
+$reverse = $modx->getOption('reverse', $scriptProperties, '0');
 
 $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
@@ -132,6 +133,11 @@ $modx->setPlaceholder($totalVar, count($items));
 if (is_array($where) && count($where) > 0) {
     $items = $migx->filterItems($where, $items);
 }
+
+if (!empty ($reverse)){
+    $items = array_reverse($items);
+}
+
 
 // sort items
 if (is_array($sort) && count($sort) > 0) {
