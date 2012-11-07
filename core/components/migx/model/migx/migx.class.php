@@ -854,7 +854,7 @@ class Migx {
 
     }
 
-    function getColumnRenderOptions($col, $indexfield = 'idx') {
+    function getColumnRenderOptions($col, $indexfield = 'idx' , $format='json') {
         $columns = $this->getColumns();
         $columnrenderoptions = array();
         $optionscolumns = array();
@@ -864,7 +864,8 @@ class Migx {
                 $options = $this->modx->fromJson($column['renderoptions']);
                 foreach ($options as $key => $option) {
                     $option['idx'] = $key;
-                    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $this->modx->toJson($option);
+                    $option['_renderer'] = $column['renderer'];
+                    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
                 }
             }
         }            
@@ -874,13 +875,20 @@ class Migx {
     }
 
     function checkRenderOptions($rows) {
-        $columnrenderoptions = $this->getColumnRenderOptions('*', 'value');
+        $columnrenderoptions = $this->getColumnRenderOptions('*', 'value','array');
+        //print_r($columnrenderoptions);
         $outputrows = $rows;
         if (count($columnrenderoptions) > 0) {
             $outputrows = array();
             foreach ($rows as $row) {
                 foreach ($columnrenderoptions as $column => $options) {
-                    $row[$column . '_ro'] = isset($options[$row[$column]]) ? $options[$row[$column]] : '';
+                    $row[$column . '_ro'] = isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
+                    foreach ($options as $option){
+                        if ($option['_renderer']=='this.renderChunk'){
+                            $row[$column . '_rc'] = $this->modx->getChunk($option['name'],$row);
+                        }
+                        break;    
+                    }
                 }
                 $outputrows[] = $row;
             }

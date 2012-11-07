@@ -327,6 +327,12 @@ $renderer['this.renderRowActions'] = "
 	} 
 ";
 
+$renderer['this.renderChunk'] = "
+renderChunk : function(val, md, rec, row, col, s) {
+    return val;
+}
+";
+
 $renderer['this.renderDate'] = "
 renderDate : function(val, md, rec, row, col, s) {
     var date;
