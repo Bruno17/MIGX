@@ -286,7 +286,8 @@ class Migx {
 
             foreach ($configs as $config) {
 
-                if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config))) {
+                if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config,'deleted'=>'0'))) {
+                              
                     $extended = $cfObject->get('extended');
                     $packageName = $this->modx->getOption('packageName', $extended, '');
                 }
