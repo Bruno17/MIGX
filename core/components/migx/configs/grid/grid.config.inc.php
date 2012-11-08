@@ -317,7 +317,7 @@ renderSwitchStatusOptions : function(val, md, rec, row, col, s) {
     }
     classname = ro.name;
     altText = ro.name;
-    return String.format('{$img}', renderImage, altText, altText, classname, handler, col);
+    return String.format('{$img}', renderImage, altText, altText, classname, handler, column.dataIndex);
 }
 ";
 
@@ -338,10 +338,12 @@ renderDate : function(val, md, rec, row, col, s) {
     var date;
 	if (val && val != '') {
 		date = Date.parseDate(val, 'Y-m-d H:i:s');
-		return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
-	} else {
-		return '';
-	}
+        if (typeof(date) != 'undefined' ){
+		    return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
+        }    
+	} 
+	return '';
+	
 }
 ";
 
@@ -443,14 +445,14 @@ $gridfunctions['this.handleColumnSwitch'] = "
 handleColumnSwitch: function(n,e,col) {
     
     var btn,params;
-    var column = this.getColumnModel().getColumnAt(col);
-    var ro_json = this.menu.record.json[column.dataIndex+'_ro'];
+    var column = col;
+    var ro_json = this.menu.record.json[column+'_ro'];
     var ro = Ext.util.JSON.decode(ro_json);
     if (ro.clickaction == 'showSelector'){
         console.log(ro);
         params = {
             action: ro.clickaction
-            ,col: column.dataIndex
+            ,col: col
             ,idx: ro.idx            
         }
         
@@ -464,7 +466,7 @@ handleColumnSwitch: function(n,e,col) {
             ,params: {
                 action: 'mgr/migxdb/process'
                 ,processaction: 'handlecolumnswitch'
-                ,col: column.dataIndex
+                ,col: column
                 ,idx: ro.idx
                 ,tv_type: this.config.tv_type
                 ,object_id: this.menu.record.id
@@ -476,8 +478,8 @@ handleColumnSwitch: function(n,e,col) {
                     
                     res_object = res.object;
                     if (res_object.tv_type == 'migx'){
-                        this.menu.record.json[column.dataIndex] = res_object.value;	
-                        this.menu.record.json[column.dataIndex+'_ro'] = Ext.util.JSON.encode(res_object);
+                        this.menu.record.json[column] = res_object.value;	
+                        this.menu.record.json[column+'_ro'] = Ext.util.JSON.encode(res_object);
                         this.getView().refresh();
                         this.collectItems();
                         MODx.fireResourceFormChange();                        	                         
