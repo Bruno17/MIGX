@@ -389,13 +389,56 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		for(i = 0; i <  griddata.length; i++) {
  			items.push(griddata.items[i].json);
         }
+
+        items = Ext.util.JSON.encode(items); 
+
+        MODx.Ajax.request({
+            url: MODx.config.assets_url+'components/migx/connector.php'
+            ,params: {
+                action: 'mgr/migxdb/process'
+                ,processaction: 'collectmigxitems'
+                ,resource_id: '{/literal}{$resource.id}{literal}'
+				,co_id: '{/literal}{$connected_object_id}{literal}'
+                ,tv_name: '{/literal}{$tv->name}{literal}'
+                ,items: items 
+                ,configs: '{/literal}{$properties.configs}{literal}'      
+                
+            }
+            ,listeners: {
+                'success': {fn:function(res){
+                    if (res.message==''){
+                        var items = res.object;
+                        Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
+                        this.autoinc = 0;
+                        for(i = 0; i <  items.length; i++) {
+ 		                    item = items[i];
+                            if (item.MIGX_id){
+                                if (parseInt(item.MIGX_id)  > this.autoinc){
+                                    this.autoinc = item.MIGX_id;
+                                }
+                            }else{
+                                item.MIGX_id = this.autoinc +1 ;
+                                this.autoinc = item.MIGX_id;                 
+                            }	
+                            items[i] = item;  
+                        } 
+        
+		                this.getStore().sortInfo = null;
+		                this.getStore().loadData(items);                                                    
+                    }
+                    
+                },scope:this}
+            }
+        });          
+        
+        /*
         if (items.length >0){
            Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items); 
         }
         else{
            Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = '';  
         }
-        
+        */
 		return;						 
     }
 	,onClick: function(e){

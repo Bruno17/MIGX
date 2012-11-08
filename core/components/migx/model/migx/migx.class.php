@@ -857,6 +857,7 @@ class Migx {
 
     function getColumnRenderOptions($col, $indexfield = 'idx' , $format='json') {
         $columns = $this->getColumns();
+        //print_r($columns);
         $columnrenderoptions = array();
         $optionscolumns = array();
         if (is_array($columns)){

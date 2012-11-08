@@ -67,7 +67,7 @@ $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
 $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
 if (!($migx instanceof Migx)) return '';
-$migx->working_context = $modx->resource->get('context_key');
+$migx->working_context = isset($modx->resource) ? $modx->resource->get('context_key'): 'web';
 
 
 if (!empty($tvname)) {
