@@ -1,16 +1,8 @@
 <?php
-$query = $this->prepareQuery($this->bloxconfig, $this->totalCount);
-$collection = $modx->getCollection('modResource', $query);
+$rows = $this->getResources($this->bloxconfig);
 
-//echo '<pre>' . print_r($this->bloxconfig, true) . '</pre>';
-//$query->prepare();
-//die($query->toSql());
-
-
-$rows = array();
 $i = 0;
-foreach ($collection as $object) {
-	$row = $object->toArray();
+foreach ($rows as &$row) {
 	if (!$i) {
 		$this->columnNames = array_keys($row);
 	}
@@ -20,12 +12,11 @@ foreach ($collection as $object) {
 			$colums[] = array('value' => $value, 'fieldname' => $fieldname);
 		}
 		$row['innerrows']['rowvalue'] = $colums;
-		$rows[] = $row;
 	}
 	$i++;
 }
 
-$numRows = $this->totalCount;
+$numRows = count($rows);
 require_once ($this->bloxconfig['absolutepath'] . 'inc/Pagination.php');
 $p = new Pagination(array('per_page' => $perPage,
 			'num_links' => $this->bloxconfig['numLinks'],
@@ -43,7 +34,9 @@ $bloxdatas['innerrows']['fieldnames'] = $fieldnames;
 $bloxdatas['pagination'] = $p->create_links();
 $bloxdatas['innerrows']['row'] = $rows;
 
-//echo '<pre>' . print_r($bloxdatas, true) . '</pre>';
-//echo '---------------------------------------';
-//echo '<pre>' . print_r($rows, true) . '</pre>';
+if ($this->bloxconfig['debug']) {
+	//echo '<pre>' . print_r($bloxdatas, true) . '</pre>';
+	//echo '---------------------------------------';
+	//echo '<pre>' . print_r($rows, true) . '</pre>';
+}
 ?>
