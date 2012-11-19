@@ -1,45 +1,31 @@
 <?php
-/**
- * bloX
- *
- * Copyright 2009-2012 by Bruno Perner <b.perner@gmx.de>
- *
- * bloX is free software; you can redistribute it and/or modify it under the 
- * terms of the GNU General Public License as published by the Free Software 
- * Foundation; either version 2 of the License, or (at your option) any 
- * later version.
- *
- * bloX is distributed in the hope that it will be useful, but WITHOUT ANY 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * bloX; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA
- *
- * @package blox
- * @subpackage snippet
+/*
+ * rowTpl - 
+ * &rowTpl = `@FIELD:`
+ * &xeditTabs = `@FIELD:` - Datensatzfeld, wechselnd von Datensatz zu Datensatz 
+ * &xeditTabs = `@TV:` - in TV des aufrufenden Documents - done
+ * 
+ * 
+ * container-typen einbauen
+ * 
+ * 
+ * Todos:  
+ * dokumentengruppen in getdocs
+ * 
  */
-$bloxconfig = $array;
+$bloxconfig = array();
 $bloxconfig['path'] = 'components/blox/';
 $bloxconfig['absolutepath'] = $modx->getOption('core_path') . $bloxconfig['path'];
 
-// Include config files
-$configs = explode(',', $modx->getOption('configs', $scriptProperties, ''));
+$configs = ( isset($configs)) ? explode(',', $configs) : array();
+$configs = array_merge(array('master'), $configs);
 
-foreach ($configs as $configName) {
-	$configFile = $bloxconfig['absolutepath'] . 'configs/' . $configName . '.config.inc.php'; // [ file ]
+foreach ($configs as $config) {
+	$configFile = $bloxconfig['absolutepath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
 	if (file_exists($configFile)) {
 		include($configFile);
-		if (isset($config) && is_array($config)) {
-			$scriptProperties = array_merge($scriptProperties, $config);
-		}
-		unset($config);
 	}
 }
-$bloxconfig = array_merge($bloxconfig, $scriptProperties);
-
 $includes = (isset($includes)) ? explode(',', $includes) : array();
 $includes = array_merge(array('blox', 'chunkie'), $includes);
 
@@ -48,23 +34,31 @@ if (file_exists($adodbFile)) {
 	include_once($adodbFile);
 }
 
-// Set defaults
-$bloxconfig['id'] = $modx->getOption('id', $scriptProperties, ''); // [ string ]
-$bloxconfig['id_'] = ($bloxconfig['id'] != '') ? $bloxconfig['id'] . '_' : ''; // [ string ]
-$bloxconfig['distinct'] = (intval($modx->getOption('distinct', $scriptProperties, '1'))) ? 'distinct' : ''; // 1 or 0 [ string ]
-$bloxconfig['projectname'] = $modx->getOption('project', $scriptProperties, 'blox');
-$bloxconfig['packagename'] = $modx->getOption('packagename', $scriptProperties, '');
-$bloxconfig['classname'] = $modx->getOption('classname', $scriptProperties, 'modResource');
-$bloxconfig['resourceclass'] = $modx->getOption('resourceclass', $scriptProperties, ($bloxconfig['classname'] !== 'modResource') ? 'modTable' : 'modResource');
-$bloxconfig['htmlouter'] = $modx->getOption('htmlouter', $scriptProperties, 'div');
-$bloxconfig['project'] = $modx->getOption('project', $scriptProperties, '');
-$bloxconfig['projectpath'] = ($bloxconfig['project'] != '') ? $bloxconfig['path'] . "projects/custom/" . $bloxconfig['project'] . '/' : $bloxconfig['path'] . "projects/blox/" . $bloxconfig['resourceclass'] . '/';
-$bloxconfig['task'] = $modx->getOption('task', $scriptProperties, $bloxconfig['htmlouter']);
-$bloxconfig['outputSeparator'] = $modx->getOption('outputSeparator', $scriptProperties, '');
+$bloxconfig['scriptProperties'] = $scriptProperties;
+$bloxconfig['id'] = isset($id) ? $id : ''; // [ string ]
+$bloxconfig['id_'] = isset($id) ? $id . '_' : ''; // [ string ]
+$bloxconfig['distinct'] = isset($distinct) && $distinct == '0' ? '' : 'distinct'; // 1 or 0 [ string ]
+$bloxconfig['projectname'] = (isset($project)) ? $project : 'blox';
+$bloxconfig['packagename'] = (isset($packagename)) ? $packagename : '';
+$bloxconfig['classname'] = (isset($classname)) ? $classname : '';
+$bloxconfig['resourceclass'] = ($bloxconfig['classname'] !== '') ? 'modTable' : 'modDocument';
+$bloxconfig['resourceclass'] = (isset($resourceclass)) ? $resourceclass : $bloxconfig['resourceclass'];
+$bloxconfig['htmlouter'] = isset($htmlouter) ? $htmlouter : 'div';
+$bloxconfig['projectpath'] = $bloxconfig['path'] . "projects/blox/" . $bloxconfig['resourceclass'] . '/';
+$bloxconfig['projectpath'] = (isset($project)) ? $bloxconfig['path'] . "projects/custom/" . $project . '/' : $bloxconfig['projectpath'];
+$bloxconfig['processTVs'] = (isset($processTVs)) ? $processTVs : '0';
 
-$bloxconfig['tpls'] = $modx->getOption('tpls', $scriptProperties, '');
-$bloxconfig['tplpath'] = (($tplpath = $modx->getOption('tplpath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $tplpath : $bloxconfig['projectpath'] . $bloxconfig['task'] . "/templates/";
-$bloxconfig['includespath'] = (($includespath = $modx->getOption('includespath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $includespath : $bloxconfig['projectpath'] . $bloxconfig['task'] . "/includes/";
+//use htmlouter div,table,ul as task if nothing else defined
+//see projects/blox/...
+$bloxconfig['task'] = (isset($task)) ? $task : $bloxconfig['htmlouter'];
+
+$bloxconfig['tpls'] = isset($tpls) ? $tpls : '';
+$bloxconfig['tplpath'] = (isset($tpl_path)) ? $bloxconfig['projectpath'] . "templates/" . $tpl_path : '';
+$bloxconfig['tplpath'] = ($bloxconfig['tplpath'] == '') ? $bloxconfig['projectpath'] . $bloxconfig['task'] . "/templates/" : $bloxconfig['tplpath'];
+$bloxconfig['outputSeparator'] = isset($outputSeparator) ? $outputSeparator : '';
+
+$bloxconfig['includespath'] = (isset($includes_path)) ? $bloxconfig['projectpath'] . $includes_path : '';
+$bloxconfig['includespath'] = ($bloxconfig['includespath'] == '') ? $bloxconfig['projectpath'] . $bloxconfig['task'] . "/includes/" : $bloxconfig['includespath'];
 $bloxconfig['cachepath'] = $bloxconfig['path'] . 'cache/';
 $bloxconfig['includesfile'] = $bloxconfig['includespath'] . "getdatas.php"; // [ file ]
 $bloxconfig['onsavefile'] = $bloxconfig['includespath'] . "onsavedatas.php"; // [ file ]
@@ -74,49 +68,56 @@ $timestampday = xetadodb_strftime("%d", $timestamp);
 $timestampmonth = xetadodb_strftime("%m", $timestamp);
 $timestampyear = xetadodb_strftime("%Y", $timestamp);
 $bloxconfig['nowtimestamp'] = $timestamp;
-$bloxconfig['day'] = $modx->getOption('day', $scriptProperties, $timestampday);
+$bloxconfig['day'] = (isset($day)) ? $day : $timestampday;
 $bloxconfig['day'] = (isset($_REQUEST['day']) && (trim($_REQUEST['day'] !== ''))) ? (string) intval($_REQUEST['day']) : $bloxconfig['day'];
-$bloxconfig['month'] = $modx->getOption('month', $scriptProperties, $timestampmonth);
+$bloxconfig['month'] = (isset($month)) ? $month : $timestampmonth;
 $bloxconfig['month'] = (isset($_REQUEST['month']) && (trim($_REQUEST['month'] !== ''))) ? (string) intval($_REQUEST['month']) : $bloxconfig['month'];
-$bloxconfig['year'] = $modx->getOption('year', $scriptProperties, $timestampyear);
+$bloxconfig['year'] = (isset($year)) ? $year : $timestampyear;
 $bloxconfig['year'] = (isset($_REQUEST['year']) && (trim($_REQUEST['year'] !== ''))) ? (string) intval($_REQUEST['year']) : $bloxconfig['year'];
 
+$bloxconfig['processpost'] = (isset($processpost)) ? $processpost : '1';
+$bloxconfig['custom'] = (isset($custom)) ? $custom : array();
+$bloxconfig['permissions'] = (isset($permissions)) ? $permissions : array();
 $bloxconfig['userID'] = $modx->getLoginUserID();
 
-$bloxconfig['pageVarKey'] = $modx->getOption('pageVarKey', $scriptProperties, 'page');
-$bloxconfig['perPage'] = intval($modx->getOption('perPage', $scriptProperties, '10'));
-$bloxconfig['numLinks'] = intval($modx->getOption('numLinks', $scriptProperties, '5'));
-$bloxconfig['page'] = (isset($_GET[$bloxconfig['pageVarKey']]) && is_numeric($_GET[$bloxconfig['pageVarKey']])) ? $_GET[$bloxconfig['pageVarKey']] : '1';
-$bloxconfig['limit'] = $modx->getOption('limit', $scriptProperties, $bloxconfig['perPage']);
-$bloxconfig['offset'] = $modx->getOption('offset', $scriptProperties, '0');
-$bloxconfig['offset'] = $bloxconfig['page'] > 1 ? ($bloxconfig['page'] - 1) * $bloxconfig['limit'] : $bloxconfig['offset'];
-$bloxconfig['where'] = $modx->getOption('where', $scriptProperties, '');
-$bloxconfig['queries'] = $modx->getOption('queries', $scriptProperties, '*');
+$bloxconfig['pageVarKey'] = isset($pageVarKey) ? $pageVarKey : 'page';
+$bloxconfig['perPage'] = (isset($perPage)) ? $perPage : 10;
+$bloxconfig['numLinks'] = (isset($numLinks)) ? $numLinks : 5;
+$bloxconfig['page'] = ( isset($_GET[$bloxconfig['pageVarKey']]) && is_numeric($_GET[$bloxconfig['pageVarKey']])) ? $_GET[$bloxconfig['pageVarKey']] : '1';
+$bloxconfig['limit'] = (isset($limit)) ? $limit : $bloxconfig['perPage'];
+$bloxconfig['offset'] = isset($offset) ? $offset : '0';
+$bloxconfig['offset'] = $bloxconfig['page'] > 1 ? ($bloxconfig['page']-1) * $bloxconfig['limit'] : $bloxconfig['offset'];
+$bloxconfig['where'] = (isset($where)) ? $where : '*';
+$bloxconfig['queries'] = (isset($queries)) ? $queries : '*';
 
-$bloxconfig['selectfields'] = $modx->getOption('selectfields', $scriptProperties, '');
-$bloxconfig['sortConfig'] = $modx->getOption('sortConfig', $scriptProperties, '');
-$bloxconfig['joins'] = $modx->getOption('joins', $scriptProperties, '');
+$bloxconfig['selectfields'] = (isset($selectfields)) ? $selectfields : '';
+$bloxconfig['sortConfig'] = (isset($sortConfig)) ? $sortConfig : '';
+$bloxconfig['joins'] = (isset($joins)) ? $joins : '';
+
+
 
 //Parameter for xedit:
-$bloxconfig['keyField'] = $modx->getOption('keyField', $scriptProperties, 'id');
-$bloxconfig['parents'] = $modx->getOption('parents', $scriptProperties, '0');
-$bloxconfig['depth'] = $modx->getOption('depth', $scriptProperties, '1');
-$bloxconfig['bloxfolder'] = $modx->getOption('bloxfolder', $scriptProperties, ''); // together with the first id in &parents here comes the pagetitle of subfolder for bloxcontainer
-$bloxconfig['documents'] = $modx->getOption('documents', $scriptProperties, '999999999');
-$bloxconfig['IDs'] = $modx->getOption('IDs', $scriptProperties, $bloxconfig['documents']);
-$bloxconfig['filter'] = $modx->getOption('filter', $scriptProperties, '');
+$bloxconfig['keyField'] = (isset($keyField)) ? $keyField : 'id';
+$bloxconfig['parents'] = (isset($parents)) ? $parents : '';
+$bloxconfig['depth'] = (isset($depth)) ? $depth : '1';
+$bloxconfig['bloxfolder'] = (isset($bloxfolder)) ? $bloxfolder : ''; //together with the first id in &parents here comes the pagetitle of subfolder for bloxcontainer
+$bloxconfig['documents'] = (isset($documents)) ? trim($documents) == '' ? '999999999' : $documents  : '';
+$bloxconfig['IDs'] = (isset($IDs)) ? $IDs : $bloxconfig['documents'];
+$bloxconfig['filter'] = (isset($filter)) ? $filter : '';
 
-$bloxconfig['showdeleted'] = $modx->getOption('showdeleted', $scriptProperties, '0'); // 0 = no, 1 = yes, 2 = only deleted
-$bloxconfig['showunpublished'] = $modx->getOption('showunpublished', $scriptProperties, '0');
+$bloxconfig['showdeleted'] = (isset($showdeleted)) ? $showdeleted : '0'; //0 = no, 1 = yes, 2 = only deleted
+$bloxconfig['showunpublished'] = (isset($showunpublished)) ? $showunpublished : '0';
 
-$bloxconfig['debug'] = intval($modx->getOption('debug', $scriptProperties, '0'));
-$bloxconfig['debugTime'] = intval($modx->getOption('debugTime', $scriptProperties, '0'));
+$bloxconfig['debug'] = (isset($debug)) ? intval($debug) : 0;
 
 if ($bloxconfig['debug']) {
 	echo '<pre>' . print_r($bloxconfig, true) . '</pre>';
 }
 
-// Include classes
+/* --------------------------------
+ *  SNIPPET LOGIC CODE STARTS HERE
+ * -------------------------------- */
+//Todo: make this better:
 foreach ($includes as $includeclass) {
 
 	if (!class_exists($includeclass)) {
@@ -125,7 +126,7 @@ foreach ($includes as $includeclass) {
 			include_once($includefile);
 		} else {
 			$output = 'Cannot find ' . $includeclass . ' class file! (' . $includefile . ')';
-			return $output;
+			return;
 		}
 	}
 
@@ -136,7 +137,7 @@ foreach ($includes as $includeclass) {
 				$blox = new blox($bloxconfig);
 			} else {
 				$output = $includeclass . ' class not found';
-				return $output;
+				return;
 			}
 			break;
 		case 'xettcal':
@@ -146,17 +147,17 @@ foreach ($includes as $includeclass) {
 				$blox->xettcal->blox = &$blox;
 			} else {
 				$output = $includeclass . ' class not found';
-				return $output;
+				return;
 			}
 			break;
 	}
 }
 
-// Output
+//Output
+
 $output = $blox->displayblox();
 
 //store the blox-object for use in other scripts e.g. ajax-scripts
 //$_SESSION['bloxobject'][$modx->resource->get('id')][$bloxconfig['id']] = $blox;
-
 return $output;
 ?>
