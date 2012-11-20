@@ -21,6 +21,7 @@
  * @package blox
  * @subpackage snippet
  */
+ 
 $bloxconfig = $array;
 $bloxconfig['path'] = 'components/blox/';
 $bloxconfig['absolutepath'] = $modx->getOption('core_path') . $bloxconfig['path'];
@@ -58,6 +59,7 @@ $bloxconfig['classname'] = $modx->getOption('classname', $scriptProperties, 'mod
 $bloxconfig['resourceclass'] = $modx->getOption('resourceclass', $scriptProperties, ($bloxconfig['classname'] !== 'modResource') ? 'modTable' : 'modResource');
 $bloxconfig['htmlouter'] = $modx->getOption('htmlouter', $scriptProperties, 'div');
 $bloxconfig['project'] = $modx->getOption('project', $scriptProperties, '');
+$bloxconfig['projectparent'] = $bloxconfig['project'] != '' ? 'custom' : 'blox';
 $bloxconfig['projectpath'] = ($bloxconfig['project'] != '') ? $bloxconfig['path'] . "projects/custom/" . $bloxconfig['project'] . '/' : $bloxconfig['path'] . "projects/blox/" . $bloxconfig['resourceclass'] . '/';
 $bloxconfig['task'] = $modx->getOption('task', $scriptProperties, $bloxconfig['htmlouter']);
 $bloxconfig['outputSeparator'] = $modx->getOption('outputSeparator', $scriptProperties, '');
@@ -67,6 +69,9 @@ $bloxconfig['tplpath'] = (($tplpath = $modx->getOption('tplpath', $scriptPropert
 $bloxconfig['includespath'] = (($includespath = $modx->getOption('includespath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $includespath : $bloxconfig['projectpath'] . $bloxconfig['task'] . "/includes/";
 $bloxconfig['cachepath'] = $bloxconfig['path'] . 'cache/';
 $bloxconfig['includesfile'] = $bloxconfig['includespath'] . "getdatas.php"; // [ file ]
+$bloxconfig['includesclassfile'] = $bloxconfig['includespath'] . "getdatas.class.php"; // [ file ]
+$pn = $bloxconfig['project'] != '' ? ucfirst($bloxconfig['project']) : $bloxconfig['resourceclass'];
+$bloxconfig['includesclass'] = ucfirst($bloxconfig['projectparent']).'_'.$pn.'_'.ucfirst($bloxconfig['task']); // [ class ]
 $bloxconfig['onsavefile'] = $bloxconfig['includespath'] . "onsavedatas.php"; // [ file ]
 
 $timestamp = time();
@@ -83,6 +88,7 @@ $bloxconfig['year'] = (isset($_REQUEST['year']) && (trim($_REQUEST['year'] !== '
 
 $bloxconfig['userID'] = $modx->getLoginUserID();
 
+$bloxconfig['totalVar'] = $modx->getOption('totalVar', $scriptProperties, 'total');
 $bloxconfig['pageVarKey'] = $modx->getOption('pageVarKey', $scriptProperties, 'page');
 $bloxconfig['perPage'] = intval($modx->getOption('perPage', $scriptProperties, '10'));
 $bloxconfig['numLinks'] = intval($modx->getOption('numLinks', $scriptProperties, '5'));
@@ -100,7 +106,7 @@ $bloxconfig['joins'] = $modx->getOption('joins', $scriptProperties, '');
 //Parameter for xedit:
 $bloxconfig['keyField'] = $modx->getOption('keyField', $scriptProperties, 'id');
 $bloxconfig['parents'] = $modx->getOption('parents', $scriptProperties, '0');
-$bloxconfig['depth'] = $modx->getOption('depth', $scriptProperties, '1');
+$bloxconfig['depth'] = $modx->getOption('depth', $scriptProperties, '10');
 $bloxconfig['bloxfolder'] = $modx->getOption('bloxfolder', $scriptProperties, ''); // together with the first id in &parents here comes the pagetitle of subfolder for bloxcontainer
 $bloxconfig['documents'] = $modx->getOption('documents', $scriptProperties, '999999999');
 $bloxconfig['IDs'] = $modx->getOption('IDs', $scriptProperties, $bloxconfig['documents']);
@@ -114,6 +120,12 @@ $bloxconfig['debugTime'] = intval($modx->getOption('debugTime', $scriptPropertie
 
 if ($bloxconfig['debug']) {
 	echo '<pre>' . print_r($bloxconfig, true) . '</pre>';
+}
+
+if ($bloxconfig['resourceclass'] == 'modResource'){
+    if (!in_array('bloxhelpers',$includes)){
+        $includes[]='bloxhelpers';
+    }
 }
 
 // Include classes
