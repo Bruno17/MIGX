@@ -1,0 +1,39 @@
+<li class="level1 folder "><a href="[[~[[+id]]]]" class="[[+alias]]" title="[[+pagetitle]]">[[+title]]</a>
+	<div class="sub col2">
+		<div class="inner clearfix">
+			<div class="col">
+				<ul>
+					<li class="level2 col2">
+						<a href="[[~43~]]" class="news" title="Neuigkeiten">Neuigkeiten</a>
+						<ul>
+							[[!getCache? 
+							&element=`getResources` 
+							&cacheExpires=`10080`
+							&cacheElementKey=`topmenu.news[[*context_key]]`
+							&parents=`43` 
+							&depth=`1` 
+							&sortby=`{"publishedon":"DESC"}`
+							&tpl=`tplBigmenuNeuigkeiten`
+							&showHidden=`1`
+							&limit=`5`]]
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="col">
+				<ul>
+					<li class="level2 col2">
+						<a href="[[~4~]]" class="termine" title="Termine">Termine</a>
+						<ul>
+							[[!getCache?
+							&element=`bloX` 
+							&cacheExpires=`10080`
+							&cacheElementKey=`topmenu.calendar[[*context_key]]`
+							&configs=`migxcalendar,menu`]]
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</li>

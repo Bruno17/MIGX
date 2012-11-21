@@ -1,4 +1,5 @@
 <?php
+
 /**
  * bloX
  *
@@ -21,7 +22,7 @@
  * @package blox
  * @subpackage snippet
  */
- 
+
 $bloxconfig = $array;
 $bloxconfig['path'] = 'components/blox/';
 $bloxconfig['absolutepath'] = $modx->getOption('core_path') . $bloxconfig['path'];
@@ -30,14 +31,14 @@ $bloxconfig['absolutepath'] = $modx->getOption('core_path') . $bloxconfig['path'
 $configs = explode(',', $modx->getOption('configs', $scriptProperties, ''));
 
 foreach ($configs as $configName) {
-	$configFile = $bloxconfig['absolutepath'] . 'configs/' . $configName . '.config.inc.php'; // [ file ]
-	if (file_exists($configFile)) {
-		include($configFile);
-		if (isset($config) && is_array($config)) {
-			$scriptProperties = array_merge($scriptProperties, $config);
-		}
-		unset($config);
-	}
+    $configFile = $bloxconfig['absolutepath'] . 'configs/' . $configName . '.config.inc.php'; // [ file ]
+    if (file_exists($configFile)) {
+        include ($configFile);
+        if (isset($config) && is_array($config)) {
+            $scriptProperties = array_merge($scriptProperties, $config);
+        }
+        unset($config);
+    }
 }
 $bloxconfig = array_merge($bloxconfig, $scriptProperties);
 
@@ -46,7 +47,7 @@ $includes = array_merge(array('blox', 'chunkie'), $includes);
 
 $adodbFile = $bloxconfig['absolutepath'] . 'inc/adodb-time.inc.php';
 if (file_exists($adodbFile)) {
-	include_once($adodbFile);
+    include_once ($adodbFile);
 }
 
 // Set defaults
@@ -60,18 +61,21 @@ $bloxconfig['resourceclass'] = $modx->getOption('resourceclass', $scriptProperti
 $bloxconfig['htmlouter'] = $modx->getOption('htmlouter', $scriptProperties, 'div');
 $bloxconfig['project'] = $modx->getOption('project', $scriptProperties, '');
 $bloxconfig['projectparent'] = $bloxconfig['project'] != '' ? 'custom' : 'blox';
-$bloxconfig['projectpath'] = ($bloxconfig['project'] != '') ? $bloxconfig['path'] . "projects/custom/" . $bloxconfig['project'] . '/' : $bloxconfig['path'] . "projects/blox/" . $bloxconfig['resourceclass'] . '/';
+$bloxconfig['projectpath'] = ($bloxconfig['project'] != '') ? $bloxconfig['path'] . "projects/custom/" . $bloxconfig['project'] . '/' : $bloxconfig['path'] . "projects/blox/" . $bloxconfig['resourceclass'] .
+    '/';
 $bloxconfig['task'] = $modx->getOption('task', $scriptProperties, $bloxconfig['htmlouter']);
 $bloxconfig['outputSeparator'] = $modx->getOption('outputSeparator', $scriptProperties, '');
 
 $bloxconfig['tpls'] = $modx->getOption('tpls', $scriptProperties, '');
-$bloxconfig['tplpath'] = (($tplpath = $modx->getOption('tplpath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $tplpath : $bloxconfig['projectpath'] . $bloxconfig['task'] . "/templates/";
-$bloxconfig['includespath'] = (($includespath = $modx->getOption('includespath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $includespath : $bloxconfig['projectpath'] . $bloxconfig['task'] . "/includes/";
+$bloxconfig['tplpath'] = (($tplpath = $modx->getOption('tplpath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $tplpath : $bloxconfig['projectpath'] . $bloxconfig['task'] .
+    "/templates/";
+$bloxconfig['includespath'] = (($includespath = $modx->getOption('includespath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $includespath : $bloxconfig['projectpath'] . $bloxconfig['task'] .
+    "/includes/";
 $bloxconfig['cachepath'] = $bloxconfig['path'] . 'cache/';
 $bloxconfig['includesfile'] = $bloxconfig['includespath'] . "getdatas.php"; // [ file ]
 $bloxconfig['includesclassfile'] = $bloxconfig['includespath'] . "getdatas.class.php"; // [ file ]
 $pn = $bloxconfig['project'] != '' ? ucfirst($bloxconfig['project']) : $bloxconfig['resourceclass'];
-$bloxconfig['includesclass'] = ucfirst($bloxconfig['projectparent']).'_'.$pn.'_'.ucfirst($bloxconfig['task']); // [ class ]
+$bloxconfig['includesclass'] = ucfirst($bloxconfig['projectparent']) . '_' . $pn . '_' . ucfirst($bloxconfig['task']); // [ class ]
 $bloxconfig['onsavefile'] = $bloxconfig['includespath'] . "onsavedatas.php"; // [ file ]
 
 $timestamp = time();
@@ -80,11 +84,11 @@ $timestampmonth = xetadodb_strftime("%m", $timestamp);
 $timestampyear = xetadodb_strftime("%Y", $timestamp);
 $bloxconfig['nowtimestamp'] = $timestamp;
 $bloxconfig['day'] = $modx->getOption('day', $scriptProperties, $timestampday);
-$bloxconfig['day'] = (isset($_REQUEST['day']) && (trim($_REQUEST['day'] !== ''))) ? (string) intval($_REQUEST['day']) : $bloxconfig['day'];
+$bloxconfig['day'] = (isset($_REQUEST['day']) && (trim($_REQUEST['day'] !== ''))) ? (string )intval($_REQUEST['day']) : $bloxconfig['day'];
 $bloxconfig['month'] = $modx->getOption('month', $scriptProperties, $timestampmonth);
-$bloxconfig['month'] = (isset($_REQUEST['month']) && (trim($_REQUEST['month'] !== ''))) ? (string) intval($_REQUEST['month']) : $bloxconfig['month'];
+$bloxconfig['month'] = (isset($_REQUEST['month']) && (trim($_REQUEST['month'] !== ''))) ? (string )intval($_REQUEST['month']) : $bloxconfig['month'];
 $bloxconfig['year'] = $modx->getOption('year', $scriptProperties, $timestampyear);
-$bloxconfig['year'] = (isset($_REQUEST['year']) && (trim($_REQUEST['year'] !== ''))) ? (string) intval($_REQUEST['year']) : $bloxconfig['year'];
+$bloxconfig['year'] = (isset($_REQUEST['year']) && (trim($_REQUEST['year'] !== ''))) ? (string )intval($_REQUEST['year']) : $bloxconfig['year'];
 
 $bloxconfig['userID'] = $modx->getLoginUserID();
 
@@ -119,56 +123,63 @@ $bloxconfig['debug'] = intval($modx->getOption('debug', $scriptProperties, '0'))
 $bloxconfig['debugTime'] = intval($modx->getOption('debugTime', $scriptProperties, '0'));
 
 if ($bloxconfig['debug']) {
-	echo '<pre>' . print_r($bloxconfig, true) . '</pre>';
+    echo '<pre>' . print_r($bloxconfig, true) . '</pre>';
 }
 
-if ($bloxconfig['resourceclass'] == 'modResource'){
-    if (!in_array('bloxhelpers',$includes)){
-        $includes[]='bloxhelpers';
+if ($bloxconfig['resourceclass'] == 'modResource') {
+    if (!in_array('bloxhelpers', $includes)) {
+        $includes[] = 'bloxhelpers';
     }
 }
 
 // Include classes
 foreach ($includes as $includeclass) {
 
-	if (!class_exists($includeclass)) {
-		$includefile = $bloxconfig['absolutepath'] . 'inc/' . $includeclass . '.class.inc.php';
-		if (file_exists($includefile)) {
-			include_once($includefile);
-		} else {
-			$output = 'Cannot find ' . $includeclass . ' class file! (' . $includefile . ')';
-			return $output;
-		}
-	}
+    if (!class_exists($includeclass)) {
+        $includefile = $bloxconfig['absolutepath'] . 'inc/' . $includeclass . '.class.inc.php';
+        if (file_exists($includefile)) {
+            include_once ($includefile);
+        } else {
+            $output = 'Cannot find ' . $includeclass . ' class file! (' . $includefile . ')';
+            return $output;
+        }
+    }
 
-	switch ($includeclass) {
-		case 'blox':
-			if (class_exists($includeclass)) {
-				// Initialize class
-				$blox = new blox($bloxconfig);
-			} else {
-				$output = $includeclass . ' class not found';
-				return $output;
-			}
-			break;
-		case 'xettcal':
-			if (class_exists($includeclass)) {
-				// Initialize class
-				$blox->xettcal = new xettcal($bloxconfig['id']);
-				$blox->xettcal->blox = &$blox;
-			} else {
-				$output = $includeclass . ' class not found';
-				return $output;
-			}
-			break;
-	}
+    switch ($includeclass) {
+        case 'blox':
+            if (class_exists($includeclass)) {
+                // Initialize class
+                $blox = new blox($bloxconfig);
+            } else {
+                $output = $includeclass . ' class not found';
+                return $output;
+            }
+            break;
+        case 'xettcal':
+            if (class_exists($includeclass)) {
+                // Initialize class
+                $blox->xettcal = new xettcal($bloxconfig['id']);
+                $blox->xettcal->blox = &$blox;
+            } else {
+                $output = $includeclass . ' class not found';
+                return $output;
+            }
+            break;
+    }
 }
 
 // Output
+$starttotal = microtime(true);
 $output = $blox->displayblox();
+$endtotal = microtime(true);
+if ($bloxconfig['debug'] || $bloxconfig['debugTime']) {
+
+    echo '<pre>Total time: ' . ($endtotal - $starttotal) . ' seconds</pre>';
+}
 
 //store the blox-object for use in other scripts e.g. ajax-scripts
 //$_SESSION['bloxobject'][$modx->resource->get('id')][$bloxconfig['id']] = $blox;
 
 return $output;
+
 ?>

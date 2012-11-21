@@ -10,7 +10,7 @@ class bloxhelpers {
     function getSiteMap($config) {
         global $modx;
 
-        $config['startid'] = $modx->getOption('startid', $config, 0);
+        $config['parents'] = $modx->getOption('startid', $config, 0);
         $config['depth'] = $modx->getOption('depth', $config, 10);
         $config['level'] = $modx->getOption('level', $config, 0);
         $config['ignoreHidden'] = $modx->getOption('ignoreHidden', $config, 0);
@@ -19,38 +19,30 @@ class bloxhelpers {
         $config['excludechildrenofdocs'] = $modx->getOption('excludechildrenofdocs', $config, '');
         $config['activeid'] = $modx->getOption('activeid', $config, $modx->resource->get('id'));
         $config['fields'] = $modx->getOption('fields', $config, '');
-        $config['activeparents'] = $modx->getParentIds($config['activeid']);
         $config['sortby'] = $modx->getOption('sortby', $config, 'menuindex');
         $config['sortdir'] = $modx->getOption('sortdir', $config, 'ASC');
         $config['classname'] = $modx->getOption('classname', $config, 'modResource');
-
-
-        $c = $modx->newQuery($config['classname'], array('parent' => $config['startid'], ));
-        if (!empty($config['fields'])) {
-            $c->select($modx->getSelectColumns($config['classname'], $config['classname'], '', explode(',', $config['fields'])));
-        }
-
-        if (empty($config['ignoreHidden'])) {
-            $c->where(array('hidemenu' => '0'));
-        }
-        $c->where(array('published' => '1'));
-        $c->where(array('deleted' => '0'));
-
-
-        $c->sortby($config['sortby'], $config['sortdir']);
-
-        $items = array();
-        /*
-        $c->prepare();
-        echo $c->toSql();
-        */
-        if ($collection = $modx->getCollection($config['classname'], $c)) {
-            foreach ($collection as $object) {
-                $items[] = $object->toArray('', false, true);
+        $config['context'] = $modx->getOption('context', $config, $modx->context->key);
+        $wheres = !empty($config['where']) ? $modx->fromJson($config['where']) : array();
+        if ($config['classname'] == 'modResource') {
+            if (empty($config['ignoreHidden'])) {
+                $wheres[] = array('hidemenu' => '0');
             }
-        }
-        return $this->getSiteMapChilds($items, $config);
+            $config['activeparents'] = $modx->getParentIds($config['activeid']);
+            $config['where'] = $modx->toJson($wheres);
+            $config['docinfo'] = $this->getResources($config);
+            $firstlevel = $modx->getChildIds($config['parents'], 1, array('context' => $config['context']));
+            //print_r($items);
+            $output = $this->getSiteMapChilds($firstlevel, $config);
 
+        } else {
+            $config['activeparents'] = $this->getParentIds($config);
+            $config = $this->getChilds($config);
+            $firstlevel = $config['levelids'];
+            $output = $this->getSiteMapChilds($firstlevel, $config);
+        }
+
+        return $output;
     }
 
 
@@ -81,9 +73,9 @@ class bloxhelpers {
         $excludedocs = !empty($config['excludedocs']) ? explode(',', $config['excludedocs']) : '';
         $excludechildrenofdocs = !empty($config['excludechildrenofdocs']) ? explode(',', $config['excludechildrenofdocs']) : '';
         $pages = array();
+        $docinfo = $config['docinfo'];
         foreach ($items as $item) {
-            $page = $item;
-            $page['id'] = $item['id'];
+            $page = $docinfo[$item];
             $page['level'] = $level;
             $page['_haschildren'] = '0';
             $page['_active'] = $config['activeid'] == $page['id'] || in_array($page['id'], $config['activeparents']) ? '1' : '0';
@@ -91,44 +83,21 @@ class bloxhelpers {
             //$page['URL'] = $modx->makeUrl($item['id']);
             //$children = $modx->getAllChildren($item['id'], 'menuindex ASC, pagetitle', 'ASC', 'id,isfolder,pagetitle,description,parent,alias,longtitle,published,deleted,hidemenu');
 
-
-            $c = $modx->newQuery($config['classname'], array('parent' => $item['id']));
-            if (!empty($config['fields'])) {
-                $c->select($modx->getSelectColumns($config['classname'], $config['classname'], '', explode(',', $config['fields'])));
+            if ($config['classname'] == 'modResource') {
+                $childs = $modx->getChildIds($page['id'], 1, array('context' => $config['context']));
+            } else {
+                $config['startid']=$page['id'];
+                $config = $this->getChilds($config);
+                $childs = $config['levelids'];
             }
-
-            if (empty($config['ignoreHidden'])) {
-                $c->where(array('hidemenu' => '0'));
-            }
-            if (!empty($excludedocs)) {
-                $c->where(array('id:!IN' => $excludedocs));
-            }
-            $c->where(array('published' => '1'));
-            $c->where(array('deleted' => '0'));
-
-            $c->sortby($config['sortby'], $config['sortdir']);
-            /*
-            $stmt = $c->prepare();
-            if ($stmt && $stmt->execute()) {
-            $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            }
-            */
-            /*
-            $c->prepare();
-            echo $c->toSql();
-            */
-            $childs = $modx->getCollection($config['classname'], $c);
-            $count = $modx->getCount($config['classname'], $c);
+            
+            $count = count($childs);
             if ($count > 0) {
                 $page['_haschildren'] = '1';
                 if (!in_array($page['id'], $excludechildrenofdocs) && $level < $config['depth']) {
                     if ($page['_active'] == '1' || $level < $config['hideSubmenuesStartlevel']) {
-                        $children = array();
-                        foreach ($childs as $child) {
-                            $children[] = $child->toArray('', false, true);
-                        }
                         $config['level'] = $level + 1;
-                        $children = $this->getSiteMapChilds($children, $config);
+                        $children = $this->getSiteMapChilds($childs, $config);
                         $page['innerrows']['level_' . $config['level']] = $children;
                         $page['innerrows']['children'] = $children;
 
@@ -143,9 +112,132 @@ class bloxhelpers {
         return $pages;
     }
 
+   function getParentIds($config,$parentids=array()){
+       global $modx;
+
+       if($object = $modx->getObject($config['classname'], array('id' => $config['activeid'] ))){
+           $parent = $object->get('parent');
+           $config['activeid']=$parent;
+           $parentids = array_merge(array($parent),$this->getParentIds($config,$parentids)); 
+       }
+       return $parentids; 
+   }
+
+
+    function getChilds($config) {
+        global $modx;
+        
+        $c = $modx->newQuery($config['classname'], array('parent' => $config['startid'], ));
+        if (!empty($config['fields'])) {
+            $c->select($modx->getSelectColumns($config['classname'], $config['classname'], '', explode(',', $config['fields'])));
+        }
+        //$c->where(array('published' => '1'));
+
+        $tablefields = array_keys($modx->getFields('modResource'));
+        if (in_array('deleted', $tablefields)) {
+            $c->where(array('deleted' => '0'));
+        }
+        $c->sortby($config['sortby'], $config['sortdir']);
+        $items = array();
+        /*
+        $c->prepare();
+        echo $c->toSql();
+        */
+        $levelids = array();
+        if ($collection = $modx->getCollection($config['classname'], $c)) {
+            foreach ($collection as $object) {
+                $items[$object->get('id')] = $object->toArray('', false, true);
+                $levelids[] = $object->get('id');
+            }
+        }
+        $config['docinfo'] = $items;
+        $config['levelids'] = $levelids;
+        return $config;
+    }
+
+
+    function buildMenu($docs, $depth, $docInfo = array(), $parentIds = array(), $level = 0) {
+        global $modx;
+        $level++;
+
+        if ($depth >= 0) {
+            $depth--;
+            $levelDocs = array();
+            $idx = 0;
+            $docs = array_intersect($docs, array_keys($docInfo));
+            $levelCount = count($docs);
+            foreach ($docs as $docId) {
+                if (isset($docInfo[$docId])) {
+                    $levelDocs[$docId] = $docInfo[$docId];
+                    $levelDocs[$docId]['title'] = ($docInfo[$docId]['menutitle'] != '') ? $docInfo[$docId]['menutitle'] : $docInfo[$docId]['pagetitle'];
+                    $levelDocs[$docId]['idx'] = $idx;
+                    $levelDocs[$docId]['levelcount'] = $levelCount;
+                    $levelDocs[$docId]['classnames'] = '';
+                    if ($idx == 0) {
+                        $levelDocs[$docId]['classnames'] .= ' first';
+                    }
+                    if (in_array($docId, $parentIds)) {
+                        $levelDocs[$docId]['classnames'] .= ' current';
+                    }
+                    if ($docId == $modx->resource->get('id')) {
+                        $levelDocs[$docId]['classnames'] .= ' here';
+                    }
+                    if ($idx == $levelCount - 1) {
+                        $levelDocs[$docId]['classnames'] .= ' last';
+                    }
+                    $levelDocs[$docId]['classnames'] = trim($levelDocs[$docId]['classnames']);
+                    $children = $modx->getChildIds($docId, 1, array('context' => $this->bloxconfig['context'], 'where' => $this->bloxconfig['where']));
+                    if ($children) {
+                        $childMenu = $this->buildMenu($children, $depth, $docInfo, $parentIds, $level);
+                        if (count($childMenu)) {
+                            $levelDocs[$docId]['level' . ($level + 1)] = $childMenu;
+                        }
+                    }
+                    $idx++;
+                }
+            }
+            return $levelDocs;
+        }
+    }
+
+    function buildMenuTemplate($docs, $depth, $docInfo = array(), $level = 0) {
+        global $modx;
+
+        $level++;
+
+        if ($depth >= 0) {
+            $depth--;
+            $levelDocTemplate = '';
+            foreach ($docs as $docId) {
+                if (isset($docInfo[$docId])) {
+                    $template = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . $level . 'Tpl.html');
+                    if (file_exists(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'doc' . $docId . 'OuterTpl.html')) {
+                        //echo 'Special-Tpl: ' . $this->bloxconfig['tplpath'] . 'doc' . $docId . 'OuterTpl.html<br/>';
+                        $childMenu = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'doc' . $docId . 'OuterTpl.html');
+                        $levelDocTemplate .= str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $childMenu) . "\r\n";
+                    } else {
+                        $children = $modx->getChildIds($docId, 1);
+                        $childMenu = ($children && $depth >= 0) ? $this->buildMenuTemplate($children, $depth, $docInfo, $level) : '';
+                        if ($childMenu) {
+                            $outerTemplate = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . ($level + 1) . 'OuterTpl.html');
+                            $childMenu = str_replace('[[#wrapper]]', $childMenu, $outerTemplate);
+                            $childMenu = str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $childMenu);
+                        }
+                        $levelDocTemplate .= str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $template) . "\r\n";
+                        $levelDocTemplate = str_replace('[[#wrapper]]', $childMenu, $levelDocTemplate);
+                    }
+                }
+            }
+            return $levelDocTemplate;
+        } else {
+            return '';
+        }
+    }
+
 
     function getResources($scriptProperties = null) {
         global $modx;
+
 
         if (!$scriptProperties) {
             $scriptProperties = $this->bloxconfig;
@@ -187,6 +279,8 @@ class bloxhelpers {
         $limit = isset($scriptProperties['limit']) ? (integer)$scriptProperties['limit'] : 5;
         $offset = isset($scriptProperties['offset']) ? (integer)$scriptProperties['offset'] : 0;
         $totalVar = !empty($scriptProperties['totalVar']) ? $scriptProperties['totalVar'] : 'total';
+
+        $fields = !empty($scriptProperties['fields']) ? explode(',', $scriptProperties['fields']) : array();
 
         $dbCacheFlag = !isset($scriptProperties['dbCacheFlag']) ? false : $scriptProperties['dbCacheFlag'];
         if (is_string($dbCacheFlag) || is_numeric($dbCacheFlag)) {
@@ -410,11 +504,12 @@ class bloxhelpers {
         $total = $modx->getCount('modResource', $criteria);
         $modx->setPlaceholder($totalVar, $total);
 
-        $fields = array_keys($modx->getFields('modResource'));
+        $includeContent = in_array('content', $fields) ? 1 : 0;
+        $fields = !empty($fields) ? $fields : array_keys($modx->getFields('modResource'));
         if (empty($includeContent)) {
             $fields = array_diff($fields, array('content'));
         }
-        $columns = $includeContent ? $modx->getSelectColumns('modResource', 'modResource') : $modx->getSelectColumns('modResource', 'modResource', '', array('content'), true);
+        $columns = $modx->getSelectColumns('modResource', 'modResource', '', $fields);
         $criteria->select($columns);
         if (!empty($sortbyTV)) {
             $criteria->leftJoin('modTemplateVar', 'tvDefault', array("tvDefault.name" => $sortbyTV));
@@ -477,6 +572,8 @@ class bloxhelpers {
             $criteria->prepare();
             $modx->log(modX::LOG_LEVEL_ERROR, $criteria->toSQL());
         }
+        //$criteria->prepare();echo $criteria->toSQL();
+
         $collection = $modx->getCollection('modResource', $criteria, $dbCacheFlag);
 
         $idx = !empty($idx) && $idx !== '0' ? (integer)$idx : 1;
@@ -496,7 +593,7 @@ class bloxhelpers {
                     $templateVars = $resource->getMany('TemplateVars');
                 }
                 /**
-                 @var modTemplateVar $templateVar */
+                 *  *  *  *  *  * @var modTemplateVar $templateVar */
                 foreach ($templateVars as $templateVar) {
                     if (!empty($includeTVList) && !in_array($templateVar->get('name'), $includeTVList))
                         continue;
@@ -512,11 +609,11 @@ class bloxhelpers {
                 }
             }
             $odd = ($idx & 1);
-            $rows[] = array_merge(array(
+            $rows[$resource->get('id')] = array_merge(array(
                 'idx' => $idx,
                 'first' => $first,
                 'last' => $last,
-                'odd' => $odd), ($includeContent) ? $resource->toArray() : $resource->get($fields), $tvs);
+                'odd' => $odd), $resource->toArray('', false, true), $tvs);
             $idx++;
         }
         return $rows;
