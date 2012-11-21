@@ -1,25 +1,29 @@
 <?php
 
-class Blox_modTable_table {
+class Blox_modTable_Table {
 
-	/**
-	 * Constructor
-	 *
-	 * @access	public
-	 * @param	array	initialization parameters
-	 */
-	public function __construct(&$blox) {
-        $this->blox = & $blox;
-        $this->bloxconfig = & $blox->bloxconfig; 
+    /**
+     * Constructor
+     *
+     * @access	public
+     * @param	array	initialization parameters
+     */
+    public function __construct(&$blox) {
+        $this->blox = &$blox;
+        $this->bloxconfig = &$blox->bloxconfig;
     }
 
     function getdatas() {
         global $modx;
-        
-        if (!empty($this->bloxconfig['packagename'])) {
-            $modx->addPackage($this->bloxconfig['packagename'], $modx->getOption('core_path') . 'components/' . $this->bloxconfig['packagename'] . '/model/');
+
+        //custom prefix  
+        $prefix = isset($this->bloxconfig['prefix']) && !empty($this->bloxconfig['prefix']) ? $this->bloxconfig['prefix'] : null;
+        //if you have an empty prefix use this property
+        if (isset($this->bloxconfig['use_custom_prefix']) && !empty($this->bloxconfig['use_custom_prefix'])) {
+            $prefix = isset($this->bloxconfig['prefix']) ? $this->bloxconfig['prefix'] : '';
         }
 
+        $modx->addPackage($this->bloxconfig['packagename'], $modx->getOption('core_path') . 'components/' . $this->bloxconfig['packagename'] . '/model/',$prefix);
 
         $query = $this->blox->prepareQuery($this->bloxconfig, $this->totalCount);
         $collection = $modx->getCollection($this->bloxconfig['classname'], $query);
@@ -27,7 +31,7 @@ class Blox_modTable_table {
         $rows = array();
         $i = 0;
         foreach ($collection as $object) {
-            $row = $object->toArray();
+            $row = $object->toArray('', false, true);
             if (!$i) {
                 $this->columnNames = array_keys($row);
             }
@@ -41,7 +45,6 @@ class Blox_modTable_table {
             }
             $i++;
         }
-
 
         $numRows = $this->totalCount;
         require_once ($this->bloxconfig['absolutepath'] . 'inc/Pagination.php');
@@ -64,13 +67,11 @@ class Blox_modTable_table {
         $bloxdatas['pagination'] = $p->create_links();
         $bloxdatas['innerrows']['row'] = $rows;
 
-
         //echo '<pre>' . print_r($bloxdatas, true) . '</pre>';
         //echo '---------------------------------------';
         //echo '<pre>' . print_r($rows, true) . '</pre>';
         return $bloxdatas;
-
     }
 }
 
-return 'Blox_modTable_table';
+?>
