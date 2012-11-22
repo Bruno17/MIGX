@@ -20,7 +20,7 @@ class bloxChunkie {
 		$this->templates = & $templates;
 		$this->template = $this->getTemplate($template);
 		$this->depth = 0;
-		$this->maxdepth = 4;
+		$this->maxdepth = 6;
 	}
 
 	function CreateVars($value = '', $key = '', $path = '') {

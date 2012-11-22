@@ -37,18 +37,19 @@ class Blox_modTable_Wayfinder {
         } else {
             echo 'bloxhelpers class not found';
         }
-
+        $config['objectIdVarKey'] = $modx->getOption('objectIdVarKey', $scriptProperties, 'objectId'); 
         $config['startid'] = $modx->getOption('startId', $scriptProperties, $modx->resource->get('id'));
         $config['depth'] = $modx->getOption('depth', $scriptProperties, '10');
         $config['startingLevel'] = $modx->getOption('startingLevel', $scriptProperties, '1');
         $config['hideSubmenuesStartlevel'] = $modx->getOption('hideSubmenuesStartlevel', $scriptProperties, $config['depth']);
         $config['selectfields'] = $modx->getOption('selectfields', $scriptProperties, 'id,pagetitle');
         $config['excludechildrenofdocs'] = $modx->getOption('excludeChildrenOfDocs', $scriptProperties, '');
-        $config['activeid'] = $modx->getOption('activeid', $scriptProperties, $_GET['objectId']);
+        $config['activeid'] = $modx->getOption('activeid', $scriptProperties, $_GET[$config['objectIdVarKey']]);
         $config['titlefield'] = $modx->getOption('titlefield', $scriptProperties, 'title'); 
         $config['sortby'] = $modx->getOption('sortby', $scriptProperties, $config['titlefield']);
         $config['sortdir'] = $modx->getOption('sortdir', $scriptProperties, 'ASC');
         $config['classname'] = $modx->getOption('classname', $scriptProperties, 'modResource'); 
+        
         
         $config['limit'] = '1000';        
 
@@ -66,7 +67,7 @@ class Blox_modTable_Wayfinder {
             $active = $child['_active'] == '1' ? 'active' : '';
             $strongopen = $child['_active'] == '1' ? '<strong>' : '';
             $strongclose = $child['_active'] == '1' ? '</strong>' : '';
-            $link = $modx->makeUrl($modx->resource->get('id'),'',array('objectId'=>$child['id']));
+            $link = $modx->makeUrl($modx->resource->get('id'),'',array($config['objectIdVarKey']=>$child['id']));
             $wrapper = '';
             if (is_array($child['innerrows']['children'])) {
                 $wrapper = $this->buildmenue($child['innerrows']['children'],$config);
