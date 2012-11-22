@@ -31,10 +31,10 @@ class Blox_modResource_Wayfinder {
 
         $config['startid'] = $modx->getOption('startId', $scriptProperties, $modx->resource->get('id'));
         $config['depth'] = $modx->getOption('depth', $scriptProperties, '10');
-        $config['level'] = $modx->getOption('startLevel', $scriptProperties, '1');
+        $config['startingLevel'] = $modx->getOption('startingLevel', $scriptProperties, '1');
         $config['hideSubmenuesStartlevel'] = $modx->getOption('hideSubmenuesStartlevel', $scriptProperties, $config['depth']);
         //$config['activeid'] = $_GET['activeid'];
-        $config['fields'] = $modx->getOption('fields', $scriptProperties, 'id,pagetitle');
+        $config['selectfields'] = $modx->getOption('selectfields', $scriptProperties, 'id,pagetitle');
         $config['excludechildrenofdocs'] = $modx->getOption('excludeChildrenOfDocs', $scriptProperties, '');
         $config['activeid'] = $modx->getOption('activeid', $scriptProperties, 0);
         $config['sortby'] = $modx->getOption('sortby', $scriptProperties, 'menuindex');

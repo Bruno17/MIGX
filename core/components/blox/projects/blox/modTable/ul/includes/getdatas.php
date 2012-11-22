@@ -1,4 +1,5 @@
 <?php
 
-include_once(dirname(__FILE__)."/../../table/includes/getdatas.php");
+$class = 'Blox_modTable_Table';
+$classfile = dirname(__FILE__)."/../../table/includes/getdatas.class.php";
 ?>

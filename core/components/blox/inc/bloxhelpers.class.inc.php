@@ -12,13 +12,13 @@ class bloxhelpers {
 
         $config['parents'] = $modx->getOption('startid', $config, 0);
         $config['depth'] = $modx->getOption('depth', $config, 10);
-        $config['level'] = $modx->getOption('level', $config, 0);
+        $config['level'] = $modx->getOption('startingLevel', $config, 0);
         $config['ignoreHidden'] = $modx->getOption('ignoreHidden', $config, 0);
         $config['hideSubmenuesStartlevel'] = $modx->getOption('hideSubmenuesStartlevel', $config, $config['depth']);
         $config['excludedocs'] = $modx->getOption('excludedocs', $config, '');
         $config['excludechildrenofdocs'] = $modx->getOption('excludechildrenofdocs', $config, '');
         $config['activeid'] = $modx->getOption('activeid', $config, $modx->resource->get('id'));
-        $config['fields'] = $modx->getOption('fields', $config, '');
+        $config['selectfields'] = $modx->getOption('selectfields', $config, '');
         $config['sortby'] = $modx->getOption('sortby', $config, 'menuindex');
         $config['sortdir'] = $modx->getOption('sortdir', $config, 'ASC');
         $config['classname'] = $modx->getOption('classname', $config, 'modResource');
@@ -62,7 +62,7 @@ class bloxhelpers {
         $config['excludedocs'] = $modx->getOption('excludedocs', $config, '');
         $config['excludechildrenofdocs'] = $modx->getOption('excludechildrenofdocs', $config, '');
         $config['activeid'] = $modx->getOption('activeid', $config, 0);
-        $config['fields'] = $modx->getOption('fields', $config, '');
+        $config['selectfields'] = $modx->getOption('selectfields', $config, '');
         $config['activeparents'] = $modx->getOption('activeparents', $config, array());
         $config['sortby'] = $modx->getOption('sortby', $config, 'menuindex');
         $config['sortdir'] = $modx->getOption('sortdir', $config, 'ASC');
@@ -128,8 +128,8 @@ class bloxhelpers {
         global $modx;
         
         $c = $modx->newQuery($config['classname'], array('parent' => $config['startid'], ));
-        if (!empty($config['fields'])) {
-            $c->select($modx->getSelectColumns($config['classname'], $config['classname'], '', explode(',', $config['fields'])));
+        if (!empty($config['selectfields'])) {
+            $c->select($modx->getSelectColumns($config['classname'], $config['classname'], '', explode(',', $config['selectfields'])));
         }
         //$c->where(array('published' => '1'));
 
@@ -280,7 +280,7 @@ class bloxhelpers {
         $offset = isset($scriptProperties['offset']) ? (integer)$scriptProperties['offset'] : 0;
         $totalVar = !empty($scriptProperties['totalVar']) ? $scriptProperties['totalVar'] : 'total';
 
-        $fields = !empty($scriptProperties['fields']) ? explode(',', $scriptProperties['fields']) : array();
+        $fields = !empty($scriptProperties['selectfields']) ? explode(',', $scriptProperties['selectfields']) : array();
 
         $dbCacheFlag = !isset($scriptProperties['dbCacheFlag']) ? false : $scriptProperties['dbCacheFlag'];
         if (is_string($dbCacheFlag) || is_numeric($dbCacheFlag)) {
