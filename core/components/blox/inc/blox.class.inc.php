@@ -95,11 +95,11 @@ class blox {
             $this->prepareJoins($classname, $joins, $c, $forcounting);
         }
 
-        if (!empty($where)) {
+        if (is_array($where)) {
             $c->where($where);
         }
 
-        if (!empty($queries)) {
+        if (is_array($queries)) {
             $keys = array('AND' => xPDOQuery::SQL_AND, 'OR' => xPDOQuery::SQL_OR);
             foreach ($queries as $query) {
                 $c->where($query['query'], $keys[$query['operator']]);
