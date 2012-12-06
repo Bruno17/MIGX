@@ -86,7 +86,7 @@ $attr = array(
 );
 $vehicle = $builder->createVehicle($category, $attr);
 
-$modx->log(modX::LOG_LEVEL_INFO, 'Adding file resolvers to plugin...');
+$modx->log(modX::LOG_LEVEL_INFO, 'Adding file resolvers ...');
 $vehicle->resolve('file', array(
 	'source' => $sources['source_core'],
 	'target' => "return MODX_CORE_PATH . 'components/';",
