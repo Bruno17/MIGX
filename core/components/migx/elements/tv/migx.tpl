@@ -1,4 +1,4 @@
-<input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv_value|escape}"{$style} tvtype="{$tv->type}" />
+<input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv->get('value')|escape}"{$style} tvtype="{$tv->type}" />
 <div id="tvpanel{$tv->id}" style="width:650px">
 </div>
 <div id="tvpanel2{$tv->id}">
@@ -32,7 +32,7 @@ MODx.window.UpdateTvItem = function(config) {
         ,buttons: [{
             text: config.cancelBtnText || _('cancel')
             ,scope: this
-            ,handler: function() { this.hide(); }
+            ,handler: this.cancel
         },{
             text: config.saveBtnText || _('done')
             ,scope: this
@@ -66,6 +66,19 @@ MODx.window.UpdateTvItem = function(config) {
     this._loadForm();	
 };
 Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
+    cancel: function(){
+        var v = this.fp.getForm().getValues();
+        var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
+        var tvs = {};
+        if (fields.length>0){
+            for (var i = 0; i < fields.length; i++) {
+                tvs['tv'+fields[i].tv_id] = true;
+            }
+        }
+        this.removeTinyMCE(tvs);
+        this.hide();
+    },
+
     submit: function() {
         if (typeof(Tiny) != 'undefined') {
             tinyMCE.triggerSave();
@@ -90,6 +103,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
             var item = {};
             var tvid = '';
+            var tvs = {};
             if (fields.length>0){
                 for (var i = 0; i < fields.length; i++) {
                     tvid = (fields[i].tv_id);
@@ -97,6 +111,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                     item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
                     //set defined record-fields to its new value
                     rec.set(fields[i].field,item[fields[i].field])
+                    tvs['tv'+tvid] = true;
                 }
                 //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
                 rec.json=item;
@@ -104,8 +119,9 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             this.grid.getView().refresh();
             this.grid.collectItems();
             //this.onDirty();
-			
+
             if (this.fireEvent('success',v)) {
+                this.removeTinyMCE(tvs);
                 this.fp.getForm().reset();
                 this.hide();
                 return true;
@@ -179,6 +195,38 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         this.fp.doAutoLoad();
     }
 
+    ,removeTinyMCE: function(tvs){
+        var wait = false;
+        if (typeof(Tiny) != 'undefined') {
+            var ed;
+
+            // TinyMCE is a very picky piece of code. Let's just ask it to forget about us by removing our editors from
+            // the stuff it tracks.
+            for (var i = 0; i < tinyMCE.editors.length ; i++){
+                ed = tinyMCE.editors[i];
+                if (typeof (ed) == 'object'){
+                    if (tvs[ed.id]){
+                        delete tinyMCE.editors[i];
+                    }
+                }
+            }
+
+            // Clean the array:
+            var clean = false;
+            while(!clean){
+                clean = true;
+                for(i = 0; i < tinyMCE.editors.length ; i++){
+                    if(tinyMCE.editors[i] === undefined){
+                        tinyMCE.editors.splice(i,1);
+                        clean = false;
+                    }
+                }
+            }
+        }
+        console.log('TinyMCE Editors left: '+tinyMCE.editors.length);
+    }
+
+
 });
 Ext.reg('modx-window-tv-item-update-{/literal}{$tv->id}{literal}',MODx.window.UpdateTvItem);
 
@@ -207,21 +255,21 @@ MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal} = function(config) {
 Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
-		var a = {
+        var self = this;
+		return a = {
             url: MODx.config.assets_url+'components/migx/connector.php'
             //url: config.url
 			,method: 'POST'
             ,params: config.baseParams
             ,scripts: true
             ,callback: function() {
-				this.isloading=false;
-				this.isloaded=true;
-				this.fireEvent('load');
+				self.isloading=false;
+				self.isloaded=true;
+				self.fireEvent('load');
                 //MODx.fireEvent('ready');
             }
             ,scope: this
         };
-        return a;        	
     },scope: this
     
     ,
@@ -234,31 +282,31 @@ Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
 	 ,load: function() {
 		//MODx.loadRTE();
         //console.log('load');
-		
-        if (typeof(Tiny) != 'undefined') {
-		    var s={};
-            if (Tiny.config){
-                s = Tiny.config || {};
-                delete s.assets_path;
-                delete s.assets_url;
-                delete s.core_path;
-                delete s.css_path;
-                delete s.editor;
-                delete s.id;
-                delete s.mode;
-                delete s.path;
-                s.cleanup_callback = "Tiny.onCleanup";
-                var z = Ext.state.Manager.get(MODx.siteId + '-tiny');
-                if (z !== false) {
-                    delete s.elements;
-                }			
-		    }
-			s.mode = "specific_textareas";
-            s.editor_selector = "modx-richtext";
-		    //s.language = "en";// de seems not to work at the moment
-            tinyMCE.init(s);				
-		}
-        
+//
+//        if (typeof(Tiny) != 'undefined') {
+//		    var s={};
+//            if (Tiny.config){
+//                s = Tiny.config || {};
+//                delete s.assets_path;
+//                delete s.assets_url;
+//                delete s.core_path;
+//                delete s.css_path;
+//                delete s.editor;
+//                delete s.id;
+//                delete s.mode;
+//                delete s.path;
+//                s.cleanup_callback = "Tiny.onCleanup";
+//                var z = Ext.state.Manager.get(MODx.siteId + '-tiny');
+//                if (z !== false) {
+//                    delete s.elements;
+//                }
+//		    }
+//			s.mode = "specific_textareas";
+//            s.editor_selector = "modx-richtext";
+//		    //s.language = "en";// de seems not to work at the moment
+//            tinyMCE.init(s);
+//		}
+//
         //this.popwindow.width='1000px';
 		//this.width='1000px';
 		//this.syncSize();
