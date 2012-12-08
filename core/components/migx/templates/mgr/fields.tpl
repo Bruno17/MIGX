@@ -134,6 +134,34 @@ Ext.onReady(function() {
     });
 	{/literal}{if $tvcount GT 0}{literal}
     {/literal}{/if}{literal}
+
+
+    if (typeof(Tiny) != 'undefined') {
+        var s={};
+        if (Tiny.config){
+            s = Tiny.config || {};
+            delete s.assets_path;
+            delete s.assets_url;
+            delete s.core_path;
+            delete s.css_path;
+            delete s.editor;
+            delete s.id;
+            delete s.mode;
+            delete s.path;
+            s.cleanup_callback = "Tiny.onCleanup";
+            var z = Ext.state.Manager.get(MODx.siteId + '-tiny');
+            if (z !== false) {
+                delete s.elements;
+            }
+        }
+        s.mode = "specific_textareas";
+//        console.log('s', s);
+        s.editor_selector = "modx-richtext";
+        //s.language = "en";// de seems not to work at the moment
+
+        tinyMCE.init(s);
+    }
+
 });    
 // ]]>
 </script>
