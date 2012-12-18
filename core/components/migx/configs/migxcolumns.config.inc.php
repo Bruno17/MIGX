@@ -17,6 +17,8 @@ $tabs = '
 ]},
 {"caption":"Renderer", "fields": [
 {"field":"renderer","caption":"Renderer","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $renderers) . '"},
+{"field":"clickaction","caption":"on Click","inputTVtype":"listbox","inputOptionValues":"||switchOption||selectFromGrid"},
+{"field":"selectorconfig","caption":"SelectFromGrid config"},
 {"field":"renderoptions","caption":"Renderoptions","inputTVtype":"migx","configs":"migxcolumnrenderoptions"}
 ]}
 ] 

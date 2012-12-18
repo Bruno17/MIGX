@@ -11,12 +11,17 @@ if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix']))
 
 $checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
 
-$packageName = $config['packageName'];
+if (!empty($config['packageName'])) {
+    $packageNames = explode(',', $config['packageName']);
+    //all packages must have the same prefix for now!
+    foreach ($packageNames as $packageName) {
+        $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+        $modelpath = $packagepath . 'model/';
 
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
-$modelpath = $packagepath . 'model/';
+        $modx->addPackage($packageName, $modelpath, $prefix);
+    }
+}
 
-$modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
 
 $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
@@ -72,7 +77,7 @@ if (!empty($joinalias)) {
 }
 
 if ($joins) {
-    $modx->migx->prepareJoins($classname,$joins,$c);
+    $modx->migx->prepareJoins($classname, $joins, $c);
 }
 
 /*
@@ -157,4 +162,3 @@ if ($collection = $modx->getCollection($classname, $c)) {
 }
 
 $rows = $modx->migx->checkRenderOptions($rows);
-

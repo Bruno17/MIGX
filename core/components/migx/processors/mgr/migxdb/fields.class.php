@@ -23,15 +23,15 @@ class migxFormProcessor extends modProcessor {
         $this->modx->getService('smarty', 'smarty.modSmarty');
         $scriptProperties = $this->getProperties();
 
-        // special actions, for example the showSelector - action
+        // special actions, for example the selectFromGrid - action
         $tempParams = $this->modx->getOption('tempParams', $scriptProperties, '');
         $action = '';
         if (!empty($tempParams)) {
             $tempParams = $this->modx->fromJson($tempParams);
             if (array_key_exists('action',$tempParams) && !empty($tempParams['action'])) {
                 $action = strtolower($tempParams['action']) ;
-                if ($action == 'showselector'){
-                    $scriptProperties['configs'] = $action;
+                if ($action == 'selectfromgrid'){
+                    $scriptProperties['configs'] = !empty($tempParams['selectorconfig']) ? $tempParams['selectorconfig'] : $action;
                 }
                 $action = '_' . $action ;
             }

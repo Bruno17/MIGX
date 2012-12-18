@@ -236,7 +236,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                         } 
         
 		                this.getStore().sortInfo = null;
-		                this.getStore().loadData(items);                                                    
+		                this.getStore().loadData(items);
+                        this.collectItems();                                                    
                     }
                     
                 },scope:this}
@@ -448,7 +449,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		if(elm == 'controlBtn') {
             var handler = t.className.split(' ')[2];
             var col = t.className.split(' ')[3];
-			var record = this.getSelectionModel().getSelected();
+            var record = this.getSelectionModel().getSelected();
+            var migxid = record.data.MIGX_id;
+            if (migxid){
+                this.menu.recordIndex = record.store.find('MIGX_id',migxid);        
+            }
             this.menu.record = record;
             var fn = eval(handler);
             fn = fn.createDelegate(this);

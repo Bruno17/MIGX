@@ -522,6 +522,9 @@ class Migx {
         
         $this->loadConfigs(false);
         //$lang = $this->modx->lexicon->fetch();
+        
+        $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
+        $this->config['resource_id'] = $this->modx->getOption('id',$resource,'');
 
         foreach ($this->config as $key => $value) {
             if (!is_array($value)) {
@@ -725,7 +728,7 @@ class Migx {
             $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
             $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
         }
-        $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
+        
         //$this->migx->debug('resource',$resource);
 
         //multiple different Forms
@@ -805,7 +808,7 @@ class Migx {
                 
             }
         }
-
+        $gf='';
         if (count($handlers) > 0) {
             $gridfunctions = array();
             $collectedhandlers = array();
@@ -815,10 +818,11 @@ class Migx {
                     $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
                 }
             }
-            $this->customconfigs['gridfunctions'] = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
-        } else {
-            $this->customconfigs['gridfunctions'] = '';
-        }
+            if (count($gridfunctions)>0){
+                $gf = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
+            }
+        } 
+        $this->customconfigs['gridfunctions'] = $gf;
 
         if (is_object($tv)) {
             $tv_id = $tv->get('id');
@@ -855,18 +859,30 @@ class Migx {
 
     }
 
-    function getColumnRenderOptions($col, $indexfield = 'idx' , $format='json') {
+    function getColumnRenderOptions($col = '*', $indexfield = 'idx' , $format='json', $getdefaultclickaction=false) {
         $columns = $this->getColumns();
-        //print_r($columns);
         $columnrenderoptions = array();
         $optionscolumns = array();
         if (is_array($columns)){
         foreach ($columns as $column) {
+            $defaultclickaction = '';
+            if ($getdefaultclickaction && !empty($column['clickaction'])){
+                $option = array();
+                $defaultclickaction = $column['clickaction'];
+                
+                $option['clickaction'] = $column['clickaction'];
+                $option['selectorconfig'] = $this->modx->getOption('selectorconfig',$column,'');
+                $defaultselectorconfig = $option['selectorconfig'];
+                $columnrenderoptions[$column['dataIndex']]['default_clickaction'] = $option;
+            }
+            
             if (isset($column['renderoptions']) && !empty($column['renderoptions'])) {
                 $options = $this->modx->fromJson($column['renderoptions']);
                 foreach ($options as $key => $option) {
                     $option['idx'] = $key;
                     $option['_renderer'] = $column['renderer'];
+                    $option['clickaction'] = empty($option['clickaction']) && !empty($defaultclickaction) ? $defaultclickaction : $option['clickaction'];
+                    $option['selectorconfig'] = empty($option['selectorconfig']) && !empty($defaultselectorconfig) ? $defaultselectorconfig : $option['selectorconfig'];
                     $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
                 }
             }
@@ -877,14 +893,14 @@ class Migx {
     }
 
     function checkRenderOptions($rows) {
-        $columnrenderoptions = $this->getColumnRenderOptions('*', 'value','array');
-        //print_r($columnrenderoptions);
+        $columnrenderoptions = $this->getColumnRenderOptions('*', 'value','array',true);
         $outputrows = $rows;
         if (count($columnrenderoptions) > 0) {
             $outputrows = array();
             foreach ($rows as $row) {
                 foreach ($columnrenderoptions as $column => $options) {
-                    $row[$column . '_ro'] = isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
+                    $row[$column . '_ro'] = isset($options['default_clickaction']) ? $this->modx->toJson($options['default_clickaction']) : '' ;
+                    $row[$column . '_ro'] = isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : $row[$column . '_ro'];
                     foreach ($options as $option){
                         if ($option['_renderer']=='this.renderChunk'){
                             $row[$column] = $this->modx->getChunk($option['name'],$row);
@@ -1001,7 +1017,7 @@ class Migx {
                         $tv->set('elements', $field['inputOptionValues']);
                     }
                     if (!empty($field['default'])) {
-                        $tv->set('default_text', $field['default']);
+                        $tv->set('default_text', $tv->processBindings($field['default']));
                     }
                     if (!empty($field['configs'])) {
                         $params['configs'] = $field['configs'];

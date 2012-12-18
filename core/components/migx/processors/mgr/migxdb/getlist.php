@@ -2,14 +2,14 @@
 
 
 
-// special actions, for example the showSelector - action
+// special actions, for example the selectFromGrid - action
 $tempParams = $modx->getOption('reqTempParams', $scriptProperties, '');
 $action = '';
 if (!empty($tempParams)) {
     $tempParams = $this->modx->fromJson($tempParams);
     if (isset($tempParams['action']) && !empty($tempParams['action'])) {
         $action = strtolower($tempParams['action']);
-        if ($action == 'showselector') {
+        if ($action == 'selectfromgrid') {
             //$scriptProperties['configs'] = $action;
         }
         $action = '_' . $action;

@@ -6,7 +6,7 @@ $tabs = '
 {"caption":"Renderoption", "fields": [
 {"field":"name","caption":"Name"},
 {"field":"value","caption":"Value"},
-{"field":"clickaction","caption":"on Click","inputTVtype":"listbox","inputOptionValues":"switchOption||showSelector"},
+{"field":"clickaction","caption":"on Click","inputTVtype":"listbox","inputOptionValues":"||switchOption||selectFromGrid"},
 {"field":"handler","caption":"Handler"},
 {"field":"image","caption":"Image","inputTVtype":"image"}
 ]}
