@@ -842,7 +842,7 @@ class Migx {
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($this->migxlang));
         $controller->setPlaceholder('properties', $properties);
         $controller->setPlaceholder('resource', $resource);
-        $controller->setPlaceholder('configs', $this->config['configs']);
+        $controller->setPlaceholder('configs', isset($this->config['configs']) ? $this->config['configs'] : array());
         $controller->setPlaceholder('reqConfigs', $this->modx->getOption('configs', $_REQUEST, ''));
         $controller->setPlaceholder('object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
         $controller->setPlaceholder('reqTempParams', $this->modx->getOption('tempParams', $_REQUEST, ''));
