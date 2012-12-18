@@ -78,13 +78,14 @@ if (!empty($tvname)) {
         */
 
 
-        $properties = $tv->get('input_properties');
-        $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
-
-        $migx->config['configs'] = $properties['configs'];
-        $migx->loadConfigs();
-        // get tabs from file or migx-config-table
-        $formtabs = $migx->getTabs();
+        if (isset($properties['formtabs']) && !empty($properties['formtabs'])) {
+            $formtabs = $properties['formtabs'];
+        } else {
+            $migx->config['configs'] = $properties['configs'];
+            $migx->loadConfigs();
+            // get tabs from file or migx-config-table
+            $formtabs = $migx->getTabs();
+        }
         if (empty($formtabs)) {
             //try to get formtabs and its fields from properties
             $formtabs = $modx->fromJSON($properties['formtabs']);
