@@ -75,6 +75,7 @@ class blox {
         $queries = !empty($queries) ? $modx->fromJSON($queries) : array();
         $sortConfig = $modx->getOption('sortConfig', $scriptProperties, '');
         $sortConfig = !empty($sortConfig) ? $modx->fromJSON($sortConfig) : array();
+        $groupby = $modx->getOption('groupby', $scriptProperties, '');
 
         $debug = $modx->getOption('debug', $scriptProperties, false);
         $joins = $modx->getOption('joins', $scriptProperties, '');
@@ -104,6 +105,11 @@ class blox {
                 $c->where($query['query'], $keys[$query['operator']]);
             }
         }
+        
+        if (!empty($groupby)){
+            $c->groupby($groupby);
+        }         
+        
         if ($forcounting) {
             if ($debug) {
                 $c->prepare();
