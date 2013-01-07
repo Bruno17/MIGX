@@ -20,11 +20,14 @@ $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
 $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'id');
 $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
 $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
-$prefix = isset($scriptProperties['prefix']) ? $scriptProperties['prefix'] : null; 
+$prefix = isset($scriptProperties['prefix']) ? $scriptProperties['prefix'] : null;
 
 $packageName = $scriptProperties['packageName'];
-$joins = $modx->getOption('joins',$scriptProperties,''); 
+$joins = $modx->getOption('joins', $scriptProperties, '');
 $joins = !empty($joins) ? $modx->fromJson($joins) : false;
+
+$selectfields = $modx->getOption('selectfields', $scriptProperties, '');
+$selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
@@ -50,10 +53,10 @@ foreach ($scriptProperties as $property => $value) {
 $idx = 0;
 $output = array();
 $c = $modx->newQuery($classname);
-$c->select($modx->getSelectColumns($classname,$classname));
+$c->select($modx->getSelectColumns($classname, $classname, '', $selectfields));
 
 if ($joins) {
-    $migx->prepareJoins($classname,$joins,$c);
+    $migx->prepareJoins($classname, $joins, $c);
 }
 
 if (!empty($where)) {
@@ -61,11 +64,19 @@ if (!empty($where)) {
 }
 
 if (!empty($queries)) {
-    foreach ($queries as $key=>$query){
-        $c->where($query,$key);
+    foreach ($queries as $key => $query) {
+        $c->where($query, $key);
     }
-    
+
 }
+
+if (!empty($groupby)) {
+    $c->groupby($groupby);
+}
+
+//set "total" placeholder for getPage
+$total = $modx->getCount($classname, $c);
+$modx->setPlaceholder($totalVar, $total);
 
 if (is_array($sortConfig)) {
     foreach ($sortConfig as $sort) {
@@ -75,10 +86,15 @@ if (is_array($sortConfig)) {
     }
 }
 
+//&limit, &offset
+if (!empty($limit)) {
+    $c->limit($limit, $offset);
+}
+
 //$c->prepare();echo $c->toSql();
 if ($collection = $modx->getCollection($classname, $c)) {
     foreach ($collection as $object) {
-        $fields = $object->toArray();
+        $fields = $object->toArray('', false, true);
         if ($toJsonPlaceholder) {
             $output[] = $fields;
         } else {

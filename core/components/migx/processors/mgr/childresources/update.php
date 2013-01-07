@@ -45,11 +45,11 @@ $includeTVs = $modx->getOption('includeTVs', $config, false);
 $classname = 'modResource';
 
 //$saveTVs = false;
-
+/*
 if ($modx->lexicon) {
     $modx->lexicon->load($packageName . ':default');
 }
-
+*/
 if (isset($scriptProperties['data'])) {
     //$scriptProperties = array_merge($scriptProperties, $modx->fromJson($scriptProperties['data']));
     $data = $modx->fromJson($scriptProperties['data']);
@@ -60,7 +60,9 @@ $data['id'] = $modx->getOption('object_id', $scriptProperties, null);
 $parent = $modx->getOption('resource_id', $scriptProperties, false);
 $checkresponse = true;
 
-switch ($scriptProperties['task']) {
+$task = $modx->getOption('task', $scriptProperties, '');
+
+switch ($task) {
     case 'publish':
         $response = $modx->runProcessor('resource/publish', $data);
         break;

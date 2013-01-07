@@ -65,8 +65,10 @@ MODx.window.MigxIframe = function(config) {
         
         {
             xtype: 'container'
-            ,width: '980'
-            ,height: '620'
+            ,layout: 'anchor'
+            ,width:'98%'
+            , height:'98%'            
+            ,anchorSize: {width:'98%', height:'98%'}
             ,autoEl: {
             tag: 'iframe'
             ,name: 'iframewin_iframe_{/literal}{$win_id}{literal}'

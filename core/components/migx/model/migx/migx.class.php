@@ -814,8 +814,11 @@ class Migx {
             $collectedhandlers = array();
             foreach ($handlers as $handler) {
                 if (!in_array($handler, $collectedhandlers) && isset($this->customconfigs['gridfunctions'][$handler])) {
-                    $collectedhandlers[] = $handler;
-                    $gridfunctions[] = $this->customconfigs['gridfunctions'][$handler];
+                    $gridfunction = $this->customconfigs['gridfunctions'][$handler];
+                    if (!empty($gridfunction)){
+                        $collectedhandlers[] = $handler;
+                        $gridfunctions[] = $gridfunction;                        
+                    }
                 }
             }
             if (count($gridfunctions)>0){
