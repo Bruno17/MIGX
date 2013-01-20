@@ -195,7 +195,7 @@ if (count($items) > 0) {
             $value = is_array($value) ? implode('||', $value) : $value; //handle arrays (checkboxes, multiselects)
             $inputTVkey = $formname.$field;
             if ($processTVs && isset($inputTvs[$inputTVkey])) {
-                if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$inputTVkey]['inputTV']))) {
+                if (isset($inputTvs[$inputTVkey]['inputTV']) && $tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$inputTVkey]['inputTV']))) {
 
                 } else {
                     $tv = $modx->newObject('modTemplateVar');
