@@ -85,7 +85,7 @@ class blox {
 
         $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
         if ($forcounting) {
-            $c->select('count(1)');
+            $c->select('1');
         } else {
             $c->select($modx->getSelectColumns($classname, $classname, '', $selectfields));
         }
@@ -117,7 +117,7 @@ class blox {
             }
             if ($c->prepare() && $c->stmt->execute()) {
                 $rows = $c->stmt->fetchAll(PDO::FETCH_COLUMN);
-                $total = intval(reset($rows));
+                $total = count($rows);
             }
             return $c;
         }
@@ -185,6 +185,10 @@ class blox {
 
     function displayblox() {
         $datas = $this->getdatas($this->date, $this->bloxconfig['includesfile']);
+        if (isset($datas['bloxoutput'])){
+            //direkt output
+            return $datas['bloxoutput'];
+        }
         return $this->displaydatas($datas);
     }
 
