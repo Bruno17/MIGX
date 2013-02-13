@@ -86,7 +86,7 @@ Ext.reg('modx-combo-formnamedropdown',MODx.combo.FormnameDropdown);
                 {if $showCheckbox}<input type="checkbox" name="tv{$tv->id}-checkbox" class="modx-tv-checkbox" value="1" />{/if}
                 <span class="modx-tv-caption" id="tv{$tv->id}-caption">{$tv->caption}</span>
             </div>    
-            <a class="modx-tv-reset" href="javascript:;" onclick="MODx.resetTV({$tv->id});" title="{$_lang.set_to_default}"></a>
+            <a class="modx-tv-reset" id="modx-tv-reset-{$tv->id}" onclick="MODx.resetTV({$tv->id});" title="{$_lang.set_to_default}"></a>
             
             {if $tv->description}<span class="modx-tv-label-description">{$tv->description}</span>{/if}
         </label>

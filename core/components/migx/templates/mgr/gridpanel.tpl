@@ -47,6 +47,7 @@ Ext.reg('migx-panel-home',Migx.panel.Home);
 {/literal}
 {$grids}
 {$updatewindows}
+{$iframewindows}
 {literal}
 
 Migx.panel.Object = function(config) {

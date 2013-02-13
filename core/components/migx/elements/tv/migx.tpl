@@ -234,7 +234,12 @@ Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
 	 ,load: function() {
 		//MODx.loadRTE();
         //console.log('load');
-		
+        /*
+        this.rtes = this.el.query('.modx-richtext');
+        for (var i = 0; i<this.rtes.length; i++) {
+            MODx.loadRTE(this.rtes[i].id);
+        }        
+		*/
         if (typeof(Tiny) != 'undefined') {
 		    var s={};
             if (Tiny.config){
