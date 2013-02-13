@@ -895,20 +895,32 @@ class Migx {
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
+    function renderChunk($tpl, $properties) {
+        
+        $value = $this->modx->getChunk($tpl, $properties);
+        
+        $this->modx->getParser();
+        /*parse all non-cacheable tags and remove unprocessed tags, if you want to parse only cacheable tags set param 3 as false*/
+        $this->modx->parser->processElementTags('', $value, true, true, '[[', ']]', array(), $counts);
+
+        return $value;
+    }
+
     function checkRenderOptions($rows) {
-        $columnrenderoptions = $this->getColumnRenderOptions('*', 'value','array',true);
+        $columnrenderoptions = $this->getColumnRenderOptions('*', 'value', 'array');
+        //print_r($columnrenderoptions);
         $outputrows = $rows;
         if (count($columnrenderoptions) > 0) {
             $outputrows = array();
             foreach ($rows as $row) {
                 foreach ($columnrenderoptions as $column => $options) {
-                    $row[$column . '_ro'] = isset($options['default_clickaction']) ? $this->modx->toJson($options['default_clickaction']) : '' ;
-                    $row[$column . '_ro'] = isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : $row[$column . '_ro'];
-                    foreach ($options as $option){
-                        if ($option['_renderer']=='this.renderChunk'){
-                            $row[$column] = $this->modx->getChunk($option['name'],$row);
+                    $row[$column . '_ro'] = isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
+                    foreach ($options as $option) {
+                        if ($option['_renderer'] == 'this.renderChunk') {
+                            $row['_this.value'] = $row[$column];
+                            $row[$column] = $this->renderChunk($option['name'], $row);
                         }
-                        break;    
+                        break;
                     }
                 }
                 $outputrows[] = $row;
