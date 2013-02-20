@@ -121,7 +121,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
  		
         var win_xtype = 'modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}';
 		if (this.windows[win_xtype]){
-			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
+			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv_id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
             this.windows[win_xtype].fp.autoLoad.params.configs=this.config.configs;
@@ -142,7 +142,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             
             ,baseParams : {
 			    action: 'mgr/migxdb/fields',
-				tv_id: '{/literal}{$tv->id}{literal}',
+				tv_id: '{/literal}{$tv_id}{literal}',
 				tv_name: '{/literal}{$tv->name}{literal}',
 				'class_key': 'modDocument',
                 'wctx':'{/literal}{$myctx}{literal}',
@@ -159,7 +159,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
         var url = MODx.config.assets_url+'components/migx/connector.php';
-        var tv = Ext.get('tv{/literal}{$tv->id}{literal}');
+        var tv = Ext.get('tv{/literal}{$tv_id}{literal}');
         var items = tv ? tv.dom.value : '';
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
         var action = action||'a';
@@ -175,7 +175,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         
         var win_xtype = 'modx-window-mi-iframe-{/literal}{$win_id}{literal}';
 		if (this.windows[win_xtype]){
-			//this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
+			//this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv_id}{literal}';
 			//this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
             //this.windows[win_xtype].fp.autoLoad.params.record_json=json;
@@ -186,6 +186,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             this.windows[win_xtype].action=action;
             this.windows[win_xtype].resource_id=resource_id;
             this.windows[win_xtype].co_id=co_id;
+            this.windows[win_xtype].grid=this;
             object_id_field = Ext.get('migx_iframewin_object_id_{/literal}{$win_id}{literal}');
             object_id_field.dom.value = object_id;
 		}

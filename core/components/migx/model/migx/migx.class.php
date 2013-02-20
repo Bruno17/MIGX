@@ -430,9 +430,10 @@ class Migx {
         $maincaption = "_('migx.management')";
 
         if (count($cmptabs) > 0) {
-            foreach ($cmptabs as $tab) {
+            foreach ($cmptabs as $tab_idx => $tab) {
                 $this->customconfigs = array();
                 $this->config['configs'] = $tab;
+                $properties['tv_id'] = $tab_idx+1 ; 
                 $this->prepareGrid($properties, $controller, $tv);
                 $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->customconfigs['cmptabcaption'];
                 $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
@@ -828,13 +829,15 @@ class Migx {
         $this->customconfigs['gridfunctions'] = $gf;
 
         if (is_object($tv)) {
-            $tv_id = $tv->get('id');
+            $win_id = $tv->get('id');
         } else {
-            $tv_id = 'migxdb';
+            $win_id = 'migxdb';
             $tv = $this->modx->newObject('modTemplateVar');
             $controller->setPlaceholder('tv', $tv);
         }
-
+        
+        $tv_id = $tv->get('id');
+        $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : 0;
 
         $newitem[] = $item;
 
@@ -842,6 +845,7 @@ class Migx {
 
         //$controller->setPlaceholder('i18n', $this->migxi18n);
         
+        $controller->setPlaceholder('tv_id', $tv_id);
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($this->migxlang));
         $controller->setPlaceholder('properties', $properties);
         $controller->setPlaceholder('resource', $resource);
@@ -858,7 +862,7 @@ class Migx {
         $controller->setPlaceholder('myctx', $wctx);
         $controller->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
         $controller->setPlaceholder('customconfigs', $this->customconfigs);
-        $controller->setPlaceholder('win_id', !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $tv_id);
+        $controller->setPlaceholder('win_id', !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $win_id);
 
     }
 

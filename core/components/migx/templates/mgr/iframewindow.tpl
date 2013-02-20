@@ -85,7 +85,7 @@ MODx.window.MigxIframe = function(config) {
         ,buttons: [{
             text: config.cancelBtnText || _('close')
             ,scope: this
-            ,handler: function() { this.hide(); }
+            ,handler: function() { this.closeWindow(); }
         }]
         ,action: 'u'
 		,record_json: ''
@@ -110,6 +110,12 @@ MODx.window.MigxIframe = function(config) {
 };
 Ext.extend(MODx.window.MigxIframe,Ext.Window,{
 
+    closeWindow: function() {
+		this.grid.refresh();
+        this.hide();
+		
+    }
+    ,
     renderIframe: function() {
 		this.add(this.iframe);
 		
