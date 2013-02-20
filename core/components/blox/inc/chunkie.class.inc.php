@@ -28,7 +28,7 @@ class bloxChunkie {
 		if ($this->depth > $this->maxdepth) {
 			return;
 		}
-		$keypath = !empty($path) ? $path . "." . $key : $key;
+		$keypath = !empty($path) ? $path . '.' . $key : $key;
 
 		if (is_array($value)) {
 			foreach ($value as $subkey => $subval) {
@@ -58,11 +58,11 @@ class bloxChunkie {
 	function getTemplate($tpl) {
 		global $modx;
 
-		$template = "";
+		$template = '';
 		if (isset($this->templates[$tpl])) {
 			$template = $this->templates[$tpl];
 		} else {
-			if (substr($tpl, 0, 6) == "@FILE ") {
+			if (substr($tpl, 0, 6) == '@FILE ') {
 				$filename = substr($tpl, 6);
 				if (!isset($modx->chunkieCache['@FILE'])) {
 					$modx->chunkieCache['@FILE'] = array();
@@ -75,10 +75,10 @@ class bloxChunkie {
 				} else {
 					$template = $modx->chunkieCache['@FILE'][$filename];
 				}
-			} elseif (substr($tpl, 0, 8) == "@INLINE ") {
+			} elseif (substr($tpl, 0, 8) == '@INLINE ') {
 				$template = substr($tpl, 8);
 			} else {
-				if (substr($tpl, 0, 7) == "@CHUNK ") {
+				if (substr($tpl, 0, 7) == '@CHUNK ') {
 					$chunkname = substr($tpl, 7);
 				} else {
 					$chunkname = $tpl;

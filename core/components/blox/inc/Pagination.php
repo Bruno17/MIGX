@@ -6,7 +6,7 @@
  *
  * @author		ExpressionEngine Dev Team. Adopted to MODX by Thomas Jakobi
  * @copyright	Copyright (c) 2008 - 2011, EllisLab, Inc.
- * @license		http://codeigniter.com/user_guide/license.html
+ * @license		http://www.codeigniter.com/user_guide/license.html
  * @link		http://www.codeigniter.com
  * @since		Version 1.0
  * @filesource
@@ -125,7 +125,7 @@ class Pagination {
 		if ($c == '&' || $c == '?') {
 			$this->original_query_string = substr($this->original_query_string, 1);
 		}
-			$this->original_query_string = ($this->original_query_string != '') ? '&' . $this->original_query_string : '';
+		$this->original_query_string = ($this->original_query_string != '') ? '&' . $this->original_query_string : '';
 
 		// Set current page to 1 if using page numbers instead of offset
 		if ($this->use_page_numbers AND $this->cur_page == 0) {
