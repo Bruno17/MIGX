@@ -22,12 +22,16 @@
  * Suite 330, Boston, MA 02111-1307 USA
  *
  * @name bloX
- * @author Bruno Perner <b.perner@gmx.de>
- * @package bloX
+ * @subpackage lexicon
+ *
+ * Properties English Lexicon Entries for bloX
  */
-$output = '';
 
-//include snippet file
-include($modx->getOption('blox.core_path', null, $modx->getOption('core_path') . 'components/blox/blox.php'));
-
-return $output;
+$_lang['prop_daterange.component'] = '';
+$_lang['prop_daterange.configs'] = '';
+$_lang['prop_daterange.includes'] = '';
+$_lang['prop_daterange.project'] = '';
+$_lang['prop_daterange.task'] = '';
+$_lang['prop_daterange.packagename'] = '';
+$_lang['prop_daterange.classname'] = '';
+$_lang['prop_daterange.where'] = '';

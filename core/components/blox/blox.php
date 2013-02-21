@@ -70,7 +70,7 @@ $bloxconfig['projectparent'] = ($bloxconfig['project'] != '') ? 'custom' : 'blox
 $bloxconfig['componentpath'] = ($bloxconfig['component'] != '' && $bloxconfig['project'] != '') ? 'components/' . $bloxconfig['component'] . '/bloxprojects/' : $bloxconfig['path'] . 'projects/custom/';
 $bloxconfig['projectpath'] = ($bloxconfig['project'] != '') ? $bloxconfig['componentpath'] . $bloxconfig['project'] . '/' : $bloxconfig['path'] . 'projects/blox/' . $bloxconfig['resourceclass'] .
     '/';
-$bloxconfig['task'] = $modx->getOption('task', $scriptProperties, $bloxconfig['htmlouter']);
+$bloxconfig['task'] = $modx->getOption('task', $scriptProperties, $bloxconfig['htmlouter'], TRUE);
 $bloxconfig['outputSeparator'] = $modx->getOption('outputSeparator', $scriptProperties, '');
 
 $bloxconfig['tpls'] = $modx->getOption('tpls', $scriptProperties, '');
