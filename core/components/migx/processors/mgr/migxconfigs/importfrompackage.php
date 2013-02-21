@@ -17,18 +17,18 @@ if (!empty($packageName)) {
     if (is_dir($configpath)) {
         if ($handle = opendir($configpath)) {
             while (false !== ($file = readdir($handle))) {
-                $exploded = explode('.',$file);
-                if (count($exploded) == 3 && $exploded[1]=='config' && $exploded[2]=='js'){
+                $exploded = explode('.', $file);
+                if (count($exploded) == 3 && $exploded[1] == 'config' && $exploded[2] == 'js') {
                     $name = $exploded[0];
-                    if ($object = $modx->getObject($classname,array('name'=>$name))){
-                        $object->set('name',$name.'_bkup_'.strftime('%Y%m%d'));
+                    if ($object = $modx->getObject($classname, array('name' => $name))) {
+                        $object->set('name', $name . '_bkup_' . strftime('%Y%m%d'));
                         $object->save();
                     }
-                    $content = @file_get_contents($configpath.$file);
+                    $content = @file_get_contents($configpath . $file);
                     $object = $modx->newObject($classname);
-                    $object->fromArray($modx->fromJson($content));
-                    $object->set('name',$name);
-                    $object->save();    
+                    $object->fromArray(recursive_encode($modx->fromJson($content)));
+                    $object->set('name', $name);
+                    $object->save();
                 }
             }
             closedir($handle);
