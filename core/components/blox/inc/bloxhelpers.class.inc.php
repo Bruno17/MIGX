@@ -200,46 +200,46 @@ class bloxhelpers {
         }
     }
 
-	function buildMenuTemplate($docs, $depth, $docInfo = array(), $level = 0) {
-		global $modx;
+    function buildMenuTemplate($docs, $depth, $docInfo = array(), $level = 0) {
+        global $modx;
 
-		$level++;
+        $level++;
 
-		if ($depth >= 0) {
-			$depth--;
-			$levelDocTemplate = '';
-			foreach ($docs as $docId) {
-				if (isset($docInfo[$docId])) {
-					if (file_exists(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . $level . 'Tpl.html')) {
-						$template = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . $level . 'Tpl.html');
-					} else {
-						$template = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'levelTpl.html');
-					}
-					if (file_exists(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'doc' . $docId . 'OuterTpl.html')) {
-						$childMenu = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'doc' . $docId . 'OuterTpl.html');
-						$levelDocTemplate .= str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $childMenu) . "\r\n";
-					} else {
-						$children = $modx->getChildIds($docId, 1);
-						$childMenu = ($children && $depth >= 0) ? $this->buildMenuTemplate($children, $depth, $docInfo, $level) : '';
-						if ($childMenu) {
-							if (file_exists(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . ($level + 1) . 'OuterTpl.html')) {
-								$outerTemplate = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . ($level + 1) . 'OuterTpl.html');
-							} else {
-								$outerTemplate = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'levelOuterTpl.html');
-							}
-							$childMenu = str_replace('[[#wrapper]]', $childMenu, $outerTemplate);
-							$childMenu = str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $childMenu);
-						}
-						$levelDocTemplate .= str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $template) . "\r\n";
-						$levelDocTemplate = str_replace('[[#wrapper]]', $childMenu, $levelDocTemplate);
-					}
-				}
-			}
-			return $levelDocTemplate;
-		} else {
-			return '';
-		}
-	}    
+        if ($depth >= 0) {
+            $depth--;
+            $levelDocTemplate = '';
+            foreach ($docs as $docId) {
+                if (isset($docInfo[$docId])) {
+                    if (file_exists(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . $level . 'Tpl.html')) {
+                        $template = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . $level . 'Tpl.html');
+                    } else {
+                        $template = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'levelTpl.html');
+                    }
+                    if (file_exists(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'doc' . $docId . 'OuterTpl.html')) {
+                        $childMenu = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'doc' . $docId . 'OuterTpl.html');
+                        $levelDocTemplate .= str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $childMenu) . "\r\n";
+                    } else {
+                        $children = $modx->getChildIds($docId, 1);
+                        $childMenu = ($children && $depth >= 0) ? $this->buildMenuTemplate($children, $depth, $docInfo, $level) : '';
+                        if ($childMenu) {
+                            if (file_exists(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . ($level + 1) . 'OuterTpl.html')) {
+                                $outerTemplate = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'level' . ($level + 1) . 'OuterTpl.html');
+                            } else {
+                                $outerTemplate = file_get_contents(MODX_CORE_PATH . $this->bloxconfig['tplpath'] . 'levelOuterTpl.html');
+                            }
+                            $childMenu = str_replace('[[#wrapper]]', $childMenu, $outerTemplate);
+                            $childMenu = str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $childMenu);
+                        }
+                        $levelDocTemplate .= str_replace('[[+', '[[+level' . ($level) . '.' . ($docId) . '.', $template) . "\r\n";
+                        $levelDocTemplate = str_replace('[[#wrapper]]', $childMenu, $levelDocTemplate);
+                    }
+                }
+            }
+            return $levelDocTemplate;
+        } else {
+            return '';
+        }
+    }    
 
 
     function getResources($scriptProperties = null) {
@@ -751,7 +751,7 @@ class bloxhelpers {
     //////////////////////////////////////////////////////////////////////
     // Ditto - Functions
     // Author:
-    // 		Mark Kaplan for MODx CMF
+    //         Mark Kaplan for MODx CMF
     //////////////////////////////////////////////////////////////////////
 
     // ---------------------------------------------------

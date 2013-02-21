@@ -26,12 +26,17 @@
 $bloxconfig = $array;
 $bloxconfig['path'] = 'components/blox/';
 $bloxconfig['absolutepath'] = $modx->getOption('core_path') . $bloxconfig['path'];
+$bloxconfig['component'] = $modx->getOption('component', $scriptProperties, '');
 
 // Include config files
 $configs = explode(',', $modx->getOption('configs', $scriptProperties, ''));
 
 foreach ($configs as $configName) {
-    $configFile = $bloxconfig['absolutepath'] . 'configs/' . $configName . '.config.inc.php'; // [ file ]
+    if ($bloxconfig['component'] != '') {
+        $configFile = $modx->getOption('core_path') . 'components/' . $bloxconfig['component'] .'/bloxconfigs/' . $configName . '.config.inc.php'; // [ file ]
+    } else {
+        $configFile = $bloxconfig['absolutepath'] . 'configs/' . $configName . '.config.inc.php'; // [ file ]
+    }
     if (file_exists($configFile)) {
         include ($configFile);
         if (isset($config) && is_array($config)) {
@@ -42,7 +47,8 @@ foreach ($configs as $configName) {
 }
 $bloxconfig = array_merge($bloxconfig, $scriptProperties);
 
-$includes = (isset($includes)) ? explode(',', $includes) : array();
+$includes = $modx->getOption('includes', $scriptProperties, '');
+$includes = ($includes != '') ? explode(',', $includes) : array();
 $includes = array_merge(array('blox', 'chunkie'), $includes);
 
 $adodbFile = $bloxconfig['absolutepath'] . 'inc/adodb-time.inc.php';
@@ -60,28 +66,29 @@ $bloxconfig['classname'] = $modx->getOption('classname', $scriptProperties, 'mod
 $bloxconfig['resourceclass'] = $modx->getOption('resourceclass', $scriptProperties, ($bloxconfig['classname'] !== 'modResource') ? 'modTable' : 'modResource');
 $bloxconfig['htmlouter'] = $modx->getOption('htmlouter', $scriptProperties, 'div');
 $bloxconfig['project'] = $modx->getOption('project', $scriptProperties, '');
-$bloxconfig['projectparent'] = $bloxconfig['project'] != '' ? 'custom' : 'blox';
-$bloxconfig['projectpath'] = ($bloxconfig['project'] != '') ? $bloxconfig['path'] . "projects/custom/" . $bloxconfig['project'] . '/' : $bloxconfig['path'] . "projects/blox/" . $bloxconfig['resourceclass'] .
+$bloxconfig['projectparent'] = ($bloxconfig['project'] != '') ? 'custom' : 'blox';
+$bloxconfig['componentpath'] = ($bloxconfig['component'] != '' && $bloxconfig['project'] != '') ? 'components/' . $bloxconfig['component'] . '/bloxprojects/' : $bloxconfig['path'] . 'projects/custom/';
+$bloxconfig['projectpath'] = ($bloxconfig['project'] != '') ? $bloxconfig['componentpath'] . $bloxconfig['project'] . '/' : $bloxconfig['path'] . 'projects/blox/' . $bloxconfig['resourceclass'] .
     '/';
 $bloxconfig['task'] = $modx->getOption('task', $scriptProperties, $bloxconfig['htmlouter']);
 $bloxconfig['outputSeparator'] = $modx->getOption('outputSeparator', $scriptProperties, '');
 
 $bloxconfig['tpls'] = $modx->getOption('tpls', $scriptProperties, '');
 $bloxconfig['tplpath'] = (($tplpath = $modx->getOption('tplpath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $tplpath : $bloxconfig['projectpath'] . $bloxconfig['task'] .
-    "/templates/";
+    '/templates/';
 $bloxconfig['includespath'] = (($includespath = $modx->getOption('includespath', $scriptProperties, '')) != '') ? $bloxconfig['projectpath'] . $includespath : $bloxconfig['projectpath'] . $bloxconfig['task'] .
-    "/includes/";
+    '/includes/';
 $bloxconfig['cachepath'] = $bloxconfig['path'] . 'cache/';
-$bloxconfig['includesfile'] = $bloxconfig['includespath'] . "getdatas.php"; // [ file ]
-$bloxconfig['includesclassfile'] = $bloxconfig['includespath'] . "getdatas.class.php"; // [ file ]
+$bloxconfig['includesfile'] = $bloxconfig['includespath'] . 'getdatas.php'; // [ file ]
+$bloxconfig['includesclassfile'] = $bloxconfig['includespath'] . 'getdatas.class.php'; // [ file ]
 $pn = $bloxconfig['project'] != '' ? ucfirst($bloxconfig['project']) : $bloxconfig['resourceclass'];
 $bloxconfig['includesclass'] = ucfirst($bloxconfig['projectparent']) . '_' . $pn . '_' . ucfirst($bloxconfig['task']); // [ class ]
-$bloxconfig['onsavefile'] = $bloxconfig['includespath'] . "onsavedatas.php"; // [ file ]
+$bloxconfig['onsavefile'] = $bloxconfig['includespath'] . 'onsavedatas.php'; // [ file ]
 
 $timestamp = time();
-$timestampday = xetadodb_strftime("%d", $timestamp);
-$timestampmonth = xetadodb_strftime("%m", $timestamp);
-$timestampyear = xetadodb_strftime("%Y", $timestamp);
+$timestampday = xetadodb_strftime('%d', $timestamp);
+$timestampmonth = xetadodb_strftime('%m', $timestamp);
+$timestampyear = xetadodb_strftime('%Y', $timestamp);
 $bloxconfig['nowtimestamp'] = $timestamp;
 $bloxconfig['day'] = $modx->getOption('day', $scriptProperties, $timestampday);
 $bloxconfig['day'] = (isset($_REQUEST['day']) && (trim($_REQUEST['day'] !== ''))) ? (string )intval($_REQUEST['day']) : $bloxconfig['day'];
