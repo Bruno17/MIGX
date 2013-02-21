@@ -66,8 +66,9 @@ $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
 $migx = $modx->getService('migx', 'Migx', $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/migx/', $scriptProperties);
-if (!($migx instanceof Migx)) return '';
-$migx->working_context = isset($modx->resource) ? $modx->resource->get('context_key'): 'web';
+if (!($migx instanceof Migx))
+    return '';
+$migx->working_context = isset($modx->resource) ? $modx->resource->get('context_key') : 'web';
 
 
 if (!empty($tvname)) {
@@ -81,8 +82,8 @@ if (!empty($tvname)) {
         $properties = $tv->get('input_properties');
         $properties = isset($properties['formtabs']) ? $properties : $tv->getProperties();
 
-        $migx->config['configs'] = $modx->getOption('configs',$properties,'');
-        if (!empty($migx->config['configs'])){
+        $migx->config['configs'] = $modx->getOption('configs', $properties, '');
+        if (!empty($migx->config['configs'])) {
             $migx->loadConfigs();
             // get tabs from file or migx-config-table
             $formtabs = $migx->getTabs();
@@ -137,7 +138,7 @@ if (is_array($where) && count($where) > 0) {
 $modx->setPlaceholder($totalVar, count($items));
 
 
-if (!empty ($reverse)){
+if (!empty($reverse)) {
     $items = array_reverse($items);
 }
 
@@ -188,21 +189,23 @@ if (count($items) > 0) {
 
     $idx = 0;
     $output = array();
+    $template = array();
+    $count = count($items);
     foreach ($items as $key => $item) {
-        $formname = isset ($item['MIGX_formname']) ?  $item['MIGX_formname'].'_' : '';
+        $formname = isset($item['MIGX_formname']) ? $item['MIGX_formname'] . '_' : '';
         $fields = array();
         foreach ($item as $field => $value) {
             $value = is_array($value) ? implode('||', $value) : $value; //handle arrays (checkboxes, multiselects)
-            $inputTVkey = $formname.$field;
+            $inputTVkey = $formname . $field;
             if ($processTVs && isset($inputTvs[$inputTVkey])) {
                 if ($tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$inputTVkey]['inputTV']))) {
 
                 } else {
                     $tv = $modx->newObject('modTemplateVar');
-                    $tv->set('type',$inputTvs[$inputTVkey]['inputTVtype']);
+                    $tv->set('type', $inputTvs[$inputTVkey]['inputTVtype']);
                 }
                 $inputTV = $inputTvs[$inputTVkey];
-  
+
                 $mTypes = $modx->getOption('manipulatable_url_tv_output_types', null, 'image,file');
                 //don't manipulate any urls here
                 $modx->setOption('manipulatable_url_tv_output_types', '');
@@ -212,7 +215,7 @@ if (count($items) > 0) {
                 $modx->setOption('manipulatable_url_tv_output_types', $mTypes);
                 //now manipulate urls
                 if ($mediasource = $migx->getFieldSource($inputTV, $tv)) {
-                     $mTypes = explode(',', $mTypes);
+                    $mTypes = explode(',', $mTypes);
                     if (!empty($value) && in_array($tv->get('type'), $mTypes)) {
                         //$value = $mediasource->prepareOutputUrl($value);
                         $value = str_replace('/./', '/', $mediasource->prepareOutputUrl($value));
@@ -231,33 +234,64 @@ if (count($items) > 0) {
             $fields['_first'] = $idx == 1 ? true : '';
             $fields['_last'] = $idx == $limit ? true : '';
             $fields['idx'] = $idx;
-            $rowtpl = $tpl;
+            $rowtpl = '';
             //get changing tpls from field
             if (substr($tpl, 0, 7) == "@FIELD:") {
                 $tplField = substr($tpl, 7);
                 $rowtpl = $fields[$tplField];
             }
 
-            if (!isset($template[$rowtpl])) {
-                if (substr($rowtpl, 0, 6) == "@FILE:") {
-                    $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
-                } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
-                    $template[$rowtpl] = substr($tpl, 6);
-                } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
-                    $template[$rowtpl] = $chunk->getContent();
-                } else {
-                    $template[$rowtpl] = false;
+            if ($fields['_first'] && !empty($tplFirst)) {
+                $rowtpl = $tplFirst;
+            }
+            if ($fields['_last'] && empty($rowtpl) && !empty($tplLast)) {
+                $rowtpl = $tplLast;
+            }
+            $tplidx = 'tpl_' . $idx;
+            if (empty($rowtpl) && !empty($$tplidx)) {
+                $rowtpl = $$tplidx;
+            }
+            if ($idx > 1 && empty($rowtpl)) {
+                $divisors = $migx->getDivisors($idx);
+                if (!empty($divisors)) {
+                    foreach ($divisors as $divisor) {
+                        $tplnth = 'tpl_n' . $divisor;
+                        if (!empty($$tplnth)) {
+                            $rowtpl = $$tplnth;
+                            if (!empty($rowtpl)) {
+                                break;
+                            }
+                        }
+                    }
                 }
+            }
+            
+            if ($count == 1 && isset($tpl_oneresult)){
+                $rowtpl = $tpl_oneresult;
             }
 
             $fields = array_merge($fields, $properties);
 
+            if (!empty($rowtpl)) {
+                $template = $migx->getTemplate($tpl, $template);
+                $fields['_tpl'] = $template[$tpl]; 
+            } else {
+                $rowtpl = $tpl;
+
+            }
+            $template = $migx->getTemplate($rowtpl, $template);
+            
+            
+            
             if ($template[$rowtpl]) {
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
                 $chunk->setContent($template[$rowtpl]);
+                
+                
+                
                 if (!empty($placeholdersKeyField) && isset($fields[$placeholdersKeyField])) {
-                    $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
+                   $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
                 } else {
                     $output[] = $chunk->process($fields);
                 }

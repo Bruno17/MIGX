@@ -1585,4 +1585,30 @@ class Migx {
             }
         }
     }
+
+    public function getTemplate($rowtpl,$template){
+        if (!isset($template[$rowtpl])) {
+            if (substr($rowtpl, 0, 6) == "@FILE:") {
+                $template[$rowtpl] = file_get_contents($this->modx->config['base_path'] . substr($rowtpl, 6));
+            } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
+               $template[$rowtpl] = substr($rowtpl, 6);
+            } elseif ($chunk = $this->modx->getObject('modChunk', array('name' => $rowtpl), true)) {
+                $template[$rowtpl] = $chunk->getContent();
+            } else {
+                $template[$rowtpl] = false;
+            }
+        }
+        return $template;        
+    }    
+    
+    
+    public function getDivisors($integer) {
+        $divisors = array();
+        for ($i = $integer; $i > 1; $i--) {
+            if (($integer % $i) === 0) {
+                $divisors[] = $i;
+            }
+        }
+        return $divisors;
+    }    
 }
