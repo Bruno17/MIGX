@@ -286,8 +286,8 @@ class Migx {
 
             foreach ($configs as $config) {
 
-                if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config,'deleted'=>'0'))) {
-                              
+                if ($cfObject = $this->modx->getObject('migxConfig', array('name' => $config, 'deleted' => '0'))) {
+
                     $extended = $cfObject->get('extended');
                     $packageName = $this->modx->getOption('packageName', $extended, '');
                 }
@@ -433,7 +433,7 @@ class Migx {
             foreach ($cmptabs as $tab_idx => $tab) {
                 $this->customconfigs = array();
                 $this->config['configs'] = $tab;
-                $properties['tv_id'] = $tab_idx+1 ; 
+                $properties['tv_id'] = $tab_idx + 1;
                 $this->prepareGrid($properties, $controller, $tv);
                 $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->customconfigs['cmptabcaption'];
                 $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
@@ -520,12 +520,12 @@ class Migx {
     }
 
     public function prepareGrid($properties, &$controller, &$tv, $columns = array()) {
-        
+
         $this->loadConfigs(false);
         //$lang = $this->modx->lexicon->fetch();
-        
+
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
-        $this->config['resource_id'] = $this->modx->getOption('id',$resource,'');
+        $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
 
         foreach ($this->config as $key => $value) {
             if (!is_array($value)) {
@@ -729,7 +729,7 @@ class Migx {
             $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
             $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
         }
-        
+
         //$this->migx->debug('resource',$resource);
 
         //multiple different Forms
@@ -806,26 +806,26 @@ class Migx {
 
                 $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
 
-                
+
             }
         }
-        $gf='';
+        $gf = '';
         if (count($handlers) > 0) {
             $gridfunctions = array();
             $collectedhandlers = array();
             foreach ($handlers as $handler) {
                 if (!in_array($handler, $collectedhandlers) && isset($this->customconfigs['gridfunctions'][$handler])) {
                     $gridfunction = $this->customconfigs['gridfunctions'][$handler];
-                    if (!empty($gridfunction)){
+                    if (!empty($gridfunction)) {
                         $collectedhandlers[] = $handler;
-                        $gridfunctions[] = $gridfunction;                        
+                        $gridfunctions[] = $gridfunction;
                     }
                 }
             }
-            if (count($gridfunctions)>0){
+            if (count($gridfunctions) > 0) {
                 $gf = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
             }
-        } 
+        }
         $this->customconfigs['gridfunctions'] = $gf;
 
         if (is_object($tv)) {
@@ -835,7 +835,7 @@ class Migx {
             $tv = $this->modx->newObject('modTemplateVar');
             $controller->setPlaceholder('tv', $tv);
         }
-        
+
         $tv_id = $tv->get('id');
         $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : $tv_id;
 
@@ -844,7 +844,7 @@ class Migx {
         //print_r(array_keys($this->customconfigs));
 
         //$controller->setPlaceholder('i18n', $this->migxi18n);
-        
+
         $controller->setPlaceholder('tv_id', $tv_id);
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($this->migxlang));
         $controller->setPlaceholder('properties', $properties);
@@ -866,49 +866,49 @@ class Migx {
 
     }
 
-    function getColumnRenderOptions($col = '*', $indexfield = 'idx' , $format='json', $getdefaultclickaction=false) {
+    function getColumnRenderOptions($col = '*', $indexfield = 'idx', $format = 'json', $getdefaultclickaction = false) {
         $columns = $this->getColumns();
         $columnrenderoptions = array();
         $optionscolumns = array();
-        if (is_array($columns)){
-        foreach ($columns as $column) {
-            $defaultclickaction = '';
-            if ($getdefaultclickaction && !empty($column['clickaction'])){
-                $option = array();
-                $defaultclickaction = $column['clickaction'];
-                
-                $option['clickaction'] = $column['clickaction'];
-                $option['selectorconfig'] = $this->modx->getOption('selectorconfig',$column,'');
-                $defaultselectorconfig = $option['selectorconfig'];
-                $columnrenderoptions[$column['dataIndex']]['default_clickaction'] = $option;
-            }
-            
-            if (isset($column['renderoptions']) && !empty($column['renderoptions'])) {
-                $options = $this->modx->fromJson($column['renderoptions']);
-                foreach ($options as $key => $option) {
-                    $option['idx'] = $key;
-                    $option['_renderer'] = $column['renderer'];
-                    $option['clickaction'] = empty($option['clickaction']) && !empty($defaultclickaction) ? $defaultclickaction : $option['clickaction'];
-                    $option['selectorconfig'] = empty($option['selectorconfig']) && !empty($defaultselectorconfig) ? $defaultselectorconfig : $option['selectorconfig'];
-                    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
+        if (is_array($columns)) {
+            foreach ($columns as $column) {
+                $defaultclickaction = '';
+                if ($getdefaultclickaction && !empty($column['clickaction'])) {
+                    $option = array();
+                    $defaultclickaction = $column['clickaction'];
+
+                    $option['clickaction'] = $column['clickaction'];
+                    $option['selectorconfig'] = $this->modx->getOption('selectorconfig', $column, '');
+                    $defaultselectorconfig = $option['selectorconfig'];
+                    $columnrenderoptions[$column['dataIndex']]['default_clickaction'] = $option;
+                }
+
+                if (isset($column['renderoptions']) && !empty($column['renderoptions'])) {
+                    $options = $this->modx->fromJson($column['renderoptions']);
+                    foreach ($options as $key => $option) {
+                        $option['idx'] = $key;
+                        $option['_renderer'] = $column['renderer'];
+                        $option['clickaction'] = empty($option['clickaction']) && !empty($defaultclickaction) ? $defaultclickaction : $option['clickaction'];
+                        $option['selectorconfig'] = empty($option['selectorconfig']) && !empty($defaultselectorconfig) ? $defaultselectorconfig : $option['selectorconfig'];
+                        $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
+                    }
                 }
             }
-        }            
         }
 
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
     function renderChunk($tpl, $properties) {
-        
+
         $value = $this->parseChunk($tpl, $properties);
-        
+
         $this->modx->getParser();
         /*parse all non-cacheable tags and remove unprocessed tags, if you want to parse only cacheable tags set param 3 as false*/
         $this->modx->parser->processElementTags('', $value, true, true, '[[', ']]', array(), $counts);
 
         return $value;
-    }    
+    }
 
     function checkRenderOptions($rows) {
         $columnrenderoptions = $this->getColumnRenderOptions('*', 'value', 'array');
@@ -1449,12 +1449,12 @@ class Migx {
                         $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case 'contains':
-                        $output = strpos($subject,$operand) !== false ? $then : (isset($else) ? $else : '');
+                        $output = strpos($subject, $operand) !== false ? $then : (isset($else) ? $else : '');
                         break;
                     case 'snippet':
-                        $result = $this->modx->runSnippet($params,array('subject'=>$subject,'operand'=>$operand));
+                        $result = $this->modx->runSnippet($params, array('subject' => $subject, 'operand' => $operand));
                         $output = !empty($result) ? $then : (isset($else) ? $else : '');
-                        break;                                                    
+                        break;
                     case '==':
                     case '=':
                     case 'eq':
@@ -1586,22 +1586,22 @@ class Migx {
         }
     }
 
-    public function getTemplate($rowtpl,$template){
+    public function getTemplate($rowtpl, $template) {
         if (!isset($template[$rowtpl])) {
             if (substr($rowtpl, 0, 6) == "@FILE:") {
                 $template[$rowtpl] = file_get_contents($this->modx->config['base_path'] . substr($rowtpl, 6));
             } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
-               $template[$rowtpl] = substr($rowtpl, 6);
+                $template[$rowtpl] = substr($rowtpl, 6);
             } elseif ($chunk = $this->modx->getObject('modChunk', array('name' => $rowtpl), true)) {
                 $template[$rowtpl] = $chunk->getContent();
             } else {
                 $template[$rowtpl] = false;
             }
         }
-        return $template;        
-    }    
-    
-    
+        return $template;
+    }
+
+
     public function getDivisors($integer) {
         $divisors = array();
         for ($i = $integer; $i > 1; $i--) {
@@ -1610,5 +1610,96 @@ class Migx {
             }
         }
         return $divisors;
-    }    
+    }
+
+    function importconfig($array) {
+        $excludekeys = array('getlistwhere', 'joins');
+        return $this->recursive_encode($array, $excludekeys);
+    }
+
+    function recursive_encode($array, $excludekeys = array()) {
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+                
+                if (!is_int($key) && in_array($key, $excludekeys)) {
+                    $array[$key] = !empty($value) ? json_encode($value) : $value;
+                    //$array[$key] = $this->recursive_encode($value, $excludekeys); 
+                } else {
+                    $array[$key] = $this->recursive_encode($value, $excludekeys);
+                }
+            }
+            if (!$this->is_assoc($array)) {
+                $array = json_encode($array);
+            }
+        }
+        return $array;
+    }
+
+    function is_assoc($array) {
+        return (bool)count(array_filter(array_keys($array), 'is_string'));
+    }
+
+    function recursive_decode($array) {
+        foreach ($array as $key => $value) {
+            if ($decoded = json_decode($value, true)) {
+                $array[$key] = $this->recursive_decode($decoded);
+            } else {
+                $array[$key] = $this->recursive_decode($value);
+            }
+        }
+        return $array;
+    }
+
+    /**
+     * Indents a flat JSON string to make it more human-readable.
+     * Source: http://recursive-design.com/blog/2008/03/11/format-json-with-php/
+     *
+     * @param string $json The original JSON string to process.
+     *
+     * @return string Indented version of the original JSON string.
+     */
+    function indent($json) {
+        $result = '';
+        $pos = 0;
+        $strLen = strlen($json);
+        $indentStr = '  ';
+        $newLine = "\n";
+        $prevChar = '';
+        $outOfQuotes = true;
+
+        for ($i = 0; $i <= $strLen; $i++) {
+            // Grab the next character in the string.
+            $char = substr($json, $i, 1);
+            // Are we inside a quoted string?
+            if ($char == '"' && $prevChar != '\\') {
+                $outOfQuotes = !$outOfQuotes;
+                // If this character is the end of an element,
+                // output a new line and indent the next line.
+            } else
+                if (($char == '}' || $char == ']') && $outOfQuotes) {
+                    $result .= $newLine;
+                    $pos--;
+                    for ($j = 0; $j < $pos; $j++) {
+                        $result .= $indentStr;
+                    }
+                }
+            // Add the character to the result string.
+            $result .= $char;
+            // If the last character was the beginning of an element,
+            // output a new line and indent the next line.
+            if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
+                $result .= $newLine;
+                if ($char == '{' || $char == '[') {
+                    $pos++;
+                }
+                for ($j = 0; $j < $pos; $j++) {
+                    $result .= $indentStr;
+                }
+            }
+            $prevChar = $char;
+        }
+        return $result;
+    }
+
+
 }

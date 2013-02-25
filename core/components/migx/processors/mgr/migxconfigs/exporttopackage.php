@@ -1,5 +1,6 @@
 <?php
 
+
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
 $packageName = $config['packageName'];
@@ -9,7 +10,7 @@ $modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
 
 if ($object = $modx->getObject($classname, $scriptProperties['object_id'])) {
-    $row = $object->toArray();
+    $row = $modx->migx->recursive_decode($object->toArray());
     $packageName = $row['extended']['packageName'];
     if (!empty($packageName)) {
         $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
@@ -22,7 +23,7 @@ if ($object = $modx->getObject($classname, $scriptProperties['object_id'])) {
             if (is_dir($configpath)) {
                 $fp = @fopen($filepath, 'w+');
                 if ($fp) {
-                    $result = @fwrite($fp, $modx->toJson($row));
+                    $result = @fwrite($fp, $modx->migx->indent($modx->toJson($row)));
                     @fclose($fp);
                 }
                 if ($result) {
@@ -37,4 +38,5 @@ if ($object = $modx->getObject($classname, $scriptProperties['object_id'])) {
 $message = 'Could not write ' . $filepath;
 
 return $modx->error->failure($message);
+
 
