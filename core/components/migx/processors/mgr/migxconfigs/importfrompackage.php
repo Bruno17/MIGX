@@ -1,4 +1,23 @@
 <?php
+if (!function_exists('recursive_encode')) {
+
+    function recursive_encode($array) {
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+                $array[$key] = recursive_encode($value);
+            }
+            if (!is_assoc($array)) {
+                $array = json_encode($array);
+            }
+        }
+        return $array;
+    }
+
+    function is_assoc($array) {
+        return (bool) count(array_filter(array_keys($array), 'is_string'));
+    }
+
+}
 
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
