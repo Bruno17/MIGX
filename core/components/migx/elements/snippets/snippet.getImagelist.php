@@ -39,8 +39,10 @@
 
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
-$limit = $modx->getOption('limit', $scriptProperties, '0');
+$splittpl = $modx->getOption('splittpl', $scriptProperties, '');
+$limit = $modx->getOption('limit', $scriptProperties, 0);
 $offset = $modx->getOption('offset', $scriptProperties, 0);
+$split = $modx->getOption('split', $scriptProperties, 1);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
 $randomize = $modx->getOption('randomize', $scriptProperties, false);
 $preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
@@ -51,6 +53,7 @@ $sort = !empty($sort) ? $modx->fromJSON($sort) : array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
+$splitSeparator = $modx->getOption('splitSeparator', $scriptProperties, '');
 $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
 $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
 $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
@@ -322,6 +325,17 @@ if (!empty($outerTpl))
 $o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
 else 
 */
+if ($split > 1) {
+	if (isset($splittpl)) {
+		$sections = array_chunk($output,$split);
+		unset($output);
+		$output = array();
+		foreach ($sections as $section) {
+			$imploded = implode($splitSeparator,$section);
+			$output[] = $modx->getChunk($splittpl,array('wrapper' => $imploded)); 
+		}
+	}
+}
 if (is_array($output)) {
     $o = implode($outputSeparator, $output);
 } else {
