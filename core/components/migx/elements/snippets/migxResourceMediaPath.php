@@ -31,8 +31,9 @@ if (empty($docid)) {
 
 if ($resource = $modx->getObject('modResource', $docid)) {
     $path = str_replace('{id}', $docid, $pathTpl);
-    $path = str_replace('{pagetitle}', $resource->get('pagetitle'), $pathTpl);
-    
+    $path = str_replace('{alias}', $resource->get('alias'), $pathTpl);
+		$path = str_replace('{pagetitle}', $resource->get('pagetitle'), $pathTpl);
+		
     $fullpath = $modx->getOption('base_path') . $path;
 
     if ($createpath && !file_exists($fullpath)) {
