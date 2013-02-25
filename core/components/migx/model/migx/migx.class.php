@@ -837,7 +837,7 @@ class Migx {
         }
         
         $tv_id = $tv->get('id');
-        $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : 0;
+        $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : $tv_id;
 
         $newitem[] = $item;
 
@@ -901,14 +901,14 @@ class Migx {
 
     function renderChunk($tpl, $properties) {
         
-        $value = $this->modx->getChunk($tpl, $properties);
+        $value = $this->parseChunk($tpl, $properties);
         
         $this->modx->getParser();
         /*parse all non-cacheable tags and remove unprocessed tags, if you want to parse only cacheable tags set param 3 as false*/
         $this->modx->parser->processElementTags('', $value, true, true, '[[', ']]', array(), $counts);
 
         return $value;
-    }
+    }    
 
     function checkRenderOptions($rows) {
         $columnrenderoptions = $this->getColumnRenderOptions('*', 'value', 'array');

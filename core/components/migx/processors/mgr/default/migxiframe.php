@@ -10,4 +10,4 @@ $tpl = $modx->migx->config['templatesPath'].'mgr/iframechunks/'.$tpl;
 $modx->toPlaceholders($modx->migx->config,'migx_config');
 $modx->toPlaceholders($_REQUEST,'request');
 
-return $modx->migx->parseChunk($tpl);
+return $modx->migx->renderChunk($tpl);

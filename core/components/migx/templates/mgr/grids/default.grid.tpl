@@ -189,6 +189,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             this.windows[win_xtype].grid=this;
             object_id_field = Ext.get('migx_iframewin_object_id_{/literal}{$win_id}{literal}');
             object_id_field.dom.value = object_id;
+            iframeTpl_field = Ext.get('migx_iframewin_iframeTpl_{/literal}{$win_id}{literal}');
+            iframeTpl_field.dom.value = tpl;               
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype

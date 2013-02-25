@@ -54,6 +54,7 @@ MODx.window.MigxIframe = function(config) {
                 xtype:'hidden'
                 ,name:'iframeTpl'
                 ,value: config.iframeTpl
+                ,id: 'migx_iframewin_object_id_{/literal}{$win_id}{literal}'
             },{
                 xtype:'hidden'
                 ,name:'object_id'
