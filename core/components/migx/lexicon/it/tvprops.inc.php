@@ -7,10 +7,10 @@
  */
 
 
-$_lang['mig.tabs'] = 'Schede form';
-$_lang['mig.columns'] = 'Colonne griglia';
-$_lang['mig.btntext'] = 'Testo alternativo ad "Aggiungi Elemento"';
-$_lang['mig.previewurl'] = 'Preview Url';
-$_lang['mig.jsonvarkey'] = 'Preview JsonVarKey';
-$_lang['mig.basepath'] = 'Base Path';
+$_lang['mig.tabs'] = 'Tabs Form';
+$_lang['mig.columns'] = 'Colonne della Griglia';
+$_lang['mig.btntext'] = 'Sostituzione "Aggiungi Elemento"';
+$_lang['mig.previewurl'] = 'Url Anteprima';
+$_lang['mig.jsonvarkey'] = 'JsonVarKey Anteprima';
+$_lang['mig.configs'] = 'Configurazioni';
 $_lang['mig.autoResourceFolders'] = 'Auto Resource Folders';
