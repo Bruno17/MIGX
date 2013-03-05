@@ -59,7 +59,7 @@ MODx.window.MigxIframe = function(config) {
                 xtype:'hidden'
                 ,name:'object_id'
                 ,value: config.object_id
-                ,id: 'migx_iframewin_object_id_{/literal}{$win_id}{literal}'
+                ,id: 'migx_iframewin_iframeTpl_{/literal}{$win_id}{literal}'
             },{
                 xtype:'hidden'
                 ,name:'tv_name'
@@ -112,7 +112,7 @@ MODx.window.MigxIframe = function(config) {
 Ext.extend(MODx.window.MigxIframe,Ext.Window,{
 
     closeWindow: function() {
-		this.grid.refresh();
+        this.grid.refresh();
         this.hide();
 		
     }

@@ -17,7 +17,7 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $cachepath = str_replace('/./', '/', $source->getBasePath());
         $baseUrl = $modx->getOption('site_url') . $source->getBaseUrl();
         $sourceProperties = $source->getPropertyList();
-
+        
         //echo '<pre>' . print_r($sourceProperties,1) . '</pre>';
         $allowedExtensions = $modx->getOption('allowedFileTypes', $sourceProperties, '');
         $allowedExtensions = empty($allowedExtensions) ? 'jpg,jpeg,png,gif' : $allowedExtensions;
