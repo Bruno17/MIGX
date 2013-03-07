@@ -1,10 +1,10 @@
 <?php
 /**
- * migx
- *
- * @package migx
- * @language it
- */
+* migx
+*
+* @package migx
+* @language it
+*/
 
 
 $_lang['mig.tabs'] = 'Schede form';

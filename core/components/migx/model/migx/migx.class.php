@@ -1601,6 +1601,21 @@ class Migx {
         return $template;
     }
 
+    public function addConnectorParams($properties, $unset = '') {
+        global $modx;
+        $properties['connectorUrl'] = $this->config['connectorUrl'];
+        $params = array();
+        $unset = explode(',', $unset);
+        $req = $_REQUEST;
+        foreach ($unset as $param) {
+            unset($req[$param]);
+        }
+        foreach ($req as $key => $value) {
+            $params[] = $key . '=' . $value;
+        }
+        $properties['urlparams'] = implode('&', $params);
+        return $properties;
+    }
 
     public function getDivisors($integer) {
         $divisors = array();
