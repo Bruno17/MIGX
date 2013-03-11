@@ -31,7 +31,7 @@ if (empty($pathTpl)) {
 
 if (empty($docid) && $modx->getPlaceholder('docid')) {
     // placeholder was set by some script
-    // note, if you pass this a TV e.g. [[*parent]], it may not get parsed
+    // warning: the parser may not render placeholders, e.g. &docid=`[[*parent]]` may fail
     $docid = $modx->getPlaceholder('docid'); 
 }
 if (empty($docid)) {
