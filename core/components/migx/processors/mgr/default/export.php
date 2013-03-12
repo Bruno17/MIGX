@@ -88,8 +88,19 @@ if (!($scriptProperties['download'])) {
     $rows = array();
     foreach ($collection as $row) {
         $tempRow = $row->toArray();
+        
+        foreach ($tempRow as $tempfield => $tempvalue){
+            //extract json-fields to new fieldnames 
+            if (is_array($tempvalue)){
+                foreach ($tempvalue as $field=>$value){
+                    $tempRow[$tempfield.'.'.$field] = $value;
+                }
+                unset ($tempRow[$tempfield]);
+            }
+        }
+        
         $newRow = array();
-
+        
         foreach ($exportFields as $key => $exportKey) {
             if (isset($tempRow[$key])) {
                 $newRow[$exportKey] = $tempRow[$key];
@@ -103,7 +114,7 @@ if (!($scriptProperties['download'])) {
     $output = array_to_csv($rows);
 
     $cacheName = md5(time());
-    $cacheName = $modx->getOption('core_path') . 'export/courses/' . $cacheName;
+    $cacheName = $modx->getOption('core_path') . 'export/' . $cacheName;
 
     $cacheManager = $modx->getCacheManager();
     $cacheManager->writeFile($cacheName, $output);
@@ -112,7 +123,7 @@ if (!($scriptProperties['download'])) {
 } else {
     $configs = $modx->getOption('configs', $scriptProperties, '');
     $cacheName = $scriptProperties['download'];
-    $cacheName = $modx->getOption('core_path') . 'export/courses/' . $cacheName;
+    $cacheName = $modx->getOption('core_path') . 'export/' . $cacheName;
 
     if (!is_file($cacheName)) {
         return 'Export error: Export ' . $cacheName . ' does not exist';
