@@ -199,7 +199,10 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 MODx.fireResourceFormChange();	
                 }
             }),this;		
-	}   
+	}
+	,refresh: function() {
+        return;
+    }       
 	,update: function(btn,e) {
       this.loadWin(btn,e,this.menu.recordIndex,'u');
     }
@@ -351,6 +354,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             //this.windows[win_xtype].action=action;
             this.windows[win_xtype].resource_id=resource_id;
             this.windows[win_xtype].co_id=co_id;
+            iframeTpl_field = Ext.get('migx_iframewin_iframeTpl_{/literal}{$win_id}{literal}');
+            iframeTpl_field.dom.value = tpl;            
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype

@@ -5,6 +5,7 @@ $tabs ='
 {"caption":"Field", "fields": [
 {"field":"field","caption":"Fieldname"},
 {"field":"caption","caption":"Caption"},
+{"field":"description","caption":"Description","inputTVtype":"textarea"},
 {"field":"inputTV","caption":"Input TV"},
 {"field":"inputTVtype","caption":"Input TV type"},
 {"field":"configs","caption":"Configs"}
