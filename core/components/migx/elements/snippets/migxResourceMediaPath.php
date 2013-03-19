@@ -75,7 +75,7 @@ if ($resource = $modx->getObject('modResource', $docid)) {
             $parentids[] = $docid;
             $ultimateParent = $parentids[1];
         } else {
-            $ultimateParent = $id;
+            $ultimateParent = $docid;
             $parentids = array();
             $parentids[] = $docid;
         }
