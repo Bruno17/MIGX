@@ -526,6 +526,19 @@ class Migx {
 
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
         $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
+        
+        if (is_object($tv)) {
+            $win_id = $tv->get('id');
+        } else {
+            $win_id = 'migxdb';
+            $tv = $this->modx->newObject('modTemplateVar');
+            $controller->setPlaceholder('tv', $tv);
+        }
+
+        $tv_id = $tv->get('id');
+        $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : $tv_id;
+        
+        $this->config['tv_id'] = $tv_id;
 
         foreach ($this->config as $key => $value) {
             if (!is_array($value)) {
@@ -828,16 +841,6 @@ class Migx {
         }
         $this->customconfigs['gridfunctions'] = $gf;
 
-        if (is_object($tv)) {
-            $win_id = $tv->get('id');
-        } else {
-            $win_id = 'migxdb';
-            $tv = $this->modx->newObject('modTemplateVar');
-            $controller->setPlaceholder('tv', $tv);
-        }
-
-        $tv_id = $tv->get('id');
-        $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : $tv_id;
 
         $newitem[] = $item;
 

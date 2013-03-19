@@ -204,6 +204,35 @@ $gridfilters['combobox']['code'] = "
 ";
 $gridfilters['combobox']['handler'] = 'gridfilter';
 
+$gridfilters['treecombo']['code']=
+"
+{
+    xtype: 'migx-treecombo'
+    ,id: '[[+name]]-migxdb-search-filter'
+    ,fieldLabel: 'Test'
+    ,emptyText: '[[+emptytext]]'
+    ,name: '[[+name]]'
+    ,hiddenName: '[[+name]]'    
+    ,baseParams: { 
+        action: 'mgr/migxdb/process',
+        processaction: '[[+getcomboprocessor]]',
+        configs: '[[+config.configs]]',
+        searchname: '[[+name]]',
+        resource_id: '[[+config.resource_id]]'
+    }
+    ,root: {
+        nodeType: 'async',
+        text: 'Root',
+        draggable: false,
+        id: 'currentctx_0'
+    }
+    ,listeners: {
+        'change': {fn:this.filter[[+name]],scope:this}
+    }
+}
+";
+$gridfilters['treecombo']['handler'] = 'gridfilter';
+
 
 
 $ctx = '{$ctx}';
