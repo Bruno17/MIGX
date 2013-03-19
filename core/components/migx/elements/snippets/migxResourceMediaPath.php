@@ -63,7 +63,6 @@ if (empty($docid)) {
 }
 
 if ($resource = $modx->getObject('modResource', $docid)) {
-
     $path = $pathTpl;
     $ultimateParent = '';
     if (strstr($path, '{breadcrumb}') || strstr($path, '{ultimateparent}')) {
@@ -91,10 +90,10 @@ if ($resource = $modx->getObject('modResource', $docid)) {
     } else {
         $path = str_replace('{id}', $docid, $path);
         $path = str_replace('{pagetitle}', $resource->get('pagetitle'), $path);
+				$path = str_replace('{alias}', $resource->get('alias'), $path);
         $path = str_replace('{parent}', $resource->get('parent'), $path);
         $path = str_replace('{ultimateparent}', $ultimateParent, $path);
     }
-
 
     $fullpath = $modx->getOption('base_path') . $path;
 
