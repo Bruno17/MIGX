@@ -1,5 +1,3 @@
-<?php
-
 $category = $modx->getOption('category', $scriptProperties, '');
 $format = $modx->getOption('format', $scriptProperties, 'json');
 

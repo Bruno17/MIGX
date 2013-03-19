@@ -1,4 +1,3 @@
-<?php
 /**
  * @name migxResourceMediaPath
  * @description Dynamically calculates the upload path for a given resource
@@ -83,14 +82,14 @@ if ($resource = $modx->getObject('modResource', $docid)) {
     if (strstr($path, '{breadcrumb}')) {
         $breadcrumbpath = '';
         for ($i = 1; $i <= $breadcrumbdepth; $i++) {
-           $breadcrumbpath .= $parentids[$i].'/';                
+            $breadcrumbpath .= $parentids[$i] . '/';
         }
         $path = str_replace('{breadcrumb}', $breadcrumbpath, $path);
 
     } else {
         $path = str_replace('{id}', $docid, $path);
         $path = str_replace('{pagetitle}', $resource->get('pagetitle'), $path);
-				$path = str_replace('{alias}', $resource->get('alias'), $path);
+        $path = str_replace('{alias}', $resource->get('alias'), $path);
         $path = str_replace('{parent}', $resource->get('parent'), $path);
         $path = str_replace('{ultimateparent}', $ultimateParent, $path);
     }
