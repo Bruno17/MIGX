@@ -227,7 +227,7 @@ $gridfilters['treecombo']['code']=
         id: 'currentctx_0'
     }
     ,listeners: {
-        'change': {fn:this.filter[[+name]],scope:this}
+        'nodeclick': {fn:this.filter[[+name]],scope:this}
     }
 }
 ";

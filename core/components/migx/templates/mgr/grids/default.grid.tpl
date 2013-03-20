@@ -293,7 +293,7 @@ Ext.extend(MODx.MigxTreeCombo,Ext.form.ComboBox,{
 		    });
 
             this.on('expand', this.onExpand);
-            this.tree.on('click', this.onClick, this);
+            this.tree.on('beforeclick', this.onNodeclick, this);
             this.tree.on('expandnode', this.onBeforeexpandnode, this);
             this.tree.on('collapsenode', this.onBeforecollapsenode, this);
             MODx.MigxTreeCombo.superclass.initComponent.apply(this, arguments);
@@ -314,11 +314,15 @@ Ext.extend(MODx.MigxTreeCombo,Ext.form.ComboBox,{
         //expand combobox again, if collapse-icon was clicked
         this.expand();
     },               
-    onClick: function(node) {
-        this.setValue(node.text);
-        this.hiddenField.value = node.id;
-        //this.fireEvent('setvalue', this, v, this.startValue);
+    onNodeclick: function(node,e) {
         //this.setValue(node.text);
+        this.setValue(node.id);
+        this.el.dom.value = node.text;
+        this.hiddenField.value = node.id;
+        this.fireEvent('nodeclick', this, node.id, this.startValue);
+        //this.setValue(node.text);
+        //this.collapse();
+        //return false;
     }
 });
 Ext.reg('migx-treecombo', MODx.MigxTreeCombo);

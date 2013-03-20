@@ -3,7 +3,7 @@
 MODx.window.UpdateTvdbItem = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        title:'MIGX'
+        title:'{/literal}{$update_win_title}{literal}'
         ,id: '{/literal}modx-window-mi-grid-update-{$win_id}{literal}'
         ,width: '1000'
 		,closeAction: 'hide'

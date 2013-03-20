@@ -87,7 +87,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 {"caption":"Settings", "fields": [
     {"field":"name","caption":"Name"},
     {"field":"extended.migx_add","caption":"[[%migx.add_replacement]]"},
-    {"field":"extended.formcaption","caption":"Form Caption"},
+    {"field":"extended.formcaption","caption":"Form Caption","description":"placeholders like [[+pagetitle]] can be used"},
+    {"field":"extended.update_win_title","caption":"Window Title"},
     {"field":"extended.win_id","caption":"unique MIGX ID"}
 ]},
 {"caption":"formtabs", "fields": [

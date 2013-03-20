@@ -526,7 +526,7 @@ class Migx {
 
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
         $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
-        
+
         if (is_object($tv)) {
             $win_id = $tv->get('id');
         } else {
@@ -537,7 +537,7 @@ class Migx {
 
         $tv_id = $tv->get('id');
         $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : $tv_id;
-        
+
         $this->config['tv_id'] = $tv_id;
 
         foreach ($this->config as $key => $value) {
@@ -866,6 +866,7 @@ class Migx {
         $controller->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
         $controller->setPlaceholder('customconfigs', $this->customconfigs);
         $controller->setPlaceholder('win_id', !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $win_id);
+        $controller->setPlaceholder('update_win_title', !empty($this->customconfigs['update_win_title']) ? $this->customconfigs['update_win_title'] : 'MIGX');
 
     }
 
@@ -902,9 +903,9 @@ class Migx {
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
-    function renderChunk($tpl, $properties) {
+    function renderChunk($tpl, $properties, $getChunk = true) {
 
-        $value = $this->parseChunk($tpl, $properties);
+        $value = $this->parseChunk($tpl, $properties, $getChunk);
 
         $this->modx->getParser();
         /*parse all non-cacheable tags and remove unprocessed tags, if you want to parse only cacheable tags set param 3 as false*/
@@ -1200,20 +1201,21 @@ class Migx {
         return $inputTvs;
     }
 
-    function parseChunk($tpl, $fields = array()) {
+    function parseChunk($tpl, $fields = array(), $getChunk = true) {
 
         $output = '';
 
-        if ($chunk = $this->modx->getObject('modChunk', array('name' => $tpl), true)) {
-            $tpl = $chunk->getContent();
-        } elseif (file_exists($tpl)) {
-            $tpl = file_get_contents($tpl);
-        } elseif (file_exists($this->modx->getOption('base_path') . $tpl)) {
-            $tpl = file_get_contents($this->modx->getOption('base_path') . $tpl);
-        } else {
-            $tpl = false;
+        if ($getChunk) {
+            if ($chunk = $this->modx->getObject('modChunk', array('name' => $tpl), true)) {
+                $tpl = $chunk->getContent();
+            } elseif (file_exists($tpl)) {
+                $tpl = file_get_contents($tpl);
+            } elseif (file_exists($this->modx->getOption('base_path') . $tpl)) {
+                $tpl = file_get_contents($this->modx->getOption('base_path') . $tpl);
+            } else {
+                $tpl = false;
+            }
         }
-
 
         if ($tpl) {
             $chunk = $this->modx->newObject('modChunk');
@@ -1229,6 +1231,7 @@ class Migx {
         return $output;
 
     }
+
 
     function sortTV($sort, &$c, $dir = 'ASC', $sortbyTVType = '') {
         $c->leftJoin('modTemplateVar', 'tvDefault', array("tvDefault.name" => $sort));
@@ -1638,10 +1641,10 @@ class Migx {
     function recursive_encode($array, $excludekeys = array()) {
         if (is_array($array)) {
             foreach ($array as $key => $value) {
-                
+
                 if (!is_int($key) && in_array($key, $excludekeys)) {
                     $array[$key] = !empty($value) ? json_encode($value) : $value;
-                    //$array[$key] = $this->recursive_encode($value, $excludekeys); 
+                    //$array[$key] = $this->recursive_encode($value, $excludekeys);
                 } else {
                     $array[$key] = $this->recursive_encode($value, $excludekeys);
                 }
