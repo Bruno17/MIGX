@@ -9,7 +9,11 @@
 {foreach from=$categories item=category name=cat}
 {if count($category.tvs) > 0}
 
+{if count($categories) > 1}
     <div id="modx-tv-tab{$category.id}" class="x-tab" title="{$category.category|default:$_lang.uncategorized|ucfirst}">
+{else}
+    <div id="modx-tv-tab{$category.id}" >
+{/if}
 
 {if count($formnames) > 0}
 {if $smarty.foreach.cat.first}
@@ -112,6 +116,7 @@ Ext.reg('modx-combo-formnamedropdown',MODx.combo.FormnameDropdown);
 {/foreach}
 </div>
 
+{if count($categories) > 1}
 {literal}
 <script type="text/javascript">
 // <![CDATA[
@@ -138,7 +143,7 @@ Ext.onReady(function() {
 // ]]>
 </script>
 {/literal}
-
+{/if}
 {$OnResourceTVFormRender}
 
 <br class="clear" />
