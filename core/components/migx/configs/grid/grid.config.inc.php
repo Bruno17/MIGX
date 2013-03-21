@@ -351,6 +351,94 @@ renderSwitchStatusOptions : function(val, md, rec, row, col, s) {
 }
 ";
 
+$tpl = '{6} <a href="#" ><img class="controlBtn btn_selectpos {4} selectpos" src="'.$base_url.'{0}" alt="select" title="select position"></a>';
+$tpl_active = '{6} '; 
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_before {4} {5}:before" src="'.$base_url.'{0}" alt="before" title="move before"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_cancel {4} cancel" src="'.$base_url.'{0}" alt="cancel" title="cancel"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_after {4} {5}:after" src="'.$base_url.'{0}" alt="after" title="move after"></a>';
+
+$renderer['this.renderPositionSelector'] = "
+renderPositionSelector : function(val, md, rec, row, col, s) {
+    var column = this.getColumnModel().getColumnAt(col);
+    var ro = Ext.util.JSON.decode(rec.json[column.dataIndex+'_ro']);
+    var value, renderImage, altText, handler, classname;
+    renderImage = ro.image;
+    var handler = ro.handler;
+    if (typeof(handler) == 'undefined' || handler == ''){
+        handler = 'this.handlePositionSelector'
+    }
+    value = val;
+    classname = 'test';
+    
+    if (this.isPosSelecting){
+        altText = 'before' ;
+        return String.format('{$tpl_active}', renderImage, altText, altText, classname, handler, column.dataIndex, value);            
+    }
+    else{
+        altText = 'select' ;
+        return String.format('{$tpl}', renderImage, altText, altText, classname, handler, column.dataIndex, value);
+    }
+    
+    
+}
+";
+
+$gridfunctions['this.handlePositionSelector'] = "
+handlePositionSelector: function(n,e,col) {
+    var btn,params;
+    var column = col;
+    //console.log(this.menu.record.json);
+    var ro_json = this.menu.record.json[column+'_ro'];
+    var ro = Ext.util.JSON.decode(ro_json);
+
+    if (this.isPosSelecting){
+        this.isPosSelecting = false;
+        if (column != 'cancel'){
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/migxdb/process'
+                ,processaction: 'handlepositionselector'
+                ,col: column
+                ,new_pos_id: this.menu.record.id
+                ,tv_type: this.config.tv_type
+                ,object_id: this.posSelectingRecord.id
+				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+            }
+            ,listeners: {
+                'success': {fn: function(res){ 
+                    res_object = res.object;
+                    if (res_object.tv_type == 'migx'){
+                        this.menu.record.json[column] = res_object.value;	
+                        this.menu.record.json[column+'_ro'] = Ext.util.JSON.encode(res_object);
+                        this.getView().refresh();
+                        this.collectItems();
+                        MODx.fireResourceFormChange();                        	                         
+                        return;
+                    }
+                    this.refresh();
+                    
+                    },scope:this }
+            }
+        });                    
+            
+        }else{
+            this.refresh();    
+        }
+
+        
+    }
+    else{
+        this.posSelectingRecord = this.menu.record;
+        this.isPosSelecting = true;
+        this.refresh();
+    }
+
+}	
+";
+
+
 $renderer['this.renderRowActions'] = "
 	dummy:function(v,md,rec) {
         // this function is fixed in the grid

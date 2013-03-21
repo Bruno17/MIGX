@@ -903,9 +903,9 @@ class Migx {
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
-    function renderChunk($tpl, $properties, $getChunk = true) {
+    function renderChunk($tpl, $properties, $getChunk = true, $printIfemty = true) {
 
-        $value = $this->parseChunk($tpl, $properties, $getChunk);
+        $value = $this->parseChunk($tpl, $properties, $getChunk,$printIfemty);
 
         $this->modx->getParser();
         /*parse all non-cacheable tags and remove unprocessed tags, if you want to parse only cacheable tags set param 3 as false*/
@@ -1201,7 +1201,7 @@ class Migx {
         return $inputTvs;
     }
 
-    function parseChunk($tpl, $fields = array(), $getChunk = true) {
+    function parseChunk($tpl, $fields = array(), $getChunk = true, $printIfemty = true) {
 
         $output = '';
 
@@ -1224,7 +1224,7 @@ class Migx {
 
             $output = $chunk->process($fields);
 
-        } else {
+        } elseif ($printIfemty) {
             $output = '<pre>' . print_r($fields, 1) . '</pre>';
         }
 

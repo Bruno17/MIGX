@@ -137,7 +137,7 @@ class migxFormProcessor extends modProcessor
         $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
         $formcaption = $this->modx->migx->customconfigs['formcaption'];
 
-        $controller->setPlaceholder('formcaption', $this->modx->migx->renderChunk($formcaption,$record,false));        
+        $controller->setPlaceholder('formcaption', $this->modx->migx->renderChunk($formcaption,$record,false,false));        
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
         $controller->setPlaceholder('categories', $categories);
