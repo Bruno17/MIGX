@@ -351,11 +351,11 @@ renderSwitchStatusOptions : function(val, md, rec, row, col, s) {
 }
 ";
 
-$tpl = '{6} <a href="#" ><img class="controlBtn btn_selectpos {4} selectpos" src="'.$base_url.'{0}" alt="select" title="select position"></a>';
+$tpl = '{6} <a href="#" ><img class="controlBtn btn_selectpos {4} selectpos" src="'.$base_url.'assets/components/migx/style/images/arrow_updown.png" alt="select" title="select position"></a>';
 $tpl_active = '{6} '; 
-$tpl_active .= '<a href="#" ><img class="controlBtn btn_before {4} {5}:before" src="'.$base_url.'{0}" alt="before" title="move before"></a>';
-$tpl_active .= '<a href="#" ><img class="controlBtn btn_cancel {4} cancel" src="'.$base_url.'{0}" alt="cancel" title="cancel"></a>';
-$tpl_active .= '<a href="#" ><img class="controlBtn btn_after {4} {5}:after" src="'.$base_url.'{0}" alt="after" title="move after"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_before {4} {5}:before" src="'.$base_url.'assets/components/migx/style/images/arrow_up.png" alt="before" title="move before"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_cancel {4} cancel" src="'.$base_url.'assets/components/migx/style/images/cancel.png" alt="cancel" title="cancel"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_after {4} {5}:after" src="'.$base_url.'assets/components/migx/style/images/arrow_down.png" alt="after" title="move after"></a>';
 
 $renderer['this.renderPositionSelector'] = "
 renderPositionSelector : function(val, md, rec, row, col, s) {
@@ -378,8 +378,7 @@ renderPositionSelector : function(val, md, rec, row, col, s) {
         altText = 'select' ;
         return String.format('{$tpl}', renderImage, altText, altText, classname, handler, column.dataIndex, value);
     }
-    
-    
+
 }
 ";
 
@@ -424,7 +423,11 @@ handlePositionSelector: function(n,e,col) {
         });                    
             
         }else{
-            this.refresh();    
+        var view = this.getView();
+        var result = view.renderBody();
+        view.mainBody.update(result).setWidth(view.getTotalWidth()); 
+        view.processRows(0, true);
+        view.layout();     
         }
 
         
@@ -432,8 +435,13 @@ handlePositionSelector: function(n,e,col) {
     else{
         this.posSelectingRecord = this.menu.record;
         this.isPosSelecting = true;
-        this.refresh();
-    }
+        var view = this.getView();
+        var result = view.renderBody();
+        view.mainBody.update(result).setWidth(view.getTotalWidth()); 
+        view.processRows(0, true);
+        view.layout();               
+        
+     }
 
 }	
 ";
