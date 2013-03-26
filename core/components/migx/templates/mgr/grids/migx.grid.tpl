@@ -223,11 +223,13 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 'success': {fn:function(res){
                     if (res.message==''){
                         var items = res.object;
+                        var item = null;
                         Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
                         this.autoinc = 0;
                         for(i = 0; i <  items.length; i++) {
  		                    item = items[i];
                             if (item.MIGX_id){
+                                
                                 if (parseInt(item.MIGX_id)  > this.autoinc){
                                     this.autoinc = item.MIGX_id;
                                 }
@@ -237,7 +239,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                             }	
                             items[i] = item;  
                         } 
-        
+                        
 		                this.getStore().sortInfo = null;
 		                this.getStore().loadData(items);
                         this.collectItems();                                                    
@@ -396,8 +398,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
  			items.push(griddata.items[i].json);
         }
 
+        if (this.call_collectmigxitems){
         items = Ext.util.JSON.encode(items); 
-
         MODx.Ajax.request({
             url: MODx.config.assets_url+'components/migx/connector.php'
             ,params: {
@@ -414,6 +416,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 'success': {fn:function(res){
                     if (res.message==''){
                         var items = res.object;
+                        var item = null;
                         Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
                         this.autoinc = 0;
                         for(i = 0; i <  items.length; i++) {
@@ -435,17 +438,16 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                     
                 },scope:this}
             }
-        });          
-        
-        /*
+        });            
+        }else{
         if (items.length >0){
            Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items); 
         }
         else{
            Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = '';  
+        }            
         }
-        */
-		return;						 
+    	return;						 
     }
 	,onClick: function(e){
 		

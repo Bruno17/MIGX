@@ -526,7 +526,8 @@ class Migx {
 
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
         $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
-
+        $this->config['connected_object_id'] = $this->modx->getOption('object_id', $_REQUEST, '');
+        
         if (is_object($tv)) {
             $win_id = $tv->get('id');
         } else {

@@ -455,6 +455,7 @@ $renderer['this.renderRowActions'] = "
 
 $renderer['this.renderChunk'] = "
 renderChunk : function(val, md, rec, row, col, s) {
+    this.call_collectmigxitems = true;
     return val;
 }
 ";
@@ -725,6 +726,7 @@ activateObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -744,6 +746,7 @@ deactivateObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -941,6 +944,7 @@ publishTargetObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -960,6 +964,7 @@ unpublishTargetObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}

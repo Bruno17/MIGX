@@ -47,7 +47,7 @@ $classname = 'modResource';
 //$saveTVs = false;
 /*
 if ($modx->lexicon) {
-    $modx->lexicon->load($packageName . ':default');
+$modx->lexicon->load($packageName . ':default');
 }
 */
 if (isset($scriptProperties['data'])) {
@@ -90,8 +90,20 @@ switch ($task) {
             $collection = $modx->getCollection('modTemplateVar', $c);
             foreach ($collection as $tv) {
                 $tvname = $tv->get('name');
+                /* handles checkboxes & multiple selects elements */
+                
                 if (isset($data[$tvname])) {
-                    $data['tv' . $tv->get('id')] = $data[$tvname];
+                    $value = $data[$tvname];
+                    /*
+                    if (is_array($value)) {
+                        $featureInsert = array();
+                        while (list($featureValue, $featureItem) = each($value)) {
+                            $featureInsert[count($featureInsert)] = $featureItem;
+                        }
+                        $value = implode('||', $featureInsert);
+                    }
+                    */
+                    $data['tv' . $tv->get('id')] = $value;
                     unset($data[$tvname]);
                 }
             }
@@ -102,7 +114,7 @@ switch ($task) {
 
         if ($scriptProperties['object_id'] == 'new') {
             //$object = $modx->newObject($classname);
-            if (!empty($parent)){
+            if (!empty($parent)) {
                 $data['parent'] = $parent;
             }
             $response = $modx->runProcessor('resource/create', $data);
