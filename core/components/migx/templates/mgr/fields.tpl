@@ -9,10 +9,10 @@
 {foreach from=$categories item=category name=cat}
 {if count($category.tvs) > 0}
 
-{if count($categories) > 1}
-    <div id="modx-tv-tab{$category.id}" class="x-tab" title="{$category.category|default:$_lang.uncategorized|ucfirst}">
-{else}
+{if count($categories) < 2 OR ($smarty.foreach.cat.first AND $category.print_before_tabs)}
     <div id="modx-tv-tab{$category.id}" >
+{else}
+    <div id="modx-tv-tab{$category.id}" class="x-tab" title="{$category.category|default:$_lang.uncategorized|ucfirst}">
 {/if}
 
 {if count($formnames) > 0}
@@ -83,7 +83,12 @@ Ext.reg('modx-combo-formnamedropdown',MODx.combo.FormnameDropdown);
     
 {foreach from=$category.tvs item=tv name='tv'}
 
-{if $tv->type NEQ "hidden"}
+{if $tv->type EQ "description_is_code"}
+<div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;">
+    {$tv->description}
+    <br class="clear" />
+</div>    
+{elseif $tv->type NEQ "hidden"}
     <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;">
         <label for="tv{$tv->id}" class="x-form-item-label modx-tv-label" style="width: auto;margin-bottom: 10px;">
             <div class="modx-tv-label-title"> 

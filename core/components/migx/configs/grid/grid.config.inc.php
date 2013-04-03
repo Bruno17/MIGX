@@ -48,7 +48,7 @@ $gridactionbuttons['loadfromsource']['standalone'] = '1';
 $gridcontextmenus['update']['code']="
         m.push({
             className : 'update', 
-            text: _('migx.edit'),
+            text: '[[%migx.edit]]',
             handler: 'this.update'
         });
         m.push('-');
@@ -143,7 +143,7 @@ $gridcontextmenus['recall_remove_delete']['handler'] = 'this.recallObject,this.r
 $gridcontextmenus['remove']['code']="
         m.push({
             className : 'remove', 
-            text: _('migx.remove'),
+            text: '[[%migx.remove]]',
             handler: 'this.removeObject'
         });						
 ";
@@ -152,7 +152,7 @@ $gridcontextmenus['remove']['handler'] = 'this.removeObject';
 $gridcontextmenus['remove_migx']['code']="
         m.push({
             className : 'remove', 
-            text: _('migx.remove'),
+            text: '[[%migx.remove]]',
             handler: 'this.remove'
         });						
 ";

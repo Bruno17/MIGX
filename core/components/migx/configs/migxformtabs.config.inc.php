@@ -4,6 +4,7 @@ $tabs ='
 [
 {"caption":"Tabs", "fields": [
 {"field":"caption","caption":"Caption"},
+{"field":"print_before_tabs","caption":"Display above Tabs","inputTVtype":"listbox","description":"Display this tab-content before the other tabs. (Works only if it is the first tab)","inputOptionValues":"no==0||yes==1"},
 {"field":"fields","caption":"Fields","inputTVtype":"migx","configs":"migxformtabfields"}
 ]}
 ] 

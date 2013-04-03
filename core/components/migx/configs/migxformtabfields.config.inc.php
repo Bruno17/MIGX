@@ -6,6 +6,7 @@ $tabs ='
 {"field":"field","caption":"Fieldname"},
 {"field":"caption","caption":"Caption"},
 {"field":"description","caption":"Description","inputTVtype":"textarea"},
+{"field":"description_is_code","caption":"Description is Code","inputTVtype":"listbox","description":"Display the description as Form-code. MODX-tags gets parsed there.","inputOptionValues":"no==0||yes==1"},
 {"field":"inputTV","caption":"Input TV"},
 {"field":"inputTVtype","caption":"Input TV type"},
 {"field":"configs","caption":"Configs"}
