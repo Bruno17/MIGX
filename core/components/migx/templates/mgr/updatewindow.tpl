@@ -15,7 +15,6 @@ MODx.window.UpdateTvdbItem = function(config) {
         ,height: '600'
         //,saveBtnText: _('done')
         ,forceLayout: true
-        ,boxMaxHeight: '700'
         ,autoScroll: true
         ,buttons: [{
             text: config.cancelBtnText || _('cancel')
@@ -187,9 +186,11 @@ MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal} = function(config) {
         ,baseParams: config.baseParams	
         ,class_key: ''
         ,bodyStyle: 'padding: 15px;'
-        //,autoSize: true
+        ,layout: 'anchor'
+        ,width:'98%'
+        , height:'98%'            
+        ,anchorSize: {width:'98%', height:'98%'}
         ,autoLoad: this.autoload(config)
-        ,width: '950'
         ,listeners: {
             //'beforeSubmit': {fn:this.beforeSubmit,scope:this},
             //'success': {fn:this.success,scope:this}

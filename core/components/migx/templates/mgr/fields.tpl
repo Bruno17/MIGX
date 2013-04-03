@@ -129,7 +129,7 @@ Ext.onReady(function() {
         ,autoTabs: true
         ,border: false
         ,plain: true
-        ,width: '900px'
+        ,width: '98%'
         ,hideMode: 'offsets'
         ,defaults: {
             bodyStyle: 'padding: 5px;'

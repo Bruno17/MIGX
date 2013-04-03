@@ -106,6 +106,7 @@ MODx.grid.multiTVgrid = function(config) {
     });
 	
     MODx.grid.multiTVgrid.superclass.constructor.call(this,config)
+    this._makeTemplates();
     this.getStore().pathconfigs=config.pathconfigs;
 	this.loadData();
     this.on('click', this.onClick, this);  
@@ -114,6 +115,22 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     _renderUrl: function(v,md,rec) {
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
+    ,_makeTemplates: function() {
+        this.tplRowActions = new Ext.XTemplate('<tpl for="."><div class="migx-actions-column">'
+										    +'<h3 class="main-column">{column_value}</h3>'
+												+'<tpl if="column_actions">'
+													+'<ul class="actions">'
+                                                        +'<tpl for="column_actions">'
+                                                            +'<tpl if="typeof (className) != '+"'undefined'"+'">'   
+														    +'<li><a href="#" class="controlBtn {className} {handler}">{text}</a></li>'
+                                                          +'</tpl>'
+													    +'</tpl>'
+                                                    +'</ul>'
+												+'</tpl>'
+											+'</div></tpl>',{
+			compiled: true
+		});
+    }    
     ,renderFirst : function(val, md, rec, row, col, s){
 		val = val.split(':');
         return val[0];
@@ -390,6 +407,14 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         });
 		return m;
     }
+    ,renderRowActions:function(v,md,rec) {
+        var n = rec.data;
+        var m = [];	   
+        {/literal}{$customconfigs.gridcolumnbuttons}{literal} 
+        rec.data.column_actions = m;
+        rec.data.column_value = v;
+        return this.tplRowActions.apply(rec.data);
+	}         
 	,collectItems: function(){
 		var items=[];
 		// read jsons from grid-store-items 

@@ -149,6 +149,17 @@ $gridcontextmenus['remove']['code']="
 ";
 $gridcontextmenus['remove']['handler'] = 'this.removeObject';
 
+$gridcontextmenus['remove_migx']['code']="
+        m.push({
+            className : 'remove', 
+            text: _('migx.remove'),
+            handler: 'this.remove'
+        });						
+";
+//$gridcontextmenus['remove_migx']['handler'] = 'this.remove';
+
+
+
 $gridfilters['textbox']['code']=
 "
 {
