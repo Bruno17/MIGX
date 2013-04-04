@@ -58,7 +58,7 @@ $gridcontextmenus['update']['handler'] = 'this.update';
 $gridcontextmenus['duplicate']['code']="
         m.push({
             className : 'duplicate', 
-            text: _('migx.duplicate'),
+            text: '[[%migx.duplicate]]',
             handler: 'this.duplicate'
         });
         m.push('-');
@@ -69,7 +69,7 @@ $gridcontextmenus['publish']['code']="
         if (n.published == 0) {
             m.push({
                 className : 'publish', 
-                text: _('migx.publish'),
+                text: '[[%migx.publish]]',
                 handler: 'this.publishObject'
             })
             m.push('-');
@@ -81,7 +81,7 @@ $gridcontextmenus['unpublish']['code']="
 if (n.published == 1) {
             m.push({
                 className : 'unpublish', 
-                text: _('migx.unpublish')
+                text: '[[%migx.unpublish]]'
                 ,handler: 'this.unpublishObject'
             });
             m.push('-');
@@ -121,19 +121,19 @@ $gridcontextmenus['recall_remove_delete']['code']="
         if (n.deleted == 1) {
         m.push({
             className : 'recall', 
-            text: _('migx.recall'),
+            text: '[[%migx.recall]]',
             handler: 'this.recallObject'
         });
 		m.push('-');
         m.push({
             className : 'remove', 
-            text: _('migx.remove'),
+            text: '[[%migx.remove]]',
             handler: 'this.removeObject'
         });						
         } else if (n.deleted == 0) {
         m.push({
             className : 'delete', 
-            text: _('migx.delete'),
+            text: '[[%migx.delete]]',
             handler: 'this.deleteObject'
         });		
         }
@@ -503,7 +503,7 @@ renderOptionSelector : function(val, md, rec, row, col, s) {
 $gridfunctions['this.selectSelectorOption'] = "
 selectSelectorOption: function(n,e,col) {
     var btn,params;
-    console.log(this.menu.record);
+    //console.log(this.menu.record);
     Ext.get('tv'+this.config.tv).dom.value = this.menu.record.data.id;
     var column = this.getColumnModel().getColumnAt(col);
     var ro_json = this.menu.record.json[column.dataIndex+'_ro'];
@@ -511,7 +511,7 @@ selectSelectorOption: function(n,e,col) {
     
     return;
     if (ro.clickaction == 'showSelector'){
-        console.log(ro);
+        //console.log(ro);
         params = {
             action: ro.clickaction
             ,col: column.dataIndex
@@ -639,12 +639,12 @@ handleColumnSwitch: function(n,e,col) {
     
     var btn,params;
     var column = col;
-    console.log(this.menu.record.json);
+    //console.log(this.menu.record.json);
     var ro_json = this.menu.record.json[column+'_ro'];
     var ro = Ext.util.JSON.decode(ro_json);
     
     if (ro.clickaction == 'selectFromGrid'){
-        console.log(ro);
+        //console.log(ro);
         params = {
             action: ro.clickaction
             ,col: col
@@ -700,6 +700,7 @@ publishObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -718,6 +719,7 @@ unpublishObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -775,7 +777,9 @@ publishSelected: function(btn,e) {
             url: this.config.url
             ,params: {
                 action: 'mgr/migxdb/process'
-                ,processaction: 'bulkupdate'      
+                ,processaction: 'bulkupdate' 
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                     
 				,configs: this.config.configs
 				,task: 'publish'
                 ,objects: cs
@@ -801,6 +805,8 @@ unpublishSelected: function(btn,e) {
                 action: 'mgr/migxdb/process'
                 ,processaction: 'bulkupdate'                     
 				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
 				,config_task: 'unpublish'
                 ,objects: cs
             }
@@ -825,6 +831,8 @@ deleteSelected: function(btn,e) {
                 action: 'mgr/migxdb/process'
                 ,processaction: 'bulkupdate'                     
 				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
 				,task: 'delete'
                 ,objects: cs
             }
@@ -845,6 +853,8 @@ deleteObject: function() {
             ,params: {
                 action: 'mgr/migxdb/update'
 				,task: 'delete'
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
             }
@@ -861,6 +871,8 @@ recallObject: function() {
             ,params: {
                 action: 'mgr/migxdb/update'
 				,task: 'recall'
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
             }
@@ -907,6 +919,8 @@ removeObject: function() {
                         action: 'mgr/migxdb/process'
                         ,processaction: 'remove'
 				        ,task: 'removeone'
+                        ,resource_id: _this.config.resource_id
+                        ,co_id: '[[+config.connected_object_id]]'                        
                         ,object_id: _this.menu.record.id
 				        ,configs: _this.config.configs
                     }

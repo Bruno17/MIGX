@@ -878,10 +878,10 @@ class Migx {
         if (is_array($columns)) {
             foreach ($columns as $column) {
                 $defaultclickaction = '';
+                
                 if ($getdefaultclickaction && !empty($column['clickaction'])) {
                     $option = array();
                     $defaultclickaction = $column['clickaction'];
-
                     $option['clickaction'] = $column['clickaction'];
                     $option['selectorconfig'] = $this->modx->getOption('selectorconfig', $column, '');
                     $defaultselectorconfig = $option['selectorconfig'];
@@ -894,6 +894,7 @@ class Migx {
                         $option['idx'] = $key;
                         $option['_renderer'] = $column['renderer'];
                         $option['clickaction'] = empty($option['clickaction']) && !empty($defaultclickaction) ? $defaultclickaction : $option['clickaction'];
+                        $option['selectorconfig'] = $this->modx->getOption('selectorconfig', $column, '');
                         $option['selectorconfig'] = empty($option['selectorconfig']) && !empty($defaultselectorconfig) ? $defaultselectorconfig : $option['selectorconfig'];
                         $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
                     }
@@ -923,7 +924,7 @@ class Migx {
             $outputrows = array();
             foreach ($rows as $row) {
                 foreach ($columnrenderoptions as $column => $options) {
-                    $row[$column . '_ro'] = isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
+                    $row[$column . '_ro'] = isset($row[$column]) && isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
                     foreach ($options as $option) {
                         if ($option['_renderer'] == 'this.renderChunk') {
                             $row['_this.value'] = $row[$column];
