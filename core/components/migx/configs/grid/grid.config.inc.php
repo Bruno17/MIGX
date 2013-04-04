@@ -58,7 +58,7 @@ $gridcontextmenus['update']['handler'] = 'this.update';
 $gridcontextmenus['duplicate']['code']="
         m.push({
             className : 'duplicate', 
-            text: _('migx.duplicate'),
+            text: '[[%migx.duplicate]]',
             handler: 'this.duplicate'
         });
         m.push('-');
