@@ -256,13 +256,15 @@ $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 $renderer['this.renderImage'] = "
     renderImage : function(val, md, rec, row, col, s){
         var source = s.pathconfigs[col];
-        if (val.substr(0,4) == 'http'){
-            return '{$httpimg}' ;
-		}        
-		if (val != ''){
-			return '{$phpthumbimg}';
+        if (val !== null) {
+	        if (val.substr(0,4) == 'http'){
+	            return '{$httpimg}' ;
+			}        
+			if (val != ''){
+				return '{$phpthumbimg}';
+			}
+			return val;
 		}
-		return val;
 	}
 ";
 
