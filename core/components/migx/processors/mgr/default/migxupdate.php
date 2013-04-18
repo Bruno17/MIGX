@@ -1,0 +1,3 @@
+<?php
+
+$items[$index] = $data;

@@ -919,7 +919,7 @@ class Migx {
     function checkRenderOptions($rows) {
         $columnrenderoptions = $this->getColumnRenderOptions('*', 'value', 'array');
         //print_r($columnrenderoptions);
-        $outputrows = $rows;
+        $outputrows = is_array($rows) ? $rows : array();
         if (count($columnrenderoptions) > 0) {
             $outputrows = array();
             foreach ($rows as $row) {
