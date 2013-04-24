@@ -602,6 +602,7 @@ class Migx {
         }
 
         $filters = array();
+        $filterDefaults = array();
         if (isset($this->customconfigs['gridfilters']) && count($this->customconfigs['gridfilters']) > 0) {
             foreach ($this->customconfigs['gridfilters'] as $filter) {
                 if (isset($filter['comboparent']) && !empty($filter['comboparent'])) {
@@ -628,6 +629,10 @@ class Migx {
                 if (!in_array($filtername, $handlers)) {
                     $handlers[] = $filtername;
                 }
+                $default = array();
+                $default['name'] = $filter['name'];
+                $default['default'] = isset($filter['default']) ? $filter['default'] : '';
+                $filterDefaults[] = $default;
             }
         }
 
@@ -823,6 +828,9 @@ class Migx {
 
             }
         }
+        
+
+        
         $gf = '';
         if (count($handlers) > 0) {
             $gridfunctions = array();
@@ -840,8 +848,9 @@ class Migx {
                 $gf = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
             }
         }
+        
+       
         $this->customconfigs['gridfunctions'] = $gf;
-
 
         $newitem[] = $item;
 
@@ -849,6 +858,7 @@ class Migx {
 
         //$controller->setPlaceholder('i18n', $this->migxi18n);
 
+        $controller->setPlaceholder('filterDefaults', $this->modx->toJSON($filterDefaults));
         $controller->setPlaceholder('tv_id', $tv_id);
         $controller->setPlaceholder('migx_lang', $this->modx->toJSON($this->migxlang));
         $controller->setPlaceholder('properties', $properties);

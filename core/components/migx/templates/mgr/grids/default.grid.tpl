@@ -53,6 +53,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
 	
     MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal}.superclass.constructor.call(this,config)
     this._makeTemplates();
+    this.setDefaultFilters();
     this.getStore().pathconfigs=config.pathconfigs;
     this.on('click', this.onClick, this);   
 
@@ -76,6 +77,24 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
 											+'</div></tpl>',{
 			compiled: true
 		});
+    }
+    ,setDefaultFilters: function(){
+        var filterDefaults = Ext.util.JSON.decode('{/literal}{$filterDefaults}{literal}');
+        var input = null;
+        var refresh = false;
+        for (var i=0;i<filterDefaults.length;i++) {
+            input = Ext.getCmp(filterDefaults[i].name+'-migxdb-search-filter');
+            if (input && filterDefaults[i].default != ''){
+                input.setValue(filterDefaults[i].default);
+                this.getStore().baseParams[filterDefaults[i].name]=filterDefaults[i].default;
+                refresh = true;
+            } 
+        }
+        if (refresh){
+            this.getBottomToolbar().changePage(1);
+            this.refresh();            
+        }            
+                   
     }
     ,getSelectedAsList: function() {
         var sels = this.getSelectionModel().getSelections();

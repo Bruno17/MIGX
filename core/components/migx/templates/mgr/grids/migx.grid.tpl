@@ -79,6 +79,7 @@ MODx.grid.multiTVgrid = function(config) {
                    }) 
 		
 		this.setWidth('99%');
+        
 		//this.syncSize();
                    // load the grid store
                   //  after the grid has been rendered
@@ -183,7 +184,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		this.getStore().sortInfo = null;
 		this.getStore().loadData(items);
         
-        console.log(this.getStore());
+        
 			
 		this.syncSize();
         this.setWidth('100%');

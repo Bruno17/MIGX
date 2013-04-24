@@ -7,7 +7,8 @@ $filenames = array();
 
 $data = $modx->getOption('data',$scriptProperties,'');
 $items = $modx->getOption('items',$scriptProperties,'');
-$index = $modx->getOption('index',$scriptProperties,'');
+$index = $modx->getOption('index',$scriptProperties,'append');
+$isnew = $modx->getOption('isnew',$scriptProperties,0);
 
 $data = $modx->fromJson($data);
 $items = $modx->fromJson($items);
