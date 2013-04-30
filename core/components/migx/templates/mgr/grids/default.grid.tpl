@@ -182,6 +182,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var items = tv ? tv.dom.value : '';
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
         var action = action||'a';
+        console.log(co_id);
         if (action == 'a'){
            var object_id = 'new';
         }else{
@@ -209,7 +210,9 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             object_id_field = Ext.get('migx_iframewin_object_id_{/literal}{$win_id}{literal}');
             object_id_field.dom.value = object_id;
             iframeTpl_field = Ext.get('migx_iframewin_iframeTpl_{/literal}{$win_id}{literal}');
-            iframeTpl_field.dom.value = tpl;               
+            iframeTpl_field.dom.value = tpl;
+            co_id_field = Ext.get('migx_iframewin_co_id_{/literal}{$win_id}{literal}');
+            co_id_field.dom.value = co_id;
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
