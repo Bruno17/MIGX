@@ -95,9 +95,9 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
         if (!empty($filter['getlistwhere'])) {
 
             $requestvalue = $modx->getOption($filter['name'], $scriptProperties, 'all');
-
+            
             if (isset($scriptProperties[$filter['name']]) && $requestvalue != 'all') {
-
+                
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
                 $chunk->setContent($filter['getlistwhere']);

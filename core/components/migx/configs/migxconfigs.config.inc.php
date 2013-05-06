@@ -210,6 +210,16 @@ $columns = '
 
 $this->customconfigs['columns'] = $this->modx->fromJson($columns);
 
+$filter = array();
+$filter['name'] = 'searchconfig';
+$filter['label'] = 'search';
+$filter['emptytext'] = 'search...';
+$filter['type'] = 'textbox';
+$filter['getlistwhere'] = '{"name:LIKE":"%[[+searchconfig]]%"}';
+
+$this->customconfigs['filters'] = array();
+$this->customconfigs['filters'][] = $filter;
+
 $gridcontextmenus['editraw']['active'] = 1;
 $gridcontextmenus['export_import']['active'] = 1;
 $gridcontextmenus['export_to_package']['active'] = 1;

@@ -388,7 +388,7 @@ class Migx {
                 }
             }
         }
-
+        
         $this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
         $this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
         $this->customconfigs['gridcolumnbuttons'] = $gridcolumnbuttons;
