@@ -56,3 +56,4 @@ $_lang['migx.year'] = 'Anno';
 
 $_lang['migx.upload_images'] = 'Carica Files';
 $_lang['migx.load_from_source'] = 'Carica da sorgente media';
+$_lang['migx.max_records_alert'] = 'Max amount of records reached';

@@ -794,8 +794,10 @@ class Migx {
         $this->working_context = $wctx;
 
         if (is_object($tv)) {
-            $this->source = $tv->getSource($this->working_context, false);
+            $this->source = $tv->getSource($this->working_context, false); 
         }
+
+       
 
 
         /* pasted end*/
@@ -813,6 +815,7 @@ class Migx {
         $cols = array();
         $fields = array();
         $colidx = 0;
+        
         if (is_array($columns) && count($columns) > 0) {
             foreach ($columns as $key => $column) {
                 $field = array();
