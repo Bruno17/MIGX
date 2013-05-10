@@ -200,7 +200,9 @@ if (count($items) > 0) {
 
                 } else {
                     $tv = $modx->newObject('modTemplateVar');
-                    $tv->set('type', $inputTvs[$inputTVkey]['inputTVtype']);
+                    if(isset($inputTvs[$inputTVkey]['inputTVtype'])){
+						$tv->set('type', $inputTvs[$inputTVkey]['inputTVtype']);
+					}
                 }
                 $inputTV = $inputTvs[$inputTVkey];
 
