@@ -225,6 +225,26 @@ if ($object->save() == false) {
     return;
 }
 
+// handle Alias
+if (isset($postvalues['alias'])) {
+    $alias = $object->get('alias');
+	$resource = $modx->newObject('modResource');
+	if ($alias == '' || ($postvalues['alias'] != $resource->cleanAlias($postvalues['alias']))) {
+		$i = 0;
+		while (TRUE) {
+			$suffix = ($index) ? '-' . $i : '';
+			$alias = $resource->cleanAlias($postvalues['title'] . $suffix);
+			$checkAlias = $modx->getObject($classname, array('alias' => $alias));
+			if (!$checkAlias) {
+				$object->set('alias', $alias);
+				break;
+			}
+			$i++;
+		}
+	}
+	unset($resource);
+}
+
 if (!empty($joinalias)) {
 
     //handle join-table
