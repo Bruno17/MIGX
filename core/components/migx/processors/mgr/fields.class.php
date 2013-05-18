@@ -107,7 +107,7 @@ class migxFormProcessor extends modProcessor
                     $formname['value'] = $form['formname'];
                     $formname['text'] = $form['formname'];
                     $formname['selected'] = 0;
-                    if ($form['formname'] == $record['MIGX_formname']) {
+                    if (isset($record['MIGX_formname']) && $form['formname'] == $record['MIGX_formname']) {
                         $formname['selected'] = 1;
                     }
                     $formnames[] = $formname;
@@ -135,9 +135,9 @@ class migxFormProcessor extends modProcessor
 
         $categories = array();
         $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
-        $formcaption = $this->modx->migx->customconfigs['formcaption'];
-
-        $controller->setPlaceholder('formcaption', $this->modx->migx->renderChunk($formcaption,$record,false,false));        
+        $formcaption = $this->modx->getOption('formcaption' , $this->modx->migx->customconfigs,'');
+        $formcaption = !empty($formcaption) ? $this->modx->migx->renderChunk($formcaption,$record,false,false) : '';
+        $controller->setPlaceholder('formcaption', $formcaption);        
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
         $controller->setPlaceholder('categories', $categories);

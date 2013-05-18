@@ -190,7 +190,7 @@ class Migx {
                     if ($idx == 0) {
                         $firstformtabs = $this->modx->fromJson($object->get('formtabs'));
                     }
-                    if ($record['MIGX_formname'] == $object->get('name')) {
+                    if (isset($record['MIGX_formname']) && $record['MIGX_formname'] == $object->get('name')) {
                         $formname['selected'] = 1;
                         $formtabs = $this->modx->fromJson($object->get('formtabs'));
                     }
@@ -295,9 +295,11 @@ class Migx {
                     $extended = $cfObject->get('extended');
                     $packageName = $this->modx->getOption('packageName', $extended, '');
                 }
+                if (isset($packageName)){
+                    $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+                    $configpath = $packagepath . 'migxconfigs/';                    
+                } 
 
-                $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
-                $configpath = $packagepath . 'migxconfigs/';
 
                 if ($grid) {
                     //first try to find custom-grid-configurations (buttons,context-menus,functions)
@@ -320,7 +322,7 @@ class Migx {
                 if ($other) {
                     //second try to find config-object
 
-                    if (!$cfObject && file_exists($configpath . $config . '.config.js')) {
+                    if (isset($configpath) && !$cfObject && file_exists($configpath . $config . '.config.js')) {
                         $filecontent = @file_get_contents($configpath . $config . '.config.js');
                         $objectarray = $this->importconfig($this->modx->fromJson($filecontent));
                         $this->prepareConfigsArray($objectarray,$gridactionbuttons,$gridcontextmenus,$gridcolumnbuttons);
@@ -942,7 +944,7 @@ class Migx {
 
         $this->modx->getParser();
         /*parse all non-cacheable tags and remove unprocessed tags, if you want to parse only cacheable tags set param 3 as false*/
-        $this->modx->parser->processElementTags('', $value, true, true, '[[', ']]', array(), $counts);
+        $this->modx->parser->processElementTags('', $value, true, true, '[[', ']]', array());
 
         return $value;
     }
@@ -1055,21 +1057,27 @@ class Migx {
 
     function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
         $fieldid = 0;
+        
+        
+        
         foreach ($tabs as $tabid => $tab) {
             $tvs = array();
-            $fields = is_array($tab['fields']) ? $tab['fields'] : $this->modx->fromJson($tab['fields']);
+            $fields = $this->modx->getOption('fields',$tab,array());
+            $fields = is_array($fields) ? $fields : $this->modx->fromJson($fields);
             if (is_array($fields) && count($fields) > 0) {
 
                 foreach ($fields as &$field) {
                     $fieldid++;
                     /*generate unique tvid, must be numeric*/
                     /*todo: find a better solution*/
-                    $field['tv_id'] = ($scriptProperties['tv_id'] . '99' . $fieldid) * 1;
+                    $field['tv_id'] = $scriptProperties['tv_id'] . '_' . $fieldid ;
 
                     if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
                         $tv = $this->modx->newObject('modTemplateVar');
                         $tv->set('description', $this->renderChunk($field['description'], $record, false, false));
                         $tv->set('type', 'description_is_code');
+                        //we change the phptype, that way we can use any id, not only integers (issues on windows-systems with big integers!)
+                        $tv->_fieldMeta['id']['phptype'] = 'string';
                         $tv->set('id', $field['tv_id']);
                     } else {
 
@@ -1079,6 +1087,18 @@ class Migx {
                             $tv = $this->modx->newObject('modTemplateVar');
                             $tv->set('type', !empty($field['inputTVtype']) ? $field['inputTVtype'] : 'text');
                         }
+                        //we change the phptype, that way we can use any id, not only integers (issues on windows-systems with big integers!)
+                        $tv->_fieldMeta['id']['phptype'] = 'string';
+                        
+                        /*             
+                        $tv->set('id','skdjflskjd');
+                        echo 'id:'. $tv->get('id');
+                        $tv->_fieldMeta['id']['phptype'] = 'string';
+                        echo($tv->_fieldMeta['id']['phptype']); 
+                        $tv->set('id','skdjflskjd');
+                        echo 'id:'. $tv->get('id');                                               
+                        */
+                        
                         if (!empty($field['inputOptionValues'])) {
                             $tv->set('elements', $field['inputOptionValues']);
                         }
@@ -1192,12 +1212,11 @@ class Migx {
             }
 
             $cat = array();
-            $cat['category'] = $tab['caption'];
+            $cat['category'] = $this->modx->getOption('caption',$tab,'undefined');
             $cat['print_before_tabs'] = isset($tab['print_before_tabs']) && !empty($tab['print_before_tabs']) ? true : false;
             $cat['id'] = $tabid;
             $cat['tvs'] = $tvs;
             $categories[] = $cat;
-
 
         }
 
@@ -1579,7 +1598,7 @@ class Migx {
         if (count($options) > 0) {
             foreach ($options as $option) {
                 $rule['name'] = isset($option['sortby']) ? (string )$option['sortby'] : '';
-                if (empty($rule['name']) || !in_array($rule['name'], array_keys(current($_data)))) {
+                if (empty($rule['name']) || (is_array(current($_data)) && !in_array($rule['name'], array_keys(current($_data)))) ) {
                     continue;
                 }
                 $rule['order'] = isset($option['sortdir']) && isset($sortdirs[$option['sortdir']]) ? $sortdirs[$option['sortdir']] : $sortdirs['ASC'];
