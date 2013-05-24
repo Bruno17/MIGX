@@ -224,9 +224,9 @@ class Migx {
         $renderer = array();
         $gridfilters = array();
         $configs = array();
-        if (isset($properties['configs'])) {
+        if (isset($properties['configs']) && !empty($properties['configs'])) {
             $configs = explode(',', $properties['configs']);
-        } elseif (isset($this->config['configs'])) {
+        } elseif (isset($this->config['configs']) && !empty($this->config['configs'])) {
             $configs = explode(',', $this->config['configs']);
         }
 
