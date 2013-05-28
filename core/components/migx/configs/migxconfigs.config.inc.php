@@ -135,6 +135,11 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.cmptabcaption","caption":"Tab Caption"},
     {"field":"extended.cmptabdescription","caption":"Tab Description"},
     {"field":"extended.cmptabcontroller","caption":"Custom Tab Controller"}
+]},
+{"caption":"MIGXfe-Settings", "fields": [
+    {"field":"extended.winbuttons","caption":"Window Buttons","inputTVtype":"textarea","description":"js-code, running on window-creation. See migxfe/templates/web/form/form.tpl and winbuttons.tpl"},
+    {"field":"extended.onsubmitsuccess","caption":"On Submit success","inputTVtype":"textarea","description":"js-code, running on submit success"},
+    {"field":"extended.submitparams","caption":"Submit params","inputTVtype":"textarea","description":"additional submit params"}
 ]}
 ]
 ';

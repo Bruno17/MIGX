@@ -33,8 +33,10 @@ if ($this->modx->lexicon) {
 }
 
 if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == 'new') {
-    $object = $modx->newObject($classname);
-    $object->set('object_id', 'new');
+    if ($object = $modx->newObject($classname)){
+        $object->set('object_id', 'new');
+    }
+    
 } else {
     $c = $modx->newQuery($classname, $scriptProperties['object_id']);
     $pk = $modx->getPK($classname);
@@ -57,7 +59,12 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
 $_SESSION['migxWorkingObjectid'] = $object_id;
 
 //handle json fields
-$record = $object->toArray();
+if ($object){
+    $record = $object->toArray();
+}
+else{
+    $record = array();
+}
 
 
 foreach ($record as $field => $fieldvalue) {
