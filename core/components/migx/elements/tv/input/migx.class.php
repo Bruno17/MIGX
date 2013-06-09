@@ -16,7 +16,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         $this->modx->lexicon->load('tv_widget', $namespace . ':default');
         //$properties = isset($params['columns']) ? $params : $this->getProperties();
         $properties = $params;
-
+        
         require_once dirname(dirname(dirname(dirname(__file__)))) . '/model/migx/migx.class.php';
         $this->migx = new Migx($this->modx, $properties);
         /* get input-tvs */

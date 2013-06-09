@@ -121,6 +121,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var storeParams = Ext.util.JSON.encode(this.store.baseParams); 
         var resource_id = '{/literal}{$resource.id}{literal}';
         var tempParams = tempParams || null;
+        var input_prefix = Ext.id(null,'inp_');
         var co_id = '{/literal}{$connected_object_id}{literal}';
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
@@ -139,10 +140,12 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         
  		
         var win_xtype = 'modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}';
-		if (this.windows[win_xtype]){
+		
+        if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv_id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
+            this.windows[win_xtype].fp.autoLoad.params.input_prefix=input_prefix;
             this.windows[win_xtype].fp.autoLoad.params.configs=this.config.configs;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
             this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
@@ -154,6 +157,17 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             //this.setWinPosition(10,10);
             
     	}
+        
+        /*
+        if (this.windows[win_xtype]){
+             //this.windows[win_xtype].destroy();
+             console.log(this.windows[win_xtype]);
+             delete this.windows[win_xtype]; 
+        }
+        */
+        
+        console.log('loadwin');
+        
 		this.loadWindow(btn,e,{
             xtype: win_xtype
 			,grid: this
@@ -170,7 +184,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
                 resource_id : resource_id,
                 co_id : co_id,
                 tempParams: tempParams,
-                storeParams: storeParams
+                storeParams: storeParams,
+                input_prefix: input_prefix
 			}
         });
     }

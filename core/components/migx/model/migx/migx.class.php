@@ -1058,7 +1058,8 @@ class Migx {
     function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
         $fieldid = 0;
         
-        
+        $input_prefix = $this->modx->getOption('input_prefix',$scriptProperties,'');
+        $input_prefix = !empty($input_prefix) ? $input_prefix.'_' : '';
         
         foreach ($tabs as $tabid => $tab) {
             $tvs = array();
@@ -1070,7 +1071,7 @@ class Migx {
                     $fieldid++;
                     /*generate unique tvid, must be numeric*/
                     /*todo: find a better solution*/
-                    $field['tv_id'] = $scriptProperties['tv_id'] . '_' . $fieldid ;
+                    $field['tv_id'] = $input_prefix . $scriptProperties['tv_id'] . '_' . $fieldid ;
 
                     if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
                         $tv = $this->modx->newObject('modTemplateVar');
@@ -1724,7 +1725,7 @@ class Migx {
 
     function recursive_decode($array) {
         foreach ($array as $key => $value) {
-            if ($decoded = json_decode($value, true)) {
+            if (is_string($value) && $decoded = json_decode($value, true)) {
                 $array[$key] = $this->recursive_decode($decoded);
             } else {
                 $array[$key] = $this->recursive_decode($value);

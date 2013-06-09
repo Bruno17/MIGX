@@ -19,7 +19,7 @@ MODx.window.UpdateTvdbItem = function(config) {
         ,buttons: [{
             text: config.cancelBtnText || _('cancel')
             ,scope: this
-            ,handler: function() { this.hide(); }
+            ,handler: this.cancel
         },{
             text: config.saveBtnText || _('done')
             ,scope: this
@@ -43,6 +43,7 @@ MODx.window.UpdateTvdbItem = function(config) {
     this.config = config;
 
     //this.on('show',this.onShow,this);
+    this.on('hide',this.onHideWindow,this);
     this.addEvents({
         success: true
         ,failure: true
@@ -53,9 +54,46 @@ MODx.window.UpdateTvdbItem = function(config) {
     this._loadForm();	
 };
 Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
+    cancel: function(){
+
+        this.hide();
+    },         
+    onHideWindow: function(){
+   
+        var v = this.fp.getForm().getValues();
+        var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
+        var field = null;
+        if (fields.length>0){
+            for (var i = 0; i < fields.length; i++) {
+                tvid = (fields[i].tv_id);
+                field = Ext.get('tv'+tvid);
+                if (field && typeof(field.onHide) != 'undefined'){
+                    field.onHide();
+                }                  
+            }
+        }
+
+    },     
     submit: function() {
         var v = this.fp.getForm().getValues();
         var object_id = this.baseParams.object_id;
+        var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
+        var item = {};
+        var tvid = ''; 
+        //we run onBeforeSubmit on each field, if this function exists. For example for richtext-fields.       
+        if (fields.length>0){
+            for (var i = 0; i < fields.length; i++) {
+                tvid = (fields[i].tv_id);
+                field = Ext.get('tv'+tvid);
+                if (field && typeof(field.onBeforeSubmit) != 'undefined'){
+                    field.onBeforeSubmit();
+                }                         
+            }
+        }	
+        
+        v = this.fp.getForm().getValues();
+        fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
+        
         if (this.fp.getForm().isValid()) {
             if (this.action == 'd'){
                 MODx.fireResourceFormChange();
@@ -67,14 +105,12 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                 /*append record*/
             }
 
-            var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
-            var item = {};
-            var tvid = '';
+
             if (fields.length>0){
                 for (var i = 0; i < fields.length; i++) {
                     tvid = (fields[i].tv_id);
                     if (v['tv'+tvid+'_prefix']) v['tv'+tvid]=v['tv'+tvid+'_prefix']+v['tv'+tvid];//url-TV support
-                    item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
+                    item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';	
                 }
                 //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
             }					
@@ -110,9 +146,12 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     },
     _loadForm: function() {
         //if (this.checkIfLoaded(this.config.record || null)) { return false; }
+        var params = this.config.baseParams || { action: this.config.action || ''};
+        //params.input_prefix = Ext.id(null,'inp_');
+        
         this.fp = this.createForm({
             url: this.config.url
-            ,baseParams: this.config.baseParams || { action: this.config.action || '' }
+            ,baseParams: params 
             //,items: this.config.fields || []
         });
 		//console.log('renderForm');
@@ -141,15 +180,22 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
         var item = {};
         var tvs = {};        
         var tvid = '';
+        var field;
         if (fields.length>0){
             for (var i = 0; i < fields.length; i++) {
                 
                 tvid = (fields[i].tv_id);
                 tvs['tv'+tvid] = true;
-                item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
+                item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';
+                
+                field = Ext.get('tv'+tvid);
+                if (field && typeof(field.onHide) != 'undefined'){
+                    field.onHide();
+                }                 							
             }
         }
 
+            /*
             if (typeof(Tiny) != 'undefined') {
                 var ed = null;
                 for (edId in tinyMCE.editors){
@@ -161,6 +207,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                     }
                 }
             }
+            */
         //console.log(item);			        
         this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(item);
         this.fp.doAutoLoad();        
@@ -204,21 +251,23 @@ MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal} = function(config) {
 Ext.extend(MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal},MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
-		var a = {
+        var self = this; 
+        
+		return a = {
             url: MODx.config.assets_url+'components/migx/connector.php'
             //url: config.url
 			,method: 'POST'
             ,params: config.baseParams
             ,scripts: true
             ,callback: function() {
-				this.isloading=false;
-				this.isloaded=true;
-				this.fireEvent('load');
+				self.isloading=false;
+				self.isloaded=true;
+				self.fireEvent('load');
                 //MODx.fireEvent('ready');
             }
             ,scope: this
         };
-        return a;        	
+  	
     },scope: this
     
     ,
@@ -230,37 +279,26 @@ Ext.extend(MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal},MODx.FormPanel,
     }
 	 ,load: function() {
 		//MODx.loadRTE();
-        //console.log('load');
-        /*
-        this.rtes = this.el.query('.modx-richtext');
-        for (var i = 0; i<this.rtes.length; i++) {
-            MODx.loadRTE(this.rtes[i].id);
-        }        
-		*/
-        if (typeof(Tiny) != 'undefined') {
-		    var s={};
-            if (Tiny.config){
-                s = Tiny.config || {};
-                delete s.assets_path;
-                delete s.assets_url;
-                delete s.core_path;
-                delete s.css_path;
-                delete s.editor;
-                delete s.id;
-                delete s.mode;
-                delete s.path;
-                s.cleanup_callback = "Tiny.onCleanup";
-                var z = Ext.state.Manager.get(MODx.siteId + '-tiny');
-                if (z !== false) {
-                    delete s.elements;
-                }			
-		    }
-			s.mode = "specific_textareas";
-            s.editor_selector = "modx-richtext";
-		    //s.language = "en";// de seems not to work at the moment
-           tinyMCE.init(s);				
-		}
         
+        var v = this.getForm().getValues();
+        //console.log(v);
+        var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
+        var item = {};
+        var tvs = {};        
+        var tvid = '';
+        var field = null;
+        if (fields.length>0){
+            for (var i = 0; i < fields.length; i++) {
+                
+                tvid = (fields[i].tv_id);
+                field = Ext.get('tv'+tvid);
+                if (field && typeof(field.onLoad) != 'undefined'){
+                    field.onLoad();
+                }                
+			
+            }
+        }            
+
         //this.popwindow.width='1000px';
 		//this.width='1000px';
 		//this.syncSize();

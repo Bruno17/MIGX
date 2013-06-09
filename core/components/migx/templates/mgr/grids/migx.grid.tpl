@@ -277,6 +277,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	,loadWin: function(btn,e,index,action) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
+        var input_prefix = Ext.id(null,'inp_');
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
             alert ('[[%migx.save_resource]]');
@@ -302,6 +303,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
+            this.windows[win_xtype].fp.autoLoad.params.input_prefix=input_prefix;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
             this.windows[win_xtype].fp.autoLoad.params.configs='{/literal}{$properties.configs}{literal}';
 		    this.windows[win_xtype].fp.autoLoad.params.itemid=index;
@@ -328,7 +330,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 autoinc : this.autoinc,
                 isnew : isnew,
                 resource_id : resource_id,
-                co_id : co_id
+                co_id : co_id,
+                input_prefix: input_prefix
 			}
         });
     }
