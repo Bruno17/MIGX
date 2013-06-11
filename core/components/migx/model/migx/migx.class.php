@@ -955,17 +955,14 @@ class Migx {
             $outputrows = array();
             foreach ($rows as $row) {
                 foreach ($columnrenderoptions as $column => $options) {
-                    if (isset($row[$column])) {
-                        $row[$column . '_ro'] = isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
-                        foreach ($options as $option) {
-                            if ($option['_renderer'] == 'this.renderChunk') {
-                                $row['_this.value'] = $row[$column];
-                                $row[$column] = $this->renderChunk($option['name'], $row);
-                            }
-                            break;
+                    $row[$column . '_ro'] = isset($row[$column]) && isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
+                    foreach ($options as $option) {
+                        if ($option['_renderer'] == 'this.renderChunk') {
+                            $row['_this.value'] = isset($row[$column]) ? $row[$column] : '';
+                            $row[$column] = $this->renderChunk($option['name'], $row);
                         }
+                        break;
                     }
-
                 }
                 $outputrows[] = $row;
             }

@@ -1,5 +1,21 @@
 Changelog for MIGX.
 
+MIGX 2.5.1
+
+==============
+fix bug with renderChunk - renderer
+
+MIGX 2.5
+
+==============
+get different rtes working - support for tinymce, ckeditor 
+some settings for MIGXfe
+cs - lexicons, 
+some eNotice - fixes
+fix with to big integers on TV-id (set phptype to string)
+limit MIGX-record-count
+
+
 MIGX 2.4.2
 
 ==============

@@ -1,4 +1,4 @@
-<textarea id="tv{$tv->id}" name="tv{$tv->id}" class="tinymcetv tv{$tv->id}" {literal}onchange="MODx.fireResourceFormChange();"{/literal}>{$tv->get('value')|escape}</textarea>
+<textarea id="tv{$tv->id}" name="tv{$tv->id}" class="rtf-tinymcetv tv{$tv->id}" {literal}onchange="MODx.fireResourceFormChange();"{/literal}>{$tv->get('value')|escape}</textarea>
 
 <script type="text/javascript">
 {literal}

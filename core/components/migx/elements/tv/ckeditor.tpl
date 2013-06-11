@@ -1,4 +1,4 @@
-<textarea id="tv{$tv->id}" style="heigth:200;" name="tv{$tv->id}" class="modx-richtext tv{$tv->id}" {literal}onchange="MODx.fireResourceFormChange();"{/literal}>{$tv->get('value')|escape}</textarea>
+<textarea id="tv{$tv->id}" style="heigth:200;" name="tv{$tv->id}" class="rtf-ckeditor tv{$tv->id}" {literal}onchange="MODx.fireResourceFormChange();"{/literal}>{$tv->get('value')|escape}</textarea>
 
 <script type="text/javascript">
 {literal}
