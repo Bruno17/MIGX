@@ -182,30 +182,27 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         var field;
         if (fields.length>0){
             for (var i = 0; i < fields.length; i++) {
-                
+                tvid = (fields[i].tv_id);
+                field = Ext.get('tv'+tvid);
+                if (field && typeof(field.onBeforeSubmit) != 'undefined'){
+                    field.onBeforeSubmit();
+                }                         
+            }
+        }	        
+        v = this.fp.getForm().getValues();
+        fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);            
+        if (fields.length>0){
+            for (var i = 0; i < fields.length; i++) {
                 tvid = (fields[i].tv_id);
                 tvs['tv'+tvid] = true;
                 item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';
-                
-                field = Ext.get('tv'+tvid);
+                  
                 if (field && typeof(field.onHide) != 'undefined'){
                     field.onHide();
                 }                   							
             }
         }
-            /*
-            if (typeof(Tiny) != 'undefined') {
-                var ed = null;
-                for (edId in tinyMCE.editors){
-                    ed = tinyMCE.editors[edId];
-                    if (typeof (ed) == 'object'){
-                        if (tvs[ed.id]){
-                            ed.remove();
-                        }         
-                    }
-                }
-            }
-            */
+
         //console.log(item);			        
         this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(item);
         this.fp.doAutoLoad();        

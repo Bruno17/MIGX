@@ -51,8 +51,9 @@ $packageName = $config['packageName'];
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
 $is_container = $modx->getOption('is_container', $config, false);
-
-$modx->addPackage($packageName, $modelpath, $prefix);
+if (is_dir($modelpath)){
+    $modx->addPackage($packageName, $modelpath, $prefix);
+}
 $classname = $config['classname'];
 
 $auto_create_tables = isset($config['auto_create_tables']) ? $config['auto_create_tables'] : true;

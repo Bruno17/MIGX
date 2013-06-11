@@ -12,8 +12,9 @@ $sender = 'default/fields';
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
-
-$modx->addPackage($packageName, $modelpath, $prefix);
+if (is_dir($modelpath)){
+    $modx->addPackage($packageName, $modelpath, $prefix);
+}
 $classname = $config['classname'];
 
 $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
