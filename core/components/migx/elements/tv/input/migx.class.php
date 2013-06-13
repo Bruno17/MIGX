@@ -86,7 +86,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         $lang['migx_add'] = str_replace("'", "\'", $lang['migx_add']);
         $this->migx->addLangValue('migx.add', $lang['migx_add']);
         $this->migx->migxlang['migx.add'] = $lang['migx_add'];
-
+        
         $this->migx->prepareGrid($params, $this, $this->tv, $columns);
         //$grid = $this->migx->getGrid();
 

@@ -31,7 +31,8 @@ Ext.onReady(function() {
 		    }
 			//s.mode = "specific_textareas";
             //s.editor_selector = "modx-richtext";
-			s.mode = "exact";
+            			
+            s.mode = "exact";
             s.elements = "{/literal}tv{$tv->id}{literal}";              
  		    //s.language = "en";// de seems not to work at the moment
             tinyMCE.init(s);

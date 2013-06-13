@@ -223,14 +223,15 @@ class Migx {
         $gridfunctions = array();
         $renderer = array();
         $gridfilters = array();
-        $configs = array();
+        $configs = array('migx_default');
+        //$configs = array();
+        
         if (isset($properties['configs']) && !empty($properties['configs'])) {
             $configs = explode(',', $properties['configs']);
         } elseif (isset($this->config['configs']) && !empty($this->config['configs'])) {
             $configs = explode(',', $this->config['configs']);
         }
-
-
+        
         if (!empty($configs)) {
             //$configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
             //$configs = array_merge( array ('master'), $configs);
@@ -365,7 +366,6 @@ class Migx {
         //$defaulttask = empty($this->customconfigs['join_alias']) ? 'default' : 'default_join';
         $defaulttask = 'default';
         $this->customconfigs['task'] = empty($this->customconfigs['task']) ? $defaulttask : $this->customconfigs['task'];
-
 
     }
 
@@ -838,6 +838,7 @@ class Migx {
 
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
+                        
                         $handlers[] = $column['renderer'];
                     }
                     $cols[] = $col;
@@ -850,8 +851,7 @@ class Migx {
 
             }
         }
-
-
+        
         $gf = '';
         if (count($handlers) > 0) {
             $gridfunctions = array();
@@ -869,7 +869,6 @@ class Migx {
                 $gf = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
             }
         }
-
 
         $this->customconfigs['gridfunctions'] = $gf;
 
@@ -1717,7 +1716,7 @@ class Migx {
     }
 
     function importconfig($array) {
-        $excludekeys = array('getlistwhere', 'joins');
+        $excludekeys = array('getlistwhere','joins');
         return $this->recursive_encode($array, $excludekeys);
     }
 
