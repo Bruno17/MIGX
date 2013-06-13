@@ -659,10 +659,10 @@ handleColumnSwitch: function(n,e,col) {
         }
         
         this.loadWin(btn,e,'u', Ext.util.JSON.encode(params));
-        return;        
+        return false;        
     }
 
-   
+        
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
@@ -693,6 +693,7 @@ handleColumnSwitch: function(n,e,col) {
                     },scope:this }
             }
         });
+        return false;
     }	
 ";
 
@@ -895,6 +896,9 @@ $gridfunctions['this.csvExport'] = "
 		var code, type, category, study_type, ebs_state;
 		var box = Ext.MessageBox.wait('Preparing …', _('migx.export_current_view'));
         var params = s.baseParams;
+        var o_action = params.action || '';
+        var o_processaction = params.processaction || '';
+        
         params.action = 'mgr/migxdb/process';
         params.processaction = 'export';
         params.configs = this.config.configs;     
@@ -909,6 +913,10 @@ $gridfunctions['this.csvExport'] = "
 				},scope:this}
 			}
 		});
+        
+        params.action = o_action;
+        params.processaction = o_processaction;
+        
 		return true;
 	}
 ";

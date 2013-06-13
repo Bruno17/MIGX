@@ -501,6 +501,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             var fn = eval(handler);
             fn = fn.createDelegate(this);
             fn(null,e,col);
+            e.stopEvent();
  		}
 	}       
 });

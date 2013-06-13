@@ -258,7 +258,6 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         return this.tplRowActions.apply(rec.data);
 	} 
 	,onClick: function(e){
-		
         var t = e.getTarget();
         var elm = t.className.split(' ')[0];
 		if(elm == 'controlBtn') {
@@ -269,6 +268,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             var fn = eval(handler);
             fn = fn.createDelegate(this);
             fn(null,e,col);
+            e.stopEvent();
  		}
 	}    
 });
