@@ -1,5 +1,14 @@
 Changelog for MIGX.
 
+MIGX 2.5.2
+
+==============
+read input-options into MIGX-TV
+respect filter in default - export.php
+fix for empty value in TV - configs not loading renderers etc.
+fix changed processaction-param after export2csv 
+stopEvent() by onClick - event
+
 MIGX 2.5.1
 
 ==============
