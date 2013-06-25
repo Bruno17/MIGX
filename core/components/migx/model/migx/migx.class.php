@@ -935,7 +935,7 @@ class Migx {
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
-    function renderChunk($tpl, $properties, $getChunk = true, $printIfemty = true) {
+    function renderChunk($tpl, $properties = array(), $getChunk = true, $printIfemty = true) {
 
         $value = $this->parseChunk($tpl, $properties, $getChunk, $printIfemty);
 
