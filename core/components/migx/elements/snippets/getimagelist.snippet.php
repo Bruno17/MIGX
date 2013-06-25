@@ -118,6 +118,7 @@ if (!empty($tvname)) {
 
     }
     $migx->source = $tv->getSource($migx->working_context, false);
+    $modx->setPlaceholder('docid', $docid);
 }
 
 if (empty($outputvalue)) {
