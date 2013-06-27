@@ -151,6 +151,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
             this.windows[win_xtype].fp.autoLoad.params.tempParams=tempParams;
             this.windows[win_xtype].fp.autoLoad.params.storeParams=storeParams;
+            this.windows[win_xtype].fp.autoLoad.params.loadaction='';
 			this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
             
@@ -161,12 +162,12 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         /*
         if (this.windows[win_xtype]){
              //this.windows[win_xtype].destroy();
-             console.log(this.windows[win_xtype]);
+             //console.log(this.windows[win_xtype]);
              delete this.windows[win_xtype]; 
         }
         */
         
-        console.log('loadwin');
+        //console.log('loadwin');
         
 		this.loadWindow(btn,e,{
             xtype: win_xtype
@@ -185,7 +186,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
                 co_id : co_id,
                 tempParams: tempParams,
                 storeParams: storeParams,
-                input_prefix: input_prefix
+                input_prefix: input_prefix,
+                loadaction:''
 			}
         });
     }
@@ -197,7 +199,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var items = tv ? tv.dom.value : '';
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
         var action = action||'a';
-        console.log(co_id);
+        //console.log(co_id);
         if (action == 'a'){
            var object_id = 'new';
         }else{

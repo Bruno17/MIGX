@@ -60,6 +60,8 @@ $docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
 $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 $reverse = $modx->getOption('reverse', $scriptProperties, '0');
 
+$modx->setPlaceholder('docid', $docid);
+
 $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
 $base_url = $modx->getOption('base_url', null, MODX_BASE_URL);
 
@@ -118,6 +120,7 @@ if (!empty($tvname)) {
 
     }
     $migx->source = $tv->getSource($migx->working_context, false);
+    
 }
 
 if (empty($outputvalue)) {

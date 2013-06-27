@@ -206,6 +206,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
 
         //console.log(item);			        
         this.fp.autoLoad.params.record_json=Ext.util.JSON.encode(item);
+        this.fp.autoLoad.params.loadaction='switchForm';
         this.fp.doAutoLoad();        
     }
     

@@ -7,6 +7,14 @@ $tvname = $modx->getOption('tv_name', $scriptProperties, '');
 if ($resource = $modx->getObject('modResource', $resource_id)) {
     $wctx = $resource->get('context_key');
 }
+else{
+    $resource = $modx->newObject('modResource');
+}
+//set objectid for migxObjectMediaPath - snippet
+$co_id = $modx->getOption('co_id', $scriptProperties, '');
+if (!empty($co_id)){
+    $modx->setPlaceholder('objectid',$co_id);
+}
 
 $result = array();
 
@@ -30,6 +38,8 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif,JPG');
         $imageExtensions = explode(',', $imageExtensions);
         $uniqueFilenames = $modx->getOption('uniqueFilenames', $sourceProperties, false);
+        $onImageUpload = $modx->getOption('onImageUpload', $sourceProperties, '');
+        $onImageRemove = $modx->getOption('onImageRemove', $sourceProperties, '');
 
 
         define('AIU_BASE_PATH', $modx->getOption('core_path') . 'components/migx/model/imageupload/');
@@ -84,6 +94,9 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                     foreach ($_SESSION['AjaxImageUpload'][$formUid] as $key => $file) {
                         unlink($file['path'] . $file['uniqueName']);
                         unlink($file['path'] . $file['thumbName']);
+                        if (!empty($onImageRemove)){
+                            $modx->runSnippet($onImageRemove,array('action'=>'remove','name'=>$file['uniqueName']));
+                        }                        
                     }
                 }
                 $_SESSION['AjaxImageUpload'][$formUid] = array();
@@ -113,6 +126,9 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                 } else {
                     $source->removeObject($thumbscontainer . $file);
                     $result['success'] = true;
+                    if (!empty($onImageRemove)){
+                        $modx->runSnippet($onImageRemove,array('action'=>'remove','name'=>$file));
+                    }                    
                 }
 
                 /*
@@ -156,6 +172,9 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                         $uniqueName = $uploader->filename . '.' . $uploader->extension;
                         //$thumbName = $uploader->filename . '.thumb.' . $uploader->extension;
                     }
+                    
+                    $uniqueName = $resource->cleanAlias($uniqueName);
+                    
                     rename($path . $originalName, $path . $uniqueName);
                     $result['filename'] = $baseUrl . $uniqueName;
                     //$result['fileid'] = end(array_keys($_SESSION['AjaxImageUpload'][$formUid]));
@@ -167,6 +186,11 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                     $placeholder['name'] = $uniqueName;
                     $placeholder['size'] = $uploader->filesize;
                     $placeholder['lastmod'] = time();
+                    $placeholder['action'] = 'upload';
+                    
+                    if (!empty($onImageUpload)){
+                        $modx->runSnippet($onImageUpload,$placeholder);
+                    }
 
                     $result['microtime'] = str_replace(array(' ', '.'), array('', ''), microtime());
 

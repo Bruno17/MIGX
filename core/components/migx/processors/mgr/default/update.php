@@ -75,8 +75,10 @@ $resource_id = !empty($co_id) ? $co_id : $resource_id;
 $checkConnected = $modx->migx->checkForConnectedResource($resource_id, $config);
 
 $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
+$has_jointable = false;
 
 if (!empty($joinalias)) {
+    $has_jointable = isset($config['has_jointable']) && $config['has_jointable']=='no' ? false : true;
     if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
         if ($checkConnected && $fkMeta['owner']=='foreign') {
@@ -226,7 +228,7 @@ if ($object->save() == false) {
     return;
 }
 
-if (!empty($joinalias)) {
+if ($has_jointable && !empty($joinalias)) {
 
     //handle join-table
     //todo make it more flexible, not only for resource-connections with joinalias 'Resource'

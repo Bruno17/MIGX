@@ -170,9 +170,15 @@ class Migx {
         return false;
     }
 
-    function checkMultipleForms($formtabs, &$controller, &$allfields, $record) {
+    function checkMultipleForms($formtabs, &$controller, &$allfields, &$record) {
         $multiple_formtabs = $this->modx->getOption('multiple_formtabs', $this->customconfigs, '');
         if (!empty($multiple_formtabs)) {
+            if (isset($_REQUEST['loadaction']) && $_REQUEST['loadaction']=='switchForm'){
+                $data = $this->modx->fromJson($this->modx->getOption('record_json',$_REQUEST,''));
+                if (is_array($data) && isset($data['MIGX_formname'])){
+                    $record = array_merge($record,$data);
+                }               
+            }
             $mf_configs = explode('||', $multiple_formtabs);
             $classname = 'migxConfig';
             $c = $this->modx->newQuery($classname);
@@ -935,7 +941,7 @@ class Migx {
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
-    function renderChunk($tpl, $properties, $getChunk = true, $printIfemty = true) {
+    function renderChunk($tpl, $properties = array(), $getChunk = true, $printIfemty = true) { 
 
         $value = $this->parseChunk($tpl, $properties, $getChunk, $printIfemty);
 

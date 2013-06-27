@@ -11,6 +11,7 @@ if ($resource = $modx->getObject('modResource', $resource_id)) {
 }
 
 if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
+    
     if ($source = $tv->getSource($wctx, false)) {
         $modx->setPlaceholder('docid', $resource_id);
         $source->initialize();
@@ -18,7 +19,6 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         
         $modx->setPlaceholder('debugSourceProperties','<pre>' . print_r($sourceProperties,1) . '</pre>');
         $modx->toPlaceholders($sourceProperties,'sourceProperty');
-        
         $basePath = $modx->getOption('basePath',$sourceProperties);
         $baseUrl = $modx->getOption('baseUrl',$sourceProperties);
         $allowedExtensions = $modx->getOption('allowedFileTypes',$sourceProperties,'') ;

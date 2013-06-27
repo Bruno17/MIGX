@@ -127,6 +127,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.check_resid","caption":"Check Resource","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0||@TV","default":"0"},
     {"field":"extended.check_resid_TV","caption":"Check Resource TV"},
     {"field":"extended.join_alias","caption":"Join Alias"},
+    {"field":"extended.has_jointable","caption":"Has Extra Connection Table","inputTVtype":"listbox","inputOptionValues":"yes||no","default":"yes"},
     {"field":"extended.getlistwhere","caption":"Where"},
     {"field":"extended.joins","caption":"Joins","inputTVtype":"textarea"}
 ]},

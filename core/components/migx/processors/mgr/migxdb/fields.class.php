@@ -78,6 +78,8 @@ class migxFormProcessor extends modProcessor {
         $allfields[] = array();
         $categories = array();
         
+        $tabs = $this->modx->migx->checkMultipleForms($tabs,$controller,$allfields,$record);
+        
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
         $formcaption = $this->modx->migx->customconfigs['formcaption'];
 
