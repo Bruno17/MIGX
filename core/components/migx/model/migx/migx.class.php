@@ -1116,7 +1116,12 @@ class Migx {
                             $tv->set('default_text', $tv->processBindings($field['default']));
                         }
                         if (!empty($field['configs'])) {
-                            $params['configs'] = $field['configs'];
+                            $cfg = $this->modx->fromJson($field['configs']);
+                            if (is_array($cfg)) {
+                                $params = array_merge($params, $cfg);
+                            } else {
+                                $params['configs'] = $field['configs'];
+                            }
                         }
 
                         /*insert actual value from requested record, convert arrays to ||-delimeted string */

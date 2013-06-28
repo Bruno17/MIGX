@@ -6,14 +6,13 @@ $tvname = $modx->getOption('tv_name', $scriptProperties, '');
 
 if ($resource = $modx->getObject('modResource', $resource_id)) {
     $wctx = $resource->get('context_key');
-}
-else{
+} else {
     $resource = $modx->newObject('modResource');
 }
 //set objectid for migxObjectMediaPath - snippet
 $co_id = $modx->getOption('co_id', $scriptProperties, '');
-if (!empty($co_id)){
-    $modx->setPlaceholder('objectid',$co_id);
+if (!empty($co_id)) {
+    $modx->setPlaceholder('objectid', $co_id);
 }
 
 $result = array();
@@ -25,21 +24,23 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
         $cachepath = str_replace('/./', '/', $source->getBasePath());
         $baseUrl = $modx->getOption('site_url') . $source->getBaseUrl();
         $sourceProperties = $source->getPropertyList();
-        
+
         //echo '<pre>' . print_r($sourceProperties,1) . '</pre>';
         $allowedExtensions = $modx->getOption('allowedFileTypes', $sourceProperties, '');
         $allowedExtensions = empty($allowedExtensions) ? 'jpg,jpeg,png,gif' : $allowedExtensions;
         $maxFilesizeMb = $modx->getOption('maxFilesizeMb', $sourceProperties, '8');
-        $maxFiles = $modx->getOption('maxFiles', $sourceProperties, '10');
+        $maxFiles = $modx->getOption('maxFiles', $sourceProperties, '0');
         $thumbX = $modx->getOption('thumbX', $sourceProperties, '100');
         $thumbY = $modx->getOption('thumbY', $sourceProperties, '100');
         $resizeConfigs = $modx->getOption('resizeconfigs', $sourceProperties, '');
+        $resizeConfigs = $modx->fromJson($resizeConfigs);
         $thumbscontainer = $modx->getOption('thumbscontainer', $sourceProperties, 'thumbs/');
         $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif,JPG');
         $imageExtensions = explode(',', $imageExtensions);
         $uniqueFilenames = $modx->getOption('uniqueFilenames', $sourceProperties, false);
         $onImageUpload = $modx->getOption('onImageUpload', $sourceProperties, '');
         $onImageRemove = $modx->getOption('onImageRemove', $sourceProperties, '');
+        $cleanalias = $modx->getOption('cleanFilename', $sourceProperties, false);
 
 
         define('AIU_BASE_PATH', $modx->getOption('core_path') . 'components/migx/model/imageupload/');
@@ -90,18 +91,20 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
             $formUid = (isset($_GET['uid'])) ? htmlentities(trim($_GET['uid']), ENT_NOQUOTES) : $formUid;
             if (strtolower($_GET['delete']) == 'all') {
                 // delete all uploaded files/thumbs & clean session
+                /*
                 if (is_array($_SESSION['AjaxImageUpload'][$formUid])) {
-                    foreach ($_SESSION['AjaxImageUpload'][$formUid] as $key => $file) {
-                        unlink($file['path'] . $file['uniqueName']);
-                        unlink($file['path'] . $file['thumbName']);
-                        if (!empty($onImageRemove)){
-                            $modx->runSnippet($onImageRemove,array('action'=>'remove','name'=>$file['uniqueName']));
-                        }                        
-                    }
+                foreach ($_SESSION['AjaxImageUpload'][$formUid] as $key => $file) {
+                unlink($file['path'] . $file['uniqueName']);
+                unlink($file['path'] . $file['thumbName']);
+                if (!empty($onImageRemove)){
+                $modx->runSnippet($onImageRemove,array('action'=>'remove','name'=>$file['uniqueName']));
+                }                        
+                }
                 }
                 $_SESSION['AjaxImageUpload'][$formUid] = array();
                 $result['success'] = true;
                 $result['session'] = $_SESSION['AjaxImageUpload'][$formUid];
+                */
             } else {
                 // delete one uploaded file/thumb & remove session entry
                 $file = $_GET['delete'];
@@ -126,9 +129,17 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                 } else {
                     $source->removeObject($thumbscontainer . $file);
                     $result['success'] = true;
-                    if (!empty($onImageRemove)){
-                        $modx->runSnippet($onImageRemove,array('action'=>'remove','name'=>$file));
-                    }                    
+                    if (is_array($resizeConfigs) && count($resizeConfigs) > 0) {
+                        foreach ($resizeConfigs as $rc) {
+                            if (isset($rc['x']) && isset($rc['y'])) {
+                                $container = isset($rc['alias']) ? $rc['alias'] . '/' : $rc['x'] . 'x' . $rc['y'] . '/';
+                                $source->removeObject($container . $file);
+                            }
+                        }
+                    }
+                    if (!empty($onImageRemove)) {
+                        $modx->runSnippet($onImageRemove, array('action' => 'remove', 'name' => $file));
+                    }
                 }
 
                 /*
@@ -162,7 +173,7 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                 $path = $uploader->path;
                 // check if count of uploaded files are below max file count
                 $files = $source->getObjectsInContainer('');
-                if (count($files) < $maxFiles) {
+                if (empty($maxFiles) || count($files) < $maxFiles) {
                     // create unique filename and unique thumbname
 
                     if ($uniqueFilenames) {
@@ -172,9 +183,18 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                         $uniqueName = $uploader->filename . '.' . $uploader->extension;
                         //$thumbName = $uploader->filename . '.thumb.' . $uploader->extension;
                     }
-                    
-                    $uniqueName = $resource->cleanAlias($uniqueName);
-                    
+
+                    $ext = $uploader->extension;
+                    if ($cleanalias) {
+                        $uniqueName = $resource->cleanAlias($uniqueName);
+                        $ext = $resource->cleanAlias($uploader->extension);
+                        /*
+                        $org = $resource->cleanAlias($originalName);
+                        rename($path . $originalName, $path . $org);
+                        $originalName = $org;
+                        */
+                    }
+
                     rename($path . $originalName, $path . $uniqueName);
                     $result['filename'] = $baseUrl . $uniqueName;
                     //$result['fileid'] = end(array_keys($_SESSION['AjaxImageUpload'][$formUid]));
@@ -187,49 +207,42 @@ if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
                     $placeholder['size'] = $uploader->filesize;
                     $placeholder['lastmod'] = time();
                     $placeholder['action'] = 'upload';
-                    
-                    if (!empty($onImageUpload)){
-                        $modx->runSnippet($onImageUpload,$placeholder);
+
+                    if (!empty($onImageUpload)) {
+                        $modx->runSnippet($onImageUpload, $placeholder);
                     }
 
                     $result['microtime'] = str_replace(array(' ', '.'), array('', ''), microtime());
 
                     $placeholder['deleteButton'] = '<div id="' . $result['microtime'] . '"  class="delete-button"><a>' . $language['deleteButton'] . '</a></div>';
 
-                    if (in_array($uploader->extension, $imageExtensions)) {
+                    if (in_array($ext, $imageExtensions)) {
                         // generate thumbname
                         if (!file_exists(AIU_CACHE_PATH . $thumbscontainer)) {
                             mkdir(AIU_CACHE_PATH . $thumbscontainer, 0755);
                         }
-                        $thumb = PhpThumbFactory::create($path . $originalName);
+                        $thumb = PhpThumbFactory::create($path . $uniqueName);
                         $thumb->adaptiveResize($thumbX, $thumbY);
                         $thumb->save($path . $thumbscontainer . $uniqueName);
                         $result['filename'] = $baseUrl . $thumbscontainer . $uniqueName;
                         $placeholder['fullRelativeUrl'] = $result['filename'];
                         $result['html'] = $modx->migx->parseChunk($imageTpl, $placeholder);
-                        if (!empty($resizeConfigs)) {
-
-                            $resizeConfigs = $modx->fromJson($resizeConfigs);
-
+                        if (is_array($resizeConfigs) && count($resizeConfigs) > 0) {
                             foreach ($resizeConfigs as $rc) {
                                 if (isset($rc['x']) && isset($rc['y'])) {
                                     $container = isset($rc['alias']) ? $rc['alias'] . '/' : $rc['x'] . 'x' . $rc['y'] . '/';
                                     if (!file_exists(AIU_CACHE_PATH . $container)) {
                                         mkdir(AIU_CACHE_PATH . $container, 0755);
                                     }
-                                    $thumb = PhpThumbFactory::create($path . $originalName);
-                                    if (isset($rc['crop'])&&!empty($rc['crop'])){
+                                    $thumb = PhpThumbFactory::create($path . $uniqueName);
+                                    if (isset($rc['crop']) && !empty($rc['crop'])) {
                                         $thumb->adaptiveResize($rc['x'], $rc['y']);
+                                    } else {
+                                        $thumb->resize($rc['x'], $rc['y']);
                                     }
-                                    else{
-                                        $thumb->resize($rc['x'], $rc['y']);    
-                                    }
-                                    $thumb->save($path . $container . $originalName);
+                                    $thumb->save($path . $container . $uniqueName);
                                 }
-
                             }
-
-
                         }
                     } else {
                         $result['html'] = $modx->migx->parseChunk($fileTpl, $placeholder);
