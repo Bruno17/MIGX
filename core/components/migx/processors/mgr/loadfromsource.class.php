@@ -9,11 +9,9 @@
  * @subpackage processors
  */
 
-class migxFormProcessor extends modProcessor
-{
+class migxFormProcessor extends modProcessor {
 
-    public function process()
-    {
+    public function process() {
 
         $scriptProperties = $this->getProperties();
         $config = $this->modx->migx->customconfigs;
@@ -61,11 +59,13 @@ class migxFormProcessor extends modProcessor
                             unset($imageList[$item[$filefield]]);
                             $item['deleted'] = '0';
                         }
-                        if (isset($item['MIGX_id']) && $item['MIGX_id'] > $maxID) {
-                            $maxID = $item['MIGX_id'];
+                        if ($item['deleted'] == '0') {
+                            //remove items, which filename no longer exits
+                            if (isset($item['MIGX_id']) && $item['MIGX_id'] > $maxID) {
+                                $maxID = $item['MIGX_id'];
+                            }
+                            $newitems[] = $item;
                         }
-                        $newitems[] = $item;
-
                     }
                     foreach ($imageList as $image) {
                         $maxID++;

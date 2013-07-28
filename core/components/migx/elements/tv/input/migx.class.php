@@ -160,6 +160,7 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         $this->setPlaceholder('i18n', $lang);
         $this->setPlaceholder('properties', $properties);
         $this->setPlaceholder('resource', $resource_array);
+        $this->setPlaceholder('request', $_REQUEST);
         $this->setPlaceholder('connected_object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
         $this->setPlaceholder('base_url', $this->modx->getOption('base_url'));
         $this->setPlaceholder('myctx', $wctx);

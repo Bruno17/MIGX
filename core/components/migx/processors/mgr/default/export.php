@@ -120,6 +120,10 @@ if (!($scriptProperties['download'])) {
         $collectfieldnames = true;
     }
 
+    
+    $excludeFields = $modx->getOption('excludeFields',$config);
+    $excludeFields = explode(',', $excludeFields);
+
     $rows = array();
     $i = 0;
     foreach ($collection as $row) {
@@ -127,22 +131,40 @@ if (!($scriptProperties['download'])) {
 
         foreach ($tempRow as $tempfield => $tempvalue) {
             //get fieldnames from first record
-            if ($collectfieldnames && $i == 0) {
+
+            if ($collectfieldnames) {
                 $exportFields[$tempfield] = $tempfield;
             }
 
             //extract json-fields to new fieldnames
+
+
             if (is_array($tempvalue)) {
                 foreach ($tempvalue as $field => $value) {
-                    $tempRow[$tempfield . '.' . $field] = $value;
-                    if ($collectfieldnames && $i == 0) {
-                        $exportFields[$tempfield . '.' . $field] = $field;
+                    $tempRow[$tempfield . '_' . $field] = $value;
+                    if ($collectfieldnames) {
+                        $exportFields[$tempfield . '_' . $field] = $field;
                     }
                 }
                 unset($tempRow[$tempfield]);
+                unset($exportFields[$tempfield]);
+                
             }
-        }
 
+            
+            if (in_array($tempfield, $excludeFields)) {
+                unset($exportFields[$tempfield]);
+                unset($tempRow[$tempfield]);
+            }
+            
+            //print_r($tempRow);
+
+
+        }
+        
+        
+
+        /*
         $newRow = array();
 
         foreach ($exportFields as $key => $exportKey) {
@@ -150,9 +172,26 @@ if (!($scriptProperties['download'])) {
                 $newRow[$exportKey] = $tempRow[$key];
             }
         }
-        $rows[] = $newRow;
+        */
+        $rows[] = $tempRow;
         $i++;
     }
+    
+    $temprows = $rows;
+    $rows = array();
+    foreach ($temprows as $row) {
+        $newRow = array();
+        foreach ($exportFields as $key => $exportKey) {
+            if (isset($row[$key])) {
+                $newRow[$exportKey] = $row[$key];
+            } else {
+                $newRow[$exportKey] = '';
+            }
+        }
+        $rows[] = $newRow;
+
+    }
+
 
     //die(print_r($rows, true));
 

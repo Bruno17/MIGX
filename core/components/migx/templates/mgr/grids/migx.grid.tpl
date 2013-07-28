@@ -277,6 +277,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	,loadWin: function(btn,e,index,action) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
+        var object_id = '{/literal}{$request.object_id}{literal}';
         var input_prefix = Ext.id(null,'inp_');
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
@@ -303,6 +304,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
+            this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
             this.windows[win_xtype].fp.autoLoad.params.input_prefix=input_prefix;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
             this.windows[win_xtype].fp.autoLoad.params.configs='{/literal}{$properties.configs}{literal}';
@@ -330,6 +332,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 autoinc : this.autoinc,
                 isnew : isnew,
                 resource_id : resource_id,
+                object_id: object_id,
                 co_id : co_id,
                 input_prefix: input_prefix
 			}
@@ -365,6 +368,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	,loadIframeWin: function(btn,e,tpl) {
         var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
+        var object_id = '{/literal}{$request.object_id}{literal}';
         var url = MODx.config.assets_url+'components/migx/connector.php';
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
 		//console.log((items));
@@ -373,7 +377,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             jsonvarkey = 'migx_outputvalue';
         }
         var win_xtype = 'modx-window-mi-iframe-{/literal}{$win_id}{literal}';
-		if (this.windows[win_xtype]){
+        var object_id_field = null;
+    	if (this.windows[win_xtype]){
 			//this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			//this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
@@ -384,6 +389,9 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             //this.windows[win_xtype].action=action;
             this.windows[win_xtype].resource_id=resource_id;
             this.windows[win_xtype].co_id=co_id;
+            this.windows[win_xtype].object_id = object_id;
+            object_id_field = Ext.get('migx_iframewin_object_id_{/literal}{$win_id}{literal}');
+            object_id_field.dom.value = object_id;            
             iframeTpl_field = Ext.get('migx_iframewin_iframeTpl_{/literal}{$win_id}{literal}');
             iframeTpl_field.dom.value = tpl;            
 		}
@@ -395,6 +403,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			,grid: this
             //,action: action
             ,resource_id: resource_id
+            ,object_id: object_id
             ,co_id: co_id
             ,title: '{/literal}{$customconfigs.iframeWindowTitle}{literal}'
             ,iframeTpl: tpl
