@@ -20,4 +20,8 @@ Ext.onReady(function() {
     field.onBeforeSubmit = function(){ };
 });
 {/literal}
+<<<<<<< HEAD
 </script>
+=======
+</script>
+>>>>>>> bceb47f1964c22fa86255e549931fa1fdf2fbadd
