@@ -43,7 +43,10 @@ Ext.onReady(function() {
     field.onHide = function(){
         //console.log('we hide');
         if (typeof(tinyMCE) != 'undefined') {
-            tinyMCE.getInstanceById('{/literal}tv{$tv->id}{literal}').remove();
+            var tinyinstance = tinyMCE.getInstanceById('{/literal}tv{$tv->id}{literal}');
+            if (typeof(tinyinstance) != 'undefined') {
+                tinyinstance.remove();
+            }
         }     
     };
         

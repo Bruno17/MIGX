@@ -20,7 +20,7 @@ $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, fa
 $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
 $prefix = isset($scriptProperties['prefix']) ? $scriptProperties['prefix'] : null;
 
-$packageName = $scriptProperties['packageName'];
+$packageName = $modx->getOption('packageName', $scriptProperties, ''); 
 $joins = $modx->getOption('joins', $scriptProperties, '');
 $joins = !empty($joins) ? $modx->fromJson($joins) : false;
 

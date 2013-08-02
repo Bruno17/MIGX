@@ -1,5 +1,14 @@
 Changelog for MIGX.
 
+MIGX 2.5.5
+
+==============
+
+https://github.com/Bruno17/MIGX/commit/4e8313a539ecbe66cff16e01de537a0bfde9f585
+some work on multiuploader for MIGXdb
+more eNotice - fixes
+
+
 MIGX 2.5.2
 
 ==============
