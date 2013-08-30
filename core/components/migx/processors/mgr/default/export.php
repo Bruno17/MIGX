@@ -34,7 +34,7 @@ function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n
 $config = $modx->migx->customconfigs;
 
 $output = '';
-if (!($scriptProperties['download'])) {
+if (!isset($scriptProperties['download'])) {
 
     $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
     if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
