@@ -199,6 +199,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var items = tv ? tv.dom.value : '';
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
         var action = action||'a';
+        var storeParams = Ext.util.JSON.encode(this.store.baseParams);
         //console.log(co_id);
         if (action == 'a'){
            var object_id = 'new';
@@ -230,6 +231,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             iframeTpl_field.dom.value = tpl;
             co_id_field = Ext.get('migx_iframewin_co_id_{/literal}{$win_id}{literal}');
             co_id_field.dom.value = co_id;
+            store_params_field = Ext.get('migx_iframewin_store_params_{/literal}{$win_id}{literal}');
+            store_params_field.dom.value = storeParams;            
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
@@ -241,6 +244,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             ,object_id: object_id
             ,resource_id: resource_id
             ,co_id: co_id
+            ,storeParams : storeParams
             ,title: '{/literal}{$customconfigs.iframeWindowTitle}{literal}'
             ,iframeTpl: tpl
         });
@@ -272,7 +276,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             fn(null,e,col);
             e.stopEvent();
  		}
-	}    
+	} 
+  
 });
 Ext.reg('modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}',MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal});
 

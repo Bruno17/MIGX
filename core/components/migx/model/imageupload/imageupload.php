@@ -11,27 +11,50 @@ if ($resource = $modx->getObject('modResource', $resource_id)) {
 }
 
 if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
-    
-    if ($source = $tv->getSource($wctx, false)) {
-        $modx->setPlaceholder('docid', $resource_id);
-        $source->initialize();
-        $sourceProperties = $source->getPropertyList();
-        
-        $modx->setPlaceholder('debugSourceProperties','<pre>' . print_r($sourceProperties,1) . '</pre>');
-        $modx->toPlaceholders($sourceProperties,'sourceProperty');
-        $basePath = $modx->getOption('basePath',$sourceProperties);
-        $baseUrl = $modx->getOption('baseUrl',$sourceProperties);
-        $allowedExtensions = $modx->getOption('allowedFileTypes',$sourceProperties,'') ;
-        $allowedExtensions = empty($allowedExtensions) ? 'jpg,jpeg,png,gif' : $allowedExtensions;
-        $maxFilesizeMb = $modx->getOption('maxFilesizeMb',$sourceProperties,'8') ;
-        $maxFiles = $modx->getOption('maxFiles',$sourceProperties,'10') ;
-        $thumbX = $modx->getOption('thumbX',$sourceProperties,'100') ;
-        $thumbY = $modx->getOption('thumbY',$sourceProperties,'100') ;
-        $thumbscontainer = $modx->getOption('thumbscontainer',$sourceProperties,'thumbs/') ;
-        $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif');
-        $imageExtensions = explode(',', $imageExtensions);        
-    }
+    $source = $tv->getSource($wctx, false);
 }
+
+if ($source) {
+
+} else {
+    $sourceid = $modx->getOption('source', $_REQUEST, '');
+    /**
+     *  * @var modMediaSource $source */
+    $modx->loadClass('sources.modMediaSource');
+    $source = modMediaSource::getDefaultSource($modx, $sourceid);
+    if (!$source->getWorkingContext()) {
+        return $modx->lexicon('permission_denied');
+    }
+    $source->setRequestProperties($_REQUEST);
+}
+
+if (!($source instanceof modMediaSource)) {
+    return 'mediasource couldn not be loaded';    
+}    
+    $modx->setPlaceholder('docid', $resource_id);
+    $source->initialize();
+    $sourceProperties = $source->getPropertyList();
+    $dirTree = $modx->getOption('dirtree', $_REQUEST, '');
+    
+    $modx->setPlaceholder('debugSourceProperties', '<pre>' . print_r($sourceProperties, 1) . '</pre>');
+    $modx->toPlaceholders($sourceProperties, 'sourceProperty');
+    $basePath = $modx->getOption('basePath', $sourceProperties);
+    $basePath = $basePath . $dirTree;
+    $baseUrl = $modx->getOption('baseUrl', $sourceProperties);
+    $baseUrl = $baseUrl . $dirTree;
+    $allowedExtensions = $modx->getOption('allowedFileTypes', $sourceProperties, '');
+    $allowedExtensions = empty($allowedExtensions) ? 'jpg,jpeg,png,gif' : $allowedExtensions;
+    $maxFilesizeMb = $modx->getOption('maxFilesizeMb', $sourceProperties, '8');
+    $maxFiles = $modx->getOption('maxFiles', $sourceProperties, '10');
+    $thumbX = $modx->getOption('thumbX', $sourceProperties, '100');
+    $thumbY = $modx->getOption('thumbY', $sourceProperties, '100');
+    $thumbscontainer = $modx->getOption('thumbscontainer', $sourceProperties, 'thumbs/');
+    $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif');
+    $imageExtensions = explode(',', $imageExtensions);
+    
+    
+
+
 
 //$baseUrl = $modx->getOption('site_url') . $baseUrl;
 
@@ -58,11 +81,10 @@ $addJquery = isset($addJquery) ? intval($addJquery) : 1;
 $addJscript = isset($addJscript) ? intval($addJscript) : 1;
 $addCss = isset($addCss) ? intval($addJquery) : 1;
 $show_clearbutton = false;
-$show_oldfiles_deletebutton = 1 ;
+$show_oldfiles_deletebutton = 1;
 
 if (!function_exists('includeFile')) {
-    function includeFile($name, $type = 'config', $defaultName = 'default', $fileType = '.inc.php')
-    {
+    function includeFile($name, $type = 'config', $defaultName = 'default', $fileType = '.inc.php') {
         $folder = (substr($type, -1) != 'y') ? $type . 's/' : substr($folder, 0, -1) . 'ies/';
         $allowedConfigs = glob(AIU_BASE_PATH . $folder . '*.' . $type . $fileType);
         foreach ($allowedConfigs as $config) {
@@ -100,7 +122,7 @@ if ($ajaxId || $ajaxUrl) {
         $placeholder['ajaxId'] = !empty($ajaxUrl) ? $ajaxUrl : $modx->makeUrl($ajaxId);
         $placeholder['dropArea'] = $language['dropArea'];
         $placeholder['uploadButton'] = $language['uploadButton'];
-        $placeholder['clearButton'] = $show_clearbutton ? '<div class="qq-clear-button">'.$language['clearButton'].'</div>' : '';
+        $placeholder['clearButton'] = $show_clearbutton ? '<div class="qq-clear-button">' . $language['clearButton'] . '</div>' : '';
         $placeholder['cancel'] = $language['cancel'];
         $placeholder['failed'] = $language['failed'];
         $placeholder['thumbX'] = $thumbX;
@@ -125,49 +147,48 @@ if ($ajaxId || $ajaxUrl) {
     }
     $output = file_get_contents(includeFile('uploadSection' . ucfirst($lang), 'template', 'uploadSection', '.html'));
     //$imageTpl = file_get_contents(includeFile('image' . ucfirst($language), 'template', 'image', '.html'));
-    $imageTpl = $modx->migx->config['corePath'].'/model/imageupload/templates/image.template.html';
-    $fileTpl = $modx->migx->config['corePath'].'/model/imageupload/templates/file.template.html';
+    $imageTpl = $modx->migx->config['corePath'] . '/model/imageupload/templates/image.template.html';
+    $fileTpl = $modx->migx->config['corePath'] . '/model/imageupload/templates/file.template.html';
     $imageList = array();
     $fileList = array();
     $placeholder = array();
     $placeholder['thumbX'] = $thumbX;
     $placeholder['thumbY'] = $thumbY;
     $placeholder['deleteButton'] = $show_oldfiles_deletebutton ? '<div class="delete-button"><a>' . $language['deleteButton'] . '</a></div>' : '';
-    
-    $files = $source->getObjectsInContainer('');
+
+    $files = $source->getObjectsInContainer($dirTree);
     $i = 1;
     foreach ($files as $file) {
         if (isset($limit) && $i > $limit) {
             break;
         }
-        $thumbpath = str_replace($basePath,$basePath . $thumbscontainer , $file['pathname']);   
-        
-        if (file_exists($thumbpath)){
-           $file['fullRelativeUrl'] = str_replace($baseUrl,$baseUrl . $thumbscontainer , $file['fullRelativeUrl']);    
-        }        
-        
-        //$imageElement = $imageTpl;
-        $placeholder = array_merge($placeholder,$file);
-        
+        $thumbpath = str_replace($basePath, $basePath . $thumbscontainer, $file['pathname']);
 
-        /*        
+        if (file_exists($thumbpath)) {
+            $file['fullRelativeUrl'] = str_replace($baseUrl, $baseUrl . $thumbscontainer, $file['fullRelativeUrl']);
+        }
+
+        //$imageElement = $imageTpl;
+        $placeholder = array_merge($placeholder, $file);
+
+
+        /*
         foreach ($placeholder as $key => $value) {
-            $imageElement = str_replace('[+' . $key . '+]', $value, $imageElement);
+        $imageElement = str_replace('[+' . $key . '+]', $value, $imageElement);
         }
         */
-        
-        
-        if (in_array($file['ext'],$imageExtensions)){
-            $imageList[] = $modx->migx->parseChunk($imageTpl,$placeholder);
+
+
+        if (in_array($file['ext'], $imageExtensions)) {
+            $imageList[] = $modx->migx->parseChunk($imageTpl, $placeholder);
+        } else {
+            $fileList[] = $modx->migx->parseChunk($fileTpl, $placeholder);
         }
-        else{
-            $fileList[] = $modx->migx->parseChunk($fileTpl,$placeholder);
-        }        
-        
+
         $i++;
     }
 
-    //echo '<pre>' . print_r($files,1) .'</pre>'; 
+    //echo '<pre>' . print_r($files,1) .'</pre>';
 
     $output = str_replace('[+images+]', implode("\r\n", $imageList), $output);
     $output = str_replace('[+files+]', implode("\r\n", $fileList), $output);

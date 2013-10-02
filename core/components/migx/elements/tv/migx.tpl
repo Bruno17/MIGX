@@ -92,6 +92,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
         var item = {};
         var tvid = ''; 
+        var addNewItemAt = '';
         //we run onBeforeSubmit on each field, if this function exists. For example for richtext-fields.       
         if (fields.length>0){
             for (var i = 0; i < fields.length; i++) {
@@ -115,8 +116,12 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                 var idx = this.baseParams.itemid; 
             }else{
                 /*append record*/
+                var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt}{literal}';
+
+                
                 var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
 		        s.loadData(items,true);
+                
                 idx=s.getCount()-1;
                 this.grid.autoinc = v['tvmigxid'];               
             }
@@ -133,7 +138,12 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                 }
                 //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
                 rec.json=item;
-            }					
+            }
+            
+            if (addNewItemAt == 'top'){
+                s.insert(0,rec);
+            }
+            					
             this.grid.getView().refresh();
             this.grid.collectItems();
             //this.onDirty();
@@ -196,9 +206,10 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                 tvid = (fields[i].tv_id);
                 tvs['tv'+tvid] = true;
                 item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';
-                  
+                field = Ext.get('tv'+tvid);  
                 if (field && typeof(field.onHide) != 'undefined'){
                     field.onHide();
+                    field.remove();
                 }                   							
             }
         }

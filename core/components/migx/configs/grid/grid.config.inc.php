@@ -229,7 +229,9 @@ $gridfilters['treecombo']['code']=
         processaction: '[[+getcomboprocessor]]',
         configs: '[[+config.configs]]',
         searchname: '[[+name]]',
-        resource_id: '[[+config.resource_id]]'
+        resource_id: '[[+config.resource_id]]',
+        co_id: '[[+config.connected_object_id]]',
+        reqConfigs: '[[+config.req_configs]]'
     }
     ,root: {
         nodeType: 'async',
@@ -707,7 +709,8 @@ publishObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
-                ,co_id: '[[+config.connected_object_id]]'                
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'                
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -726,7 +729,8 @@ unpublishObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
-                ,co_id: '[[+config.connected_object_id]]'                
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'                
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -747,6 +751,7 @@ activateObject: function() {
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
                 ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -767,6 +772,7 @@ deactivateObject: function() {
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
                 ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -790,6 +796,7 @@ publishSelected: function(btn,e) {
 				,configs: this.config.configs
 				,task: 'publish'
                 ,objects: cs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:function(r) {
@@ -816,6 +823,7 @@ unpublishSelected: function(btn,e) {
                 ,co_id: '[[+config.connected_object_id]]'                
 				,config_task: 'unpublish'
                 ,objects: cs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:function(r) {
@@ -842,6 +850,7 @@ deleteSelected: function(btn,e) {
                 ,co_id: '[[+config.connected_object_id]]'                
 				,task: 'delete'
                 ,objects: cs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:function(r) {
@@ -864,6 +873,7 @@ deleteObject: function() {
                 ,co_id: '[[+config.connected_object_id]]'                
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -882,6 +892,7 @@ recallObject: function() {
                 ,co_id: '[[+config.connected_object_id]]'                
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -937,6 +948,7 @@ removeObject: function() {
                         ,co_id: '[[+config.connected_object_id]]'                        
                         ,object_id: _this.menu.record.id
 				        ,configs: _this.config.configs
+                        ,reqConfigs: '[[+config.req_configs]]'                        
                     }
                     ,listeners: {
                         'success': {fn:_this.refresh,scope:_this}
@@ -984,6 +996,7 @@ publishTargetObject: function() {
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
                 ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -1004,6 +1017,7 @@ unpublishTargetObject: function() {
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
                 ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -1012,6 +1026,41 @@ unpublishTargetObject: function() {
     }    
 ";
 
+$img = '<img src="' . "'+data.image+'" . '" alt="" onclick="Ext.getCmp(' . "\'gal-album-items-view\'" . ').ssWin.hide();" />';
+$win_id = '{$win_id}';
+$gridfunctions['this.showScreenshot'] = "
+    showScreenshot: function(id) {
+        //var data = this.lookup['gal-item-'+id];
+        //if (!data) return false;
+        
+        console.log(this.menu.record.json);
+        var data = this.menu.record.json;
+        
+        if (!this.ssWin) {
+            this.ssWin = new Ext.Window({
+                layout:'fit'
+                ,width: 600
+                ,height: 450
+                ,closeAction:'hide'
+                ,plain: true
+                ,items: [{
+                    id: 'gal-item-ss-[[+config.win_id]]'
+                    ,html: ''
+                }]
+                ,buttons: [{
+                    text: _('close')
+                    ,handler: function() { this.ssWin.hide(); }
+                    ,scope: this
+                }]
+            });
+        }
+        this.ssWin.show();
+        this.ssWin.setSize(data.image_width,data.image_height);
+        this.ssWin.center();
+        this.ssWin.setTitle(data.name);
+        Ext.get('gal-item-ss-[[+config.win_id]]').update('{$img}');
+    }     
+";
 
 
 

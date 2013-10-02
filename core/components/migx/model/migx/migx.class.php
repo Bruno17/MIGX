@@ -173,11 +173,11 @@ class Migx {
     function checkMultipleForms($formtabs, &$controller, &$allfields, &$record) {
         $multiple_formtabs = $this->modx->getOption('multiple_formtabs', $this->customconfigs, '');
         if (!empty($multiple_formtabs)) {
-            if (isset($_REQUEST['loadaction']) && $_REQUEST['loadaction']=='switchForm'){
-                $data = $this->modx->fromJson($this->modx->getOption('record_json',$_REQUEST,''));
-                if (is_array($data) && isset($data['MIGX_formname'])){
-                    $record = array_merge($record,$data);
-                }               
+            if (isset($_REQUEST['loadaction']) && $_REQUEST['loadaction'] == 'switchForm') {
+                $data = $this->modx->fromJson($this->modx->getOption('record_json', $_REQUEST, ''));
+                if (is_array($data) && isset($data['MIGX_formname'])) {
+                    $record = array_merge($record, $data);
+                }
             }
             $mf_configs = explode('||', $multiple_formtabs);
             $classname = 'migxConfig';
@@ -231,13 +231,13 @@ class Migx {
         $gridfilters = array();
         $configs = array('migx_default');
         //$configs = array();
-        
+
         if (isset($properties['configs']) && !empty($properties['configs'])) {
             $configs = explode(',', $properties['configs']);
         } elseif (isset($this->config['configs']) && !empty($this->config['configs'])) {
             $configs = explode(',', $this->config['configs']);
         }
-        
+
         if (!empty($configs)) {
             //$configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
             //$configs = array_merge( array ('master'), $configs);
@@ -554,6 +554,7 @@ class Migx {
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
         $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
         $this->config['connected_object_id'] = $this->modx->getOption('object_id', $_REQUEST, '');
+        $this->config['req_configs'] = $this->modx->getOption('configs', $_REQUEST, '');
 
         if (is_object($tv)) {
             $win_id = $tv->get('id');
@@ -562,6 +563,9 @@ class Migx {
             $tv = $this->modx->newObject('modTemplateVar');
             $controller->setPlaceholder('tv', $tv);
         }
+        
+        $this->customconfigs['win_id'] = !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $win_id;
+        
 
         $tv_id = $tv->get('id');
         $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : $tv_id;
@@ -844,7 +848,7 @@ class Migx {
 
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
-                        
+
                         $handlers[] = $column['renderer'];
                     }
                     $cols[] = $col;
@@ -857,7 +861,7 @@ class Migx {
 
             }
         }
-        
+
         $gf = '';
         if (count($handlers) > 0) {
             $gridfunctions = array();
@@ -902,7 +906,7 @@ class Migx {
         $controller->setPlaceholder('myctx', $wctx);
         $controller->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
         $controller->setPlaceholder('customconfigs', $this->customconfigs);
-        $controller->setPlaceholder('win_id', !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $win_id);
+        $controller->setPlaceholder('win_id', $this->customconfigs['win_id']);
         $controller->setPlaceholder('update_win_title', !empty($this->customconfigs['update_win_title']) ? $this->customconfigs['update_win_title'] : 'MIGX');
 
     }
@@ -914,7 +918,12 @@ class Migx {
         if (is_array($columns)) {
             foreach ($columns as $column) {
                 $defaultclickaction = '';
-
+                
+                $renderer = $this->modx->getOption('renderer', $column, '');
+                $renderoptions = $this->modx->getOption('renderoptions', $column, '');
+                $renderchunktpl = $this->modx->getOption('renderchunktpl', $column, '');
+                $options = $this->modx->fromJson($column['renderoptions']);
+                
                 if ($getdefaultclickaction && !empty($column['clickaction'])) {
                     $option = array();
                     $defaultclickaction = $column['clickaction'];
@@ -924,16 +933,20 @@ class Migx {
                     $columnrenderoptions[$column['dataIndex']]['default_clickaction'] = $option;
                 }
 
-                if (isset($column['renderoptions']) && !empty($column['renderoptions'])) {
-                    $options = $this->modx->fromJson($column['renderoptions']);
+                if (is_array($options) && count($options)>0) {
                     foreach ($options as $key => $option) {
                         $option['idx'] = $key;
-                        $option['_renderer'] = $column['renderer'];
+                        $option['_renderer'] = $renderer;
                         $option['clickaction'] = empty($option['clickaction']) && !empty($defaultclickaction) ? $defaultclickaction : $option['clickaction'];
                         $option['selectorconfig'] = $this->modx->getOption('selectorconfig', $column, '');
                         $option['selectorconfig'] = empty($option['selectorconfig']) && !empty($defaultselectorconfig) ? $defaultselectorconfig : $option['selectorconfig'];
                         $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
                     }
+                } elseif (!empty($renderer) && $renderer == 'this.renderChunk') {
+                    $option['idx'] = 0;
+                    $option['_renderer'] = $renderer;
+                    $option['_renderchunktpl'] = $renderchunktpl;
+                    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
                 }
             }
         }
@@ -941,7 +954,7 @@ class Migx {
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
-    function renderChunk($tpl, $properties = array(), $getChunk = true, $printIfemty = true) { 
+    function renderChunk($tpl, $properties = array(), $getChunk = true, $printIfemty = true) {
 
         $value = $this->parseChunk($tpl, $properties, $getChunk, $printIfemty);
 
@@ -959,12 +972,24 @@ class Migx {
         if (count($columnrenderoptions) > 0) {
             $outputrows = array();
             foreach ($rows as $row) {
+                
                 foreach ($columnrenderoptions as $column => $options) {
-                    $row[$column . '_ro'] = isset($row[$column]) && isset($options[$row[$column]]) ? $this->modx->toJson($options[$row[$column]]) : '';
+                    $value = $this->modx->getOption($column,$row,'');
+                    
+                    $row[$column . '_ro'] = isset($options[$value]) ? $this->modx->toJson($options[$value]) : '';
                     foreach ($options as $option) {
                         if ($option['_renderer'] == 'this.renderChunk') {
-                            $row['_this.value'] = isset($row[$column]) ? $row[$column] : '';
-                            $row[$column] = $this->renderChunk($option['name'], $row);
+                            $row['_this.value'] = $value;
+                            $properties = $row;
+                            $properties['_request'] = $_REQUEST;
+                            $renderchunktpl = $this->modx->getOption('_renderchunktpl', $option, '');
+                            if (!empty($renderchunktpl)){
+                                $row[$column] = $this->renderChunk($renderchunktpl, $properties,false);    
+                            }
+                            else{
+                                $row[$column] = $this->renderChunk($option['name'], $properties);
+                            }
+                            
                         }
                         break;
                     }
@@ -1727,7 +1752,7 @@ class Migx {
     }
 
     function importconfig($array) {
-        $excludekeys = array('getlistwhere','joins');
+        $excludekeys = array('getlistwhere', 'joins', 'configs');
         return $this->recursive_encode($array, $excludekeys);
     }
 

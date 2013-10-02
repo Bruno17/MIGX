@@ -24,8 +24,4 @@ class modTemplateVarInputRenderRedactor extends modTemplateVarInputRender {
         return $corePath . 'elements/tv/redactor.tpl';  
     }
 }
-<<<<<<< HEAD
 return 'modTemplateVarInputRenderRedactor';
-=======
-return 'modTemplateVarInputRenderRedactor';
->>>>>>> bceb47f1964c22fa86255e549931fa1fdf2fbadd

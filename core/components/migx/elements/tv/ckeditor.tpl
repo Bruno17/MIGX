@@ -38,8 +38,8 @@ Ext.onReady(function() {
         
     field.onBeforeSubmit = function(){
         //console.log('we submit');
-        console.log(field.htmlEditor.getValue()) ;
-    
+        field.htmlEditor.getValue();
+   
     };        
 
 
