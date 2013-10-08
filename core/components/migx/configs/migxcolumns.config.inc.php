@@ -19,6 +19,7 @@ $tabs = '
 {"field":"renderer","caption":"Renderer","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $renderers) . '"},
 {"field":"clickaction","caption":"on Click","inputTVtype":"listbox","inputOptionValues":"||switchOption||selectFromGrid"},
 {"field":"selectorconfig","caption":"SelectFromGrid config"},
+{"field":"renderchunktpl","caption":"renderChunk template","inputTVtype":"textarea"},
 {"field":"renderoptions","caption":"Renderoptions","inputTVtype":"migx","configs":"migxcolumnrenderoptions"}
 ]}
 ] 

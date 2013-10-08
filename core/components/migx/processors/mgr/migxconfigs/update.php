@@ -146,7 +146,7 @@ switch ($task) {
         }
 
         if (isset($postvalues['jsonexport'])) {
-            $postvalues = $modx->fromJson($postvalues['jsonexport']);
+            $postvalues = $modx->migx->importconfig($modx->fromJson($postvalues['jsonexport']));
         }
 
 

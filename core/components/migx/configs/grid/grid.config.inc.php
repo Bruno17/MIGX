@@ -48,7 +48,7 @@ $gridactionbuttons['loadfromsource']['standalone'] = '1';
 $gridcontextmenus['update']['code']="
         m.push({
             className : 'update', 
-            text: _('migx.edit'),
+            text: '[[%migx.edit]]',
             handler: 'this.update'
         });
         m.push('-');
@@ -58,7 +58,7 @@ $gridcontextmenus['update']['handler'] = 'this.update';
 $gridcontextmenus['duplicate']['code']="
         m.push({
             className : 'duplicate', 
-            text: _('migx.duplicate'),
+            text: '[[%migx.duplicate]]',
             handler: 'this.duplicate'
         });
         m.push('-');
@@ -69,7 +69,7 @@ $gridcontextmenus['publish']['code']="
         if (n.published == 0) {
             m.push({
                 className : 'publish', 
-                text: _('migx.publish'),
+                text: '[[%migx.publish]]',
                 handler: 'this.publishObject'
             })
             m.push('-');
@@ -81,7 +81,7 @@ $gridcontextmenus['unpublish']['code']="
 if (n.published == 1) {
             m.push({
                 className : 'unpublish', 
-                text: _('migx.unpublish')
+                text: '[[%migx.unpublish]]'
                 ,handler: 'this.unpublishObject'
             });
             m.push('-');
@@ -121,19 +121,19 @@ $gridcontextmenus['recall_remove_delete']['code']="
         if (n.deleted == 1) {
         m.push({
             className : 'recall', 
-            text: _('migx.recall'),
+            text: '[[%migx.recall]]',
             handler: 'this.recallObject'
         });
 		m.push('-');
         m.push({
             className : 'remove', 
-            text: _('migx.remove'),
+            text: '[[%migx.remove]]',
             handler: 'this.removeObject'
         });						
         } else if (n.deleted == 0) {
         m.push({
             className : 'delete', 
-            text: _('migx.delete'),
+            text: '[[%migx.delete]]',
             handler: 'this.deleteObject'
         });		
         }
@@ -143,11 +143,22 @@ $gridcontextmenus['recall_remove_delete']['handler'] = 'this.recallObject,this.r
 $gridcontextmenus['remove']['code']="
         m.push({
             className : 'remove', 
-            text: _('migx.remove'),
+            text: '[[%migx.remove]]',
             handler: 'this.removeObject'
         });						
 ";
 $gridcontextmenus['remove']['handler'] = 'this.removeObject';
+
+$gridcontextmenus['remove_migx']['code']="
+        m.push({
+            className : 'remove', 
+            text: '[[%migx.remove]]',
+            handler: 'this.remove'
+        });						
+";
+//$gridcontextmenus['remove_migx']['handler'] = 'this.remove';
+
+
 
 $gridfilters['textbox']['code']=
 "
@@ -204,6 +215,37 @@ $gridfilters['combobox']['code'] = "
 ";
 $gridfilters['combobox']['handler'] = 'gridfilter';
 
+$gridfilters['treecombo']['code']=
+"
+{
+    xtype: 'migx-treecombo'
+    ,id: '[[+name]]-migxdb-search-filter'
+    ,fieldLabel: 'Test'
+    ,emptyText: '[[+emptytext]]'
+    ,name: '[[+name]]'
+    ,hiddenName: '[[+name]]'    
+    ,baseParams: { 
+        action: 'mgr/migxdb/process',
+        processaction: '[[+getcomboprocessor]]',
+        configs: '[[+config.configs]]',
+        searchname: '[[+name]]',
+        resource_id: '[[+config.resource_id]]',
+        co_id: '[[+config.connected_object_id]]',
+        reqConfigs: '[[+config.req_configs]]'
+    }
+    ,root: {
+        nodeType: 'async',
+        text: 'Root',
+        draggable: false,
+        id: 'currentctx_0'
+    }
+    ,listeners: {
+        'nodeclick': {fn:this.filter[[+name]],scope:this}
+    }
+}
+";
+$gridfilters['treecombo']['handler'] = 'gridfilter';
+
 
 
 $ctx = '{$ctx}';
@@ -216,13 +258,15 @@ $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 $renderer['this.renderImage'] = "
     renderImage : function(val, md, rec, row, col, s){
         var source = s.pathconfigs[col];
-        if (val.substr(0,4) == 'http'){
-            return '{$httpimg}' ;
-		}        
-		if (val != ''){
-			return '{$phpthumbimg}';
-		}
-		return val;
+        if (val !== null) {
+            if (val.substr(0,4) == 'http'){
+                return '{$httpimg}' ;
+            }        
+            if (val != ''){
+                return '{$phpthumbimg}';
+            }
+            return val;
+        }
 	}
 ";
 
@@ -322,6 +366,102 @@ renderSwitchStatusOptions : function(val, md, rec, row, col, s) {
 }
 ";
 
+$tpl = '{6} <a href="#" ><img class="controlBtn btn_selectpos {4} selectpos" src="'.$base_url.'assets/components/migx/style/images/arrow_updown.png" alt="select" title="select position"></a>';
+$tpl_active = '{6} '; 
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_before {4} {5}:before" src="'.$base_url.'assets/components/migx/style/images/arrow_up.png" alt="before" title="move before"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_cancel {4} cancel" src="'.$base_url.'assets/components/migx/style/images/cancel.png" alt="cancel" title="cancel"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_after {4} {5}:after" src="'.$base_url.'assets/components/migx/style/images/arrow_down.png" alt="after" title="move after"></a>';
+
+$renderer['this.renderPositionSelector'] = "
+renderPositionSelector : function(val, md, rec, row, col, s) {
+    var column = this.getColumnModel().getColumnAt(col);
+    var ro = Ext.util.JSON.decode(rec.json[column.dataIndex+'_ro']);
+    var value, renderImage, altText, handler, classname;
+    renderImage = ro.image;
+    var handler = ro.handler;
+    if (typeof(handler) == 'undefined' || handler == ''){
+        handler = 'this.handlePositionSelector'
+    }
+    value = val;
+    classname = 'test';
+    
+    if (this.isPosSelecting){
+        altText = 'before' ;
+        return String.format('{$tpl_active}', renderImage, altText, altText, classname, handler, column.dataIndex, value);            
+    }
+    else{
+        altText = 'select' ;
+        return String.format('{$tpl}', renderImage, altText, altText, classname, handler, column.dataIndex, value);
+    }
+
+}
+";
+
+$gridfunctions['this.handlePositionSelector'] = "
+handlePositionSelector: function(n,e,col) {
+    var btn,params;
+    var column = col;
+    //console.log(this.menu.record.json);
+    var ro_json = this.menu.record.json[column+'_ro'];
+    var ro = Ext.util.JSON.decode(ro_json);
+
+    if (this.isPosSelecting){
+        this.isPosSelecting = false;
+        if (column != 'cancel'){
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/migxdb/process'
+                ,processaction: 'handlepositionselector'
+                ,col: column
+                ,new_pos_id: this.menu.record.id
+                ,tv_type: this.config.tv_type
+                ,object_id: this.posSelectingRecord.id
+				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+            }
+            ,listeners: {
+                'success': {fn: function(res){ 
+                    res_object = res.object;
+                    if (res_object.tv_type == 'migx'){
+                        this.menu.record.json[column] = res_object.value;	
+                        this.menu.record.json[column+'_ro'] = Ext.util.JSON.encode(res_object);
+                        this.getView().refresh();
+                        this.collectItems();
+                        MODx.fireResourceFormChange();                        	                         
+                        return;
+                    }
+                    this.refresh();
+                    
+                    },scope:this }
+            }
+        });                    
+            
+        }else{
+        var view = this.getView();
+        var result = view.renderBody();
+        view.mainBody.update(result).setWidth(view.getTotalWidth()); 
+        view.processRows(0, true);
+        view.layout();     
+        }
+
+        
+    }
+    else{
+        this.posSelectingRecord = this.menu.record;
+        this.isPosSelecting = true;
+        var view = this.getView();
+        var result = view.renderBody();
+        view.mainBody.update(result).setWidth(view.getTotalWidth()); 
+        view.processRows(0, true);
+        view.layout();               
+        
+     }
+
+}	
+";
+
+
 $renderer['this.renderRowActions'] = "
 	dummy:function(v,md,rec) {
         // this function is fixed in the grid
@@ -330,6 +470,7 @@ $renderer['this.renderRowActions'] = "
 
 $renderer['this.renderChunk'] = "
 renderChunk : function(val, md, rec, row, col, s) {
+    this.call_collectmigxitems = true;
     return val;
 }
 ";
@@ -338,7 +479,11 @@ $renderer['this.renderDate'] = "
 renderDate : function(val, md, rec, row, col, s) {
     var date;
 	if (val && val != '') {
-		date = Date.parseDate(val, 'Y-m-d H:i:s');
+        if (typeof val == 'number') {
+            date = new Date(val*1000);
+        } else {
+			date = Date.parseDate(val, 'Y-m-d H:i:s');
+        }
         if (typeof(date) != 'undefined' ){
 		    return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
         }    
@@ -366,7 +511,7 @@ renderOptionSelector : function(val, md, rec, row, col, s) {
 $gridfunctions['this.selectSelectorOption'] = "
 selectSelectorOption: function(n,e,col) {
     var btn,params;
-    console.log(this.menu.record);
+    //console.log(this.menu.record);
     Ext.get('tv'+this.config.tv).dom.value = this.menu.record.data.id;
     var column = this.getColumnModel().getColumnAt(col);
     var ro_json = this.menu.record.json[column.dataIndex+'_ro'];
@@ -374,7 +519,7 @@ selectSelectorOption: function(n,e,col) {
     
     return;
     if (ro.clickaction == 'showSelector'){
-        console.log(ro);
+        //console.log(ro);
         params = {
             action: ro.clickaction
             ,col: column.dataIndex
@@ -502,12 +647,12 @@ handleColumnSwitch: function(n,e,col) {
     
     var btn,params;
     var column = col;
-    console.log(this.menu.record.json);
+    //console.log(this.menu.record.json);
     var ro_json = this.menu.record.json[column+'_ro'];
     var ro = Ext.util.JSON.decode(ro_json);
     
     if (ro.clickaction == 'selectFromGrid'){
-        console.log(ro);
+        //console.log(ro);
         params = {
             action: ro.clickaction
             ,col: col
@@ -516,10 +661,10 @@ handleColumnSwitch: function(n,e,col) {
         }
         
         this.loadWin(btn,e,'u', Ext.util.JSON.encode(params));
-        return;        
+        return false;        
     }
 
-   
+        
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
@@ -550,6 +695,7 @@ handleColumnSwitch: function(n,e,col) {
                     },scope:this }
             }
         });
+        return false;
     }	
 ";
 
@@ -563,6 +709,8 @@ publishObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'                
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -581,6 +729,8 @@ unpublishObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'                
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -600,6 +750,8 @@ activateObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -619,6 +771,8 @@ deactivateObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -636,10 +790,13 @@ publishSelected: function(btn,e) {
             url: this.config.url
             ,params: {
                 action: 'mgr/migxdb/process'
-                ,processaction: 'bulkupdate'      
+                ,processaction: 'bulkupdate' 
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                     
 				,configs: this.config.configs
 				,task: 'publish'
                 ,objects: cs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:function(r) {
@@ -662,8 +819,11 @@ unpublishSelected: function(btn,e) {
                 action: 'mgr/migxdb/process'
                 ,processaction: 'bulkupdate'                     
 				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
 				,config_task: 'unpublish'
                 ,objects: cs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:function(r) {
@@ -686,8 +846,11 @@ deleteSelected: function(btn,e) {
                 action: 'mgr/migxdb/process'
                 ,processaction: 'bulkupdate'                     
 				,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
 				,task: 'delete'
                 ,objects: cs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:function(r) {
@@ -706,8 +869,11 @@ deleteObject: function() {
             ,params: {
                 action: 'mgr/migxdb/update'
 				,task: 'delete'
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -722,8 +888,11 @@ recallObject: function() {
             ,params: {
                 action: 'mgr/migxdb/update'
 				,task: 'recall'
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -738,6 +907,9 @@ $gridfunctions['this.csvExport'] = "
 		var code, type, category, study_type, ebs_state;
 		var box = Ext.MessageBox.wait('Preparing …', _('migx.export_current_view'));
         var params = s.baseParams;
+        var o_action = params.action || '';
+        var o_processaction = params.processaction || '';
+        
         params.action = 'mgr/migxdb/process';
         params.processaction = 'export';
         params.configs = this.config.configs;     
@@ -752,6 +924,10 @@ $gridfunctions['this.csvExport'] = "
 				},scope:this}
 			}
 		});
+        
+        params.action = o_action;
+        params.processaction = o_processaction;
+        
 		return true;
 	}
 ";
@@ -768,8 +944,11 @@ removeObject: function() {
                         action: 'mgr/migxdb/process'
                         ,processaction: 'remove'
 				        ,task: 'removeone'
+                        ,resource_id: _this.config.resource_id
+                        ,co_id: '[[+config.connected_object_id]]'                        
                         ,object_id: _this.menu.record.id
 				        ,configs: _this.config.configs
+                        ,reqConfigs: '[[+config.req_configs]]'                        
                     }
                     ,listeners: {
                         'success': {fn:_this.refresh,scope:_this}
@@ -816,6 +995,8 @@ publishTargetObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -835,6 +1016,8 @@ unpublishTargetObject: function() {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -843,6 +1026,41 @@ unpublishTargetObject: function() {
     }    
 ";
 
+$img = '<img src="' . "'+data.image+'" . '" alt="" onclick="Ext.getCmp(' . "\'gal-album-items-view\'" . ').ssWin.hide();" />';
+$win_id = '{$win_id}';
+$gridfunctions['this.showScreenshot'] = "
+    showScreenshot: function(id) {
+        //var data = this.lookup['gal-item-'+id];
+        //if (!data) return false;
+        
+        console.log(this.menu.record.json);
+        var data = this.menu.record.json;
+        
+        if (!this.ssWin) {
+            this.ssWin = new Ext.Window({
+                layout:'fit'
+                ,width: 600
+                ,height: 450
+                ,closeAction:'hide'
+                ,plain: true
+                ,items: [{
+                    id: 'gal-item-ss-[[+config.win_id]]'
+                    ,html: ''
+                }]
+                ,buttons: [{
+                    text: _('close')
+                    ,handler: function() { this.ssWin.hide(); }
+                    ,scope: this
+                }]
+            });
+        }
+        this.ssWin.show();
+        this.ssWin.setSize(data.image_width,data.image_height);
+        this.ssWin.center();
+        this.ssWin.setTitle(data.name);
+        Ext.get('gal-item-ss-[[+config.win_id]]').update('{$img}');
+    }     
+";
 
 
 

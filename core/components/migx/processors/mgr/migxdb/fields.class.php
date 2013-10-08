@@ -28,7 +28,7 @@ class migxFormProcessor extends modProcessor {
         $action = '';
         if (!empty($tempParams)) {
             $tempParams = $this->modx->fromJson($tempParams);
-            if (array_key_exists('action',$tempParams) && !empty($tempParams['action'])) {
+            if (is_array($tempParams) && array_key_exists('action',$tempParams) && !empty($tempParams['action'])) {
                 $action = strtolower($tempParams['action']) ;
                 if ($action == 'selectfromgrid'){
                     $scriptProperties['configs'] = !empty($tempParams['selectorconfig']) ? $tempParams['selectorconfig'] : $action;
@@ -78,8 +78,12 @@ class migxFormProcessor extends modProcessor {
         $allfields[] = array();
         $categories = array();
         
+        $tabs = $this->modx->migx->checkMultipleForms($tabs,$controller,$allfields,$record);
+        
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
+        $formcaption = $this->modx->migx->customconfigs['formcaption'];
 
+        $controller->setPlaceholder('formcaption', $this->modx->migx->renderChunk($formcaption,$record,false,false));
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
         $controller->setPlaceholder('object', $object);

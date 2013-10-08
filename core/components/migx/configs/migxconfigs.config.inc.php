@@ -87,8 +87,11 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 {"caption":"Settings", "fields": [
     {"field":"name","caption":"Name"},
     {"field":"extended.migx_add","caption":"[[%migx.add_replacement]]"},
-    {"field":"extended.formcaption","caption":"Form Caption"},
-    {"field":"extended.win_id","caption":"unique MIGX ID"}
+    {"field":"extended.formcaption","caption":"Form Caption","description":"placeholders like [[+pagetitle]] can be used"},
+    {"field":"extended.update_win_title","caption":"Window Title"},
+    {"field":"extended.win_id","caption":"unique MIGX ID"},
+    {"field":"extended.maxRecords","caption":"max MIGX records"},
+    {"field":"extended.addNewItemAt","caption":"Add new MIGX records at","inputTVtype":"listbox","inputOptionValues":"bottom||top","default":"bottom"}
 ]},
 {"caption":"formtabs", "fields": [
     {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"},
@@ -125,6 +128,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.check_resid","caption":"Check Resource","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0||@TV","default":"0"},
     {"field":"extended.check_resid_TV","caption":"Check Resource TV"},
     {"field":"extended.join_alias","caption":"Join Alias"},
+    {"field":"extended.has_jointable","caption":"Has Extra Connection Table","inputTVtype":"listbox","inputOptionValues":"yes||no","default":"yes"},
     {"field":"extended.getlistwhere","caption":"Where"},
     {"field":"extended.joins","caption":"Joins","inputTVtype":"textarea"}
 ]},
@@ -133,6 +137,11 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.cmptabcaption","caption":"Tab Caption"},
     {"field":"extended.cmptabdescription","caption":"Tab Description"},
     {"field":"extended.cmptabcontroller","caption":"Custom Tab Controller"}
+]},
+{"caption":"MIGXfe-Settings", "fields": [
+    {"field":"extended.winbuttons","caption":"Window Buttons","inputTVtype":"textarea","description":"js-code, running on window-creation. See migxfe/templates/web/form/form.tpl and winbuttons.tpl"},
+    {"field":"extended.onsubmitsuccess","caption":"On Submit success","inputTVtype":"textarea","description":"js-code, running on submit success"},
+    {"field":"extended.submitparams","caption":"Submit params","inputTVtype":"textarea","description":"additional submit params"}
 ]}
 ]
 ';
@@ -208,6 +217,16 @@ $columns = '
 ';
 
 $this->customconfigs['columns'] = $this->modx->fromJson($columns);
+
+$filter = array();
+$filter['name'] = 'searchconfig';
+$filter['label'] = 'search';
+$filter['emptytext'] = 'search...';
+$filter['type'] = 'textbox';
+$filter['getlistwhere'] = '{"name:LIKE":"%[[+searchconfig]]%"}';
+
+$this->customconfigs['filters'] = array();
+$this->customconfigs['filters'][] = $filter;
 
 $gridcontextmenus['editraw']['active'] = 1;
 $gridcontextmenus['export_import']['active'] = 1;

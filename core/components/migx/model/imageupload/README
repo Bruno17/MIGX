@@ -1,0 +1,19 @@
+Snippet AjaxImageUpload
+MODX Snippet/jQuery Script Wrapper for Andrew Valums great file upload script http://valums.com/ajax-upload/
+
+Usage:
+- Non Ajax Page: [!AjaxImageUpload? &mode=`form` &ajaxId=`779` &uid=`uniqueid` &language=`german` &allowedExtensions=`jpg,jpeg,png,gif` &thumbX=`75` &thumbY=`75`!]
+- AJAX page: [!AjaxImageUpload? &mode=`ajax` &language=`german` &allowedExtensions=`jpg,jpeg,png,gif` &maxFilesizeMb=`2` &thumbX=`100` &thumbY=`100`!]
+
+Annotations:
+- Install with following snippet code: 
+  <?php return include MODX_BASE_PATH.'assets/snippets/AjaxImageUpload/AjaxImageUpload.snippet.php'; ?>
+- Most of the parameters have default values (see snippet code)
+- Images will be saved with an unique filename in assets/cache/AjaxImageUpload
+- The image properties will be saved in $_SESSION['AjaxImageUpload'][$uid][$id] 
+  as array('originalName', 'uniqueName', 'thumbName', 'path') and should be 
+  moved from there during the other form process. ($uid should be set on non 
+  ajax page, $id is the number of the image)
+- The unique id could be created for each form (to separate multiple upload 
+  queues) and maybe each pageview (to separate uploads for the same queue and 
+  session but i.e. in different tabs)

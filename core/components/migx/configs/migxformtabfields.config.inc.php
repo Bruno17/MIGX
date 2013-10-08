@@ -5,9 +5,11 @@ $tabs ='
 {"caption":"Field", "fields": [
 {"field":"field","caption":"Fieldname"},
 {"field":"caption","caption":"Caption"},
+{"field":"description","caption":"Description","inputTVtype":"textarea"},
+{"field":"description_is_code","caption":"Description is Code","inputTVtype":"listbox","description":"Display the description as Form-code. MODX-tags gets parsed there.","inputOptionValues":"no==0||yes==1"},
 {"field":"inputTV","caption":"Input TV"},
 {"field":"inputTVtype","caption":"Input TV type"},
-{"field":"configs","caption":"Configs"}
+{"field":"configs","caption":"Configs","inputTVtype":"textarea","description":"this can be used either for a migx-TV-configname or for input-properties of any TV-type as json-string"}
 ]},
 {"caption":"Mediasources", "fields": [
 {"field":"sourceFrom","caption":"source From","inputTVtype":"listbox","inputOptionValues":"config||tv||migx"},

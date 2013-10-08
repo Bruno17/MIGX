@@ -56,5 +56,6 @@ $_lang['migx.year'] = 'Year';
 
 $_lang['migx.upload_images'] = 'Upload Files';
 $_lang['migx.load_from_source'] = 'Load from mediasource';
+$_lang['migx.max_records_alert'] = 'Max amount of records reached';
 
 $_lang['migx.selector_options'] = 'Options';

@@ -17,8 +17,10 @@ if (!empty($config['packageName'])) {
     foreach ($packageNames as $packageName) {
         $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
         $modelpath = $packagepath . 'model/';
-
-        $modx->addPackage($packageName, $modelpath, $prefix);
+        if (is_dir($modelpath)){
+            $modx->addPackage($packageName, $modelpath, $prefix);
+        } 
+        
     }
 }
 
@@ -95,9 +97,9 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
         if (!empty($filter['getlistwhere'])) {
 
             $requestvalue = $modx->getOption($filter['name'], $scriptProperties, 'all');
-
+            
             if (isset($scriptProperties[$filter['name']]) && $requestvalue != 'all') {
-
+                
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
                 $chunk->setContent($filter['getlistwhere']);

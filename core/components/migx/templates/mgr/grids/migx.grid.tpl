@@ -79,6 +79,7 @@ MODx.grid.multiTVgrid = function(config) {
                    }) 
 		
 		this.setWidth('99%');
+        
 		//this.syncSize();
                    // load the grid store
                   //  after the grid has been rendered
@@ -106,6 +107,7 @@ MODx.grid.multiTVgrid = function(config) {
     });
 	
     MODx.grid.multiTVgrid.superclass.constructor.call(this,config)
+    this._makeTemplates();
     this.getStore().pathconfigs=config.pathconfigs;
 	this.loadData();
     this.on('click', this.onClick, this);  
@@ -114,6 +116,22 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     _renderUrl: function(v,md,rec) {
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
+    ,_makeTemplates: function() {
+        this.tplRowActions = new Ext.XTemplate('<tpl for="."><div class="migx-actions-column">'
+										    +'<h3 class="main-column">{column_value}</h3>'
+												+'<tpl if="column_actions">'
+													+'<ul class="actions">'
+                                                        +'<tpl for="column_actions">'
+                                                            +'<tpl if="typeof (className) != '+"'undefined'"+'">'   
+														    +'<li><a href="#" class="controlBtn {className} {handler}">{text}</a></li>'
+                                                          +'</tpl>'
+													    +'</tpl>'
+                                                    +'</ul>'
+												+'</tpl>'
+											+'</div></tpl>',{
+			compiled: true
+		});
+    }    
     ,renderFirst : function(val, md, rec, row, col, s){
 		val = val.split(':');
         return val[0];
@@ -165,6 +183,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         
 		this.getStore().sortInfo = null;
 		this.getStore().loadData(items);
+        
+        
 			
 		this.syncSize();
         this.setWidth('100%');
@@ -182,7 +202,12 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         return cs;
     }
 	,addItem: function(btn,e) {
+	    var maxRecords =  parseInt('{/literal}{$customconfigs.maxRecords}{literal}');
 		var s=this.getStore();
+        if(maxRecords != 0 && s.getCount() >= maxRecords){
+            alert ('[[%migx.max_records_alert]]');
+            return;            
+        }
 		this.loadWin(btn,e,s.getCount(),'a');
 	}
 	,preview: function(btn,e) {
@@ -199,7 +224,10 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 MODx.fireResourceFormChange();	
                 }
             }),this;		
-	}   
+	}
+	,refresh: function() {
+        return;
+    }       
 	,update: function(btn,e) {
       this.loadWin(btn,e,this.menu.recordIndex,'u');
     }
@@ -220,11 +248,13 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 'success': {fn:function(res){
                     if (res.message==''){
                         var items = res.object;
+                        var item = null;
                         Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
                         this.autoinc = 0;
                         for(i = 0; i <  items.length; i++) {
  		                    item = items[i];
                             if (item.MIGX_id){
+                                
                                 if (parseInt(item.MIGX_id)  > this.autoinc){
                                     this.autoinc = item.MIGX_id;
                                 }
@@ -234,7 +264,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                             }	
                             items[i] = item;  
                         } 
-        
+                        
 		                this.getStore().sortInfo = null;
 		                this.getStore().loadData(items);
                         this.collectItems();                                                    
@@ -247,6 +277,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	,loadWin: function(btn,e,index,action) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
+        var object_id = '{/literal}{$request.object_id}{literal}';
+        var input_prefix = Ext.id(null,'inp_');
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
             alert ('[[%migx.save_resource]]');
@@ -272,6 +304,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
+            this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
+            this.windows[win_xtype].fp.autoLoad.params.input_prefix=input_prefix;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
             this.windows[win_xtype].fp.autoLoad.params.configs='{/literal}{$properties.configs}{literal}';
 		    this.windows[win_xtype].fp.autoLoad.params.itemid=index;
@@ -298,7 +332,9 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 autoinc : this.autoinc,
                 isnew : isnew,
                 resource_id : resource_id,
-                co_id : co_id
+                object_id: object_id,
+                co_id : co_id,
+                input_prefix: input_prefix
 			}
         });
     }
@@ -332,6 +368,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 	,loadIframeWin: function(btn,e,tpl) {
         var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
+        var object_id = '{/literal}{$request.object_id}{literal}';
         var url = MODx.config.assets_url+'components/migx/connector.php';
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
 		//console.log((items));
@@ -340,7 +377,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             jsonvarkey = 'migx_outputvalue';
         }
         var win_xtype = 'modx-window-mi-iframe-{/literal}{$win_id}{literal}';
-		if (this.windows[win_xtype]){
+        var object_id_field = null;
+    	if (this.windows[win_xtype]){
 			//this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			//this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
@@ -351,6 +389,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             //this.windows[win_xtype].action=action;
             this.windows[win_xtype].resource_id=resource_id;
             this.windows[win_xtype].co_id=co_id;
+            this.windows[win_xtype].object_id = object_id;
+            object_id_field = Ext.get('migx_iframewin_object_id_{/literal}{$win_id}{literal}');
+            object_id_field.dom.value = object_id;            
+            iframeTpl_field = Ext.get('migx_iframewin_iframeTpl_{/literal}{$win_id}{literal}');
+            iframeTpl_field.dom.value = tpl;            
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
@@ -360,6 +403,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			,grid: this
             //,action: action
             ,resource_id: resource_id
+            ,object_id: object_id
             ,co_id: co_id
             ,title: '{/literal}{$customconfigs.iframeWindowTitle}{literal}'
             ,iframeTpl: tpl
@@ -383,6 +427,14 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         });
 		return m;
     }
+    ,renderRowActions:function(v,md,rec) {
+        var n = rec.data;
+        var m = [];	   
+        {/literal}{$customconfigs.gridcolumnbuttons}{literal} 
+        rec.data.column_actions = m;
+        rec.data.column_value = v;
+        return this.tplRowActions.apply(rec.data);
+	}         
 	,collectItems: function(){
 		var items=[];
 		// read jsons from grid-store-items 
@@ -391,8 +443,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
  			items.push(griddata.items[i].json);
         }
 
+        if (this.call_collectmigxitems){
         items = Ext.util.JSON.encode(items); 
-
         MODx.Ajax.request({
             url: MODx.config.assets_url+'components/migx/connector.php'
             ,params: {
@@ -409,6 +461,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 'success': {fn:function(res){
                     if (res.message==''){
                         var items = res.object;
+                        var item = null;
                         Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
                         this.autoinc = 0;
                         for(i = 0; i <  items.length; i++) {
@@ -430,17 +483,16 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                     
                 },scope:this}
             }
-        });          
-        
-        /*
+        });            
+        }else{
         if (items.length >0){
            Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items); 
         }
         else{
            Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = '';  
+        }            
         }
-        */
-		return;						 
+    	return;						 
     }
 	,onClick: function(e){
 		
@@ -458,6 +510,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             var fn = eval(handler);
             fn = fn.createDelegate(this);
             fn(null,e,col);
+            e.stopEvent();
  		}
 	}       
 });

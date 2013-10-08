@@ -53,6 +53,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
 	
     MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal}.superclass.constructor.call(this,config)
     this._makeTemplates();
+    this.setDefaultFilters();
     this.getStore().pathconfigs=config.pathconfigs;
     this.on('click', this.onClick, this);   
 
@@ -76,6 +77,24 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
 											+'</div></tpl>',{
 			compiled: true
 		});
+    }
+    ,setDefaultFilters: function(){
+        var filterDefaults = Ext.util.JSON.decode('{/literal}{$filterDefaults}{literal}');
+        var input = null;
+        var refresh = false;
+        for (var i=0;i<filterDefaults.length;i++) {
+            input = Ext.getCmp(filterDefaults[i].name+'-migxdb-search-filter');
+            if (input && filterDefaults[i].default != ''){
+                input.setValue(filterDefaults[i].default);
+                this.getStore().baseParams[filterDefaults[i].name]=filterDefaults[i].default;
+                refresh = true;
+            } 
+        }
+        if (refresh){
+            this.getBottomToolbar().changePage(1);
+            this.refresh();            
+        }            
+                   
     }
     ,getSelectedAsList: function() {
         var sels = this.getSelectionModel().getSelections();
@@ -102,6 +121,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var storeParams = Ext.util.JSON.encode(this.store.baseParams); 
         var resource_id = '{/literal}{$resource.id}{literal}';
         var tempParams = tempParams || null;
+        var input_prefix = Ext.id(null,'inp_');
         var co_id = '{/literal}{$connected_object_id}{literal}';
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
@@ -120,21 +140,35 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         
  		
         var win_xtype = 'modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}';
-		if (this.windows[win_xtype]){
+		
+        if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv_id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
             this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
+            this.windows[win_xtype].fp.autoLoad.params.input_prefix=input_prefix;
             this.windows[win_xtype].fp.autoLoad.params.configs=this.config.configs;
             this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
             this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
             this.windows[win_xtype].fp.autoLoad.params.tempParams=tempParams;
             this.windows[win_xtype].fp.autoLoad.params.storeParams=storeParams;
+            this.windows[win_xtype].fp.autoLoad.params.loadaction='';
 			this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
             
             //this.setWinPosition(10,10);
             
     	}
+        
+        /*
+        if (this.windows[win_xtype]){
+             //this.windows[win_xtype].destroy();
+             //console.log(this.windows[win_xtype]);
+             delete this.windows[win_xtype]; 
+        }
+        */
+        
+        //console.log('loadwin');
+        
 		this.loadWindow(btn,e,{
             xtype: win_xtype
 			,grid: this
@@ -151,7 +185,9 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
                 resource_id : resource_id,
                 co_id : co_id,
                 tempParams: tempParams,
-                storeParams: storeParams
+                storeParams: storeParams,
+                input_prefix: input_prefix,
+                loadaction:''
 			}
         });
     }
@@ -163,6 +199,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var items = tv ? tv.dom.value : '';
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
         var action = action||'a';
+        var storeParams = Ext.util.JSON.encode(this.store.baseParams);
+        //console.log(co_id);
         if (action == 'a'){
            var object_id = 'new';
         }else{
@@ -189,6 +227,12 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             this.windows[win_xtype].grid=this;
             object_id_field = Ext.get('migx_iframewin_object_id_{/literal}{$win_id}{literal}');
             object_id_field.dom.value = object_id;
+            iframeTpl_field = Ext.get('migx_iframewin_iframeTpl_{/literal}{$win_id}{literal}');
+            iframeTpl_field.dom.value = tpl;
+            co_id_field = Ext.get('migx_iframewin_co_id_{/literal}{$win_id}{literal}');
+            co_id_field.dom.value = co_id;
+            store_params_field = Ext.get('migx_iframewin_store_params_{/literal}{$win_id}{literal}');
+            store_params_field.dom.value = storeParams;            
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
@@ -200,6 +244,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             ,object_id: object_id
             ,resource_id: resource_id
             ,co_id: co_id
+            ,storeParams : storeParams
             ,title: '{/literal}{$customconfigs.iframeWindowTitle}{literal}'
             ,iframeTpl: tpl
         });
@@ -219,7 +264,6 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         return this.tplRowActions.apply(rec.data);
 	} 
 	,onClick: function(e){
-		
         var t = e.getTarget();
         var elm = t.className.split(' ')[0];
 		if(elm == 'controlBtn') {
@@ -230,9 +274,102 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             var fn = eval(handler);
             fn = fn.createDelegate(this);
             fn(null,e,col);
+            e.stopEvent();
  		}
-	}    
+	} 
+  
 });
 Ext.reg('modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}',MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal});
 
+MODx.MigxTreeCombo = function(config) {
+    config = config || {};
+    Ext.applyIf(config,{
+
+      
+    });
+    MODx.MigxTreeCombo.superclass.constructor.call(this,config);
+    this.options = config;
+    this.config = config;
+
+    //this.on('show',this.onShow,this);
+    this.addEvents({
+        success: true
+        ,failure: true
+		//,hide:true
+		//,show:true
+    });
+    //this.renderIframe();	
+};
+
+Ext.extend(MODx.MigxTreeCombo,Ext.form.ComboBox,{
+    extStore: null,
+    tree: null,
+    treeId: 0,
+    
+       initComponent: function() {
+            this.treeId = Ext.id();
+            this.focusLinkId = Ext.id();
+            Ext.apply(this, {
+                store: new Ext.data.SimpleStore({
+                    fields: [],
+                    data: [[]]
+                }),
+                editable: false,
+                shadow: false,
+                mode: 'local',
+                triggerAction: 'all',
+                maxHeight: 200,
+                tpl: '<tpl for="."><div style="height:200px"><div id="' + this.treeId + '"></tpl>',
+                selectedClass: '',
+                onSelect: Ext.emptyFn,
+                valueField: 'id',
+            });
+            var baseParams = this.baseParams;
+            var root = this.root;
+            var listeners = this.treelisteners;
+            this.tree = new Ext.tree.TreePanel({
+			    loader: new Ext.tree.TreeLoader({
+			        dataUrl: MODx.config.assets_url+'components/migx/connector.php',
+                    baseParams: baseParams
+			    }),
+                root: root,
+			    autoHeight: true
+		    });
+
+            this.on('expand', this.onExpand);
+            this.tree.on('beforeclick', this.onNodeclick, this);
+            this.tree.on('expandnode', this.onBeforeexpandnode, this);
+            this.tree.on('collapsenode', this.onBeforecollapsenode, this);
+            MODx.MigxTreeCombo.superclass.initComponent.apply(this, arguments);
+    },        
+
+
+    onExpand: function() {
+
+        this.tree.render(this.treeId);        
+        this.tree.getRootNode().expand();
+    },
+
+    onBeforeexpandnode: function(node) {
+        //expand combobox again, if expand-icon was clicked
+        this.expand();
+    },
+    onBeforecollapsenode: function(node) {
+        //expand combobox again, if collapse-icon was clicked
+        this.expand();
+    },               
+    onNodeclick: function(node,e) {
+        //this.setValue(node.text);
+        this.setValue(node.id);
+        this.el.dom.value = node.text;
+        this.hiddenField.value = node.id;
+        this.fireEvent('nodeclick', this, node.id, this.startValue);
+        //this.setValue(node.text);
+        //this.collapse();
+        //return false;
+    }
+});
+Ext.reg('migx-treecombo', MODx.MigxTreeCombo);
+
 {/literal}
+

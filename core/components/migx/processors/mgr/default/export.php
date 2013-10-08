@@ -4,9 +4,9 @@
  * Generatting CSV formatted string from an array.
  * By Sergey Gurevich.
  */
-function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n", $qut = '"')
-{
-    if (!is_array($array) or !is_array($array[0])) return false;
+function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n", $qut = '"') {
+    if (!is_array($array) or !is_array($array[0]))
+        return false;
 
     //Header row.
     if ($header_row) {
@@ -38,15 +38,26 @@ if (!($scriptProperties['download'])) {
 
     $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
     if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
-        $prefix = isset($config['prefix']) ? $config['prefix'] : '';  
+        $prefix = isset($config['prefix']) ? $config['prefix'] : '';
     }
     $packageName = $config['packageName'];
     $classname = $config['classname'];
+    $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
 
-    $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
-    $modelpath = $packagepath . 'model/';
+    if (!empty($config['packageName'])) {
+        $packageNames = explode(',', $config['packageName']);
+        //all packages must have the same prefix for now!
+        foreach ($packageNames as $packageName) {
+            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $modelpath = $packagepath . 'model/';
+            if (is_dir($modelpath)) {
+                $modx->addPackage($packageName, $modelpath, $prefix);
+            }
 
-    $modx->addPackage($packageName, $modelpath, $prefix);
+        }
+    }
+
+    $checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
 
     if ($this->modx->lexicon) {
         $this->modx->lexicon->load($packageName . ':default');
@@ -59,15 +70,41 @@ if (!($scriptProperties['download'])) {
     $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 
     $c = $modx->newQuery($classname);
+    $c->select($modx->getSelectColumns($classname, $classname));
 
-    if (!empty($showtrash)) {
-        $c->where(array($classname . '.deleted' => '1'));
-    } else {
-        $c->where(array($classname . '.deleted' => '0'));
+    if ($joins) {
+        $modx->migx->prepareJoins($classname, $joins, $c);
+    }
+
+    if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
+        foreach ($config['gridfilters'] as $filter) {
+
+            if (!empty($filter['getlistwhere'])) {
+
+                $requestvalue = $modx->getOption($filter['name'], $scriptProperties, 'all');
+
+                if (isset($scriptProperties[$filter['name']]) && $requestvalue != 'all') {
+
+                    $chunk = $modx->newObject('modChunk');
+                    $chunk->setCacheable(false);
+                    $chunk->setContent($filter['getlistwhere']);
+                    $fwhere = $chunk->process($scriptProperties);
+                    $fwhere = strpos($fwhere, '{') === 0 ? $modx->fromJson($fwhere) : $fwhere;
+
+                    $c->where($fwhere);
+                }
+            }
+        }
+    }
+
+    if ($checkdeleted) {
+        if (!empty($showtrash)) {
+            $c->where(array($classname . '.deleted' => '1'));
+        } else {
+            $c->where(array($classname . '.deleted' => '0'));
+        }
     }
     $count = $modx->getCount($classname, $c);
-
-    $c->select($modx->getSelectColumns($classname, $classname));
 
     $c->sortby($sort, $dir);
 
@@ -76,18 +113,58 @@ if (!($scriptProperties['download'])) {
 
     $collection = $modx->getCollection($classname, $c);
 
+    $collectfieldnames = false;
     if (isset($config['exportfields']) && !empty($config['exportfields'])) {
         $exportFields = $config['exportfields'];
     } else {
-        $fields = $modx->getFields($classname);
-        foreach ($fields as $field => $value) {
-            $exportFields[$field] = $field;
-        }
+        $collectfieldnames = true;
     }
 
+    
+    $excludeFields = $modx->getOption('excludeFields',$config);
+    $excludeFields = explode(',', $excludeFields);
+
     $rows = array();
+    $i = 0;
     foreach ($collection as $row) {
         $tempRow = $row->toArray();
+
+        foreach ($tempRow as $tempfield => $tempvalue) {
+            //get fieldnames from first record
+
+            if ($collectfieldnames) {
+                $exportFields[$tempfield] = $tempfield;
+            }
+
+            //extract json-fields to new fieldnames
+
+
+            if (is_array($tempvalue)) {
+                foreach ($tempvalue as $field => $value) {
+                    $tempRow[$tempfield . '_' . $field] = $value;
+                    if ($collectfieldnames) {
+                        $exportFields[$tempfield . '_' . $field] = $field;
+                    }
+                }
+                unset($tempRow[$tempfield]);
+                unset($exportFields[$tempfield]);
+                
+            }
+
+            
+            if (in_array($tempfield, $excludeFields)) {
+                unset($exportFields[$tempfield]);
+                unset($tempRow[$tempfield]);
+            }
+            
+            //print_r($tempRow);
+
+
+        }
+        
+        
+
+        /*
         $newRow = array();
 
         foreach ($exportFields as $key => $exportKey) {
@@ -95,15 +172,33 @@ if (!($scriptProperties['download'])) {
                 $newRow[$exportKey] = $tempRow[$key];
             }
         }
-        $rows[] = $newRow;
+        */
+        $rows[] = $tempRow;
+        $i++;
     }
+    
+    $temprows = $rows;
+    $rows = array();
+    foreach ($temprows as $row) {
+        $newRow = array();
+        foreach ($exportFields as $key => $exportKey) {
+            if (isset($row[$key])) {
+                $newRow[$exportKey] = $row[$key];
+            } else {
+                $newRow[$exportKey] = '';
+            }
+        }
+        $rows[] = $newRow;
+
+    }
+
 
     //die(print_r($rows, true));
 
     $output = array_to_csv($rows);
 
     $cacheName = md5(time());
-    $cacheName = $modx->getOption('core_path') . 'export/courses/' . $cacheName;
+    $cacheName = $modx->getOption('core_path') . 'export/' . $cacheName;
 
     $cacheManager = $modx->getCacheManager();
     $cacheManager->writeFile($cacheName, $output);
@@ -112,7 +207,7 @@ if (!($scriptProperties['download'])) {
 } else {
     $configs = $modx->getOption('configs', $scriptProperties, '');
     $cacheName = $scriptProperties['download'];
-    $cacheName = $modx->getOption('core_path') . 'export/courses/' . $cacheName;
+    $cacheName = $modx->getOption('core_path') . 'export/' . $cacheName;
 
     if (!is_file($cacheName)) {
         return 'Export error: Export ' . $cacheName . ' does not exist';

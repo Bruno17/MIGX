@@ -48,8 +48,9 @@ $packageName = $config['packageName'];
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
-
-$modx->addPackage($packageName, $modelpath, $prefix);
+if (is_dir($modelpath)){
+    $modx->addPackage($packageName, $modelpath, $prefix);
+}
 $classname = $config['classname'];
 
 if ($modx->lexicon) {

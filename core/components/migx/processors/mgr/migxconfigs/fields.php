@@ -40,8 +40,8 @@ if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] =
     unset($temprecord['id'], $temprecord['name'], $temprecord['createdby'], $temprecord['createdon'], $temprecord['editedby'], $temprecord['editedon'], $temprecord['deleted'], $temprecord['deletedon'], $temprecord['deletedby'],
         $temprecord['published'], $temprecord['publishedon'], $temprecord['publishedby'], $temprecord['object_id']);
 
-
-    $record['jsonexport'] = $modx->toJson($temprecord);
+    $row = $modx->migx->recursive_decode($temprecord);
+    $record['jsonexport'] = $modx->migx->indent($modx->toJson($row));
 } else {
 
     foreach ($record as $field => $fieldvalue) {

@@ -64,6 +64,7 @@ if (!function_exists('recursive_decode')) {
 
 }
 
+
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
 $packageName = $config['packageName'];
@@ -73,7 +74,11 @@ $modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
 
 if ($object = $modx->getObject($classname, $scriptProperties['object_id'])) {
+<<<<<<< HEAD
     $row = recursive_decode($object->toArray());
+=======
+    $row = $modx->migx->recursive_decode($object->toArray());
+>>>>>>> dd2739c2c53ed4c7c5dced486c8c7bd203f8f6bb
     $packageName = $row['extended']['packageName'];
     if (!empty($packageName)) {
         $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
@@ -86,7 +91,11 @@ if ($object = $modx->getObject($classname, $scriptProperties['object_id'])) {
             if (is_dir($configpath)) {
                 $fp = @fopen($filepath, 'w+');
                 if ($fp) {
+<<<<<<< HEAD
                     $result = @fwrite($fp, indent($modx->toJson($row)));
+=======
+                    $result = @fwrite($fp, $modx->migx->indent($modx->toJson($row)));
+>>>>>>> dd2739c2c53ed4c7c5dced486c8c7bd203f8f6bb
                     @fclose($fp);
                 }
                 if ($result) {
@@ -101,4 +110,5 @@ if ($object = $modx->getObject($classname, $scriptProperties['object_id'])) {
 $message = 'Could not write ' . $filepath;
 
 return $modx->error->failure($message);
+
 

@@ -40,12 +40,20 @@ if (!empty($packageName)) {
                 if (count($exploded) == 3 && $exploded[1] == 'config' && $exploded[2] == 'js') {
                     $name = $exploded[0];
                     if ($object = $modx->getObject($classname, array('name' => $name))) {
+<<<<<<< HEAD
                         $object->set('name', $name . '_bkup_' . strftime('%Y%m%d'));
+=======
+                        $object->set('name', $name . '_bkup_' . strftime('%Y%m%d%H%M'));
+>>>>>>> dd2739c2c53ed4c7c5dced486c8c7bd203f8f6bb
                         $object->save();
                     }
                     $content = @file_get_contents($configpath . $file);
                     $object = $modx->newObject($classname);
+<<<<<<< HEAD
                     $object->fromArray(recursive_encode($modx->fromJson($content)));
+=======
+                    $object->fromArray($modx->migx->importconfig($modx->fromJson($content)));
+>>>>>>> dd2739c2c53ed4c7c5dced486c8c7bd203f8f6bb
                     $object->set('name', $name);
                     $object->save();
                 }

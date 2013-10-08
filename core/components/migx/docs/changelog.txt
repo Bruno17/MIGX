@@ -1,5 +1,85 @@
 Changelog for MIGX.
 
+MIGX 2.5.6
+
+==============
+
+Add support for the modmore.com Redactor editor 
+some work on multiuploader for MIGXdb
+more eNotice - fixes
+
+
+MIGX 2.5.2
+
+==============
+read input-options into MIGX-TV
+respect filter in default - export.php
+fix for empty value in TV - configs not loading renderers etc.
+fix changed processaction-param after export2csv 
+stopEvent() by onClick - event
+
+MIGX 2.5.1
+
+==============
+fix bug with renderChunk - renderer
+
+MIGX 2.5
+
+==============
+get different rtes working - support for tinymce, ckeditor 
+some settings for MIGXfe
+cs - lexicons, 
+some eNotice - fixes
+fix with to big integers on TV-id (set phptype to string)
+limit MIGX-record-count
+
+
+MIGX 2.4.2
+
+==============
+columnButtons for the migx - grid 
+little form-layout-mods
+added the option to have the first formtab outside the other tabs above of them.
+
+added the option to use the TV-description-field as parsed code-areas in the formtabs, modx-tags are parsed there - 
+snippets, chunks, output-filters can be used there. All fields of the record can be used as placeholders.
+
+migxupdate for MIGXfe
+default-values for MIGXdb-filters
+update co_id in iframe-window
+add a searchbox to MIGX-Configurator
+read configs directly from exported configs-files from custom-packages - directory by using configname:packagename - configs
+
+
+MIGX 2.4.1
+
+==============
+some new snippets:
+getDayliMIGXrecord
+migxgetrelations
+
+added beta treecombo-filter-option for example to filter resources in MIGXdb by resourcetree
+add window-title configuration, make window-caption dynamic (its possible to use placeholders now)
+hide tabs in form, when only one tab
+added selectposition - renderer
+
+
+MIGX 2.4.0
+
+==============
+new renderer - switchStatusOptions
+new renderer - renderChunk
+getImageList - added 'contains' and 'snippet' - where-filters
+add duplicate-contextmenue to MIGXdb 
+new property for getImageList: &reverse
+give TVs in each CMP-tab a unique id
+refresh grid after closing iframe-window
+added tpl_n{n} tplFirst tplLast tpl_n tpl_oneresult properties to getImageList
+export jsonarray-fields as separate fields in csv-export
+alias, breadcrumb and ultimateparent for migxREsourceMediaPath
+Added TV - description - field to configuration
+
+
 MIGX 2.3.1
 
 ==============

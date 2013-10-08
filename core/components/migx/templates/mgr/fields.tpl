@@ -1,6 +1,8 @@
 {$OnResourceTVFormPrerender}
 
-<h2>{$customconfigs.formcaption}</h2>
+{if $formcaption != ''}
+    <h2>{$formcaption}</h2>
+{/if} 
 
 <input type="hidden" class="mulititems_grid_item_fields" name="mulititems_grid_item_fields" value='{$fields}' />
 <input type="hidden" class="tvmigxid" name="tvmigxid" value='{$migxid}' />
@@ -9,7 +11,11 @@
 {foreach from=$categories item=category name=cat}
 {if count($category.tvs) > 0}
 
+{if count($categories) < 2 OR ($smarty.foreach.cat.first AND $category.print_before_tabs)}
+    <div id="modx-tv-tab{$category.id}" >
+{else}
     <div id="modx-tv-tab{$category.id}" class="x-tab" title="{$category.category|default:$_lang.uncategorized|ucfirst}">
+{/if}
 
 {if count($formnames) > 0}
 {if $smarty.foreach.cat.first}
@@ -79,7 +85,12 @@ Ext.reg('modx-combo-formnamedropdown',MODx.combo.FormnameDropdown);
     
 {foreach from=$category.tvs item=tv name='tv'}
 
-{if $tv->type NEQ "hidden"}
+{if $tv->type EQ "description_is_code"}
+<div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;">
+    {$tv->description}
+    <br class="clear" />
+</div>    
+{elseif $tv->type NEQ "hidden"}
     <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;">
         <label for="tv{$tv->id}" class="x-form-item-label modx-tv-label" style="width: auto;margin-bottom: 10px;">
             <div class="modx-tv-label-title"> 
@@ -112,6 +123,7 @@ Ext.reg('modx-combo-formnamedropdown',MODx.combo.FormnameDropdown);
 {/foreach}
 </div>
 
+{if count($categories) > 1}
 {literal}
 <script type="text/javascript">
 // <![CDATA[
@@ -124,7 +136,7 @@ Ext.onReady(function() {
         ,autoTabs: true
         ,border: false
         ,plain: true
-        ,width: '900px'
+        ,width: '98%'
         ,hideMode: 'offsets'
         ,defaults: {
             bodyStyle: 'padding: 5px;'
@@ -138,7 +150,7 @@ Ext.onReady(function() {
 // ]]>
 </script>
 {/literal}
-
+{/if}
 {$OnResourceTVFormRender}
 
 <br class="clear" />

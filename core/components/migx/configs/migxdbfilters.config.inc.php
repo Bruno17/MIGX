@@ -16,7 +16,8 @@ $tabs = '
 {"field":"getcomboprocessor","caption":"getcombo processor"},
 {"field":"combotextfield","caption":"getcombo textfield"},
 {"field":"comboidfield","caption":"getcombo idfield (optional)"},
-{"field":"comboparent","caption":"parent combobox (name)"}
+{"field":"comboparent","caption":"parent combobox (name)"},
+{"field":"default","caption":"default value"}
 ]}
 ] 
 ';
