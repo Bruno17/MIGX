@@ -1,3 +1,4 @@
+<?php
 /**
  * getImageList
  *
@@ -37,6 +38,7 @@
 
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
+$outerTpl = $modx->getOption('outerTpl', $scriptProperties, false);
 $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
@@ -120,7 +122,7 @@ if (!empty($tvname)) {
 
     }
     $migx->source = $tv->getSource($migx->working_context, false);
-    
+
 }
 
 if (empty($outputvalue)) {
@@ -318,15 +320,15 @@ if (!empty($toSeparatePlaceholders)) {
     $modx->toPlaceholders($output, $toSeparatePlaceholders);
     return '';
 }
-/*
-if (!empty($outerTpl))
-$o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
-else 
-*/
+
 if (is_array($output)) {
     $o = implode($outputSeparator, $output);
 } else {
     $o = $output;
+}
+
+if($outerTpl) {
+    $o = $modx->getChunk($outerTpl, array('wrapper' => $o));
 }
 
 if (!empty($toPlaceholder)) {
