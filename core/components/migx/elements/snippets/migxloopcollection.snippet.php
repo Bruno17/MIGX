@@ -27,6 +27,9 @@ $joins = !empty($joins) ? $modx->fromJson($joins) : false;
 $selectfields = $modx->getOption('selectfields', $scriptProperties, '');
 $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
 
+$addfields = $modx->getOption('addfields', $scriptProperties, '');
+$addfields = !empty($addfields) ? explode(',', $addfields) : null;
+
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
 
@@ -93,6 +96,16 @@ if (!empty($limit)) {
 if ($collection = $modx->getCollection($classname, $c)) {
     foreach ($collection as $object) {
         $fields = $object->toArray('', false, true);
+        
+        if (!empty($addfields)){
+            foreach ($addfields as $addfield){
+                $addfield = explode(':',$addfield);
+                $addname = $addfield[0];
+                $adddefault = isset($addfield[1]) ? $addfield[1] : '';
+                $fields[$addname] = $adddefault; 
+            }
+        }
+        
         if ($toJsonPlaceholder) {
             $output[] = $fields;
         } else {

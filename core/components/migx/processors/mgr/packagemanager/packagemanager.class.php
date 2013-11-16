@@ -70,12 +70,12 @@ class migxCreatePackageProcessor extends modProcessor
             $generator->parseSchema($schemafile, $modelpath);
         }
 
-        if ($properties['task'] == 'addmissing' || $properties['task'] == 'removedeleted') {
+        if ($properties['task'] == 'addmissing' || $properties['task'] == 'removedeleted' || $properties['task'] == 'checkindexes') {
             $prefix = empty($prefix) ? null : $prefix;
             $options['addmissing'] = 0;
             $options['removedeleted'] = 0;
             $options[$properties['task']] = 1;
-
+            
             $this->modx->addPackage($packageName, $modelpath, $prefix);
             $pkgman = $this->modx->migx->loadPackageManager();
 

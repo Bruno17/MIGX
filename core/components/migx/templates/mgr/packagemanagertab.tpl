@@ -150,6 +150,23 @@
                     scope: this
                 }]
             },{
+                title: 'Update indexes',
+                layout:'form',
+                defaults: {
+                    autoHeight: true
+                },
+                items: [{
+                    html: '<p>Add new indexes from schema</p>',
+                    bodyCssClass: 'panel-desc',
+                    border: false
+                },
+                {
+                    xtype: 'button',
+                    handler: function(){this.updatePackage('checkindexes')},
+                    text: 'Update indexes',
+                    scope: this
+                }]
+            },{
                 title: 'Xml Schema',
                 layout:'form',
                 defaults: {

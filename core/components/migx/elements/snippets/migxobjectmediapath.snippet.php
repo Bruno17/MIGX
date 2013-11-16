@@ -3,11 +3,16 @@ $objectid = $modx->getOption('objectid', $scriptProperties, '');
 $createfolder = $modx->getOption('createFolder', $scriptProperties, '1');
 $path = '';
 $createpath = false;
-
 if (empty($objectid) && $modx->getPlaceholder('objectid')) {
     // placeholder was set by some script on frontend for example
     $objectid = $modx->getPlaceholder('objectid');
 }
+if (empty($objectid) && isset($_REQUEST['object_id'])) {
+    $objectid = $_REQUEST['object_id'];
+}
+
+
+
 if (empty($objectid)) {
 
     //set Session - var in fields.php - processor

@@ -129,6 +129,10 @@ switch ($task) {
         $tabs = $modx->migx->getTabs();
         $fieldid = 0;
         $postvalues = array();
+        $arraydelimiters = $modx->getOption('arraydelimiters',$config,array());
+        $arrayenclosings = $modx->getOption('arrayenclosings',$config,array());
+        $default_arraydelimiter = $modx->getOption('arraydelimiter',$config,'||');
+        $default_arrayenclosing = $modx->getOption('arrayenclosing',$config,'');        
 
         foreach ($scriptProperties as $field => $value) {
             $fieldid++;
@@ -138,7 +142,9 @@ switch ($task) {
                 while (list($featureValue, $featureItem) = each($value)) {
                     $featureInsert[count($featureInsert)] = $featureItem;
                 }
-                $value = implode('||', $featureInsert);
+                $arraydelimiter = $modx->getOption($field,$arraydelimiters,$default_arraydelimiter);
+                $arrayenclosing = $modx->getOption($field,$arrayenclosings,$default_arrayenclosing);
+                $value = $arrayenclosing . implode($arraydelimiter, $featureInsert) . $arrayenclosing;
             }
 
             $field = explode('.', $field);

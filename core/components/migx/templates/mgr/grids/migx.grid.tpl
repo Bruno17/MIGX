@@ -203,7 +203,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     }
 	,addItem: function(btn,e) {
 	    var maxRecords =  parseInt('{/literal}{$customconfigs.maxRecords}{literal}');
-		var s=this.getStore();
+        var s=this.getStore();
         if(maxRecords != 0 && s.getCount() >= maxRecords){
             alert ('[[%migx.max_records_alert]]');
             return;            
@@ -233,7 +233,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     }
 	,duplicate: function(btn,e) {
       this.loadWin(btn,e,this.menu.recordIndex,'d');
-    }  
+    } 
+
 	,loadFromSource: function(btn,e) {
         MODx.Ajax.request({
             url: MODx.config.assets_url+'components/migx/connector.php'

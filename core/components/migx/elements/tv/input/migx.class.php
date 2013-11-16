@@ -11,7 +11,6 @@
 class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
     public function process($value, array $params = array()) {
 
-
         $namespace = 'migx';
         $this->modx->lexicon->load('tv_widget', $namespace . ':default');
         //$properties = isset($params['columns']) ? $params : $this->getProperties();
@@ -40,9 +39,11 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
 
         $resource_array = array();
+        $resource_id = 0;
         //are we on a edit- or create-resource - managerpage?
         if (is_object($this->modx->resource)) {
             $resource_array = $this->modx->resource->toArray();
+            $resource_id = $this->modx->resource->get('id');
             $wctx = $this->modx->resource->get('context_key');
         } else {
             //try to get a context from REQUEST
@@ -98,14 +99,16 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         }
 
         //$newitem[] = $item;
+        $temp = $this->modx->getObject('modTemplateVar',$this->tv->get('id'));
         $tv_value = $this->tv->processBindings($this->tv->get('value'));
-        $default_value = $this->tv->processBindings($this->tv->get('default_text'));
+        $default_value = $this->tv->processBindings($temp->get('default_text'),$resource_id);
 
         if (empty($tv_value) && !empty($default_value)) {
             $tv_value = $default_value;
         }
 
         $options = $this->getInputOptions();
+        
         if (is_array($options) && !empty($options)) {
             $allow_customrecords = true;
             $optrows = array();
@@ -117,6 +120,8 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
                 
                 $optrows[$row['MIGX_id']] = $row;
             }
+            
+            
 
             $tv_value = $this->modx->fromJson($tv_value);
             $rows = array();
@@ -126,10 +131,14 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
                     if (isset($optrows[$row['MIGX_id']])){
                        //use input-option-fields and values
                        $rowfields = $optrows[$row['MIGX_id']];
+                       
+                       $editablefields = $this->modx->getOption('editablefields',$rowfields,'');
+                       $editablefields = explode(',',$editablefields);
+                                              
                        //add additional field/values from MIGX
                        foreach ($row as $field=>$value){
-                           //only, if not in options
-                           if (!array_key_exists($field,$rowfields)){
+                           //only, if not in options or editable
+                           if (in_array($field,$editablefields) || !array_key_exists($field,$rowfields)){
                                $rowfields[$field] = $value;     
                            } 
                        }

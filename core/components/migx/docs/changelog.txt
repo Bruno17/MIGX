@@ -1,5 +1,15 @@
 Changelog for MIGX.
 
+MIGX 2.5.8
+
+==============
+Added 'showScreenshot' (big image in popup) 
+Added template-field for direct template-input for renderChunk
+Added position - selector for new MIGX - items
+Fix for not removed rte-editors when using formswitcher
+send current store-params to iframe-window
+
+
 MIGX 2.5.6
 
 ==============
