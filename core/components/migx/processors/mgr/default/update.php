@@ -40,18 +40,17 @@ if (empty($scriptProperties['object_id'])) {
 
 $config = $modx->migx->customconfigs;
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
+$errormsg = '';
 
-
-
-if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])){
-    $prefix = isset($config['prefix']) ? $config['prefix'] : '';  
+if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
+    $prefix = isset($config['prefix']) ? $config['prefix'] : '';
 }
 $packageName = $config['packageName'];
 
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
 $is_container = $modx->getOption('is_container', $config, false);
-if (is_dir($modelpath)){
+if (is_dir($modelpath)) {
     $modx->addPackage($packageName, $modelpath, $prefix);
 }
 $classname = $config['classname'];
@@ -78,10 +77,10 @@ $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
 $has_jointable = false;
 
 if (!empty($joinalias)) {
-    $has_jointable = isset($config['has_jointable']) && $config['has_jointable']=='no' ? false : true;
+    $has_jointable = isset($config['has_jointable']) && $config['has_jointable'] == 'no' ? false : true;
     if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
-        if ($checkConnected && $fkMeta['owner']=='foreign') {
+        if ($checkConnected && $fkMeta['owner'] == 'foreign') {
             $scriptProperties[$fkMeta['local']] = $resource_id;
         }
         $joinvalues = array();
@@ -127,12 +126,15 @@ switch ($task) {
 
         $modx->migx->loadConfigs();
         $tabs = $modx->migx->getTabs();
+        $form_fields = $modx->migx->extractFieldsFromTabs($tabs);
+
         $fieldid = 0;
         $postvalues = array();
-        $arraydelimiters = $modx->getOption('arraydelimiters',$config,array());
-        $arrayenclosings = $modx->getOption('arrayenclosings',$config,array());
-        $default_arraydelimiter = $modx->getOption('arraydelimiter',$config,'||');
-        $default_arrayenclosing = $modx->getOption('arrayenclosing',$config,'');        
+        $arraydelimiters = $modx->getOption('arraydelimiters', $config, array());
+        $arrayenclosings = $modx->getOption('arrayenclosings', $config, array());
+        $default_arraydelimiter = $modx->getOption('arraydelimiter', $config, '||');
+        $default_arrayenclosing = $modx->getOption('arrayenclosing', $config, '');
+        $validation_errors = array();
 
         foreach ($scriptProperties as $field => $value) {
             $fieldid++;
@@ -142,11 +144,30 @@ switch ($task) {
                 while (list($featureValue, $featureItem) = each($value)) {
                     $featureInsert[count($featureInsert)] = $featureItem;
                 }
-                $arraydelimiter = $modx->getOption($field,$arraydelimiters,$default_arraydelimiter);
-                $arrayenclosing = $modx->getOption($field,$arrayenclosings,$default_arrayenclosing);
+                $arraydelimiter = $modx->getOption($field, $arraydelimiters, $default_arraydelimiter);
+                $arrayenclosing = $modx->getOption($field, $arrayenclosings, $default_arrayenclosing);
                 $value = $arrayenclosing . implode($arraydelimiter, $featureInsert) . $arrayenclosing;
             }
 
+            $form_field = $modx->getOption($field, $form_fields, '');
+
+            $validation = $modx->getOption('validation', $form_field, '');
+            if (!empty($validation)) {
+                $validations = explode(',', str_replace('||', ',', $validation));
+                foreach ($validations as $validation_type) {
+                    switch ($validation_type) {
+                        case 'required':
+                            if (empty($value)) {
+                                $error = $form_field;
+                                $error['validation_type'] = $validation_type;
+                                //$error['field'] = ;
+                                $validation_errors[] = $error;
+
+                            }
+                            break;
+                    }
+                }
+            }
             $field = explode('.', $field);
 
             if (count($field) > 1) {
@@ -155,6 +176,7 @@ switch ($task) {
             } else {
                 $postvalues[$field[0]] = $value;
             }
+
 
             if (!empty($joinalias)) {
                 // check for jointable- fields
@@ -166,6 +188,17 @@ switch ($task) {
             }
         }
 
+        if (count($validation_errors) > 0) {
+            $updateerror = true;
+            foreach ($validation_errors as $error) {
+                $field_caption = $modx->getOption('caption',$error,'');
+                $validation_type = $modx->getOption('validation_type',$error,'');
+                //$errormsg .=   $modx->lexicon('quip.thread_err_save');
+                $errormsg .= $field_caption . ': ' . $validation_type . '<br/>';
+            }
+            return;
+        }
+
         if ($scriptProperties['object_id'] == 'new') {
             $object = $modx->newObject($classname);
             $tempvalues['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
@@ -174,7 +207,8 @@ switch ($task) {
             $postvalues['published'] = isset($postvalues['published']) ? $postvalues['published'] : '1';
         } else {
             $object = $modx->getObject($classname, $scriptProperties['object_id']);
-            if (empty($object)) return $modx->error->failure($modx->lexicon('quip.thread_err_nf'));
+            if (empty($object))
+                return $modx->error->failure($modx->lexicon('quip.thread_err_nf'));
             $postvalues['editedon'] = strftime('%Y-%m-%d %H:%M:%S');
             $postvalues['editedby'] = $modx->user->get('id');
             $tempvalues['createdon'] = $object->get('createdon');

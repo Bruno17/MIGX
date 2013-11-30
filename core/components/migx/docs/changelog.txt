@@ -1,5 +1,17 @@
 Changelog for MIGX.
 
+MIGX 2.5.11
+==============
+add simple MIGXdb - validation (only required for now)
+some fixes
+
+
+MIGX 2.5.9
+==============
+let us create new indexes, with altered field-def from schema 
+optimize input-option-values-handling, see:http://forums.modx.com/thread/79757/sortable-editable-list-of-checkboxes?page=4#dis-post-483240
+
+
 MIGX 2.5.8
 
 ==============

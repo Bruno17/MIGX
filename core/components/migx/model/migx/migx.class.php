@@ -1277,8 +1277,8 @@ class Migx {
         }
 
     }
-
-    function extractInputTvs($formtabs) {
+    
+    function extractFieldsFromTabs($formtabs,$onlyTvTypes = false){
         //multiple different Forms
         // Note: use same field-names and inputTVs in all forms
         if (is_array($formtabs) && isset($formtabs[0]['formtabs'])) {
@@ -1309,6 +1309,9 @@ class Migx {
                             } elseif (isset($field['inputTVtype']) && !empty($field['inputTVtype'])) {
                                 $inputTvs[$field['field']] = $field;
                                 $inputTvs[$formname . $field['field']] = $field;
+                            }elseif (!$onlyTvTypes){
+                                $inputTvs[$field['field']] = $field;
+                                $inputTvs[$formname . $field['field']] = $field;                                
                             }
                         }
                     }
@@ -1316,7 +1319,13 @@ class Migx {
 
             }
         }
-        return $inputTvs;
+        return $inputTvs;        
+    }
+
+    function extractInputTvs($formtabs) {
+        
+        return $this->extractFieldsFromTabs($formtabs,true);
+        
     }
 
     function parseChunk($tpl, $fields = array(), $getChunk = true, $printIfemty = true) {

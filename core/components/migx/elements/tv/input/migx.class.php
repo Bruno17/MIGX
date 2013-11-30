@@ -99,61 +99,62 @@ class modTemplateVarInputRenderMigx extends modTemplateVarInputRender {
         }
 
         //$newitem[] = $item;
-        $temp = $this->modx->getObject('modTemplateVar',$this->tv->get('id'));
         $tv_value = $this->tv->processBindings($this->tv->get('value'));
-        $default_value = $this->tv->processBindings($temp->get('default_text'),$resource_id);
+        if ($temp = $this->modx->getObject('modTemplateVar', $this->tv->get('id'))) {
+            $default_value = $this->tv->processBindings($temp->get('default_text'), $resource_id);
+        } else {
+            $default_value = $this->tv->processBindings($this->tv->get('default_text'), $resource_id);
+        }
 
         if (empty($tv_value) && !empty($default_value)) {
             $tv_value = $default_value;
         }
 
         $options = $this->getInputOptions();
-        
+
         if (is_array($options) && !empty($options)) {
             $allow_customrecords = true;
             $optrows = array();
-            foreach ($options as $key=>$row) {
-                
+            foreach ($options as $key => $row) {
+
                 $row['MIGX_id'] = isset($row['MIGX_id']) ? $row['MIGX_id'] : 0;
                 //if no MIGX_id, but id, use id, else use the key
-                $row['MIGX_id'] = empty($row['MIGX_id']) & isset($row['id']) ? $row['id'] :$key;  
-                
+                $row['MIGX_id'] = empty($row['MIGX_id']) & isset($row['id']) ? $row['id'] : $key;
+
                 $optrows[$row['MIGX_id']] = $row;
             }
-            
-            
+
 
             $tv_value = $this->modx->fromJson($tv_value);
             $rows = array();
             if (is_array($tv_value)) {
                 foreach ($tv_value as $row) {
                     //only add records, which exists also in the input-options
-                    if (isset($optrows[$row['MIGX_id']])){
-                       //use input-option-fields and values
-                       $rowfields = $optrows[$row['MIGX_id']];
-                       
-                       $editablefields = $this->modx->getOption('editablefields',$rowfields,'');
-                       $editablefields = explode(',',$editablefields);
-                                              
-                       //add additional field/values from MIGX
-                       foreach ($row as $field=>$value){
-                           //only, if not in options or editable
-                           if (in_array($field,$editablefields) || !array_key_exists($field,$rowfields)){
-                               $rowfields[$field] = $value;     
-                           } 
-                       }
-                       $rows[] = $rowfields;
-                       unset($optrows[$row['MIGX_id']]);
-                    }
-                    elseif ($allow_customrecords){
+                    if (isset($optrows[$row['MIGX_id']])) {
+                        //use input-option-fields and values
+                        $rowfields = $optrows[$row['MIGX_id']];
+
+                        $editablefields = $this->modx->getOption('editablefields', $rowfields, '');
+                        $editablefields = explode(',', $editablefields);
+
+                        //add additional field/values from MIGX
+                        foreach ($row as $field => $value) {
+                            //only, if not in options or editable
+                            if (in_array($field, $editablefields) || !array_key_exists($field, $rowfields)) {
+                                $rowfields[$field] = $value;
+                            }
+                        }
+                        $rows[] = $rowfields;
+                        unset($optrows[$row['MIGX_id']]);
+                    } elseif ($allow_customrecords) {
                         //customrecord, not in input-options
                         $rows[] = $row;
                     }
                 }
             }
-            
+
             //add not allready existing input-options
-            foreach ($optrows as $row){
+            foreach ($optrows as $row) {
                 $rows[] = $row;
             }
 
