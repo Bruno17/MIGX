@@ -196,7 +196,19 @@ if (count($items) > 0) {
         $formname = isset($item['MIGX_formname']) ? $item['MIGX_formname'] . '_' : '';
         $fields = array();
         foreach ($item as $field => $value) {
-            $value = is_array($value) ? implode('||', $value) : $value; //handle arrays (checkboxes, multiselects)
+            if (is_array($value)){
+                if (is_array($value[0])){
+                    //nested array - convert to json
+                    $value = $modx->toJson($value);
+                }
+                else{
+                    $value = implode('||', $value); //handle arrays (checkboxes, multiselects)  
+                }
+            }
+            
+            
+            
+            
             $inputTVkey = $formname . $field;
             if ($processTVs && isset($inputTvs[$inputTVkey])) {
                 if (isset($inputTvs[$inputTVkey]['inputTV']) && $tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$inputTVkey]['inputTV']))) {
