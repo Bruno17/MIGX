@@ -335,6 +335,10 @@ if (!empty($outerTpl))
 $o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
 else 
 */
+
+# Found no images to return, send an empty string
+if(empty($output)) return '';
+
 if (is_array($output)) {
     $o = implode($outputSeparator, $output);
 } else {
