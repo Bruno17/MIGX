@@ -1164,12 +1164,12 @@ class Migx {
 
                         $tv->set('value', $fieldvalue);
                         if (!empty($field['caption'])) {
-                            $field['caption'] = htmlentities($field['caption'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                            $field['caption'] = htmlentities($this->replaceLang($field['caption']), ENT_QUOTES, $this->modx->getOption('modx_charset'));
                             $tv->set('caption', $field['caption']);
                         }
 
                         if (!empty($field['description'])) {
-                            $field['description'] = htmlentities($field['description'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                            $field['description'] = htmlentities($this->replaceLang($field['description']), ENT_QUOTES, $this->modx->getOption('modx_charset'));
                             $tv->set('description', $field['description']);
                         }
 
