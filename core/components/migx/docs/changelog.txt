@@ -1,5 +1,13 @@
 Changelog for MIGX.
 
+MIGX 2.6
+==============
+[getImageList] output inner arrays as json-string
+added polish translation
+[getImageList] splits, build summaries
+ make grid-columns translatable, let user add custom-lexicons from custom php-config-files 
+
+
 MIGX 2.5.11
 ==============
 add simple MIGXdb - validation (only required for now)
