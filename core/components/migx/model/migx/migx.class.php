@@ -522,14 +522,18 @@ class Migx {
 
     }
 
-    public function loadLang() {
-        //$lang = $this->modx->lexicon->fetch();
-        $this->migxlang = $this->modx->lexicon->fetch('migx');
+    public function loadLang($prefix = 'migx') {
+        $lang = $this->modx->lexicon->fetch($prefix);
 
-        //$this->migxi18n = array();
-        foreach ($this->migxlang as $key => $value) {
-            $this->addLangValue($key, $value);
+        if (is_array($lang)) {
+            $this->migxlang = is_array($this->migxlang) ? array_merge($this->migxlang, $lang) : $lang;
+            //$this->migxi18n = array();
+            foreach ($lang as $key => $value) {
+                $this->addLangValue($key, $value);
+            }
         }
+
+
     }
 
     public function addLangValue($key, $value) {
@@ -563,9 +567,9 @@ class Migx {
             $tv = $this->modx->newObject('modTemplateVar');
             $controller->setPlaceholder('tv', $tv);
         }
-        
+
         $this->customconfigs['win_id'] = !empty($this->customconfigs['win_id']) ? $this->customconfigs['win_id'] : $win_id;
-        
+
 
         $tv_id = $tv->get('id');
         $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : $tv_id;
@@ -840,7 +844,7 @@ class Migx {
                 if (!empty($column['show_in_grid'])) {
                     $col = array();
                     $col['dataIndex'] = $column['dataIndex'];
-                    $col['header'] = htmlentities($column['header'], ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                    $col['header'] = htmlentities($this->replaceLang($column['header']), ENT_QUOTES, $this->modx->getOption('modx_charset'));
                     $col['sortable'] = isset($column['sortable']) && $column['sortable'] == 'true' ? true : false;
                     if (isset($column['width']) && !empty($column['width'])) {
                         $col['width'] = (int)$column['width'];
@@ -918,12 +922,12 @@ class Migx {
         if (is_array($columns)) {
             foreach ($columns as $column) {
                 $defaultclickaction = '';
-                
+
                 $renderer = $this->modx->getOption('renderer', $column, '');
                 $renderoptions = $this->modx->getOption('renderoptions', $column, '');
                 $renderchunktpl = $this->modx->getOption('renderchunktpl', $column, '');
                 $options = $this->modx->fromJson($column['renderoptions']);
-                
+
                 if ($getdefaultclickaction && !empty($column['clickaction'])) {
                     $option = array();
                     $defaultclickaction = $column['clickaction'];
@@ -933,7 +937,7 @@ class Migx {
                     $columnrenderoptions[$column['dataIndex']]['default_clickaction'] = $option;
                 }
 
-                if (is_array($options) && count($options)>0) {
+                if (is_array($options) && count($options) > 0) {
                     foreach ($options as $key => $option) {
                         $option['idx'] = $key;
                         $option['_renderer'] = $renderer;
@@ -972,10 +976,10 @@ class Migx {
         if (count($columnrenderoptions) > 0) {
             $outputrows = array();
             foreach ($rows as $row) {
-                
+
                 foreach ($columnrenderoptions as $column => $options) {
-                    $value = $this->modx->getOption($column,$row,'');
-                    
+                    $value = $this->modx->getOption($column, $row, '');
+
                     $row[$column . '_ro'] = isset($options[$value]) ? $this->modx->toJson($options[$value]) : '';
                     foreach ($options as $option) {
                         if ($option['_renderer'] == 'this.renderChunk') {
@@ -983,13 +987,12 @@ class Migx {
                             $properties = $row;
                             $properties['_request'] = $_REQUEST;
                             $renderchunktpl = $this->modx->getOption('_renderchunktpl', $option, '');
-                            if (!empty($renderchunktpl)){
-                                $row[$column] = $this->renderChunk($renderchunktpl, $properties,false);    
-                            }
-                            else{
+                            if (!empty($renderchunktpl)) {
+                                $row[$column] = $this->renderChunk($renderchunktpl, $properties, false);
+                            } else {
                                 $row[$column] = $this->renderChunk($option['name'], $properties);
                             }
-                            
+
                         }
                         break;
                     }
@@ -1277,8 +1280,8 @@ class Migx {
         }
 
     }
-    
-    function extractFieldsFromTabs($formtabs,$onlyTvTypes = false){
+
+    function extractFieldsFromTabs($formtabs, $onlyTvTypes = false) {
         //multiple different Forms
         // Note: use same field-names and inputTVs in all forms
         if (is_array($formtabs) && isset($formtabs[0]['formtabs'])) {
@@ -1309,9 +1312,9 @@ class Migx {
                             } elseif (isset($field['inputTVtype']) && !empty($field['inputTVtype'])) {
                                 $inputTvs[$field['field']] = $field;
                                 $inputTvs[$formname . $field['field']] = $field;
-                            }elseif (!$onlyTvTypes){
+                            } elseif (!$onlyTvTypes) {
                                 $inputTvs[$field['field']] = $field;
-                                $inputTvs[$formname . $field['field']] = $field;                                
+                                $inputTvs[$formname . $field['field']] = $field;
                             }
                         }
                     }
@@ -1319,13 +1322,13 @@ class Migx {
 
             }
         }
-        return $inputTvs;        
+        return $inputTvs;
     }
 
     function extractInputTvs($formtabs) {
-        
-        return $this->extractFieldsFromTabs($formtabs,true);
-        
+
+        return $this->extractFieldsFromTabs($formtabs, true);
+
     }
 
     function parseChunk($tpl, $fields = array(), $getChunk = true, $printIfemty = true) {
@@ -1761,7 +1764,10 @@ class Migx {
     }
 
     function importconfig($array) {
-        $excludekeys = array('getlistwhere', 'joins', 'configs');
+        $excludekeys = array(
+            'getlistwhere',
+            'joins',
+            'configs');
         return $this->recursive_encode($array, $excludekeys);
     }
 
