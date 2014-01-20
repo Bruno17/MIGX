@@ -49,6 +49,7 @@ $sort = !empty($sort) ? $modx->fromJSON($sort) : array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
+$splitSeparator = $modx->getOption('splitSeparator', $scriptProperties, '');
 $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
 $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
 $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
@@ -59,6 +60,14 @@ $docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? 
 $docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
 $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 $reverse = $modx->getOption('reverse', $scriptProperties, '0');
+$sumFields = $modx->getOption('sumFields', $scriptProperties, '');
+$sumPrefix = $modx->getOption('sumPrefix', $scriptProperties, 'summary_');
+$addfields = $modx->getOption('addfields', $scriptProperties, '');
+$addfields = !empty($addfields) ? explode(',', $addfields) : null;
+//split json into parts
+$splits = $modx->fromJson($modx->getOption('splits', $scriptProperties, 0));
+$splitTpl = $modx->getOption('splitTpl', $scriptProperties, '');
+$splitSeparator = $modx->getOption('splitSeparator', $scriptProperties, '');
 
 $modx->setPlaceholder('docid', $docid);
 
@@ -120,7 +129,7 @@ if (!empty($tvname)) {
 
     }
     $migx->source = $tv->getSource($migx->working_context, false);
-    
+
 }
 
 if (empty($outputvalue)) {
@@ -192,23 +201,21 @@ if (count($items) > 0) {
     $output = array();
     $template = array();
     $count = count($items);
+
     foreach ($items as $key => $item) {
         $formname = isset($item['MIGX_formname']) ? $item['MIGX_formname'] . '_' : '';
         $fields = array();
         foreach ($item as $field => $value) {
-            if (is_array($value)){
-                if (is_array($value[0])){
+            if (is_array($value)) {
+                if (is_array($value[0])) {
                     //nested array - convert to json
                     $value = $modx->toJson($value);
-                }
-                else{
-                    $value = implode('||', $value); //handle arrays (checkboxes, multiselects)  
+                } else {
+                    $value = implode('||', $value); //handle arrays (checkboxes, multiselects)
                 }
             }
-            
-            
-            
-            
+
+
             $inputTVkey = $formname . $field;
             if ($processTVs && isset($inputTvs[$inputTVkey])) {
                 if (isset($inputTvs[$inputTVkey]['inputTV']) && $tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$inputTVkey]['inputTV']))) {
@@ -239,6 +246,27 @@ if (count($items) > 0) {
             $fields[$field] = $value;
 
         }
+
+        if (!empty($addfields)) {
+            foreach ($addfields as $addfield) {
+                $addfield = explode(':', $addfield);
+                $addname = $addfield[0];
+                $adddefault = isset($addfield[1]) ? $addfield[1] : '';
+                $fields[$addname] = $adddefault;
+            }
+        }
+
+        if (!empty($sumFields)) {
+            $sumFields = is_array($sumFields) ? $sumFields : explode(',', $sumFields);
+            foreach ($sumFields as $sumField) {
+                if (isset($fields[$sumField])) {
+                    $summaries[$sumPrefix . $sumField] = $summaries[$sumPrefix . $sumField] + $fields[$sumField];
+                    $fields[$sumPrefix . $sumField] = $summaries[$sumPrefix . $sumField];
+                }
+            }
+        }
+
+
         if ($toJsonPlaceholder) {
             $output[] = $fields;
         } else {
@@ -278,8 +306,8 @@ if (count($items) > 0) {
                     }
                 }
             }
-            
-            if ($count == 1 && isset($tpl_oneresult)){
+
+            if ($count == 1 && isset($tpl_oneresult)) {
                 $rowtpl = $tpl_oneresult;
             }
 
@@ -287,24 +315,22 @@ if (count($items) > 0) {
 
             if (!empty($rowtpl)) {
                 $template = $migx->getTemplate($tpl, $template);
-                $fields['_tpl'] = $template[$tpl]; 
+                $fields['_tpl'] = $template[$tpl];
             } else {
                 $rowtpl = $tpl;
 
             }
             $template = $migx->getTemplate($rowtpl, $template);
-            
-            
-            
+
+
             if ($template[$rowtpl]) {
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
                 $chunk->setContent($template[$rowtpl]);
-                
-                
-                
+
+
                 if (!empty($placeholdersKeyField) && isset($fields[$placeholdersKeyField])) {
-                   $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
+                    $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
                 } else {
                     $output[] = $chunk->process($fields);
                 }
@@ -321,6 +347,11 @@ if (count($items) > 0) {
     }
 }
 
+if (count($summaries) > 0) {
+    $modx->toPlaceholders($summaries);
+}
+
+
 if ($toJsonPlaceholder) {
     $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
     return '';
@@ -335,6 +366,18 @@ if (!empty($outerTpl))
 $o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
 else 
 */
+
+if ($count > 0 && $splits > 0) {
+    $size = ceil($count / $splits);
+    $chunks = array_chunk($output, $size);
+    $output = array();
+    foreach ($chunks as $chunk) {
+        $o = implode($outputSeparator, $chunk);
+        $output[] = $modx->getChunk($splitTpl, array('output'=>$o));
+    }
+    $outputSeparator = $splitSeparator;
+}
+
 if (is_array($output)) {
     $o = implode($outputSeparator, $output);
 } else {
