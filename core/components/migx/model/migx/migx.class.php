@@ -1764,22 +1764,24 @@ class Migx {
     }
 
     function importconfig($array) {
-        $excludekeys = array(
+        $excludekeys_ifarray = array(
             'getlistwhere',
             'joins',
             'configs');
-        return $this->recursive_encode($array, $excludekeys);
+        $array = $this->recursive_encode($array, $excludekeys_ifarray);
+        return $array;
+        
     }
 
-    function recursive_encode($array, $excludekeys = array()) {
+    function recursive_encode($array, $excludekeys_ifarray = array()) {
         if (is_array($array)) {
             foreach ($array as $key => $value) {
 
-                if (!is_int($key) && in_array($key, $excludekeys)) {
+                if (!is_int($key) && is_array($value) && in_array($key, $excludekeys_ifarray)) {
                     $array[$key] = !empty($value) ? json_encode($value) : $value;
                     //$array[$key] = $this->recursive_encode($value, $excludekeys);
                 } else {
-                    $array[$key] = $this->recursive_encode($value, $excludekeys);
+                    $array[$key] = $this->recursive_encode($value, $excludekeys_ifarray);
                 }
             }
             if (!$this->is_assoc($array)) {
