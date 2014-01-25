@@ -1104,7 +1104,7 @@ class Migx {
                     /*generate unique tvid, must be numeric*/
                     /*todo: find a better solution*/
                     $field['tv_id'] = $input_prefix . $scriptProperties['tv_id'] . '_' . $fieldid;
-                    $params = array();
+
                     if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
                         $tv = $this->modx->newObject('modTemplateVar');
                         $tv->set('description', $this->renderChunk($field['description'], $record, false, false));
