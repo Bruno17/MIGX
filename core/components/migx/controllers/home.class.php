@@ -82,8 +82,11 @@ class MigxHomeManagerController extends MigxManagerController {
             }
             $this->addLastJavascript($tiny->config['assetsUrl'] . 'tiny.browser.js');
 
+        } 
+        elseif ($useEditor){
+            $onRichTextEditorInit = $this->loadRichTextEditor();
+            $this->addHtml($onRichTextEditorInit);
         }
-
 
         $this->addJavascript($this->modx->getOption('manager_url') . 'assets/modext/util/datetime.js');
         $this->addJavascript($this->modx->getOption('manager_url') . 'assets/modext/widgets/element/modx.panel.tv.renders.js');
@@ -93,11 +96,9 @@ class MigxHomeManagerController extends MigxManagerController {
         $this->addHtml('<script type="text/javascript">' . $this->panelJs . '</script>');
         $this->addLastJavascript($this->migx->config['jsUrl'] . 'mgr/sections/index.js');
 
-        $this->loadRichTextEditor();
-
-
     }
-
+    
+    
     /**
      * Initialize a RichText Editor, if set
      *
@@ -127,9 +128,12 @@ class MigxHomeManagerController extends MigxManagerController {
                 //'resource' => &$this->resource,
                 //'mode' => !empty($resourceId) ? modSystemEvent::MODE_UPD : modSystemEvent::MODE_NEW,
                 ));
+                
             if (is_array($onRichTextEditorInit)) {
                 $onRichTextEditorInit = implode('', $onRichTextEditorInit);
+                
                 $this->setPlaceholder('onRichTextEditorInit', $onRichTextEditorInit);
+                return $onRichTextEditorInit;
             }
         }
     }
