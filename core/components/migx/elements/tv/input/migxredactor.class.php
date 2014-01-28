@@ -6,6 +6,7 @@
 class modTemplateVarInputRenderRedactor extends modTemplateVarInputRender {
     public function process($value,array $params = array()) {
         
+        $inputTVid = $this->modx->getOption('inputTVid',$params,0);
         $which_editor = $this->modx->getOption('which_editor',null,'');
         $this->setPlaceholder('which_editor',$which_editor);
         
@@ -17,7 +18,7 @@ class modTemplateVarInputRenderRedactor extends modTemplateVarInputRender {
             return;
         }
 
-        if (!empty($params['buttons'])){
+        if (!empty($params['buttons']) && !is_array($params['buttons'])  ){
             $params['buttons'] = explode(',',$params['buttons']);
         }
 
@@ -35,11 +36,11 @@ class modTemplateVarInputRenderRedactor extends modTemplateVarInputRender {
             $params[$key] = $this->_fixValueType($params[$key], $systemValue);
         }
         $params = array_merge($systemOptions, $params);
-        $params['imageGetJson'] = $params['imageGetJson'].'&tv=' . $this->tv->get('id');
-        $params['fileGetJson'] = $params['fileGetJson'].'&tv=' . $this->tv->get('id');
-        $params['imageUpload'] = $params['imageUpload'].'&tv=' . $this->tv->get('id');
-        if(isset($params['clipboardUploadUrl'])) $params['clipboardUploadUrl'] = $params['clipboardUploadUrl'].'&tv=' . $this->tv->get('id');
-        $params['fileUpload'] = $params['fileUpload'].'&tv=' . $this->tv->get('id');
+        $params['imageGetJson'] = $params['imageGetJson'].'&tv=' . $inputTVid;
+        $params['fileGetJson'] = $params['fileGetJson'].'&tv=' . $inputTVid;
+        $params['imageUpload'] = $params['imageUpload'].'&tv=' . $inputTVid;
+        if(isset($params['clipboardUploadUrl'])) $params['clipboardUploadUrl'] = $params['clipboardUploadUrl'].'&tv=' . $inputTVid;
+        $params['fileUpload'] = $params['fileUpload'].'&tv=' . $inputTVid;
         $params['plugins'] = array(); // wipe it clean and readd
         if(isset($params['buttonFullScreen'])) $params['plugins'][] = "fullscreen";
 		if(isset($params['clipsJson']) && !empty($params['clipsJson'])) $params['plugins'][] = "clips";

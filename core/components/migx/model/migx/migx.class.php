@@ -1105,6 +1105,7 @@ class Migx {
                     /*todo: find a better solution*/
                     $field['tv_id'] = $input_prefix . $scriptProperties['tv_id'] . '_' . $fieldid;
                     $params = array();
+                    $tv = false;
                     if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
                         $tv = $this->modx->newObject('modTemplateVar');
                         $tv->set('description', $this->renderChunk($field['description'], $record, false, false));
@@ -1116,10 +1117,19 @@ class Migx {
 
                         if (isset($field['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
                             $params = $tv->get('input_properties');
-                        } else {
+                            $params['inputTVid'] = $tv->get('id');
+                        } 
+                        
+                        if (!empty($field['inputTVtype'])) {
                             $tv = $this->modx->newObject('modTemplateVar');
-                            $tv->set('type', !empty($field['inputTVtype']) ? $field['inputTVtype'] : 'text');
+                            $tv->set('type', $field['inputTVtype']);
                         }
+                        
+                        if (!$tv){
+                            $tv = $this->modx->newObject('modTemplateVar');
+                            $tv->set('type','text');
+                        }
+                        
                         $o_type = $tv->get('type');
                         if ($tv->get('type') == 'richtext') {
                             $tv->set('type', 'migx' . strtolower($rte));
