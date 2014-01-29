@@ -1,0 +1,3 @@
+
+var banners = $('.migxbanner');
+console.log(banners);

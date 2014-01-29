@@ -44,6 +44,16 @@ $gridactionbuttons['loadfromsource']['handler'] = 'this.loadFromSource';
 $gridactionbuttons['loadfromsource']['scope'] = 'this';
 $gridactionbuttons['loadfromsource']['standalone'] = '1';
 
+$gridactionbuttons['resetwinposition']['text'] = "'Reset Win Position'";
+$gridactionbuttons['resetwinposition']['handler'] = 'this.resetWinPosition';
+$gridactionbuttons['resetwinposition']['scope'] = 'this';
+
+$gridfunctions['this.resetWinPosition'] = "
+resetWinPosition: function(btn,e) {
+    this.setWinPosition(10,10);     
+}";
+
+
 
 $gridcontextmenus['update']['code']="
         m.push({
@@ -270,6 +280,33 @@ $renderer['this.renderImage'] = "
 	}
 ";
 
+$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+'";
+$phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
+
+$renderer['this.renderImageFromHtml'] = "
+    renderImageFromHtml : function(val, md, rec, row, col, s){
+        var source = s.pathconfigs[col];
+        if (val !== null) {
+            if (val != ''){
+                var el = document.createElement('div');
+                el.innerHTML = val;               
+                var img = el.querySelector('img');
+                
+                if (img){
+                    val = img.getAttribute('src');
+                    return '{$phpthumbimg}';
+                }
+                
+            }
+            return val;
+        }
+	}
+
+";
+
+
+
+
 $renderer['this.renderPlaceholder'] = "
 renderPlaceholder : function(val, md, rec, row, col, s){
          return '[[+'+val+'.'+rec.json.MIGX_id+']]';
@@ -396,6 +433,9 @@ renderPositionSelector : function(val, md, rec, row, col, s) {
 
 }
 ";
+
+
+
 
 $gridfunctions['this.handlePositionSelector'] = "
 handlePositionSelector: function(n,e,col) {
@@ -905,7 +945,7 @@ $gridfunctions['this.csvExport'] = "
 	csvExport: function(btn,e) {
 		var s = this.getStore();
 		var code, type, category, study_type, ebs_state;
-		var box = Ext.MessageBox.wait('Preparing …', _('migx.export_current_view'));
+		var box = Ext.MessageBox.wait('Preparing ...', _('migx.export_current_view'));
         var params = s.baseParams;
         var o_action = params.action || '';
         var o_processaction = params.processaction || '';
@@ -1061,8 +1101,4 @@ $gridfunctions['this.showScreenshot'] = "
         Ext.get('gal-item-ss-[[+config.win_id]]').update('{$img}');
     }     
 ";
-
-
-
-
 
