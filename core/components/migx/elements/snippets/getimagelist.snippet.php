@@ -79,7 +79,6 @@ if (!($migx instanceof Migx))
     return '';
 $migx->working_context = isset($modx->resource) ? $modx->resource->get('context_key') : 'web';
 
-
 if (!empty($tvname)) {
     if ($tv = $modx->getObject('modTemplateVar', array('name' => $tvname))) {
 
@@ -158,6 +157,7 @@ if (is_array($sort) && count($sort) > 0) {
     $items = $migx->sortDbResult($items, $sort);
 }
 
+$output = '';
 
 if (count($items) > 0) {
     $items = $offset > 0 ? array_slice($items, $offset) : $items;
