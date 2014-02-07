@@ -57,3 +57,8 @@ $_lang['year'] = 'Jahr';
 $_lang['migx.upload_images'] = 'Dateien hochladen';
 $_lang['migx.load_from_source'] = 'Laden von Medienquelle';
 $_lang['migx.max_records_alert'] = 'Maximale Anzahl an Datensätzen erreicht';
+
+$_lang['migx.selector_options'] = 'Optionen';
+
+$_lang['migx.emptythrash_confirm'] = 'Papierkorb wirklich leeren?';
+$_lang['migx.emptythrash'] = 'Papierkorb leeren';

@@ -59,3 +59,6 @@ $_lang['migx.load_from_source'] = 'Load from mediasource';
 $_lang['migx.max_records_alert'] = 'Max amount of records reached';
 
 $_lang['migx.selector_options'] = 'Options';
+
+$_lang['migx.emptythrash_confirm'] = 'Empty Thrash. Are you sure?';
+$_lang['migx.emptythrash'] = 'Empty Thrash';

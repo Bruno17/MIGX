@@ -48,10 +48,41 @@ $gridactionbuttons['resetwinposition']['text'] = "'Reset Win Position'";
 $gridactionbuttons['resetwinposition']['handler'] = 'this.resetWinPosition';
 $gridactionbuttons['resetwinposition']['scope'] = 'this';
 
+$gridactionbuttons['emptyThrash']['text'] = "'[[%migx.emptythrash]]'";
+$gridactionbuttons['emptyThrash']['handler'] = 'this.emptyThrash';
+$gridactionbuttons['emptyThrash']['scope'] = 'this';
+
 $gridfunctions['this.resetWinPosition'] = "
 resetWinPosition: function(btn,e) {
     this.setWinPosition(10,10);     
 }";
+
+$gridfunctions['this.emptyThrash'] = "
+emptyThrash: function(btn,e) {
+    var _this=this;
+    Ext.Msg.confirm(_('warning') || '','[[%migx.emptythrash_confirm]]',function(e) {
+        if (e == 'yes') {    
+            MODx.Ajax.request({
+                url: _this.config.url
+                ,params: {
+                    action: 'mgr/migxdb/process'
+                    ,processaction: 'emptythrash'                     
+                    ,configs: _this.config.configs
+                    ,resource_id: _this.config.resource_id
+                    ,co_id: '[[+config.connected_object_id]]'                
+                    ,reqConfigs: '[[+config.req_configs]]'
+                }
+                ,listeners: {
+                    'success': {fn:function(r) {
+                        _this.refresh();
+                    },scope:_this}
+                }
+            });
+        }
+    }),this;           
+    return true;
+}
+";
 
 
 
