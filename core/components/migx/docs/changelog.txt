@@ -1,5 +1,19 @@
 Changelog for MIGX.
 
+MIGX 2.6.7
+==============
+add date - filter 
+add handlepositionselector - processor 
+add snippet exportmigx2db
+
+MIGX 2.6.6
+==============
+fixes only
+
+MIGX 2.6.5
+==============
+fixes only
+
 MIGX 2.6.4
 ==============
 [redactor-field] get and use file-properties from a redactor-inputTV
