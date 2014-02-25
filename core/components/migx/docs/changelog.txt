@@ -1,5 +1,22 @@
 Changelog for MIGX.
 
+MIGX 2.6.4
+==============
+[redactor-field] get and use file-properties from a redactor-inputTV
+add renderImageFromHtml - renderer
+
+MIGX 2.6.3
+==============
+configurable redactor-field with configs-configuration, make redactor work in MIGXdb - CMP
+
+MIGX 2.6.2
+==============
+fix issue with imported configs-field, if not an array 
+
+MIGX 2.6.1
+==============
+Make Formfields translatable
+
 MIGX 2.6
 ==============
 [getImageList] output inner arrays as json-string
