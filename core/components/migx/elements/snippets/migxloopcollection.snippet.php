@@ -30,6 +30,8 @@ $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
 $addfields = $modx->getOption('addfields', $scriptProperties, '');
 $addfields = !empty($addfields) ? explode(',', $addfields) : null;
 
+$debug = $modx->getOption('debug', $scriptProperties, false);
+
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
 
@@ -92,7 +94,10 @@ if (!empty($limit)) {
     $c->limit($limit, $offset);
 }
 
-//$c->prepare();echo $c->toSql();
+if ($debug){
+  $c->prepare();echo $c->toSql();
+}
+
 if ($collection = $modx->getCollection($classname, $c)) {
     foreach ($collection as $object) {
         $fields = $object->toArray('', false, true);
