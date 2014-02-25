@@ -526,7 +526,7 @@ class Migx {
         $lang = $this->modx->lexicon->fetch($prefix);
 
         if (is_array($lang)) {
-            $this->migxlang = is_array($this->migxlang) ? array_merge($this->migxlang, $lang) : $lang;
+            $this->migxlang = isset($this->migxlang) && is_array($this->migxlang) ? array_merge($this->migxlang, $lang) : $lang;
             //$this->migxi18n = array();
             foreach ($lang as $key => $value) {
                 $this->addLangValue($key, $value);
@@ -547,7 +547,11 @@ class Migx {
         if ($debug) {
             echo str_replace($this->langSearch, $this->langReplace, $value);
         }
-        return str_replace($this->langSearch, $this->langReplace, $value);
+
+        if (isset($this->langSearch) && isset($this->langReplace)) {
+            $value = str_replace($this->langSearch, $this->langReplace, $value);
+        }
+        return $value;
     }
 
     public function prepareGrid($properties, &$controller, &$tv, $columns = array()) {
@@ -646,7 +650,8 @@ class Migx {
             }
 
             foreach ($this->customconfigs['gridfilters'] as $filter) {
-                $filter['emptytext'] = empty($filter['emptytext']) ? 'search...' : $filter['emptytext'];
+                $filter['emptytext'] = empty($filter['emptytext']) ? 'migx.search' : $filter['emptytext'];
+                $filter['emptytext'] = str_replace(array('[[%', ']]'), '', $this->replaceLang('[[%' . $filter['emptytext'] . ']]'));
                 $filter['combochilds'] = '[]';
                 if (isset($combochilds[$filter['name']])) {
                     $filter['combochilds'] = $this->modx->toJson(array_values($combochilds[$filter['name']]));
@@ -1118,18 +1123,18 @@ class Migx {
                         if (isset($field['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
                             $params = $tv->get('input_properties');
                             $params['inputTVid'] = $tv->get('id');
-                        } 
-                        
+                        }
+
                         if (!empty($field['inputTVtype'])) {
                             $tv = $this->modx->newObject('modTemplateVar');
                             $tv->set('type', $field['inputTVtype']);
                         }
-                        
-                        if (!$tv){
+
+                        if (!$tv) {
                             $tv = $this->modx->newObject('modTemplateVar');
-                            $tv->set('type','text');
+                            $tv->set('type', 'text');
                         }
-                        
+
                         $o_type = $tv->get('type');
                         if ($tv->get('type') == 'richtext') {
                             $tv->set('type', 'migx' . strtolower($rte));
@@ -1461,13 +1466,9 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);
@@ -1780,7 +1781,7 @@ class Migx {
             'configs');
         $array = $this->recursive_encode($array, $excludekeys_ifarray);
         return $array;
-        
+
     }
 
     function recursive_encode($array, $excludekeys_ifarray = array()) {
