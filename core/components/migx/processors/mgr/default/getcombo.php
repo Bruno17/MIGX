@@ -20,6 +20,7 @@ if (is_dir($modelpath)){
     $modx->addPackage($packageName, $modelpath, $prefix);
 }
 $classname = $config['classname'];
+$joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
 
 if ($this->modx->lexicon) {
     $this->modx->lexicon->load($packageName . ':default');
@@ -75,6 +76,10 @@ switch ($mode) {
         }
         $c->select($classname.'.id, ' . $idfield . ' as combo_id, ' . $textfield . ' as combo_name');
         break;
+}
+
+if ($joins) {
+    $modx->migx->prepareJoins($classname, $joins, $c);
 }
 
 if ($execute) {

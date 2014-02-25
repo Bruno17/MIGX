@@ -199,7 +199,61 @@ $gridcontextmenus['remove_migx']['code']="
 ";
 //$gridcontextmenus['remove_migx']['handler'] = 'this.remove';
 
-
+$gridfilters['date']['code']="
+{
+    xtype: 'compositefield',
+    width: 300,
+    items: [
+        {
+            xtype: 'modx-combo'
+            ,id: '[[+name]]-migxdb-search-filter'
+            ,name: '[[+name]]'
+            ,hiddenName: '[[+name]]'
+            ,url: '[[+config.connectorUrl]]'
+            ,fields: ['combo_id','combo_name']
+            ,displayField: 'combo_name'
+            ,valueField: 'combo_id'    
+            ,pageSize: 0
+	        ,value: 'all'
+            ,baseParams: { 
+                action: 'mgr/migxdb/process',
+                processaction: 'getdatecombo',
+                configs: '[[+config.configs]]',
+                searchname: '[[+name]]',
+                resource_id: '[[+config.resource_id]]'
+            }			
+            ,listeners: {
+                'select': {
+                    fn: function(tf,nv,ov){
+                        var s = this.getStore();
+                        s.baseParams.[[+name]]_dir = tf.getValue();                        
+                        this.filter[[+name]](tf,nv,ov);    
+                    }, 
+                    scope: this
+                }
+            }
+        },
+        {
+            xtype     : 'datefield',
+            id: '[[+name]]-migxdb-search-filter-date'
+            ,name: '[[+name]]_date'
+            ,format: 'Y-m-d'            
+            ,listeners: {
+                'select': {
+                    fn: function(tf,nv,ov){
+                        var s = this.getStore();
+                        s.baseParams.[[+name]]_date = tf.getValue();       
+                        this.filter[[+name]](tf,nv,ov);    
+                    },
+                    scope: this
+                }
+            }  
+        }
+      
+    ]
+}
+";
+$gridfilters['date']['handler'] = 'gridfilter';
 
 $gridfilters['textbox']['code']=
 "
@@ -892,7 +946,7 @@ unpublishSelected: function(btn,e) {
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
                 ,co_id: '[[+config.connected_object_id]]'                
-				,config_task: 'unpublish'
+				,task: 'unpublish'
                 ,objects: cs
                 ,reqConfigs: '[[+config.req_configs]]'
             }
