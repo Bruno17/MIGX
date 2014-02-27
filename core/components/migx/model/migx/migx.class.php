@@ -12,8 +12,7 @@
  * @package migx
  * @subpackage migx
  */
-class Migx
-{
+class Migx {
     /**
      * @access public
      * @var modX A reference to the modX object.
@@ -45,8 +44,7 @@ class Migx
      * behaviour.
      * @return MIGX A unique MIGX instance.
      */
-    function __construct(modX & $modx, array $config = array())
-    {
+    function __construct(modX & $modx, array $config = array()) {
         $this->modx = &$modx;
 
         $packageName = 'migx';
@@ -99,18 +97,15 @@ class Migx
         }
     }
 
-    function findProcessor($processorspath, $filename, &$filenames)
-    {
+    function findProcessor($processorspath, $filename, &$filenames) {
         return $this->findCustomFile($processorspath, $filename, $filenames);
     }
 
-    function findGrid($processorspath, $filename, &$filenames)
-    {
+    function findGrid($processorspath, $filename, &$filenames) {
         return $this->findCustomFile($processorspath, $filename, $filenames, 'grids');
     }
 
-    function findCustomFile($defaultpath, $filename, &$filenames, $type = 'processors')
-    {
+    function findCustomFile($defaultpath, $filename, &$filenames, $type = 'processors') {
         $config = $this->customconfigs;
         $packageName = $this->modx->getOption('packageName', $config);
         $task = $this->getTask();
@@ -175,8 +170,7 @@ class Migx
         return false;
     }
 
-    function checkMultipleForms($formtabs, &$controller, &$allfields, &$record)
-    {
+    function checkMultipleForms($formtabs, &$controller, &$allfields, &$record) {
         $multiple_formtabs = $this->modx->getOption('multiple_formtabs', $this->customconfigs, '');
         if (!empty($multiple_formtabs)) {
             if (isset($_REQUEST['loadaction']) && $_REQUEST['loadaction'] == 'switchForm') {
@@ -228,8 +222,7 @@ class Migx
         return $formtabs;
     }
 
-    function loadConfigs($grid = true, $other = true, $properties = array(), $sender = '')
-    {
+    function loadConfigs($grid = true, $other = true, $properties = array(), $sender = '') {
         $gridactionbuttons = array();
         $gridcolumnbuttons = array();
         $gridcontextmenus = array();
@@ -383,8 +376,7 @@ class Migx
     }
 
 
-    public function prepareConfigsArray($objectarray, &$gridactionbuttons, &$gridcontextmenus, &$gridcolumnbuttons)
-    {
+    public function prepareConfigsArray($objectarray, &$gridactionbuttons, &$gridcontextmenus, &$gridcolumnbuttons) {
 
         if (is_array($objectarray['extended'])) {
             foreach ($objectarray['extended'] as $key => $value) {
@@ -435,32 +427,26 @@ class Migx
         }
     }
 
-    function loadPackageManager()
-    {
+    function loadPackageManager() {
 
         include_once ($this->config['modelPath'] . 'migx/migxpackagemanager.class.php');
         return new MigxPackageManager($this->modx);
     }
 
-    public function getTask()
-    {
+    public function getTask() {
         return isset($this->customconfigs['task']) ? $this->customconfigs['task'] : '';
     }
-    public function getTabs()
-    {
+    public function getTabs() {
         return isset($this->customconfigs['tabs']) ? $this->customconfigs['tabs'] : '';
     }
-    public function getColumns()
-    {
+    public function getColumns() {
         return isset($this->customconfigs['columns']) ? $this->customconfigs['columns'] : '';
     }
-    public function getGrid()
-    {
+    public function getGrid() {
         return !empty($this->customconfigs['grid']) ? $this->customconfigs['grid'] : 'default';
     }
 
-    public function prepareCmpTabs($properties, &$controller, &$tv)
-    {
+    public function prepareCmpTabs($properties, &$controller, &$tv) {
         $cmptabs = (isset($this->config['cmptabs'])) ? explode('||', $this->config['cmptabs']) : array();
         $cmptabsout = array();
         $grids = '';
@@ -478,7 +464,7 @@ class Migx
                 $this->prepareGrid($properties, $controller, $tv);
                 $tabcaption = empty($this->customconfigs['cmptabcaption']) ? 'undefined' : $this->customconfigs['cmptabcaption'];
                 $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
-                $maincaption = empty($this->customconfigs['cmpmaincaption']) ? $maincaption : "'" . $this->customconfigs['cmpmaincaption'] . "'";
+                $maincaption = empty($this->customconfigs['cmpmaincaption']) ? $maincaption : "'" . $this->replaceLang($this->customconfigs['cmpmaincaption']) . "'";
 
                 $controller->setPlaceholder('cmptabcaption', $tabcaption);
                 $controller->setPlaceholder('cmptabdescription', $tabdescription);
@@ -536,8 +522,7 @@ class Migx
 
     }
 
-    public function loadLang($prefix = 'migx')
-    {
+    public function loadLang($prefix = 'migx') {
         $lang = $this->modx->lexicon->fetch($prefix);
 
         if (is_array($lang)) {
@@ -551,16 +536,14 @@ class Migx
 
     }
 
-    public function addLangValue($key, $value)
-    {
+    public function addLangValue($key, $value) {
         //$key = str_replace('migx.', 'migx_', $key);
         //$this->migxi18n[$key] = $value;
         $this->langSearch[$key] = '[[%' . $key . ']]';
         $this->langReplace[$key] = $value;
     }
 
-    public function replaceLang($value, $debug = false)
-    {
+    public function replaceLang($value, $debug = false) {
         if ($debug) {
             echo str_replace($this->langSearch, $this->langReplace, $value);
         }
@@ -571,8 +554,7 @@ class Migx
         return $value;
     }
 
-    public function prepareGrid($properties, &$controller, &$tv, $columns = array())
-    {
+    public function prepareGrid($properties, &$controller, &$tv, $columns = array()) {
 
         $this->loadConfigs(false);
         //$lang = $this->modx->lexicon->fetch();
@@ -938,8 +920,7 @@ class Migx
 
     }
 
-    function getColumnRenderOptions($col = '*', $indexfield = 'idx', $format = 'json', $getdefaultclickaction = false)
-    {
+    function getColumnRenderOptions($col = '*', $indexfield = 'idx', $format = 'json', $getdefaultclickaction = false) {
         $columns = $this->getColumns();
         $columnrenderoptions = array();
         $optionscolumns = array();
@@ -982,8 +963,7 @@ class Migx
         return $col == '*' ? $columnrenderoptions : $columnrenderoptions[$col];
     }
 
-    function renderChunk($tpl, $properties = array(), $getChunk = true, $printIfemty = true)
-    {
+    function renderChunk($tpl, $properties = array(), $getChunk = true, $printIfemty = true) {
 
         $value = $this->parseChunk($tpl, $properties, $getChunk, $printIfemty);
 
@@ -994,8 +974,7 @@ class Migx
         return $value;
     }
 
-    function checkRenderOptions($rows)
-    {
+    function checkRenderOptions($rows) {
         $columnrenderoptions = $this->getColumnRenderOptions('*', 'value', 'array');
         //print_r($columnrenderoptions);
         $outputrows = is_array($rows) ? $rows : array();
@@ -1030,8 +1009,7 @@ class Migx
 
     }
 
-    function prepareSourceForGrid($inputTv)
-    {
+    function prepareSourceForGrid($inputTv) {
         if (!empty($inputTv['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $inputTv['inputTV']))) {
 
         } else {
@@ -1043,8 +1021,7 @@ class Migx
 
     }
 
-    function getFieldSource($field, &$tv)
-    {
+    function getFieldSource($field, &$tv) {
         //source from config
 
         $sourcefrom = isset($field['sourceFrom']) && !empty($field['sourceFrom']) ? $field['sourceFrom'] : 'config';
@@ -1086,8 +1063,7 @@ class Migx
         return $mediasource;
     }
 
-    function generateTvTab($tvnames)
-    {
+    function generateTvTab($tvnames) {
         $tvnames = !empty($tvnames) ? explode(',', $tvnames) : array();
         $fields = array();
         foreach ($tvnames as $tvname) {
@@ -1098,8 +1074,7 @@ class Migx
         return $fields;
     }
 
-    function checkForConnectedResource($resource_id = false, &$config)
-    {
+    function checkForConnectedResource($resource_id = false, &$config) {
         if ($resource_id) {
             $check_resid = $this->modx->getOption('check_resid', $config);
             if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
@@ -1116,8 +1091,7 @@ class Migx
     }
 
 
-    function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties)
-    {
+    function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
         $fieldid = 0;
 
         $input_prefix = $this->modx->getOption('input_prefix', $scriptProperties, '');
@@ -1322,8 +1296,7 @@ class Migx
 
     }
 
-    function extractFieldsFromTabs($formtabs, $onlyTvTypes = false)
-    {
+    function extractFieldsFromTabs($formtabs, $onlyTvTypes = false) {
         //multiple different Forms
         // Note: use same field-names and inputTVs in all forms
         if (is_array($formtabs) && isset($formtabs[0]['formtabs'])) {
@@ -1367,15 +1340,13 @@ class Migx
         return $inputTvs;
     }
 
-    function extractInputTvs($formtabs)
-    {
+    function extractInputTvs($formtabs) {
 
         return $this->extractFieldsFromTabs($formtabs, true);
 
     }
 
-    function parseChunk($tpl, $fields = array(), $getChunk = true, $printIfemty = true)
-    {
+    function parseChunk($tpl, $fields = array(), $getChunk = true, $printIfemty = true) {
 
         $output = '';
 
@@ -1407,8 +1378,7 @@ class Migx
     }
 
 
-    function sortTV($sort, &$c, $dir = 'ASC', $sortbyTVType = '')
-    {
+    function sortTV($sort, &$c, $dir = 'ASC', $sortbyTVType = '') {
         $c->leftJoin('modTemplateVar', 'tvDefault', array("tvDefault.name" => $sort));
         $c->leftJoin('modTemplateVarResource', 'tvSort', array("tvSort.contentid = modResource.id", "tvSort.tmplvarid = tvDefault.id"));
         if (empty($sortbyTVType))
@@ -1435,8 +1405,7 @@ class Migx
         return true;
     }
 
-    function tvFilters($tvFilters = '', &$criteria)
-    {
+    function tvFilters($tvFilters = '', &$criteria) {
 
         //tvFilter::categories=inArray=[[+category]]
 
@@ -1538,8 +1507,7 @@ class Migx
 
     }
 
-    public function debug($key, $value, $reset = false)
-    {
+    public function debug($key, $value, $reset = false) {
 
         $debug[$key] = $value;
         $chunk = $this->modx->getObject('modChunk', array('name' => 'debug'));
@@ -1548,8 +1516,7 @@ class Migx
         $chunk->save();
     }
 
-    function filterItems($where, $items)
-    {
+    function filterItems($where, $items) {
 
         $tempitems = array();
         foreach ($items as $item) {
@@ -1693,8 +1660,7 @@ class Migx
      * @return array $data - Sorted data
      */
 
-    function sortDbResult($_data, $options = array())
-    {
+    function sortDbResult($_data, $options = array()) {
 
 
         $sortmodes = array();
@@ -1741,8 +1707,7 @@ class Migx
     }
 
 
-    public function prepareJoins($classname, $joins, &$c)
-    {
+    public function prepareJoins($classname, $joins, &$c) {
         if (is_array($joins)) {
             foreach ($joins as $join) {
                 $jalias = $this->modx->getOption('alias', $join, '');
@@ -1777,8 +1742,7 @@ class Migx
         }
     }
 
-    public function getTemplate($rowtpl, $template)
-    {
+    public function getTemplate($rowtpl, $template) {
         if (!isset($template[$rowtpl])) {
             if (substr($rowtpl, 0, 6) == "@FILE:") {
                 $template[$rowtpl] = file_get_contents($this->modx->config['base_path'] . substr($rowtpl, 6));
@@ -1793,8 +1757,7 @@ class Migx
         return $template;
     }
 
-    public function addConnectorParams($properties, $unset = '')
-    {
+    public function addConnectorParams($properties, $unset = '') {
         global $modx;
         $properties['connectorUrl'] = $this->config['connectorUrl'];
         $params = array();
@@ -1810,8 +1773,7 @@ class Migx
         return $properties;
     }
 
-    public function getDivisors($integer)
-    {
+    public function getDivisors($integer) {
         $divisors = array();
         for ($i = $integer; $i > 1; $i--) {
             if (($integer % $i) === 0) {
@@ -1821,8 +1783,7 @@ class Migx
         return $divisors;
     }
 
-    function importconfig($array)
-    {
+    function importconfig($array) {
         $excludekeys_ifarray = array(
             'getlistwhere',
             'joins',
@@ -1832,8 +1793,7 @@ class Migx
 
     }
 
-    function recursive_encode($array, $excludekeys_ifarray = array())
-    {
+    function recursive_encode($array, $excludekeys_ifarray = array()) {
         if (is_array($array)) {
             foreach ($array as $key => $value) {
 
@@ -1851,13 +1811,11 @@ class Migx
         return $array;
     }
 
-    function is_assoc($array)
-    {
+    function is_assoc($array) {
         return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
-    function recursive_decode($array)
-    {
+    function recursive_decode($array) {
         foreach ($array as $key => $value) {
             if (is_string($value) && $decoded = json_decode($value, true)) {
                 $array[$key] = $this->recursive_decode($decoded);
@@ -1876,8 +1834,7 @@ class Migx
      *
      * @return string Indented version of the original JSON string.
      */
-    function indent($json)
-    {
+    function indent($json) {
         $result = '';
         $pos = 0;
         $strLen = strlen($json);
