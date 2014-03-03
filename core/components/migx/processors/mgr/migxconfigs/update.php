@@ -133,7 +133,6 @@ switch ($task) {
 
             if ($field != 'configs') {
                 $field = explode('.', $field);
-
                 if (count($field) > 1) {
                     //extended field (json-array)
                     $postvalues[$field[0]][$field[1]] = $value;

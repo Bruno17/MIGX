@@ -91,7 +91,7 @@ Ext.reg('modx-combo-formnamedropdown',MODx.combo.FormnameDropdown);
     <br class="clear" />
 </div>    
 {elseif $tv->type NEQ "hidden"}
-    <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;">
+    <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;{if $tv->display EQ "none"}display:none;{/if} ">
         <label for="tv{$tv->id}" class="x-form-item-label modx-tv-label" style="width: auto;margin-bottom: 10px;">
             <div class="modx-tv-label-title"> 
                 {if $showCheckbox}<input type="checkbox" name="tv{$tv->id}-checkbox" class="modx-tv-checkbox" value="1" />{/if}

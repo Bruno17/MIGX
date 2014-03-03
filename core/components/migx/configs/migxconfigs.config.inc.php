@@ -73,6 +73,10 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     foreach ($gridactionbuttons as $key => $value) {
         $actionbuttons[] = $key;
     }
+    $windowbuttons = array();
+    foreach ($winbuttons as $key => $value) {
+        $windowbuttons[] = $key;
+    }    
     $allhandlers = array();
     foreach ($gridfunctions as $key => $value) {
         $allhandlers[] = $key;
@@ -108,6 +112,9 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 ]},
 {"caption":"Actionbuttons", "fields": [
     {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $actionbuttons) . '"}
+]},
+{"caption":"Window Buttons", "fields": [
+    {"field":"extended.winbuttonslist","caption":"Window Buttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $windowbuttons) . '"}
 ]},
 {"caption":"Handlers", "fields": [
     {"field":"extended.extrahandlers","caption":"Extra Handlers","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $allhandlers) . '"}

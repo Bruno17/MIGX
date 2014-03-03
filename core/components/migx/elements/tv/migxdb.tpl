@@ -69,6 +69,8 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
     loadGrid: function(init) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         var object_id = '{/literal}{$object_id}{literal}';
+        
+        if ('{/literal}{$customconfigs.check_resid}{literal}' == '1'){
         if (object_id != ''){
             if (object_id == 'new'){
                 if (!init){
@@ -86,7 +88,8 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
                 return;
             }            
         }
-    
+        }        
+
         MODx.load({
             xtype: 'modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}'
             ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'

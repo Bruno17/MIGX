@@ -52,6 +52,21 @@ $gridactionbuttons['emptyThrash']['text'] = "'[[%migx.emptythrash]]'";
 $gridactionbuttons['emptyThrash']['handler'] = 'this.emptyThrash';
 $gridactionbuttons['emptyThrash']['scope'] = 'this';
 
+$winbuttons['cancel']['text'] = "config.cancelBtnText || _('cancel')";
+$winbuttons['cancel']['handler'] = 'this.cancel';
+$winbuttons['cancel']['scope'] = 'this';
+
+$winbuttons['done']['text'] = "config.saveBtnText || _('done')";
+$winbuttons['done']['handler'] = 'this.submit';
+$winbuttons['done']['scope'] = 'this';
+
+/*
+$winfunctions['this.test'] = "
+test: function(btn,e) {
+    console.log('test');     
+}";
+*/
+
 $gridfunctions['this.resetWinPosition'] = "
 resetWinPosition: function(btn,e) {
     this.setWinPosition(10,10);     

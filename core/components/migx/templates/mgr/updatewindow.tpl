@@ -16,15 +16,7 @@ MODx.window.UpdateTvdbItem = function(config) {
         //,saveBtnText: _('done')
         ,forceLayout: true
         ,autoScroll: true
-        ,buttons: [{
-            text: config.cancelBtnText || _('cancel')
-            ,scope: this
-            ,handler: this.cancel
-        },{
-            text: config.saveBtnText || _('done')
-            ,scope: this
-            ,handler: this.submit
-        }]
+        {/literal}{$customconfigs.winbuttons}{literal}
         ,record: {}
 		,grid: null
         ,action: 'u'
@@ -73,10 +65,10 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
             }
         }
 
-    },     
-    submit: function() {
+    }
+    {/literal}{$customconfigs.winfunctions}{literal}
+    ,getFormValues: function(){
         var v = this.fp.getForm().getValues();
-        var object_id = this.baseParams.object_id;
         var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
         var item = {};
         var tvid = ''; 
@@ -90,49 +82,49 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                 }                         
             }
         }	
-        
         v = this.fp.getForm().getValues();
         fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
-        
+        if (this.action == 'd'){
+            MODx.fireResourceFormChange();
+            object_id = 'new';     
+        }
+        if (this.action == 'u'){
+            /*update record*/
+        }else{
+            /*append record*/
+        }
+        if (fields.length>0){
+            for (var i = 0; i < fields.length; i++) {
+                tvid = (fields[i].tv_id);
+                if (v['tv'+tvid+'_prefix']) v['tv'+tvid]=v['tv'+tvid+'_prefix']+v['tv'+tvid];//url-TV support
+                item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';	
+            }
+            //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
+        } 
+        return item        
+    }
+    ,submit: function() {
+        var object_id = this.baseParams.object_id;
         if (this.fp.getForm().isValid()) {
-            if (this.action == 'd'){
-                MODx.fireResourceFormChange();
-                object_id = 'new';     
-            }
-            if (this.action == 'u'){
-                /*update record*/
-            }else{
-                /*append record*/
-            }
-
-
-            if (fields.length>0){
-                for (var i = 0; i < fields.length; i++) {
-                    tvid = (fields[i].tv_id);
-                    if (v['tv'+tvid+'_prefix']) v['tv'+tvid]=v['tv'+tvid+'_prefix']+v['tv'+tvid];//url-TV support
-                    item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';	
-                }
-                //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
-            }					
-			
+			var item = this.getFormValues();		
             //console.log(this.config);
             MODx.Ajax.request({
-            url: this.grid.url
-            ,params: {
-                action: 'mgr/migxdb/update'
-                ,data: Ext.util.JSON.encode(item)
-				,configs: this.grid.configs
-                ,resource_id: this.grid.resource_id
-                ,co_id: this.grid.co_id
-                ,object_id: object_id
-                ,tv_id: this.baseParams.tv_id
-                ,wctx: this.baseParams.wctx
-            }
-            ,listeners: {
-                'success': {fn:this.onSubmitSuccess,scope:this}
-            }
-        });
-        return true;
+                url: this.grid.url
+                ,params: {
+                    action: 'mgr/migxdb/update'
+                    ,data: Ext.util.JSON.encode(item)
+				    ,configs: this.grid.configs
+                    ,resource_id: this.grid.resource_id
+                    ,co_id: this.grid.co_id
+                    ,object_id: object_id
+                    ,tv_id: this.baseParams.tv_id
+                    ,wctx: this.baseParams.wctx
+                }
+                ,listeners: {
+                    'success': {fn:this.onSubmitSuccess,scope:this}
+                }
+            });
+            return true;
         }
         return false;
     },

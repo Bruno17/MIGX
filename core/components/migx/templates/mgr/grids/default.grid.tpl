@@ -137,8 +137,6 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         }
         
         var isnew = (action == 'u') ? '0':'1';
-        
- 		
         var win_xtype = 'modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}';
 		
         if (this.windows[win_xtype]){
@@ -173,7 +171,6 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             xtype: win_xtype
 			,grid: this
             ,action: action
-            
             ,baseParams : {
 			    action: 'mgr/migxdb/fields',
 				tv_id: '{/literal}{$tv_id}{literal}',

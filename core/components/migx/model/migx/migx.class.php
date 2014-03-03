@@ -223,10 +223,12 @@ class Migx {
     }
 
     function loadConfigs($grid = true, $other = true, $properties = array(), $sender = '') {
+        $winbuttons = array();
         $gridactionbuttons = array();
         $gridcolumnbuttons = array();
         $gridcontextmenus = array();
         $gridfunctions = array();
+        $winfunctions = array();
         $renderer = array();
         $gridfilters = array();
         $configs = array('migx_default');
@@ -332,13 +334,13 @@ class Migx {
                     if (isset($configpath) && !$cfObject && file_exists($configpath . $config . '.config.js')) {
                         $filecontent = @file_get_contents($configpath . $config . '.config.js');
                         $objectarray = $this->importconfig($this->modx->fromJson($filecontent));
-                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons);
+                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
                     }
 
                     if ($cfObject) {
 
                         $objectarray = $cfObject->toArray();
-                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons);
+                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
 
                     }
                     //third add configs from file, if exists
@@ -369,6 +371,8 @@ class Migx {
         $this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
         $this->customconfigs['gridcolumnbuttons'] = $gridcolumnbuttons;
         $this->customconfigs['gridfunctions'] = array_merge($gridfunctions, $renderer);
+        $this->customconfigs['winfunctions'] = $winfunctions;
+        $this->customconfigs['windowbuttons'] = $winbuttons;
         //$defaulttask = empty($this->customconfigs['join_alias']) ? 'default' : 'default_join';
         $defaulttask = 'default';
         $this->customconfigs['task'] = empty($this->customconfigs['task']) ? $defaulttask : $this->customconfigs['task'];
@@ -376,7 +380,7 @@ class Migx {
     }
 
 
-    public function prepareConfigsArray($objectarray, &$gridactionbuttons, &$gridcontextmenus, &$gridcolumnbuttons) {
+    public function prepareConfigsArray($objectarray, &$gridactionbuttons, &$gridcontextmenus, &$gridcolumnbuttons, &$winbuttons) {
 
         if (is_array($objectarray['extended'])) {
             foreach ($objectarray['extended'] as $key => $value) {
@@ -425,6 +429,17 @@ class Migx {
                 $gridactionbuttons[$button]['active'] = 1;
             }
         }
+
+        if (isset($this->customconfigs['winbuttonslist'])) {
+            $winbuttonslist = $this->customconfigs['winbuttonslist'];
+            if (!empty($winbuttonslist)) {
+                $winbuttonslist = explode('||', $winbuttonslist);
+                foreach ($winbuttonslist as $button) {
+                    $winbuttons[$button]['active'] = 1;
+                }
+            }
+        }
+
     }
 
     function loadPackageManager() {
@@ -609,6 +624,40 @@ class Migx {
                 $handlers[] = $handler;
             }
         }
+
+        //winbuttons
+        $winbuttons = '';
+        if (isset($this->customconfigs['windowbuttons'])) {
+            if (is_array($this->customconfigs['windowbuttons']) && count($this->customconfigs['windowbuttons']) > 0) {
+                $buttons_a = array();
+                foreach ($this->customconfigs['windowbuttons'] as $button) {
+                    if (!empty($button['active'])) {
+                        unset($button['active']);
+                        if (isset($button['handler']) && !in_array($button['handler'], $handlers)) {
+                            $handlers[] = $button['handler'];
+                        }
+                        $buttons_a[] = str_replace('"', '', $this->modx->toJson($button));
+                    }
+                }
+                if (count($buttons_a) > 0) {
+                    $winbuttons = ',buttons:[' . implode(',', $buttons_a) . ']';
+                }else{
+                    $winbuttons = ",buttons: [{
+            text: config.cancelBtnText || _('cancel')
+            ,scope: this
+            ,handler: this.cancel
+        },{
+            text: config.saveBtnText || _('done')
+            ,scope: this
+            ,handler: this.submit
+        }]";
+                }
+                
+                
+                
+            }
+        }
+        $this->customconfigs['winbuttons'] = $winbuttons;
 
         $buttons = array();
         if (count($this->customconfigs['gridactionbuttons']) > 0) {
@@ -872,8 +921,10 @@ class Migx {
         }
 
         $gf = '';
+        $wf = '';
         if (count($handlers) > 0) {
             $gridfunctions = array();
+            $winfunctions = array();
             $collectedhandlers = array();
             foreach ($handlers as $handler) {
                 if (!in_array($handler, $collectedhandlers) && isset($this->customconfigs['gridfunctions'][$handler])) {
@@ -883,13 +934,24 @@ class Migx {
                         $gridfunctions[] = $gridfunction;
                     }
                 }
+                if (!in_array($handler, $collectedhandlers) && isset($this->customconfigs['winfunctions'][$handler])) {
+                    $winfunction = $this->customconfigs['winfunctions'][$handler];
+                    if (!empty($winfunction)) {
+                        $collectedhandlers[] = $handler;
+                        $winfunctions[] = $winfunction;
+                    }
+                }                
             }
             if (count($gridfunctions) > 0) {
                 $gf = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
             }
+            if (count($winfunctions) > 0) {
+                $wf = ',' . str_replace($search, $replace, implode(',', $winfunctions));
+            }            
         }
 
         $this->customconfigs['gridfunctions'] = $gf;
+        $this->customconfigs['winfunctions'] = $wf;
 
         $newitem[] = $item;
 
@@ -1158,6 +1220,9 @@ class Migx {
                         if (!empty($field['default'])) {
                             $tv->set('default_text', $tv->processBindings($field['default']));
                         }
+                        if (isset($field['display'])) {
+                            $tv->set('display', $field['display']);
+                        }                        
                         if (!empty($field['configs'])) {
                             $cfg = $this->modx->fromJson($field['configs']);
                             if (is_array($cfg)) {
@@ -1466,9 +1531,13 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
+                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
+                                ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
+                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
+                                ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);
