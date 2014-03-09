@@ -111,7 +111,9 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"columnbuttons","caption":"Columnbuttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $menus) . '"}
 ]},
 {"caption":"Actionbuttons", "fields": [
+    {"field":"extended.actionbuttonsperrow","caption":"Buttons per row","inputTVtype":"listbox","inputOptionValues":"1||2||3||4||5","default":"4"},
     {"field":"actionbuttons","caption":"Actionbuttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $actionbuttons) . '"}
+    
 ]},
 {"caption":"Window Buttons", "fields": [
     {"field":"extended.winbuttonslist","caption":"Window Buttons","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $windowbuttons) . '"}
@@ -120,6 +122,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.extrahandlers","caption":"Extra Handlers","inputTVtype":"checkbox","inputOptionValues":"' . implode('||', $allhandlers) . '"}
 ]},
 {"caption":"Db-Filters", "fields": [
+    {"field":"extended.filtersperrow","caption":"Filters per row","inputTVtype":"listbox","inputOptionValues":"1||2||3||4||5","default":"4"},
     {"field":"filters","caption":"Filters","inputTVtype":"migx","configs":"migxdbfilters"}
 ]},
 {"caption":"MIGXdb-Settings", "fields": [

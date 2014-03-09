@@ -63,3 +63,4 @@ $_lang['migx.selector_options'] = 'Options';
 $_lang['migx.emptythrash_confirm'] = 'Empty Thrash. Are you sure?';
 $_lang['migx.emptythrash'] = 'Empty Thrash';
 $_lang['migx.search'] = 'Search...';
+$_lang['migx.reset_all'] = 'Reset all';

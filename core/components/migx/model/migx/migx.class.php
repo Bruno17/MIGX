@@ -738,11 +738,12 @@ class Migx {
 
         if (isset($buttons) && count($buttons) > 0) {
             $gridactionbuttons = implode(',', $buttons);
+            $perRow = $this->modx->getOption('actionbuttonsperrow',$this->customconfigs,'4');
             $tbaractions[] = "
           {
             xtype: 'buttongroup',
             title: '[[%migx.actions]]',
-            columns: 4,
+            columns: {$perRow},
             defaults: {
                 scale: 'large'
             },
@@ -759,11 +760,12 @@ class Migx {
         $tbarfilters = array();
         if (count($filters) > 0) {
             $gridfilters = implode(',', $filters);
+            $perRow = $this->modx->getOption('filtersperrow',$this->customconfigs,'4');
             $tbarfilters[] = "
           {
             xtype: 'buttongroup',
             title: '[[%migx.filters]]',
-            columns: 4,
+            columns: {$perRow},
             defaults: {
                 scale: 'large'
             },

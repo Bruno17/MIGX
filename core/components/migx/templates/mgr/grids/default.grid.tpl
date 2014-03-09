@@ -82,11 +82,16 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var filterDefaults = Ext.util.JSON.decode('{/literal}{$filterDefaults}{literal}');
         var input = null;
         var refresh = false;
+        var value = '';
         for (var i=0;i<filterDefaults.length;i++) {
             input = Ext.getCmp(filterDefaults[i].name+'-migxdb-search-filter');
-            if (input && filterDefaults[i].default != ''){
-                input.setValue(filterDefaults[i].default);
-                this.getStore().baseParams[filterDefaults[i].name]=filterDefaults[i].default;
+            value = filterDefaults[i].default;
+            if (input && value != ''){
+                if (value == '_empty'){
+                    value = '';
+                }                
+                input.setValue(value);
+                this.getStore().baseParams[filterDefaults[i].name]=value;
                 refresh = true;
             } 
         }

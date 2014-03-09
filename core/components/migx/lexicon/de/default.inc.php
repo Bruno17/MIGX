@@ -63,3 +63,4 @@ $_lang['migx.selector_options'] = 'Optionen';
 $_lang['migx.emptythrash_confirm'] = 'Papierkorb wirklich leeren?';
 $_lang['migx.emptythrash'] = 'Papierkorb leeren';
 $_lang['migx.search'] = 'Suche...';
+$_lang['migx.reset_all'] = 'Alle zurücksetzen';

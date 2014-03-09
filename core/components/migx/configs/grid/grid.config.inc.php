@@ -268,13 +268,34 @@ $gridfilters['date']['code']="
     ]
 }
 ";
+
+$gridfilters['resetall']['code']=
+"
+{
+    xtype: 'button'
+    ,id: '[[+name]]-migxdb-search-filter'
+    ,text: '[[%migx.reset_all]]'
+    ,listeners: {
+                'click': {
+                    fn: function(tf,nv,ov){
+                        var s = this.getStore();
+                        this.setDefaultFilters();  
+                    },
+                    scope: this
+                }
+    }
+}
+";
+//$gridfilters['resetall']['handler'] = 'gridfilter';
+
+
 $gridfilters['date']['handler'] = 'gridfilter';
 
 $gridfilters['textbox']['code']=
 "
 {
     xtype: 'textfield'
-    ,idxxx: '[[+name]]-migxdb-search-filter'
+    ,id: '[[+name]]-migxdb-search-filter'
     ,fieldLabel: 'Test'
     ,emptyText: '[[+emptytext]]'
     ,listeners: {
@@ -692,7 +713,11 @@ $gridfunctions['gridfilter'] = "
     filter[[+name]]: function(tf,nv,ov) {
         var children = Ext.util.JSON.decode('[[+combochilds]]');
         var s = this.getStore();
-        s.baseParams.[[+name]] = tf.getValue();
+        var value = tf.getValue();
+        if (value == '_empty'){
+            value = '';
+        }
+        s.baseParams.[[+name]] = value;
         var dddx_select = null;
         for(i = 0; i <  children.length; i++) {
  		    child = children[i];
