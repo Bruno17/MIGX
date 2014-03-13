@@ -109,7 +109,7 @@ if (!($scriptProperties['download'])) {
     $c->sortby($sort, $dir);
 
     //$c->prepare();
-    //die ($c->toSql());
+    //adie ($c->toSql());
 
     $collection = $modx->getCollection($classname, $c);
 
@@ -128,7 +128,7 @@ if (!($scriptProperties['download'])) {
     $i = 0;
     foreach ($collection as $row) {
         $tempRow = $row->toArray();
-
+        
         foreach ($tempRow as $tempfield => $tempvalue) {
             //get fieldnames from first record
 

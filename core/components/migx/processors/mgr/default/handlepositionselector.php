@@ -49,8 +49,8 @@ if (!empty($newpos_id) && !empty($object_id) && count($col) > 1) {
         }
     }
     
-    //$c->sortby($posfield);
-    $c->sortby('name');
+    $c->sortby($posfield);
+    //$c->sortby('name');
     
     if ($collection = $modx->getCollection($classname, $c)) {
         $curpos = 1;
