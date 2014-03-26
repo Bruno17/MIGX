@@ -11,7 +11,9 @@ $tabs ='
 {"field":"inputTVtype","caption":"Input TV type"},
 {"field":"validation","caption":"Validation","description":"Example: required"},
 {"field":"configs","caption":"Configs","inputTVtype":"textarea","description":"this can be used either for a migx-TV-configname or for input-properties of any TV-type as json-string"},
+{"field":"restrictive_condition","caption":"Restrictive Condition (MODX tags)","inputTVtype":"textarea","description":"An empty result will show this field"},
 {"field":"display","caption":"Display","inputTVtype":"listbox","inputOptionValues":"yes==||no==none"}
+
 ]},
 {"caption":"Mediasources", "fields": [
 {"field":"sourceFrom","caption":"source From","inputTVtype":"listbox","inputOptionValues":"config||tv||migx"},

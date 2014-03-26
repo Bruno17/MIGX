@@ -641,7 +641,7 @@ class Migx {
                 }
                 if (count($buttons_a) > 0) {
                     $winbuttons = ',buttons:[' . implode(',', $buttons_a) . ']';
-                }else{
+                } else {
                     $winbuttons = ",buttons: [{
             text: config.cancelBtnText || _('cancel')
             ,scope: this
@@ -652,9 +652,8 @@ class Migx {
             ,handler: this.submit
         }]";
                 }
-                
-                
-                
+
+
             }
         }
         $this->customconfigs['winbuttons'] = $winbuttons;
@@ -738,7 +737,7 @@ class Migx {
 
         if (isset($buttons) && count($buttons) > 0) {
             $gridactionbuttons = implode(',', $buttons);
-            $perRow = $this->modx->getOption('actionbuttonsperrow',$this->customconfigs,'4');
+            $perRow = $this->modx->getOption('actionbuttonsperrow', $this->customconfigs, '4');
             $tbaractions[] = "
           {
             xtype: 'buttongroup',
@@ -760,7 +759,7 @@ class Migx {
         $tbarfilters = array();
         if (count($filters) > 0) {
             $gridfilters = implode(',', $filters);
-            $perRow = $this->modx->getOption('filtersperrow',$this->customconfigs,'4');
+            $perRow = $this->modx->getOption('filtersperrow', $this->customconfigs, '4');
             $tbarfilters[] = "
           {
             xtype: 'buttongroup',
@@ -942,14 +941,14 @@ class Migx {
                         $collectedhandlers[] = $handler;
                         $winfunctions[] = $winfunction;
                     }
-                }                
+                }
             }
             if (count($gridfunctions) > 0) {
                 $gf = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
             }
             if (count($winfunctions) > 0) {
                 $wf = ',' . str_replace($search, $replace, implode(',', $winfunctions));
-            }            
+            }
         }
 
         $this->customconfigs['gridfunctions'] = $gf;
@@ -1169,6 +1168,14 @@ class Migx {
             if (is_array($fields) && count($fields) > 0) {
 
                 foreach ($fields as &$field) {
+                    if (isset($field['restrictive_condition'])) {
+                        $props = $record;
+                        $rc = $this->renderChunk($field['restrictive_condition'], $props, false, false);
+                        if (!empty($rc)){
+                            continue;                           
+                        }
+                    }
+
                     $fieldid++;
                     /*generate unique tvid, must be numeric*/
                     /*todo: find a better solution*/
@@ -1224,7 +1231,7 @@ class Migx {
                         }
                         if (isset($field['display'])) {
                             $tv->set('display', $field['display']);
-                        }                        
+                        }
                         if (!empty($field['configs'])) {
                             $cfg = $this->modx->fromJson($field['configs']);
                             if (is_array($cfg)) {

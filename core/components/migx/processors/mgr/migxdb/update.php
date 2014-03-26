@@ -4,6 +4,7 @@ $filename = basename(__file__);
 $processorspath = dirname(dirname(__file__)). '/' ;
 $updateerror=false;
 $filenames = array();
+$message = '';
 
 $data = $modx->getOption('data',$scriptProperties,'');
 $data = $modx->fromJson($data);
@@ -21,4 +22,4 @@ if ($updateerror){
 	return $modx->error->failure($errormsg);	
 }
 
-return $modx->error->success('',$object);
+return $modx->error->success($message,$object);

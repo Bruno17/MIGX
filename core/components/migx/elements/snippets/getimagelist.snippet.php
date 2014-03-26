@@ -125,9 +125,9 @@ if (!empty($tvname)) {
             // Note: use same field-names and inputTVs in all forms
             $inputTvs = $migx->extractInputTvs($formtabs);
         }
-
+        $migx->source = $tv->getSource($migx->working_context, false);
     }
-    $migx->source = $tv->getSource($migx->working_context, false);
+    
 
 }
 
