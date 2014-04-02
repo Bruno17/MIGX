@@ -1,5 +1,14 @@
 Changelog for MIGX.
 
+MIGX 2.6.8
+==============
+some other small fixes
+restrictive condition by processed MIGX-tags for formfields
+Filter-Button for Reset all filters to default-value
+extend date-filter
+make cmp main caption translatable 
+Migx::prepareJoins - optional rightjoin 
+
 MIGX 2.6.7
 ==============
 add date - filter 

@@ -84,15 +84,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
         }	
         v = this.fp.getForm().getValues();
         fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
-        if (this.action == 'd'){
-            MODx.fireResourceFormChange();
-            object_id = 'new';     
-        }
-        if (this.action == 'u'){
-            /*update record*/
-        }else{
-            /*append record*/
-        }
+
         if (fields.length>0){
             for (var i = 0; i < fields.length; i++) {
                 tvid = (fields[i].tv_id);
@@ -105,6 +97,17 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     }
     ,submit: function() {
         var object_id = this.baseParams.object_id;
+        
+        if (this.action == 'd'){
+            MODx.fireResourceFormChange();
+            object_id = 'new';     
+        }
+        if (this.action == 'u'){
+            /*update record*/
+        }else{
+            /*append record*/
+        }        
+        
         if (this.fp.getForm().isValid()) {
 			var item = this.getFormValues();		
             //console.log(this.config);
