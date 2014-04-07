@@ -1665,7 +1665,7 @@ class Migx {
                         break;
                     case 'find':
                     case 'find_in_set':
-                        $subject = explode(',', $subject);
+                        $subject = is_array($subject) ? $subject : explode(',', $subject);
                         $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case 'find_pd':
