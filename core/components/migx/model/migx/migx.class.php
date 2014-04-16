@@ -1171,8 +1171,8 @@ class Migx {
                     if (isset($field['restrictive_condition'])) {
                         $props = $record;
                         $rc = $this->renderChunk($field['restrictive_condition'], $props, false, false);
-                        if (!empty($rc)){
-                            continue;                           
+                        if (!empty($rc)) {
+                            continue;
                         }
                     }
 
@@ -1182,170 +1182,177 @@ class Migx {
                     $field['tv_id'] = $input_prefix . $scriptProperties['tv_id'] . '_' . $fieldid;
                     $params = array();
                     $tv = false;
-                    if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
+
+
+                    if (isset($field['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
+                        $params = $tv->get('input_properties');
+                        $params['inputTVid'] = $tv->get('id');
+                    }
+
+                    if (!empty($field['inputTVtype'])) {
                         $tv = $this->modx->newObject('modTemplateVar');
-                        $tv->set('description', $this->renderChunk($field['description'], $record, false, false));
-                        $tv->set('type', 'description_is_code');
-                        //we change the phptype, that way we can use any id, not only integers (issues on windows-systems with big integers!)
-                        $tv->_fieldMeta['id']['phptype'] = 'string';
-                        $tv->set('id', $field['tv_id']);
-                    } else {
+                        $tv->set('type', $field['inputTVtype']);
+                    }
 
-                        if (isset($field['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
-                            $params = $tv->get('input_properties');
-                            $params['inputTVid'] = $tv->get('id');
-                        }
+                    if (!$tv) {
+                        $tv = $this->modx->newObject('modTemplateVar');
+                        $tv->set('type', 'text');
+                    }
 
-                        if (!empty($field['inputTVtype'])) {
-                            $tv = $this->modx->newObject('modTemplateVar');
-                            $tv->set('type', $field['inputTVtype']);
-                        }
+                    $o_type = $tv->get('type');
+                    if ($tv->get('type') == 'richtext') {
+                        $tv->set('type', 'migx' . strtolower($rte));
+                    }
 
-                        if (!$tv) {
-                            $tv = $this->modx->newObject('modTemplateVar');
-                            $tv->set('type', 'text');
-                        }
+                    //we change the phptype, that way we can use any id, not only integers (issues on windows-systems with big integers!)
+                    $tv->_fieldMeta['id']['phptype'] = 'string';
 
-                        $o_type = $tv->get('type');
-                        if ($tv->get('type') == 'richtext') {
-                            $tv->set('type', 'migx' . strtolower($rte));
-                        }
+                    /*
+                    $tv->set('id','skdjflskjd');
+                    echo 'id:'. $tv->get('id');
+                    $tv->_fieldMeta['id']['phptype'] = 'string';
+                    echo($tv->_fieldMeta['id']['phptype']); 
+                    $tv->set('id','skdjflskjd');
+                    echo 'id:'. $tv->get('id');                                               
+                    */
 
-                        //we change the phptype, that way we can use any id, not only integers (issues on windows-systems with big integers!)
-                        $tv->_fieldMeta['id']['phptype'] = 'string';
-
-                        /*
-                        $tv->set('id','skdjflskjd');
-                        echo 'id:'. $tv->get('id');
-                        $tv->_fieldMeta['id']['phptype'] = 'string';
-                        echo($tv->_fieldMeta['id']['phptype']); 
-                        $tv->set('id','skdjflskjd');
-                        echo 'id:'. $tv->get('id');                                               
-                        */
-
-                        if (!empty($field['inputOptionValues'])) {
-                            $tv->set('elements', $field['inputOptionValues']);
-                        }
-                        if (!empty($field['default'])) {
-                            $tv->set('default_text', $tv->processBindings($field['default']));
-                        }
-                        if (isset($field['display'])) {
-                            $tv->set('display', $field['display']);
-                        }
-                        if (!empty($field['configs'])) {
-                            $cfg = $this->modx->fromJson($field['configs']);
-                            if (is_array($cfg)) {
-                                $params = array_merge($params, $cfg);
-                            } else {
-                                $params['configs'] = $field['configs'];
-                            }
-                        }
-
-                        /*insert actual value from requested record, convert arrays to ||-delimeted string */
-                        $fieldvalue = '';
-                        if (isset($record[$field['field']])) {
-                            $fieldvalue = $record[$field['field']];
-                            if (is_array($fieldvalue)) {
-                                $fieldvalue = is_array($fieldvalue[0]) ? $this->modx->toJson($fieldvalue) : implode('||', $fieldvalue);
-                            }
-                        }
-
-
-                        $tv->set('value', $fieldvalue);
-                        if (!empty($field['caption'])) {
-                            $field['caption'] = htmlentities($this->replaceLang($field['caption']), ENT_QUOTES, $this->modx->getOption('modx_charset'));
-                            $tv->set('caption', $field['caption']);
-                        }
-
-                        if (!empty($field['description'])) {
-                            $field['description'] = htmlentities($this->replaceLang($field['description']), ENT_QUOTES, $this->modx->getOption('modx_charset'));
-                            $tv->set('description', $field['description']);
-                        }
-
-                        $field['array_tv_id'] = $field['tv_id'] . '[]';
-
-                        $allfield = array();
-                        $allfield['field'] = $field['field'];
-                        $allfield['tv_id'] = $field['tv_id'];
-                        $allfield['array_tv_id'] = $field['array_tv_id'];
-                        $allfields[] = $allfield;
-
-                        $mediasource = $this->getFieldSource($field, $tv);
-                        $tv->setSource($mediasource);
-                        $tv->set('id', $field['tv_id']);
-
-                        /*
-                        $default = $tv->processBindings($tv->get('default_text'), $resourceId);
-                        if (strpos($tv->get('default_text'), '@INHERIT') > -1 && (strcmp($default, $tv->get('value')) == 0 || $tv->get('value') == null)) {
-                        $tv->set('inherited', true);
-                        }
-                        */
-
-                        if ($tv->get('value') == null) {
-                            $v = $tv->get('default_text');
-                            if ($tv->get('type') == 'checkbox' && $tv->get('value') == '') {
-                                $v = '';
-                            }
-                            $tv->set('value', $v);
-                        }
-
-
-                        $this->modx->smarty->assign('tv', $tv);
-
-
-                        /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
-                        * may be performancewise its better todo that here?
-                        
-                        if (!empty($properties['basePath'])) {
-                        if ($properties['autoResourceFolders'] == 'true') {
-                        $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
-                        $targetDir = $params['basePath'];
-
-                        $cacheManager = $this->modx->getCacheManager();
-                        // if directory doesnt exist, create it 
-                        if (!file_exists($targetDir) || !is_dir($targetDir)) {
-                        if (!$cacheManager->writeTree($targetDir)) {
-                        $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
-                        return $this->modx->error->failure('Could not create directory: ' . $targetDir);
-                        }
-                        }
-                        // make sure directory is readable/writable 
-                        if (!is_readable($targetDir) || !is_writable($targetDir)) {
-                        $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
-                        return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
-                        }
+                    if (!empty($field['inputOptionValues'])) {
+                        $tv->set('elements', $field['inputOptionValues']);
+                    }
+                    if (!empty($field['default'])) {
+                        $tv->set('default_text', $tv->processBindings($field['default']));
+                    }
+                    if (isset($field['display'])) {
+                        $tv->set('display', $field['display']);
+                    }
+                    if (!empty($field['configs'])) {
+                        $cfg = $this->modx->fromJson($field['configs']);
+                        if (is_array($cfg)) {
+                            $params = array_merge($params, $cfg);
                         } else {
-                        $params['basePath'] = $basePath;
+                            $params['configs'] = $field['configs'];
                         }
+                    }
+
+                    /*insert actual value from requested record, convert arrays to ||-delimeted string */
+                    $fieldvalue = '';
+                    if (isset($record[$field['field']])) {
+                        $fieldvalue = $record[$field['field']];
+                        if (is_array($fieldvalue)) {
+                            $fieldvalue = is_array($fieldvalue[0]) ? $this->modx->toJson($fieldvalue) : implode('||', $fieldvalue);
                         }
-                        */
+                    }
 
-                        if (!isset($params['allowBlank']))
-                            $params['allowBlank'] = 1;
+                    $tv->set('value', $fieldvalue);
+                    if (!empty($field['caption'])) {
+                        $field['caption'] = htmlentities($this->replaceLang($field['caption']), ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                        $tv->set('caption', $field['caption']);
+                    }
 
-                        $value = $tv->get('value');
-                        if ($value === null) {
-                            $value = $tv->get('default_text');
+
+                    $desc = '';
+                    if (!empty($field['description'])) {
+                        $desc = $field['description'];
+                        $field['description'] = htmlentities($this->replaceLang($field['description']), ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                        $tv->set('description', $field['description']);
+                    }
+
+                    $field['array_tv_id'] = $field['tv_id'] . '[]';
+
+                    $allfield = array();
+                    $allfield['field'] = $field['field'];
+                    $allfield['tv_id'] = $field['tv_id'];
+                    $allfield['array_tv_id'] = $field['array_tv_id'];
+                    $allfields[] = $allfield;
+
+                    $mediasource = $this->getFieldSource($field, $tv);
+                    $tv->setSource($mediasource);
+                    $tv->set('id', $field['tv_id']);
+
+                    /*
+                    $default = $tv->processBindings($tv->get('default_text'), $resourceId);
+                    if (strpos($tv->get('default_text'), '@INHERIT') > -1 && (strcmp($default, $tv->get('value')) == 0 || $tv->get('value') == null)) {
+                    $tv->set('inherited', true);
+                    }
+                    */
+
+                    if ($tv->get('value') == null) {
+                        $v = $tv->get('default_text');
+                        if ($tv->get('type') == 'checkbox' && $tv->get('value') == '') {
+                            $v = '';
                         }
-                        $this->modx->smarty->assign('params', $params);
-                        /* find the correct renderer for the TV, if not one, render a textbox */
-                        $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
+                        $tv->set('value', $v);
+                    }
 
-                        if ($o_type == 'richtext') {
-                            $fallback = true;
-                            foreach ($inputRenderPaths as $path) {
-                                $renderFile = $path . $tv->get('type') . '.class.php';
-                                if (file_exists($renderFile)) {
-                                    $fallback = false;
-                                    break;
-                                }
+
+                    $this->modx->smarty->assign('tv', $tv);
+
+
+                    /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
+                    * may be performancewise its better todo that here?
+                    
+                    if (!empty($properties['basePath'])) {
+                    if ($properties['autoResourceFolders'] == 'true') {
+                    $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
+                    $targetDir = $params['basePath'];
+
+                    $cacheManager = $this->modx->getCacheManager();
+                    // if directory doesnt exist, create it 
+                    if (!file_exists($targetDir) || !is_dir($targetDir)) {
+                    if (!$cacheManager->writeTree($targetDir)) {
+                    $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
+                    return $this->modx->error->failure('Could not create directory: ' . $targetDir);
+                    }
+                    }
+                    // make sure directory is readable/writable 
+                    if (!is_readable($targetDir) || !is_writable($targetDir)) {
+                    $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
+                    return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
+                    }
+                    } else {
+                    $params['basePath'] = $basePath;
+                    }
+                    }
+                    */
+
+                    if (!isset($params['allowBlank']))
+                        $params['allowBlank'] = 1;
+
+                    $value = $tv->get('value');
+                    if ($value === null) {
+                        $value = $tv->get('default_text');
+                    }
+
+                    $this->modx->smarty->assign('params', $params);
+                    /* find the correct renderer for the TV, if not one, render a textbox */
+                    $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
+
+                    if ($o_type == 'richtext') {
+                        $fallback = true;
+                        foreach ($inputRenderPaths as $path) {
+                            $renderFile = $path . $tv->get('type') . '.class.php';
+                            if (file_exists($renderFile)) {
+                                $fallback = false;
+                                break;
                             }
-                            if ($fallback) {
-                                $tv->set('type', 'textarea');
-                            }
                         }
+                        if ($fallback) {
+                            $tv->set('type', 'textarea');
+                        }
+                    }
 
+                    if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
+                        $props = $record;
+                        unset($field['description']);
+                        $tv_array = $tv->toArray();
+                        unset($tv_array['description']);
+                        $props['record_json'] = $this->modx->toJson($props);
+                        $props['tv_json'] = $this->modx->toJson($tv_array);
+                        $props['field_json'] = $this->modx->toJson($field);
 
+                        $tv->set('formElement', $this->renderChunk($desc, $props, false, false));
+                        $tv->set('type', 'description_is_code');
+                    } else {
                         $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
 
                         if (empty($inputForm))
@@ -1353,7 +1360,6 @@ class Migx {
 
                         $tv->set('formElement', $inputForm);
                     }
-
 
                     $tvs[] = $tv;
                 }
@@ -1665,7 +1671,7 @@ class Migx {
                         break;
                     case 'find':
                     case 'find_in_set':
-                        $subject = is_array($subject) ? $subject : explode(',', $subject);
+                        $subject = explode(',', $subject);
                         $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case 'find_pd':

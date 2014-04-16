@@ -157,6 +157,7 @@ if (is_array($sort) && count($sort) > 0) {
     $items = $migx->sortDbResult($items, $sort);
 }
 
+$summaries = array();
 $output = '';
 
 if (count($items) > 0) {

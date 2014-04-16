@@ -86,10 +86,9 @@ Ext.reg('modx-combo-formnamedropdown',MODx.combo.FormnameDropdown);
 {foreach from=$category.tvs item=tv name='tv'}
 
 {if $tv->type EQ "description_is_code"}
-<div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;">
-    {$tv->description}
-    <br class="clear" />
-</div>    
+
+    {$tv->get('formElement')}
+   
 {elseif $tv->type NEQ "hidden"}
     <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;{if $tv->display EQ "none"}display:none;{/if} ">
         <label for="tv{$tv->id}" class="x-form-item-label modx-tv-label" style="width: auto;margin-bottom: 10px;">
