@@ -1176,6 +1176,9 @@ class Migx {
                         }
                     }
 
+                    $fieldname = $this->modx->getOption('field', $field, '');
+
+
                     $fieldid++;
                     /*generate unique tvid, must be numeric*/
                     /*todo: find a better solution*/
@@ -1236,8 +1239,8 @@ class Migx {
 
                     /*insert actual value from requested record, convert arrays to ||-delimeted string */
                     $fieldvalue = '';
-                    if (isset($record[$field['field']])) {
-                        $fieldvalue = $record[$field['field']];
+                    if (isset($record[$fieldname])) {
+                        $fieldvalue = $record[$fieldname];
                         if (is_array($fieldvalue)) {
                             $fieldvalue = is_array($fieldvalue[0]) ? $this->modx->toJson($fieldvalue) : implode('||', $fieldvalue);
                         }
@@ -1257,14 +1260,13 @@ class Migx {
                         $tv->set('description', $field['description']);
                     }
 
-                    $field['array_tv_id'] = $field['tv_id'] . '[]';
-
                     $allfield = array();
-                    $allfield['field'] = $field['field'];
+                    $allfield['field'] = $fieldname;
                     $allfield['tv_id'] = $field['tv_id'];
-                    $allfield['array_tv_id'] = $field['array_tv_id'];
+                    $allfield['array_tv_id'] = $field['tv_id'] . '[]';
                     $allfields[] = $allfield;
-
+                                        
+                    $field['array_tv_id'] = $field['tv_id'] . '[]';
                     $mediasource = $this->getFieldSource($field, $tv);
                     $tv->setSource($mediasource);
                     $tv->set('id', $field['tv_id']);
@@ -1340,7 +1342,8 @@ class Migx {
                             $tv->set('type', 'textarea');
                         }
                     }
-
+                    
+                    $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
                     if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
                         $props = $record;
                         unset($field['description']);
@@ -1349,11 +1352,12 @@ class Migx {
                         $props['record_json'] = $this->modx->toJson($props);
                         $props['tv_json'] = $this->modx->toJson($tv_array);
                         $props['field_json'] = $this->modx->toJson($field);
+                        $props['tv_formElement'] = $inputForm;
 
                         $tv->set('formElement', $this->renderChunk($desc, $props, false, false));
                         $tv->set('type', 'description_is_code');
                     } else {
-                        $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
+                        
 
                         if (empty($inputForm))
                             continue;
@@ -1546,13 +1550,9 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);
@@ -1671,7 +1671,7 @@ class Migx {
                         break;
                     case 'find':
                     case 'find_in_set':
-                        $subject = explode(',', $subject);
+                        $subject = is_array($subject) ? $subject : explode(',', $subject);
                         $output = in_array($operand, $subject) ? $then : (isset($else) ? $else : '');
                         break;
                     case 'find_pd':
