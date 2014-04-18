@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(dirname(__file__)) . '/model/migx/migx.class.php';
+require_once dirname(dirname(dirname(__file__))) . '/model/migx/migx.class.php';
 abstract class MigxManagerController extends modExtraManagerController {
     /**
      @var MIGX $migx */
