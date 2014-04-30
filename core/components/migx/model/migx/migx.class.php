@@ -1349,12 +1349,16 @@ class Migx {
                         unset($field['description']);
                         $tv_array = $tv->toArray();
                         unset($tv_array['description']);
+                        // don't parse the value - set special placeholder, replace it later
+                        $tv_array['value'] = '[+[+value]]';
+                        $tempvalue = $tv->get('value');                           
                         $props['record_json'] = $this->modx->toJson($props);
                         $props['tv_json'] = $this->modx->toJson($tv_array);
                         $props['field_json'] = $this->modx->toJson($field);
-                        $props['tv_formElement'] = $inputForm;
-
-                        $tv->set('formElement', $this->renderChunk($desc, $props, false, false));
+                        // don't parse the rendered formElement - set special placeholder, replace it later
+                        $props['tv_formElement'] = '[+[+tv_formElement]]';  
+                                             
+                        $tv->set('formElement',str_replace(array('[+[+value]]','[+[+tv_formElement]]'),array($tempvalue,$inputForm),$this->renderChunk($desc, $props, false, false)));
                         $tv->set('type', 'description_is_code');
                     } else {
                         

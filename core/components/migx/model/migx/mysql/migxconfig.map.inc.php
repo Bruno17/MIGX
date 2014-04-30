@@ -159,6 +159,17 @@ $xpdo_meta_map['migxConfig']= array (
       'default' => 0,
     ),
   ),
+  'composites' => 
+  array (
+    'Formtabs' => 
+    array (
+      'class' => 'migxFormtab',
+      'local' => 'id',
+      'foreign' => 'config_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+  ),
   'aggregates' => 
   array (
     'ConfigElements' => 
