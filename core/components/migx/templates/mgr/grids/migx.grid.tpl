@@ -166,6 +166,10 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         }
         catch (e){
         }
+        
+        if (items.length == 0){
+            Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = '';     
+        }
                 
         this.autoinc = 0;
         for(i = 0; i <  items.length; i++) {
