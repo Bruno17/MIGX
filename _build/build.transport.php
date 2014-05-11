@@ -594,6 +594,13 @@ foreach ($categories as $k => $categoryName) {
                 $helper->sendLog(modX::LOG_LEVEL_INFO, '    ' . $modx->lexicon('mc_no') . ' ' . $resolver . ' ' . $modx->lexicon('mc_resolver') . '.');
             }
         }
+        /*
+        $modx->log(modX::LOG_LEVEL_INFO,'Adding in PHP resolvers...');
+        $vehicle->resolve('php',array(
+            'source' => $sources['resolvers'] . 'resolve.tables.php',
+        ));
+        */        
+        
     }
 
     /* Add subpackages */
@@ -637,6 +644,12 @@ if ($hasMenu) {
                 ));
             $modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP validators...');
             $vehicle->validate('php', array('source' => $sources['validators'] . 'modx-2.2.php', ));
+        
+            $modx->log(modX::LOG_LEVEL_INFO,'Adding in PHP resolvers...');
+            $vehicle->resolve('php',array(
+                'source' => $sources['resolvers'] . 'resolve.tables.php',
+            ));            
+            
             $builder->putVehicle($vehicle);
            
         }
@@ -657,6 +670,12 @@ if ($hasMenu) {
                 ));
             $modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP validators...');
             $vehicle->validate('php', array('source' => $sources['validators'] . 'modx-2.3.php', ));
+            
+            $modx->log(modX::LOG_LEVEL_INFO,'Adding in PHP resolvers...');
+            $vehicle->resolve('php',array(
+                'source' => $sources['resolvers'] . 'resolve.tables.php',
+            ));            
+            
             $builder->putVehicle($vehicle);
                         
         }

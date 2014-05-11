@@ -3,7 +3,7 @@
  * snippets transport file for MIGX extra
  *
  * Copyright 2013 by Bruno Perner b.perner@gmx.de
- * Created on 04-18-2014
+ * Created on 05-11-2014
  *
  * @package migx
  * @subpackage build
