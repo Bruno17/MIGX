@@ -119,31 +119,60 @@ if ($collection = $modx->getCollection($classname, $c)) {
             $fields['_first'] = $idx == 1 ? true : '';
             $fields['_last'] = $idx == $limit ? true : '';
             $fields['idx'] = $idx;
-            $rowtpl = $tpl;
+            $rowtpl = '';
             //get changing tpls from field
             if (substr($tpl, 0, 7) == "@FIELD:") {
                 $tplField = substr($tpl, 7);
                 $rowtpl = $fields[$tplField];
             }
 
-            if (!isset($template[$rowtpl])) {
-                if (substr($rowtpl, 0, 6) == "@FILE:") {
-                    $template[$rowtpl] = file_get_contents($modx->config['base_path'] . substr($rowtpl, 6));
-                } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
-                    $template[$rowtpl] = substr($tpl, 6);
-                } elseif ($chunk = $modx->getObject('modChunk', array('name' => $rowtpl), true)) {
-                    $template[$rowtpl] = $chunk->getContent();
-                } else {
-                    $template[$rowtpl] = false;
+            if ($fields['_first'] && !empty($tplFirst)) {
+                $rowtpl = $tplFirst;
+            }
+            if ($fields['_last'] && empty($rowtpl) && !empty($tplLast)) {
+                $rowtpl = $tplLast;
+            }
+            $tplidx = 'tpl_' . $idx;
+            if (empty($rowtpl) && !empty($$tplidx)) {
+                $rowtpl = $$tplidx;
+            }
+            if ($idx > 1 && empty($rowtpl)) {
+                $divisors = $migx->getDivisors($idx);
+                if (!empty($divisors)) {
+                    foreach ($divisors as $divisor) {
+                        $tplnth = 'tpl_n' . $divisor;
+                        if (!empty($$tplnth)) {
+                            $rowtpl = $$tplnth;
+                            if (!empty($rowtpl)) {
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
+            if ($count == 1 && isset($tpl_oneresult)) {
+                $rowtpl = $tpl_oneresult;
+            }
+
             $fields = array_merge($fields, $properties);
+
+            if (!empty($rowtpl)) {
+                $template = $migx->getTemplate($tpl, $template);
+                $fields['_tpl'] = $template[$tpl];
+            } else {
+                $rowtpl = $tpl;
+
+            }
+            $template = $migx->getTemplate($rowtpl, $template);
+
 
             if ($template[$rowtpl]) {
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
                 $chunk->setContent($template[$rowtpl]);
+
+
                 if (!empty($placeholdersKeyField) && isset($fields[$placeholdersKeyField])) {
                     $output[$fields[$placeholdersKeyField]] = $chunk->process($fields);
                 } else {

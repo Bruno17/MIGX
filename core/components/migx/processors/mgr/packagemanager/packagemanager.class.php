@@ -77,7 +77,7 @@ class migxCreatePackageProcessor extends modProcessor
             $options[$properties['task']] = 1;
             
             $this->modx->addPackage($packageName, $modelpath, $prefix);
-            $pkgman = $this->modx->migx->loadPackageManager();
+            $pkgman = $this->loadPackageManager();
 
             $pkgman->parseSchema($schemafile, $modelpath, true);
 
@@ -95,7 +95,7 @@ class migxCreatePackageProcessor extends modProcessor
         if ($properties['task'] == 'createTables') {
             //$prefix = empty($prefix) ? null : $prefix;
             $this->modx->addPackage($packageName, $modelpath, $prefix);
-            $pkgman = $this->modx->migx->loadPackageManager();
+            $pkgman = $this->loadPackageManager();
             $pkgman->parseSchema($schemafile, $modelpath, true);
             $pkgman->createTables();
         }
@@ -111,5 +111,12 @@ class migxCreatePackageProcessor extends modProcessor
 
         return $this->success();
     }
+    
+    function loadPackageManager() {
+        $modelPath = $this->modx->etOption('migx.core_path',null,$this->modx->getOption('core_path').'components/migx/').'model/';
+        include_once ($modelPath . 'migx/migxpackagemanager.class.php');
+        return new MigxPackageManager($this->modx);
+    }    
+    
 }
 return 'migxCreatePackageProcessor';
