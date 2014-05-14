@@ -1815,12 +1815,16 @@ class Migx {
                         */
                         $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
                         switch ($type) {
-                            case 'left':
-                                $c->leftjoin($joinclass, $jalias, $on);
-                                break;
                             case 'right':
                                 $c->rightjoin($joinclass, $jalias, $on);
                                 break;
+                            case 'inner':
+                                $c->innerjoin($joinclass, $jalias, $on);
+                                break; 
+                            case 'left':
+                            default:
+                                $c->leftjoin($joinclass, $jalias, $on);
+                                break;                                                               
                         }
 
                         $c->select($this->modx->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));

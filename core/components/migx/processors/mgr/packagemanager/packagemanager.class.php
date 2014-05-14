@@ -16,6 +16,7 @@ class migxCreatePackageProcessor extends modProcessor
     {
 
         $properties = $this->getProperties();
+        
         $prefix = isset($properties['prefix']) && !empty($properties['prefix']) ? $properties['prefix'] : null;
         if (isset($properties['usecustomprefix']) && !empty($properties['usecustomprefix'])) {
             $prefix = isset($properties['prefix']) ? $properties['prefix'] : null;
@@ -113,7 +114,7 @@ class migxCreatePackageProcessor extends modProcessor
     }
     
     function loadPackageManager() {
-        $modelPath = $this->modx->etOption('migx.core_path',null,$this->modx->getOption('core_path').'components/migx/').'model/';
+        $modelPath = $this->modx->getOption('migx.core_path',null,$this->modx->getOption('core_path').'components/migx/').'model/';
         include_once ($modelPath . 'migx/migxpackagemanager.class.php');
         return new MigxPackageManager($this->modx);
     }    
