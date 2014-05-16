@@ -8,7 +8,7 @@ class migxFormtab extends xPDOSimpleObject
 
 
         $result = parent::save($cacheFlag);
-        
+
         $handleformtabfields = $this->get('handleformtabfields');
 
         if ($handleformtabfields && $result) {
@@ -17,7 +17,7 @@ class migxFormtab extends xPDOSimpleObject
             if (!is_array($fields)) {
                 $fields = $this->xpdo->fromJson($fields);
             }
-            
+
             $saved_fields = array();
             if (is_array($fields)) {
                 $posted_fields = array();
@@ -44,7 +44,8 @@ class migxFormtab extends xPDOSimpleObject
                             $field_object->fromArray($field);
                             $field_object->save();
                             $field['MIGX_id'] = $field_object->get('id');
-                            $saved_fields[] = $field;
+                            $pos = isset($field['pos']) ? $field['pos'] : 0;
+                            $saved_fields[$pos] = $field;
                             unset($posted_fields[$migx_id]);
                         } else {
                             $field_object->remove();
@@ -59,12 +60,20 @@ class migxFormtab extends xPDOSimpleObject
                         $field_object->set('config_id', $this->get('config_id'));
                         $field_object->save();
                         $field['MIGX_id'] = $field_object->get('id');
-                        $saved_fields[] = $field;
+                        $pos = isset($field['pos']) ? $field['pos'] : 0;
+                        $saved_fields[$pos] = $field;
                     }
                 }
-                $this->set('saved_fields', $saved_fields);
+
+                ksort($saved_fields);
+                $fields = array();
+                foreach ($saved_fields as $field) {
+                    $fields[] = $field;
+                }
+
+                $this->set('saved_fields', $fields);
             }
-            $this->set('handleformtabfields',0);//prevent double-saving of fields
+            $this->set('handleformtabfields', 0); //prevent double-saving of fields
         }
 
         return $result;

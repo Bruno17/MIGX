@@ -37,7 +37,8 @@ class migxConfig extends xPDOSimpleObject
                             $formtab_object->save();
                             $formtab['MIGX_id'] = $formtab_object->get('id');
                             $formtab['fields'] = $formtab_object->get('saved_fields');
-                            $saved_formtabs[] = $formtab;
+                            $pos = isset($formtab['pos']) ? $formtab['pos'] : 0;                            
+                            $saved_formtabs[$pos] = $formtab;
                             unset($posted_tabs[$migx_id]);
                         } else {
                             $formtab_object->remove();
@@ -53,10 +54,18 @@ class migxConfig extends xPDOSimpleObject
                         $formtab_object->save();
                         $formtab['MIGX_id'] = $formtab_object->get('id');
                         $formtab['fields'] = $formtab_object->get('saved_fields');
-                        $saved_formtabs[] = $formtab;
+                        $pos = isset($formtab['pos']) ? $formtab['pos'] : 0;                        
+                        $saved_formtabs[$pos] = $formtab;
                     }
                 }
-                $this->set('formtabs',$this->xpdo->toJson($saved_formtabs));
+                
+                ksort($saved_formtabs);
+                $formtabs = array();
+                foreach ($saved_formtabs as $tab){
+                    $formtabs[]=$tab;
+                }
+                
+                $this->set('formtabs',$this->xpdo->toJson($formtabs));
                 $this->set('preventformtabhandling',1);
                 $this->save();
             }
