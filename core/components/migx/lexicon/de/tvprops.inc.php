@@ -9,8 +9,8 @@
 
 $_lang['mig.tabs'] = 'Formular-Tabs';
 $_lang['mig.columns'] = 'Tabellenspalten';
-$_lang['mig.btntext'] = 'Andere Beschriftung für den Button "Datensatz erstellen"';
+$_lang['mig.btntext'] = 'Andere Beschriftung fÃ¼r den Button "Datensatz erstellen"';
 $_lang['mig.previewurl'] = 'Vorschau-URL';
-$_lang['mig.jsonvarkey'] = 'JsonVarKey für die Vorschau';
+$_lang['mig.jsonvarkey'] = 'JsonVarKey fÃ¼r die Vorschau';
 $_lang['mig.configs'] = 'Konfigurationen';
 $_lang['mig.autoResourceFolders'] = 'Auto-Ressourcen-Ordner';
