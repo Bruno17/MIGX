@@ -7,10 +7,10 @@
  */
 
 
-$_lang['mig.tabs'] = 'Formular Tabs';
-$_lang['mig.columns'] = 'Grid Spalten';
-$_lang['mig.btntext'] = '"Datensatz erstellen" Ersetzung';
-$_lang['mig.previewurl'] = 'Vorschau Url';
-$_lang['mig.jsonvarkey'] = 'Vorschau JsonVarKey';
+$_lang['mig.tabs'] = 'Formular-Tabs';
+$_lang['mig.columns'] = 'Tabellenspalten';
+$_lang['mig.btntext'] = 'Andere Beschriftung für den Button "Datensatz erstellen"';
+$_lang['mig.previewurl'] = 'Vorschau-URL';
+$_lang['mig.jsonvarkey'] = 'JsonVarKey für die Vorschau';
 $_lang['mig.configs'] = 'Konfigurationen';
-$_lang['mig.autoResourceFolders'] = 'Auto Resource Folders';
+$_lang['mig.autoResourceFolders'] = 'Auto-Ressourcen-Ordner';
