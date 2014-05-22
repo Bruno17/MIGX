@@ -9,20 +9,20 @@
 //$_lang['mig_'] = '';
 
 $_lang['migx'] = 'MIGX';
-$_lang['migx.management'] = 'MIGX Management';
-$_lang['migx.management_desc'] = 'Hier können Sie MIGX und MIGXdb - Konfigurationen erstellen und verwalten';
+$_lang['migx.management'] = 'MIGX-Verwaltung';
+$_lang['migx.management_desc'] = 'Hier können Sie MIGX- und MIGXdb-Konfigurationen erstellen und verwalten';
 
 $_lang['migx.noitems'] = 'Keine Datensätze gefunden';
 $_lang['migx.add'] = 'Datensatz erstellen';
 $_lang['migx.remove_confirm'] = 'Datensatz entfernen?';
 $_lang['migx.edit'] = 'Bearbeiten';
-$_lang['migx.edit_raw'] = 'Edit raw';
+$_lang['migx.edit_raw'] = 'Rohdaten bearbeiten';
 $_lang['migx.export_import'] = 'Export/Import';
 $_lang['migx.remove'] = 'Entfernen';
 $_lang['migx.duplicate'] = 'Duplizieren';
 $_lang['migx.preview'] = 'Vorschau';
-$_lang['migx.save_resource'] = 'Bevor neue Datensätze erstellt werden können, muß diese Resource gespeichert sein.';
-$_lang['migx.save_object'] = 'Bevor neue Datensätze erstellt werden können, muß dieses Objekt gespeichert sein.';
+$_lang['migx.save_resource'] = 'Bevor neue Datensätze erstellt werden können, müssen Sie diese Ressource speichern.';
+$_lang['migx.save_object'] = 'Bevor neue Datensätze erstellt werden können, müssen Sie dieses Objekt speichern.';
 
 $_lang['migx.show_trash'] = 'Papierkorbansicht';
 $_lang['migx.show_normal'] = 'Normalansicht';
@@ -44,12 +44,12 @@ $_lang['migx.remove'] = 'Entfernen';
 $_lang['migx.new'] = 'neu';
 $_lang['migx.filters'] = 'Filter';
 
-$_lang['migx.add_replacement'] = '"Datensatz erstellen" Ersetzung';
+$_lang['migx.add_replacement'] = 'Andere Beschriftung für den Button "Datensatz erstellen"';
 $_lang['migx.activate'] = 'Aktivieren';
 $_lang['migx.deactivate'] = 'Deaktivieren';
 
 $_lang['migx.import_from_package'] = 'Importieren aus Package';
-$_lang['migx.export_to_package'] = 'Exportieren nach Package';
+$_lang['migx.export_to_package'] = 'Exportieren in Package';
 
 $_lang['month'] = 'Monat';
 $_lang['year'] = 'Jahr';

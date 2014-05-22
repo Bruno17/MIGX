@@ -29,8 +29,8 @@ $_lang['migx.show_normal'] = 'Normal View';
 $_lang['migx.loadgrid'] = 'Load Grid';
 
 $_lang['migx.create'] = 'Create';
-$_lang['migx.publish'] = 'Publish';//ver&ouml;ffentlichen
-$_lang['migx.unpublish'] = 'Unpublish';//'zur&uuml;ckziehen'
+$_lang['migx.publish'] = 'Publish';
+$_lang['migx.unpublish'] = 'Unpublish';
 $_lang['migx.delete'] = 'Delete';
 $_lang['migx.actions'] = 'Actions';
 $_lang['migx.bulk_actions'] = 'Bulk Actions';
