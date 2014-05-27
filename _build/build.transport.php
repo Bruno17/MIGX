@@ -625,6 +625,8 @@ foreach ($categories as $k => $categoryName) {
 /* Transport Menus */
 if ($hasMenu) {
     /* load menu */
+    
+    
     $helper->sendLog(modX::LOG_LEVEL_INFO, $modx->lexicon('Packaging in menu 2.2.x') . '.');
     $menus = include $sources['data'] . 'transport.menu-2.2.x.php';
     foreach ($menus as $menu) {
@@ -642,13 +644,19 @@ if ($hasMenu) {
                         xPDOTransport::UNIQUE_KEY => array('namespace', 'controller'),
                         ), ),
                 ));
-            $modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP validators...');
-            $vehicle->validate('php', array('source' => $sources['validators'] . 'modx-2.2.php', ));
-        
-            $modx->log(modX::LOG_LEVEL_INFO,'Adding in PHP resolvers...');
+            //$modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP validators...');
+            //$vehicle->validate('php', array('source' => $sources['validators'] . 'modx-2.2.php', ));
+
+            $modx->log(modX::LOG_LEVEL_INFO,'Adding in PHP resolvers resolve.menues.php');
+            $vehicle->resolve('php',array(
+                'source' => $sources['resolvers'] . 'resolve.menues.php',
+            ));            
+                    
+            $modx->log(modX::LOG_LEVEL_INFO,'Adding in PHP resolvers resolve.tables.php');
             $vehicle->resolve('php',array(
                 'source' => $sources['resolvers'] . 'resolve.tables.php',
-            ));            
+            ));
+                        
             
             $builder->putVehicle($vehicle);
            
@@ -656,7 +664,8 @@ if ($hasMenu) {
         $helper->sendLog(modX::LOG_LEVEL_INFO, $modx->lexicon('mc_packaged') . ' ' . count($menus) . ' ' . $modx->lexicon('mc_menu_items') . '.');
         unset($vehicle, $menus);
     }
-
+    
+    /*
     $helper->sendLog(modX::LOG_LEVEL_INFO, $modx->lexicon('Packaging in menu 2.3.x') . '.');
     $menus = include $sources['data'] . 'transport.menu-2.3.x.php';
     foreach ($menus as $menu) {
@@ -671,10 +680,12 @@ if ($hasMenu) {
             $modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP validators...');
             $vehicle->validate('php', array('source' => $sources['validators'] . 'modx-2.3.php', ));
             
-            $modx->log(modX::LOG_LEVEL_INFO,'Adding in PHP resolvers...');
-            $vehicle->resolve('php',array(
-                'source' => $sources['resolvers'] . 'resolve.tables.php',
-            ));            
+            
+            //$modx->log(modX::LOG_LEVEL_INFO,'Adding in PHP resolvers...');
+            //$vehicle->resolve('php',array(
+            //    'source' => $sources['resolvers'] . 'resolve.tables.php',
+            //));
+                        
             
             $builder->putVehicle($vehicle);
                         
@@ -682,6 +693,7 @@ if ($hasMenu) {
         $helper->sendLog(modX::LOG_LEVEL_INFO, $modx->lexicon('mc_packaged') . ' ' . count($menus) . ' ' . $modx->lexicon('mc_menu_items') . '.');
         unset($vehicle, $menus);
     }
+    */
 }
 
 /* Next-to-last step - pack in the license file, readme.txt, changelog,

@@ -3,7 +3,7 @@
 * Resolver to connect plugins to system events for MIGX extra
 *
 * Copyright 2013 by Bruno Perner b.perner@gmx.de
-* Created on 05-11-2014
+* Created on 05-16-2014
 *
  * MIGX is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software

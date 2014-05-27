@@ -1,56 +1,49 @@
 <?php
-$modx =& $object->xpdo;
-$modx->log(modX::LOG_LEVEL_INFO, ' a ') ;
+
+$modx = &$object->xpdo;
+$modx->log(modX::LOG_LEVEL_INFO, 'create/upgrade tables');
 if ($object->xpdo) {
+
+    $packageName = 'migx';
+    $prefix = null;
+    $restrictPrefix = true;
+
+    $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+    $modelpath = $packagepath . 'model/';
+    $schemapath = $modelpath . 'schema/';
+    $schemafile = $schemapath . $packageName . '.mysql.schema.xml';
+
+    $manager = $modx->getManager();
+    $generator = $manager->getGenerator();
+
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
-            $modx =& $object->xpdo;
-            $processorsPath = $modx->getOption('migx.core_path',null,$modx->getOption('core_path').'components/migx/').'processors/mgr/packagemanager/';
-            $action = 'packagemanager';
-            $options = array(
-                'processors_path'=>$processorsPath
-            ); 
-            $properties = array(
-                'task'=>'createTables',
-                'packageName'=>'migx'
-            );
-            $modx->log(modX::LOG_LEVEL_INFO, ' b ') ;            
-            $response = $modx->runProcessor($action,$properties,$options);
-            $modx->log(modX::LOG_LEVEL_INFO, ' c ') ;
-  
-            break;
         case xPDOTransport::ACTION_UPGRADE:
-            $modx =& $object->xpdo;
-            $processorsPath = $modx->getOption('migx.core_path',null,$modx->getOption('core_path').'components/migx/').'processors/mgr/packagemanager/';
-            $action = 'packagemanager';
-            $options = array(
-                'processors_path'=>$processorsPath
-            ); 
-            $properties = array(
-                'task'=>'createTables',
-                'packageName'=>'migx'
-            );            
- 
-            $response = $modx->runProcessor($action,$properties,$options);
-            $properties = array(
-                'task'=>'addmissing',
-                'packageName'=>'migx'
-            );            
- 
-            $response = $modx->runProcessor($action,$properties,$options);
-            
-            $response = $modx->runProcessor($action,$properties,$options);
-            $properties = array(
-                'task'=>'checkindexes',
-                'packageName'=>'migx'
-            );            
+            $modx->addPackage($packageName, $modelpath, $prefix);
+            $migxmodelPath = $modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/') . 'model/';
+            include_once ($migxmodelPath . 'migx/migxpackagemanager.class.php');
+            $pkgman = new MigxPackageManager($modx);
 
-            $modx->log(modX::LOG_LEVEL_INFO, ' d ') ;            
-            $response = $modx->runProcessor($action,$properties,$options);
-            $modx->log(modX::LOG_LEVEL_INFO, ' e ') ;                         
-                    
             break;
     }
-    
+
+    switch ($options[xPDOTransport::PACKAGE_ACTION]) {
+        case xPDOTransport::ACTION_INSTALL:
+        case xPDOTransport::ACTION_UPGRADE:
+            //create tables
+            $pkgman->parseSchema($schemafile, $modelpath, true);
+            $pkgman->createTables();
+
+            $options['addmissing'] = 1;
+            $options['removedeleted'] = 1;
+            $options['checkindexes'] = 1;
+
+            $pkgman->checkClassesFields($options);
+
+            $modx->log(modX::LOG_LEVEL_INFO, 'tables upgraded');
+
+            break;
+    }
+
 }
 return true;
