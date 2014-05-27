@@ -1,5 +1,17 @@
 Changelog for MIGX.
 
+MIGX 2.8.0
+==============
+resolve tables on install
+render cross, also when empty string
+reusable activaterelations - processors
+[migxLoopCollection] tpl_nN
+[#154] clean TV-value, if no MIGX-items 
+additional db-storage of formtabs and fields
+get menue working in MODX 2.3
+improve description_is_code 
+
+
 MIGX 2.6.8
 ==============
 some other small fixes

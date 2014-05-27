@@ -98,6 +98,8 @@ if ($debug){
   $c->prepare();echo $c->toSql();
 }
 
+$template = array();
+
 if ($collection = $modx->getCollection($classname, $c)) {
     foreach ($collection as $object) {
         $fields = $object->toArray('', false, true);
@@ -149,10 +151,6 @@ if ($collection = $modx->getCollection($classname, $c)) {
                         }
                     }
                 }
-            }
-
-            if ($count == 1 && isset($tpl_oneresult)) {
-                $rowtpl = $tpl_oneresult;
             }
 
             $fields = array_merge($fields, $properties);
