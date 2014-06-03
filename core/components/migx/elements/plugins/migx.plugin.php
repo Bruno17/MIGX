@@ -1,4 +1,3 @@
-<?php
 $corePath = $modx->getOption('migx.core_path',null,$modx->getOption('core_path').'components/migx/');
 $assetsUrl = $modx->getOption('migx.assets_url', null, $modx->getOption('assets_url') . 'components/migx/');
 switch ($modx->event->name) {

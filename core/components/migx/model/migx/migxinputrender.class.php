@@ -112,9 +112,11 @@ class migxInputRender extends modTemplateVarInputRender {
         }
 
         $options = $this->getInputOptions();
+        
+        $disable_add_item = $this->modx->getOption('disable_add_item',$this->migx->customconfigs,false);
 
         if (is_array($options) && !empty($options)) {
-            $allow_customrecords = true;
+            $allow_customrecords = $disable_add_item ? false : true;
             $optrows = array();
             foreach ($options as $key => $row) {
                 $row['MIGX_id'] = isset($row['MIGX_id']) ? $row['MIGX_id'] : 0;

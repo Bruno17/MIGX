@@ -88,18 +88,31 @@ MODx.grid.multiTVgrid = function(config) {
    }
 }
 
-		,tbar: [{
+		,tbar: [
+        {/literal}{if $customconfigs.disable_add_item != '1'}{literal}
+        {
             text: '[[%migx.add]]',
 			handler: this.addItem
         }
+        {/literal}{/if}{literal}        
         {/literal}{if $properties.previewurl != ''}{literal}
-        ,{
+        {/literal}
+        {if $customconfigs.disable_add_item != '1'}
+        ,
+        {/if}
+        {literal}        
+        {
             text: '[[%migx.preview]]',
 			handler: this.preview
         }
         {/literal}{/if}{literal}
         
-        {/literal}{if $customconfigs.tbar != ''},{$customconfigs.tbar}{/if}{literal}
+        {/literal}{if $customconfigs.tbar != ''}
+        {if $customconfigs.disable_add_item != '1'}
+        ,
+        {/if}        
+        {$customconfigs.tbar}
+        {/if}{literal}
         ]        
 		,viewConfig: {
             forceFit:true
@@ -345,7 +358,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     }
 	,loadPreviewWin: function(btn,e,index,action) {
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
-		//console.log((items));
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
         if (jsonvarkey == ''){
             jsonvarkey = 'migx_outputvalue';
@@ -376,7 +388,6 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         var object_id = '{/literal}{$request.object_id}{literal}';
         var url = MODx.config.assets_url+'components/migx/connector.php';
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
-		//console.log((items));
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
         if (jsonvarkey == ''){
             jsonvarkey = 'migx_outputvalue';
@@ -503,7 +514,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		
         var t = e.getTarget();
         var elm = t.className.split(' ')[0];
-		if(elm == 'controlBtn') {
+        if(elm == 'controlBtn') {
             var handler = t.className.split(' ')[2];
             var col = t.className.split(' ')[3];
             var record = this.getSelectionModel().getSelected();
