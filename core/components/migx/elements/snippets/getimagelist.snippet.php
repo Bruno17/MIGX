@@ -159,10 +159,10 @@ if (is_array($sort) && count($sort) > 0) {
 
 $summaries = array();
 $output = '';
+$count = count($items);
 
-if (count($items) > 0) {
+if ($count > 0) {
     $items = $offset > 0 ? array_slice($items, $offset) : $items;
-    $count = count($items);
     $limit = $limit == 0 || $limit > $count ? $count : $limit;
     $preselectLimit = $preselectLimit > $count ? $count : $preselectLimit;
     //preselect important items
