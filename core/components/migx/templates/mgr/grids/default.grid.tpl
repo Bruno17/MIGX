@@ -10,6 +10,11 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     // add empty pathconfig (source) to array to match number of col in renderimage
     var pc=[''];
     var renderer = null;
+    var pageSize = '{/literal}{$customconfigs.gridpagesize}{literal}';
+    if (pageSize != ''){
+        config.pageSize=pageSize;    
+    }
+   
 	for(i = 0; i <  config.columns.length; i++) {
         renderer = config.columns[i]['renderer'];
         if (typeof renderer != 'undefined'){
@@ -26,6 +31,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
 	resizable: true,
     loadMask: true,
     paging: true,
+    pageSize: 10,
     autosave: false,
     remoteSort: true,
     primaryKey: 'id',

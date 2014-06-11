@@ -132,6 +132,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.task","caption":"Processors Path"},
     {"field":"extended.getlistsort","caption":"getlist defaultsort"},
     {"field":"extended.getlistsortdir","caption":"getlist defaultsortdir"},
+    {"field":"extended.sortconfig","caption":"Sort Config","description":"multifield-sortconfig - json-format","inputTVtype":"textarea"},
+    {"field":"extended.gridpagesize","caption":"Items per Page Default (default=10)"},
     {"field":"extended.use_custom_prefix","caption":"Prefix","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $prefixes) . '"},
     {"field":"extended.prefix","caption":"Custom Prefix"},
     {"field":"extended.grid","caption":"Grid"},

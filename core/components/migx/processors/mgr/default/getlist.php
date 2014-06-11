@@ -58,8 +58,13 @@ $object_id = $modx->getOption('object_id', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
 $resource_id = !empty($object_id) ? $object_id : $resource_id;
 
-if (isset($sortConfig)) {
+$sortConfig = $modx->getOption('sortconfig',$config,'');
+
+if (!empty($sortConfig)) {
     $sort = '';
+    if (!is_array($sortConfig)){
+        $sortConfig = $modx->fromJson($sortConfig);
+    }
 }
 
 $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';

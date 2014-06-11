@@ -703,6 +703,8 @@ selectSelectorOption: function(n,e,col) {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'                
             }
             ,listeners: {
                 'success': {fn:this.refresh,scope:this}
@@ -843,6 +845,8 @@ handleColumnSwitch: function(n,e,col) {
                 ,object_id: this.menu.record.id
 				,configs: this.config.configs
                 ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'
+                ,reqConfigs: '[[+config.req_configs]]'                
             }
             ,listeners: {
                 'success': {fn: function(res){ 
