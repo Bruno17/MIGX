@@ -37,6 +37,7 @@
 
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
+$wrapperTpl = $modx->getOption('wrapperTpl', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
@@ -389,6 +390,10 @@ if (is_array($output)) {
 if (!empty($toPlaceholder)) {
     $modx->setPlaceholder($toPlaceholder, $o);
     return '';
+}
+
+if (!empty($wrapperTpl)) {
+    $o = $modx->getChunk($wrapperTpl, 'output' => $o);
 }
 
 return $o;
