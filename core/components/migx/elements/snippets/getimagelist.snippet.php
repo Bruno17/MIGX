@@ -403,4 +403,8 @@ if (!empty($toPlaceholder)) {
     return '';
 }
 
+if (!empty($wrapperTpl)) {
+    $o = $modx->getChunk($wrapperTpl, 'output' => $o);
+}
+
 return $o;
