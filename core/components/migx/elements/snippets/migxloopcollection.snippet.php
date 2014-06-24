@@ -1,4 +1,5 @@
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
+$wrapperTpl = $modx->getOption('wrapperTpl', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
@@ -189,7 +190,6 @@ if ($collection = $modx->getCollection($classname, $c)) {
     }
 }
 
-
 if ($toJsonPlaceholder) {
     $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
     return '';
@@ -199,15 +199,22 @@ if (!empty($toSeparatePlaceholders)) {
     $modx->toPlaceholders($output, $toSeparatePlaceholders);
     return '';
 }
-/*
-if (!empty($outerTpl))
-$o = parseTpl($outerTpl, array('output'=>implode($outputSeparator, $output)));
-else 
-*/
+
 if (is_array($output)) {
     $o = implode($outputSeparator, $output);
 } else {
     $o = $output;
+}
+
+if (!empty($o) && !empty($wrapperTpl)) {
+    $template = $migx->getTemplate($wrapperTpl);
+    if ($template[$wrapperTpl]) {
+        $chunk = $modx->newObject('modChunk');
+        $chunk->setCacheable(false);
+        $chunk->setContent($template[$wrapperTpl]);
+        $properties['output'] = $o;
+        $o = $chunk->process($properties);
+    }
 }
 
 if (!empty($toPlaceholder)) {

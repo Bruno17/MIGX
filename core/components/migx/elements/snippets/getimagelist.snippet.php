@@ -37,6 +37,7 @@
 
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
+$wrapperTpl = $modx->getOption('wrapperTpl', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
@@ -127,7 +128,7 @@ if (!empty($tvname)) {
         }
         $migx->source = $tv->getSource($migx->working_context, false);
     }
-    
+
 
 }
 
@@ -163,7 +164,7 @@ $count = count($items);
 
 if ($count > 0) {
     $items = $offset > 0 ? array_slice($items, $offset) : $items;
-    
+
     $limit = $limit == 0 || $limit > $count ? $count : $limit;
     $preselectLimit = $preselectLimit > $count ? $count : $preselectLimit;
     //preselect important items
@@ -375,7 +376,7 @@ if ($count > 0 && $splits > 0) {
     $output = array();
     foreach ($chunks as $chunk) {
         $o = implode($outputSeparator, $chunk);
-        $output[] = $modx->getChunk($splitTpl, array('output'=>$o));
+        $output[] = $modx->getChunk($splitTpl, array('output' => $o));
     }
     $outputSeparator = $splitSeparator;
 }
@@ -384,6 +385,17 @@ if (is_array($output)) {
     $o = implode($outputSeparator, $output);
 } else {
     $o = $output;
+}
+
+if (!empty($o) && !empty($wrapperTpl)) {
+    $template = $migx->getTemplate($wrapperTpl);
+    if ($template[$wrapperTpl]) {
+        $chunk = $modx->newObject('modChunk');
+        $chunk->setCacheable(false);
+        $chunk->setContent($template[$wrapperTpl]);
+        $properties['output'] = $o;
+        $o = $chunk->process($properties);        
+    }
 }
 
 if (!empty($toPlaceholder)) {

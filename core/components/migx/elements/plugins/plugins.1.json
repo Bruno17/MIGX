@@ -1,0 +1,42 @@
+[
+  {
+    "id":1,
+    "source":0,
+    "property_preprocess":false,
+    "name":"MIGX",
+    "description":"",
+    "editor_type":0,
+    "category":0,
+    "cache_type":0,
+    "locked":false,
+    "properties":[
+      
+    ],
+    "disabled":false,
+    "moduleguid":"",
+    "static":false,
+    "static_file":"",
+    "filename":"migx.plugin.php",
+    "category_name":"MIGX"
+  },
+  {
+    "id":7,
+    "source":0,
+    "property_preprocess":false,
+    "name":"MIGXquip",
+    "description":"",
+    "editor_type":0,
+    "category":0,
+    "cache_type":0,
+    "locked":false,
+    "properties":[
+      
+    ],
+    "disabled":true,
+    "moduleguid":"",
+    "static":false,
+    "static_file":"",
+    "filename":"migxquip.plugin.php",
+    "category_name":"MIGX"
+  }
+]

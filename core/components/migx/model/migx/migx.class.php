@@ -1834,7 +1834,7 @@ class Migx {
         }
     }
 
-    public function getTemplate($rowtpl, $template) {
+    public function getTemplate($rowtpl, $template = array()) {
         if (!isset($template[$rowtpl])) {
             if (substr($rowtpl, 0, 6) == "@FILE:") {
                 $template[$rowtpl] = file_get_contents($this->modx->config['base_path'] . substr($rowtpl, 6));
