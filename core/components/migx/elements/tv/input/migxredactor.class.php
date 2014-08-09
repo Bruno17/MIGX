@@ -55,6 +55,7 @@ class modTemplateVarInputRenderRedactor extends modTemplateVarInputRender {
         $this->setPlaceholder('assetsUrl', $redactor->config['assetsUrl']);
         $this->setPlaceholder('params', $params);
         $this->setPlaceholder('params_json', $this->modx->toJSON($params));
+        $this->setPlaceholder('redactorVersion',(is_null($redactor->version)) ? '1.4.3' : $version->float);
         //$this->registerStuff();
 
         //return parent::render($value, $params);

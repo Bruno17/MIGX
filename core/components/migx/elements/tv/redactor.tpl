@@ -1,4 +1,4 @@
-<script type="text/javascript" src="{$assetsUrl}redactor-1.3.4.min.js"></script>
+<script type="text/javascript" src="{$assetsUrl}redactor-{$redactorVersion}.min.js"></script>
 <textarea id="tv{$tv->id}" name="tv{$tv->id}" class="rtf-tinymcetv tv{$tv->id}" {literal}onchange="MODx.fireResourceFormChange();"{/literal}>{$tv->get('value')|escape}</textarea>
 
 <script type="text/javascript">

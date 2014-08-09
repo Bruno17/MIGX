@@ -1823,6 +1823,12 @@ class Migx {
                             case 'right':
                                 $c->rightjoin($joinclass, $jalias, $on);
                                 break;
+                            case 'inner':
+                                $c->innerjoin($joinclass, $jalias, $on);
+                                break; 
+                            default:
+                                $c->leftjoin($joinclass, $jalias, $on);
+                                break;                                      
                         }
                         
                         $c->select($c->xpdo->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
