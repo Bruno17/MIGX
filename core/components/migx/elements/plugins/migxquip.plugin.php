@@ -1,3 +1,4 @@
+<?php
 $quipCorePath = $modx->getOption('quip.core_path', null, $modx->getOption('core_path') . 'components/quip/');
 //$assetsUrl = $modx->getOption('migx.assets_url', null, $modx->getOption('assets_url') . 'components/migx/');
 switch ($modx->event->name)

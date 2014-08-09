@@ -1,3 +1,4 @@
+<?php
 //[[migxSwitchDetailChunk? &detailChunk=`detailChunk` &listingChunk=`listingChunk`]]
 
 

@@ -1,3 +1,4 @@
+<?php
 $pathTpl = $modx->getOption('pathTpl', $scriptProperties, '');
 $objectid = $modx->getOption('objectid', $scriptProperties, '');
 $createfolder = $modx->getOption('createFolder', $scriptProperties, '1');

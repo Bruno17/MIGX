@@ -577,6 +577,7 @@ handlePositionSelector: function(n,e,col) {
                 action: 'mgr/migxdb/process'
                 ,processaction: 'handlepositionselector'
                 ,col: column
+                ,co_id: '[[+config.connected_object_id]]' 
                 ,new_pos_id: this.menu.record.id
                 ,tv_type: this.config.tv_type
                 ,object_id: this.posSelectingRecord.id

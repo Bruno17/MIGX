@@ -9,33 +9,53 @@
  * @subpackage processors
  */
 
-class migxCreatePackageProcessor extends modProcessor
-{
+class migxCreatePackageProcessor extends modProcessor {
 
-    public function process()
-    {
+    public function process() {
 
         $properties = $this->getProperties();
-        
         $prefix = isset($properties['prefix']) && !empty($properties['prefix']) ? $properties['prefix'] : null;
+        $restrictPrefix = true;
         if (isset($properties['usecustomprefix']) && !empty($properties['usecustomprefix'])) {
             $prefix = isset($properties['prefix']) ? $properties['prefix'] : null;
+            if (empty($prefix)){
+                $restrictPrefix = false;    
+            }
         }
 
         $packageName = $properties['packageName'];
         //$tablename = $properties['tablename'];
         $tableList = isset($properties['tableList']) && !empty($properties['tableList']) ? $properties['tableList'] : null;
         //$tableList = array(array('table1'=>'classname1'),array('table2'=>'className2'));
-        $restrictPrefix = true;
+        
 
         $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
         $modelpath = $packagepath . 'model/';
         $schemapath = $modelpath . 'schema/';
         $schemafile = $schemapath . $packageName . '.mysql.schema.xml';
 
-        $manager = $this->modx->getManager();
-        $generator = $manager->getGenerator();
+        if (file_exists($packagepath . 'config/config.inc.php')) {
+            include ($packagepath . 'config/config.inc.php');
 
+            $charset = '';
+
+            if (!empty($database_connection_charset)){
+                $charset = ';charset=' . $database_connection_charset;
+            }
+            
+            $dsn = $database_type . ':host=' . $database_server . ';dbname=' . $dbase . $charset ;
+            
+            $xpdo = new xPDO($dsn, $database_user, $database_password);
+            
+            //echo $o=($xpdo->connect()) ? 'Connected' : 'Not Connected';
+            
+        } else {
+            $xpdo = &$this->modx;
+        }
+
+        $manager = $xpdo->getManager();
+        $generator = $manager->getGenerator();
+        
         if ($properties['task'] == 'createPackage' || $properties['task'] == 'writeSchema') {
             // create folders
             if (!is_dir($packagepath)) {
@@ -76,9 +96,9 @@ class migxCreatePackageProcessor extends modProcessor
             $options['addmissing'] = 0;
             $options['removedeleted'] = 0;
             $options[$properties['task']] = 1;
-            
+
             $this->modx->addPackage($packageName, $modelpath, $prefix);
-            $pkgman = $this->loadPackageManager();
+            $pkgman = $this->modx->migx->loadPackageManager();
 
             $pkgman->parseSchema($schemafile, $modelpath, true);
 
@@ -96,7 +116,7 @@ class migxCreatePackageProcessor extends modProcessor
         if ($properties['task'] == 'createTables') {
             //$prefix = empty($prefix) ? null : $prefix;
             $this->modx->addPackage($packageName, $modelpath, $prefix);
-            $pkgman = $this->loadPackageManager();
+            $pkgman = $this->modx->migx->loadPackageManager();
             $pkgman->parseSchema($schemafile, $modelpath, true);
             $pkgman->createTables();
         }
@@ -112,12 +132,5 @@ class migxCreatePackageProcessor extends modProcessor
 
         return $this->success();
     }
-    
-    function loadPackageManager() {
-        $modelPath = $this->modx->getOption('migx.core_path',null,$this->modx->getOption('core_path').'components/migx/').'model/';
-        include_once ($modelPath . 'migx/migxpackagemanager.class.php');
-        return new MigxPackageManager($this->modx);
-    }    
-    
 }
 return 'migxCreatePackageProcessor';

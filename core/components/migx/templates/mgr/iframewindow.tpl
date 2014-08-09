@@ -125,7 +125,6 @@ Ext.extend(MODx.window.MigxIframe,Ext.Window,{
     ,
     renderIframe: function() {
 		this.add(this.iframe);
-		
     }
     ,onShow: function() {
      var input = Ext.getCmp('migx_iframewin_json_{/literal}{$win_id}{literal}');

@@ -1,3 +1,4 @@
+<?php
 /**
  * @name migxResourceMediaPath
  * @description Dynamically calculates the upload path for a given resource

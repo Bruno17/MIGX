@@ -994,7 +994,7 @@ class Migx {
                 $renderer = $this->modx->getOption('renderer', $column, '');
                 $renderoptions = $this->modx->getOption('renderoptions', $column, '');
                 $renderchunktpl = $this->modx->getOption('renderchunktpl', $column, '');
-                $options = $this->modx->fromJson($column['renderoptions']);
+                $options = $this->modx->fromJson($renderoptions);
 
                 if ($getdefaultclickaction && !empty($column['clickaction'])) {
                     $option = array();
@@ -1796,6 +1796,8 @@ class Migx {
 
 
     public function prepareJoins($classname, $joins, &$c) {
+      
+        
         if (is_array($joins)) {
             foreach ($joins as $join) {
                 $jalias = $this->modx->getOption('alias', $join, '');
@@ -1804,7 +1806,7 @@ class Migx {
                 $selectfields = $this->modx->getOption('selectfields', $join, '');
                 $on = $this->modx->getOption('on', $join, null);
                 if (!empty($jalias)) {
-                    if (empty($joinclass) && $fkMeta = $this->modx->getFKDefinition($classname, $jalias)) {
+                    if (empty($joinclass) && $fkMeta = $c->xpdo->getFKDefinition($classname, $jalias)) {
                         $joinclass = $fkMeta['class'];
                     }
                     if (!empty($joinclass)) {
@@ -1815,19 +1817,15 @@ class Migx {
                         */
                         $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
                         switch ($type) {
+                            case 'left':
+                                $c->leftjoin($joinclass, $jalias, $on);
+                                break;
                             case 'right':
                                 $c->rightjoin($joinclass, $jalias, $on);
                                 break;
-                            case 'inner':
-                                $c->innerjoin($joinclass, $jalias, $on);
-                                break; 
-                            case 'left':
-                            default:
-                                $c->leftjoin($joinclass, $jalias, $on);
-                                break;                                                               
                         }
-
-                        $c->select($this->modx->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
+                        
+                        $c->select($c->xpdo->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
                     }
                 }
             }

@@ -1,3 +1,4 @@
+<?php
 /**
  * getImageList
  *
@@ -185,7 +186,9 @@ if ($count > 0) {
     //limit items
     $tempitems = array();
     for ($i = 0; $i < $limit; $i++) {
-        $tempitems[] = $items[$i];
+        if(!is_null($items[$i]))
+            $tempitems[] = $items[$i];
+        }
     }
     $items = $tempitems;
 

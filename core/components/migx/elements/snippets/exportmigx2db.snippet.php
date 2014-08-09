@@ -1,3 +1,4 @@
+<?php
 /**
  * exportMIGX2db
  *

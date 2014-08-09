@@ -1,3 +1,4 @@
+<?php
 $value = $modx->getOption('value',$scriptProperties,'');
 $prefix = $modx->getOption('prefix',$scriptProperties,'');
 

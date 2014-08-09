@@ -1,3 +1,4 @@
+<?php
 $id = $modx->getOption('id', $scriptProperties, $modx->resource->get('id'));
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, '');
 $element = $modx->getOption('element', $scriptProperties, 'getResources');

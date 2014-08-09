@@ -1,3 +1,4 @@
+<?php
 if (!is_array($subject)) {
     $subject = explode(',',str_replace(array('||',' '),array(',',''),$subject));
 }

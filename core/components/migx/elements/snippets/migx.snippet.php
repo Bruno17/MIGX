@@ -1,3 +1,4 @@
+<?php
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '0');

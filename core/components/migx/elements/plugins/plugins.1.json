@@ -16,6 +16,35 @@
     "moduleguid":"",
     "static":false,
     "static_file":"",
+    "plugin_events":[
+      {
+        "pluginid":"MIGX",
+        "event":"OnDocFormPrerender",
+        "priority":0,
+        "propertyset":0,
+        "name":"OnDocFormPrerender",
+        "service":1,
+        "groupname":"Resources"
+      },
+      {
+        "pluginid":"MIGX",
+        "event":"OnTVInputPropertiesList",
+        "priority":0,
+        "propertyset":0,
+        "name":"OnTVInputPropertiesList",
+        "service":1,
+        "groupname":"Template Variables"
+      },
+      {
+        "pluginid":"MIGX",
+        "event":"OnTVInputRenderList",
+        "priority":0,
+        "propertyset":0,
+        "name":"OnTVInputRenderList",
+        "service":1,
+        "groupname":"Template Variables"
+      }
+    ],
     "filename":"migx.plugin.php",
     "category_name":"MIGX"
   },
@@ -36,6 +65,17 @@
     "moduleguid":"",
     "static":false,
     "static_file":"",
+    "plugin_events":[
+      {
+        "pluginid":"MIGXquip",
+        "event":"OnDocFormPrerender",
+        "priority":0,
+        "propertyset":0,
+        "name":"OnDocFormPrerender",
+        "service":1,
+        "groupname":"Resources"
+      }
+    ],
     "filename":"migxquip.plugin.php",
     "category_name":"MIGX"
   }

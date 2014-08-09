@@ -1,5 +1,11 @@
 Changelog for MIGX.
 
+MIGX 2.8.1
+==============
+lets disable the 'Add Item' - button
+new configs gridperpage and sortconfig
+wrapperTpl for getImageList and migxLoopCollection
+
 MIGX 2.8.0
 ==============
 resolve tables on install

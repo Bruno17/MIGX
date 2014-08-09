@@ -1,3 +1,4 @@
+<?php
 $scriptProperties = $_REQUEST;
 $col = '';
 // special actions, for example the showSelector - action

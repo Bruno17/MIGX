@@ -1,3 +1,4 @@
+<?php
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
 $wrapperTpl = $modx->getOption('wrapperTpl', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '0');
@@ -19,9 +20,14 @@ $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
 $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'id');
 $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
 $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
-$prefix = isset($scriptProperties['prefix']) ? $scriptProperties['prefix'] : null;
+$prefix = isset($scriptProperties['prefix']) ? $scriptProperties['prefix'] : '';
+$usecustomprefix = $modx->getOption('useCustomPrefix',$scriptProperties,'');
 
-$packageName = $modx->getOption('packageName', $scriptProperties, ''); 
+if (empty($prefix)){
+    $prefix = !empty($usecustomprefix) ? $prefix : null;
+}
+
+$packageName = $modx->getOption('packageName', $scriptProperties, '');
 $joins = $modx->getOption('joins', $scriptProperties, '');
 $joins = !empty($joins) ? $modx->fromJson($joins) : false;
 
@@ -36,7 +42,21 @@ $debug = $modx->getOption('debug', $scriptProperties, false);
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
 
-$modx->addPackage($packageName, $modelpath, $prefix);
+if (file_exists($packagepath . 'config/config.inc.php')) {
+    include ($packagepath . 'config/config.inc.php');
+    $charset = '';
+    if (!empty($database_connection_charset)) {
+        $charset = ';charset=' . $database_connection_charset;
+    }
+    $dsn = $database_type . ':host=' . $database_server . ';dbname=' . $dbase . $charset;
+    $xpdo = new xPDO($dsn, $database_user, $database_password);
+    //echo $o=($xpdo->connect()) ? 'Connected' : 'Not Connected';
+
+} else {
+    $xpdo = &$modx;
+}
+
+$xpdo->addPackage($packageName, $modelpath, $prefix);
 $classname = $scriptProperties['classname'];
 
 $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
@@ -56,14 +76,20 @@ foreach ($scriptProperties as $property => $value) {
 
 $idx = 0;
 $output = array();
-$c = $modx->newQuery($classname);
-$c->select($modx->getSelectColumns($classname, $classname, '', $selectfields));
+$c = $xpdo->newQuery($classname);
+$c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
 
 if ($joins) {
     $migx->prepareJoins($classname, $joins, $c);
 }
 
 if (!empty($where)) {
+    foreach ($where as $key => $value) {
+        if (strstr($key, 'MONTH') || strstr($key, 'YEAR') || strstr($key, 'DATE')) {
+            $c->where($key . " = " . $value, xPDOQuery::SQL_AND);
+            unset($where[$key]);
+        }
+    }
     $c->where($where);
 }
 
@@ -79,7 +105,7 @@ if (!empty($groupby)) {
 }
 
 //set "total" placeholder for getPage
-$total = $modx->getCount($classname, $c);
+$total = $xpdo->getCount($classname, $c);
 $modx->setPlaceholder($totalVar, $total);
 
 if (is_array($sortConfig)) {
@@ -94,26 +120,29 @@ if (is_array($sortConfig)) {
 if (!empty($limit)) {
     $c->limit($limit, $offset);
 }
-
-if ($debug){
-  $c->prepare();echo $c->toSql();
+$c->prepare();
+if ($debug) {
+    echo $c->toSql();
 }
 
 $template = array();
 
-if ($collection = $modx->getCollection($classname, $c)) {
-    foreach ($collection as $object) {
-        $fields = $object->toArray('', false, true);
-        
-        if (!empty($addfields)){
-            foreach ($addfields as $addfield){
-                $addfield = explode(':',$addfield);
+
+if ($c->stmt->execute()) {
+    if (!$rows = $c->stmt->fetchAll(PDO::FETCH_ASSOC)) {
+        $rows = array();
+    }
+    foreach ($rows as $fields) {
+
+        if (!empty($addfields)) {
+            foreach ($addfields as $addfield) {
+                $addfield = explode(':', $addfield);
                 $addname = $addfield[0];
                 $adddefault = isset($addfield[1]) ? $addfield[1] : '';
-                $fields[$addname] = $adddefault; 
+                $fields[$addname] = $adddefault;
             }
         }
-        
+
         if ($toJsonPlaceholder) {
             $output[] = $fields;
         } else {
