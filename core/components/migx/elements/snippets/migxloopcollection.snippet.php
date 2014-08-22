@@ -42,7 +42,12 @@ $debug = $modx->getOption('debug', $scriptProperties, false);
 $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
 $modelpath = $packagepath . 'model/';
 
-if (file_exists($packagepath . 'config/config.inc.php')) {
+$xpdo_name = $packageName . '_xpdo';
+
+if (isset($modx->$xpdo_name)){
+    //create xpdo-instance for that package only once
+    $xpdo = &$modx->$xpdo_name;
+}elseif (file_exists($packagepath . 'config/config.inc.php')) {
     include ($packagepath . 'config/config.inc.php');
     $charset = '';
     if (!empty($database_connection_charset)) {
@@ -51,6 +56,8 @@ if (file_exists($packagepath . 'config/config.inc.php')) {
     $dsn = $database_type . ':host=' . $database_server . ';dbname=' . $dbase . $charset;
     $xpdo = new xPDO($dsn, $database_user, $database_password);
     //echo $o=($xpdo->connect()) ? 'Connected' : 'Not Connected';
+
+    $modx->$xpdo_name = &$xpdo;
 
 } else {
     $xpdo = &$modx;
@@ -77,6 +84,7 @@ foreach ($scriptProperties as $property => $value) {
 $idx = 0;
 $output = array();
 $c = $xpdo->newQuery($classname);
+
 $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
 
 if ($joins) {

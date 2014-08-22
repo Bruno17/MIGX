@@ -36,7 +36,7 @@ MODx.window.MigxIframe = function(config) {
                 ,value:'{/literal}{$configs}{literal}'
             },{
                 xtype:'hidden'
-                ,name:'action'
+                ,name:'actionx' //fix for firefox - issue with form-action
                 ,value:'mgr/migxdb/process'
             },{
                 xtype:'hidden'

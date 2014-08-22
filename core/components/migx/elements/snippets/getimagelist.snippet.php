@@ -184,11 +184,14 @@ if ($count > 0) {
     }
 
     //limit items
+    $count = count($items);
     $tempitems = array();
+
     for ($i = 0; $i < $limit; $i++) {
-        if(!is_null($items[$i]))
-            $tempitems[] = $items[$i];
+        if ($i >= $count) {
+            break;
         }
+        $tempitems[] = $items[$i];
     }
     $items = $tempitems;
 
@@ -397,7 +400,7 @@ if (!empty($o) && !empty($wrapperTpl)) {
         $chunk->setCacheable(false);
         $chunk->setContent($template[$wrapperTpl]);
         $properties['output'] = $o;
-        $o = $chunk->process($properties);        
+        $o = $chunk->process($properties);
     }
 }
 
