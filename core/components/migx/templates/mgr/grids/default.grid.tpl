@@ -12,7 +12,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     var renderer = null;
     var pageSize = '{/literal}{$customconfigs.gridpagesize}{literal}';
     if (pageSize != ''){
-        config.pageSize=pageSize;    
+        config.pageSize=parseInt(pageSize); 
     }
    
 	for(i = 0; i <  config.columns.length; i++) {
