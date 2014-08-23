@@ -316,6 +316,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         }
         
         var isnew = (action == 'u') ? '0':'1';
+        var isduplicate = (action == 'd') ? '1':'0';
 		
         var win_xtype = 'modx-window-tv-item-update-{/literal}{$tv->id}{literal}';
 		if (this.windows[win_xtype]){
@@ -330,6 +331,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             this.windows[win_xtype].fp.autoLoad.params.record_json=json;
             this.windows[win_xtype].fp.autoLoad.params.autoinc=this.autoinc;
             this.windows[win_xtype].fp.autoLoad.params.isnew=isnew;
+            this.windows[win_xtype].fp.autoLoad.params.isduplicate=isduplicate;
 			this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
 		}
@@ -349,6 +351,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 				itemid : index,
                 autoinc : this.autoinc,
                 isnew : isnew,
+                isduplicate : isduplicate,
                 resource_id : resource_id,
                 object_id: object_id,
                 co_id : co_id,

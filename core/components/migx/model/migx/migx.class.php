@@ -1177,6 +1177,7 @@ class Migx {
                     }
 
                     $fieldname = $this->modx->getOption('field', $field, '');
+                    $useDefaultIfEmpty = $this->modx->getOption('useDefaultIfEmpty', $field, 0);
 
 
                     $fieldid++;
@@ -1265,7 +1266,7 @@ class Migx {
                     $allfield['tv_id'] = $field['tv_id'];
                     $allfield['array_tv_id'] = $field['tv_id'] . '[]';
                     $allfields[] = $allfield;
-                                        
+
                     $field['array_tv_id'] = $field['tv_id'] . '[]';
                     $mediasource = $this->getFieldSource($field, $tv);
                     $tv->setSource($mediasource);
@@ -1278,12 +1279,29 @@ class Migx {
                     }
                     */
 
-                    if ($tv->get('value') == null) {
-                        $v = $tv->get('default_text');
-                        if ($tv->get('type') == 'checkbox' && $tv->get('value') == '') {
-                            $v = '';
+                    $isnew = $this->modx->getOption('isnew', $scriptProperties, 0);
+                    $isduplicate = $this->modx->getOption('isduplicate', $scriptProperties, 0);
+
+                    
+                    if (!empty($useDefaultIfEmpty)) {
+                        //old behaviour minus use now default values for checkboxes, if new record
+                        if ($tv->get('value') == null) {
+                            $v = $tv->get('default_text');
+                            if ($tv->get('type') == 'checkbox' && $tv->get('value') == '') {
+                                if (!empty($isnew) && empty($isduplicate)) {
+                                    $v = $tv->get('default_text');
+                                 } else {
+                                    $v = '';
+                                }
+                            }
+                            $tv->set('value', $v);
                         }
-                        $tv->set('value', $v);
+                    } else {
+                        //set default value, only on new records
+                        if (!empty($isnew) && empty($isduplicate)) {
+                            $v = $tv->get('default_text');
+                            $tv->set('value', $v);
+                        }
                     }
 
 
@@ -1342,7 +1360,7 @@ class Migx {
                             $tv->set('type', 'textarea');
                         }
                     }
-                    
+
                     $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
                     if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
                         $props = $record;
@@ -1351,17 +1369,17 @@ class Migx {
                         unset($tv_array['description']);
                         // don't parse the value - set special placeholder, replace it later
                         $tv_array['value'] = '[+[+value]]';
-                        $tempvalue = $tv->get('value');                           
+                        $tempvalue = $tv->get('value');
                         $props['record_json'] = $this->modx->toJson($props);
                         $props['tv_json'] = $this->modx->toJson($tv_array);
                         $props['field_json'] = $this->modx->toJson($field);
                         // don't parse the rendered formElement - set special placeholder, replace it later
-                        $props['tv_formElement'] = '[+[+tv_formElement]]';  
-                                             
-                        $tv->set('formElement',str_replace(array('[+[+value]]','[+[+tv_formElement]]'),array($tempvalue,$inputForm),$this->renderChunk($desc, $props, false, false)));
+                        $props['tv_formElement'] = '[+[+tv_formElement]]';
+
+                        $tv->set('formElement', str_replace(array('[+[+value]]', '[+[+tv_formElement]]'), array($tempvalue, $inputForm), $this->renderChunk($desc, $props, false, false)));
                         $tv->set('type', 'description_is_code');
                     } else {
-                        
+
 
                         if (empty($inputForm))
                             continue;
@@ -1554,9 +1572,13 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
+                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
+                                ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
+                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
+                                ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);
@@ -1796,8 +1818,8 @@ class Migx {
 
 
     public function prepareJoins($classname, $joins, &$c) {
-      
-        
+
+
         if (is_array($joins)) {
             foreach ($joins as $join) {
                 $jalias = $this->modx->getOption('alias', $join, '');
@@ -1825,12 +1847,12 @@ class Migx {
                                 break;
                             case 'inner':
                                 $c->innerjoin($joinclass, $jalias, $on);
-                                break; 
+                                break;
                             default:
                                 $c->leftjoin($joinclass, $jalias, $on);
-                                break;                                      
+                                break;
                         }
-                        
+
                         $c->select($c->xpdo->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
                     }
                 }

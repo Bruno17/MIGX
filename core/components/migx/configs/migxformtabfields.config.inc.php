@@ -13,7 +13,6 @@ $tabs ='
 {"field":"configs","caption":"Configs","inputTVtype":"textarea","description":"this can be used either for a migx-TV-configname or for input-properties of any TV-type as json-string"},
 {"field":"restrictive_condition","caption":"Restrictive Condition (MODX tags)","inputTVtype":"textarea","description":"An empty result will show this field"},
 {"field":"display","caption":"Display","inputTVtype":"listbox","inputOptionValues":"yes==||no==none"}
-
 ]},
 {"caption":"Mediasources", "fields": [
 {"field":"sourceFrom","caption":"source From","inputTVtype":"listbox","inputOptionValues":"config||tv||migx"},
@@ -21,7 +20,8 @@ $tabs ='
 ]},
 {"caption":"Input Options", "fields": [
 {"field":"inputOptionValues","caption":"Input Option Values"},
-{"field":"default","caption":"Default Value"}
+{"field":"default","caption":"Default Value"},
+{"field":"useDefaultIfEmpty","caption":"Use Default if Empty","inputTVtype":"listbox","inputOptionValues":"no==0||yes==1","description":"for example, when working with real TVs of resources, you would set this to yes, otherwise, the default-value is only used for new items"}
 ]}
 ] 
 ';         
