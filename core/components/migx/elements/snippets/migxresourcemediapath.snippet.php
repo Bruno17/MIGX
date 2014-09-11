@@ -93,16 +93,21 @@ if ($resource = $modx->getObject('modResource', $docid)) {
         $path = str_replace('{alias}', $resource->get('alias'), $path);
         $path = str_replace('{parent}', $resource->get('parent'), $path);
         $path = str_replace('{ultimateparent}', $ultimateParent, $path);
-        if ($template = $resource->getOne('Template')){
+        if ($template = $resource->getOne('Template')) {
             $path = str_replace('{templatename}', $template->get('templatename'), $path);
+        }
+        if ($user = $modx->user) {
+            $path = str_replace('{username}', $modx->user->get('username'), $path);
         }
     }
 
     $fullpath = $modx->getOption('base_path') . $path;
-
+    
     if ($createpath && !file_exists($fullpath)) {
-        if (!@mkdir($fullpath, 0755, true)) {
+        $permissions = $modx->getOption('new_folder_permissions', null, '0755', true);
+        if (!@mkdir($fullpath, $permissions, true)) {
             $modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migxResourceMediaPath]: could not create directory %s).', $fullpath));
+
         }
     }
 
@@ -111,5 +116,3 @@ if ($resource = $modx->getObject('modResource', $docid)) {
     $modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migxResourceMediaPath]: resource not found (page id %s).', $docid));
     return;
 }
-
-/*EOF*/
