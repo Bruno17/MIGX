@@ -255,5 +255,22 @@
     "static_file":"",
     "filename":"migxjsontoplaceholders.snippet.php",
     "category_name":"MIGX"
+  },
+  {
+    "id":185,
+    "source":0,
+    "property_preprocess":false,
+    "name":"migxGetCollectionTree",
+    "description":"",
+    "editor_type":0,
+    "category":0,
+    "cache_type":0,
+    "locked":false,
+    "properties":null,
+    "moduleguid":"",
+    "static":false,
+    "static_file":"",
+    "filename":"migxgetcollectiontree.snippet.php",
+    "category_name":"MIGX"
   }
 ]

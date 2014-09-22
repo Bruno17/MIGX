@@ -1,5 +1,4 @@
 <?php
-
 /*
 getXpdoInstanceAndAddPackage - properties
 
