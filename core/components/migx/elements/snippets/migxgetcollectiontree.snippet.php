@@ -22,7 +22,7 @@
 /**
  * migxGetCollectionTree
  *
- * display nested items from different objects. The tree-schema is defined by a json-property. 
+ *          display nested items from different objects. The tree-schema is defined by a json-property. 
  *
  * @version 1.0.0
  * @author Bruno Perner <b.perner@gmx.de>
@@ -35,6 +35,7 @@
 $treeSchema = $modx->getOption('treeSchema', $scriptProperties, '');
 $treeSchema = $modx->fromJson($treeSchema);
 $scriptProperties['current'] = $modx->getOption('current', $scriptProperties, '');
+$scriptProperties['currentClassname'] = $modx->getOption('currentClassname', $scriptProperties, '');
 $scriptProperties['currentKeyField'] = $modx->getOption('currentKeyField', $scriptProperties, 'id');
 $return = $modx->getOption('return', $scriptProperties, 'parsed'); //parsed,json,arrayprint
 
@@ -45,45 +46,56 @@ Get Resource-Tree, 4 levels deep
 
 [[!migxGetCollectionTree?
 &current=`57`
+&currentClassname=`modResource`
 &treeSchema=`
 {
-"classname":"modResource",
-"debug":"1",
-"tpl":"mgctResourceTree",
-"wrapperTpl":"@CODE:<ul>[[+output]]</ul>",
-"selectfields":"id,pagetitle",
-"where":{"parent":"0","published":"1","deleted":"0"},
-"_branches":[{
-"alias":"children",
-"classname":"modResource",
-"local":"parent",
-"foreign":"id",
-"tpl":"mgctResourceTree",
-"debug":"1",
-"selectfields":"id,pagetitle,parent",
-"_branches":[{
-"alias":"children",
-"classname":"modResource",
-"local":"parent",
-"foreign":"id",
-"tpl":"mgctResourceTree",
-"debug":"1",
-"selectfields":"id,pagetitle,parent",
-"where":{"published":"1","deleted":"0"},
-"_branches":[{
-"alias":"children",
-"classname":"modResource",
-"local":"parent",
-"foreign":"id",
-"tpl":"mgctResourceTree",
-"debug":"1",
-"selectfields":"id,pagetitle,parent",
-"where":{"published":"1","deleted":"0"}
-}]
-}]
-}]
-}`
-]]
+    "classname": "modResource",
+    "debug": "1",
+    "tpl": "mgctResourceTree",
+    "wrapperTpl": "@CODE:<ul>[[+output]]</ul>",
+    "selectfields": "id,pagetitle",
+    "where": {
+        "parent": "0",
+        "published": "1",
+        "deleted": "0"
+    },
+    "_branches": [{
+        "alias": "children",
+        "classname": "modResource",
+        "local": "parent",
+        "foreign": "id",
+        "tpl": "mgctResourceTree",
+        "debug": "1",
+        "selectfields": "id,pagetitle,parent",
+        "_branches": [{
+            "alias": "children",
+            "classname": "modResource",
+            "local": "parent",
+            "foreign": "id",
+            "tpl": "mgctResourceTree",
+            "debug": "1",
+            "selectfields": "id,pagetitle,parent",
+            "where": {
+                "published": "1",
+                "deleted": "0"
+            },
+            "_branches": [{
+                "alias": "children",
+                "classname": "modResource",
+                "local": "parent",
+                "foreign": "id",
+                "tpl": "mgctResourceTree",
+                "debug": "1",
+                "selectfields": "id,pagetitle,parent",
+                "where": {
+                    "published": "1",
+                    "deleted": "0"
+                }
+            }]
+        }]
+    }]
+}
+`]]
 
 the chunk mgctResourceTree:
 <li class="[[+_activelabel]] [[+_currentlabel]]" ><a href="[[~[[+id]]]]">[[+pagetitle]]([[+id]])</a></li>
@@ -96,35 +108,31 @@ get all Templates and its Resources:
 [[!migxGetCollectionTree?
 &treeSchema=`
 {
-"classname":"modTemplate",
-"debug":"1",
-"tpl":"@CODE:<h3>[[+templatename]]</h3><ul>[[+innerrows.resource]]</ul>",
-"selectfields":"id,templatename",
-"_branches":[{
-"alias":"resource",
-"classname":"modResource",
-"local":"template",
-"foreign":"id",
-"tpl":"@CODE:<li>[[+pagetitle]]([[+id]])</li>",
-"debug":"1",
-"selectfields":"id,pagetitle,template"
-
-}]
-}`
-]]
+    "classname": "modTemplate",
+    "debug": "1",
+    "tpl": "@CODE:<h3>[[+templatename]]</h3><ul>[[+innerrows.resource]]</ul>",
+    "selectfields": "id,templatename",
+    "_branches": [{
+        "alias": "resource",
+        "classname": "modResource",
+        "local": "template",
+        "foreign": "id",
+        "tpl": "@CODE:<li>[[+pagetitle]]([[+id]])</li>",
+        "debug": "1",
+        "selectfields": "id,pagetitle,template"
+    }]
+}
+`]]
 */
-
+    
 if (!class_exists('MigxGetCollectionTree')) {
-    class MigxGetCollectionTree
-    {
-        function __construct(modX & $modx, array $config = array())
-        {
+    class MigxGetCollectionTree {
+        function __construct(modX & $modx, array $config = array()) {
             $this->modx = &$modx;
             $this->config = $config;
         }
 
-        function getBranch($branch, $foreigns = array(), $level = 1)
-        {
+        function getBranch($branch, $foreigns = array(), $level = 1) {
             $modx = &$this->modx;
 
             $local = $modx->getOption('local', $branch, '');
@@ -146,14 +154,16 @@ if (!class_exists('MigxGetCollectionTree')) {
             return $rows;
         }
 
-        function getRows($scriptProperties, $level)
-        {
+        function getRows($scriptProperties, $level) {
             $migx = &$this->migx;
             $modx = &$this->modx;
 
             $current = $modx->getOption('current', $this->config, '');
             $currentKeyField = $modx->getOption('currentKeyField', $this->config, 'id');
             $currentlabel = $modx->getOption('currentlabel', $this->config, 'current');
+            $classname = $modx->getOption('classname', $scriptProperties, '');
+            $currentClassname = !empty($this->config['currentClassname']) ? $this->config['currentClassname'] : $classname;  
+            
             $activelabel = $modx->getOption('activelabel', $this->config, 'active');
             $return = $modx->getOption('return', $this->config, 'parsed');
 
@@ -193,7 +203,7 @@ if (!class_exists('MigxGetCollectionTree')) {
                     if ($subrow['_current'] == '1') {
                         //echo 'active subrow:<pre>' . print_r($subrow,1) . '</pre>';
                         $currentsubrow[$subrow[$local]] = true;
-                    }                    
+                    }
 
 
                 }
@@ -211,7 +221,7 @@ if (!class_exists('MigxGetCollectionTree')) {
                         if (isset($currentsubrow[$row[$foreign]]) && $currentsubrow[$row[$foreign]]) {
                             $row['_currentparent'] = '1';
                             //echo 'active row:<pre>' . print_r($row,1) . '</pre>';
-                        }                        
+                        }
 
                         //render innerrows
                         //$output = $migx->renderOutput($collectedSubrows[$row[$foreign]],$scriptProperties);
@@ -249,7 +259,7 @@ if (!class_exists('MigxGetCollectionTree')) {
                 //add additional placeholders
                 $row['_level'] = $level;
                 $row['_active'] = $modx->getOption('_active', $row, '0');
-                if ($row[$currentKeyField] == $current) {
+                if ($currentClassname == $classname && $row[$currentKeyField] == $current) {
                     $row['_current'] = '1';
                     $row['_currentlabel'] = $currentlabel;
                     $row['_active'] = '1';
@@ -268,8 +278,7 @@ if (!class_exists('MigxGetCollectionTree')) {
             return $rows;
         }
 
-        function renderRow($row, $levelFromCurrent = 0)
-        {
+        function renderRow($row, $levelFromCurrent = 0) {
             $migx = &$this->migx;
             $modx = &$this->modx;
             $return = $modx->getOption('return', $this->config, 'parsed');
@@ -277,11 +286,11 @@ if (!class_exists('MigxGetCollectionTree')) {
             $current = $modx->getOption('_current', $row, '0');
             $currentparent = $modx->getOption('_currentparent', $row, '0');
             $levelFromCurrent = $current == '1' ? 1 : $levelFromCurrent;
-            $row['_levelFromCurrent'] = $levelFromCurrent;            
+            $row['_levelFromCurrent'] = $levelFromCurrent;
             foreach ($branchProperties as $alias => $properties) {
                 $innerrows = $modx->getOption('innerrows.' . $alias, $row, array());
                 $subrows = $this->renderRows($innerrows, $properties, $levelFromCurrent, $currentparent);
-                if ($return == 'parsed'){
+                if ($return == 'parsed') {
                     $subrows = $migx->renderOutput($subrows, $properties);
                 }
                 $row['innerrows.' . $alias] = $subrows;
@@ -290,9 +299,8 @@ if (!class_exists('MigxGetCollectionTree')) {
             return $row;
         }
 
-        function renderRows($rows, $scriptProperties, $levelFromCurrent = 0, $siblingOfCurrent = '0')
-        {
-            
+        function renderRows($rows, $scriptProperties, $levelFromCurrent = 0, $siblingOfCurrent = '0') {
+
             $modx = &$this->modx;
             $temprows = $rows;
             $rows = array();
@@ -301,7 +309,7 @@ if (!class_exists('MigxGetCollectionTree')) {
             }
             foreach ($temprows as $row) {
                 $row['_siblingOfCurrent'] = $siblingOfCurrent;
-                $row = $this->renderRow($row,$levelFromCurrent);
+                $row = $this->renderRow($row, $levelFromCurrent);
                 $rows[] = $row;
             }
             return $rows;
@@ -331,11 +339,11 @@ if (is_array($treeSchema)) {
     $row['_scriptProperties']['row'] = $scriptProperties;
 
     $rows = $instance->renderRow($row);
-    
+
     $output = '';
     switch ($return) {
         case 'parsed':
-            $output = $modx->getOption('innerrows.row',$rows,'');
+            $output = $modx->getOption('innerrows.row', $rows, '');
             break;
         case 'json':
             $output = $modx->toJson($rows);
