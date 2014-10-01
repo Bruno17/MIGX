@@ -9,15 +9,28 @@ $idfield = $config['gridfilters'][$scriptProperties['searchname']]['comboidfield
 $idfield = empty($idfield) ? $textfield : $idfield;
 
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
-if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])){
-    $prefix = isset($config['prefix']) ? $config['prefix'] : '';  
+if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
+    $prefix = isset($config['prefix']) ? $config['prefix'] : '';
 }
-$packageName = $config['packageName'];
 
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
-$modelpath = $packagepath . 'model/';
-if (is_dir($modelpath)){
-    $modx->addPackage($packageName, $modelpath, $prefix);
+if (!empty($config['packageName'])) {
+    $packageNames = explode(',', $config['packageName']);
+
+    if (count($packageNames) == '1') {
+        //for now connecting also to foreign databases, only with one package by default possible
+        $xpdo = $modx->migx->getXpdoInstanceAndAddPackage($config);
+    } else {
+        //all packages must have the same prefix for now!
+        foreach ($packageNames as $packageName) {
+            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $modelpath = $packagepath . 'model/';
+            if (is_dir($modelpath)) {
+                $modx->addPackage($packageName, $modelpath, $prefix);
+            }
+
+        }
+        $xpdo = &$modx;
+    }
 }
 $classname = $config['classname'];
 $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
@@ -29,7 +42,7 @@ if ($this->modx->lexicon) {
 $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
 
 if (!empty($joinalias)) {
-    if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
+    if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
     } else {
         $joinalias = '';
@@ -44,7 +57,7 @@ $limit = $modx->getOption('limit', $scriptProperties, 20);
 $mode = $modx->getOption('searchname', $scriptProperties, 'year');
 $context = $modx->getOption('context', $scriptProperties, 'alle');
 
-$c = $modx->newQuery($classname);
+$c = $xpdo->newQuery($classname);
 //$count = $modx->getCount($classname,$c);
 
 $execute = true;

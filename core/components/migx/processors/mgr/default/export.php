@@ -4,7 +4,8 @@
  * Generatting CSV formatted string from an array.
  * By Sergey Gurevich.
  */
-function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n", $qut = '"') {
+function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n", $qut = '"')
+{
     if (!is_array($array) or !is_array($array[0]))
         return false;
 
@@ -40,23 +41,28 @@ if (!($scriptProperties['download'])) {
     if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
         $prefix = isset($config['prefix']) ? $config['prefix'] : '';
     }
-    $packageName = $config['packageName'];
-    $classname = $config['classname'];
-    $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
 
     if (!empty($config['packageName'])) {
         $packageNames = explode(',', $config['packageName']);
-        //all packages must have the same prefix for now!
-        foreach ($packageNames as $packageName) {
-            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
-            $modelpath = $packagepath . 'model/';
-            if (is_dir($modelpath)) {
-                $modx->addPackage($packageName, $modelpath, $prefix);
-            }
 
+        if (count($packageNames) == '1') {
+            //for now connecting also to foreign databases, only with one package by default possible
+            $xpdo = $modx->migx->getXpdoInstanceAndAddPackage($config);
+        } else {
+            //all packages must have the same prefix for now!
+            foreach ($packageNames as $packageName) {
+                $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+                $modelpath = $packagepath . 'model/';
+                if (is_dir($modelpath)) {
+                    $modx->addPackage($packageName, $modelpath, $prefix);
+                }
+
+            }
+            $xpdo = &$modx;
         }
     }
-
+    $classname = $config['classname'];
+    $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
     $checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
 
     if ($this->modx->lexicon) {
@@ -69,8 +75,8 @@ if (!($scriptProperties['download'])) {
     $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
     $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 
-    $c = $modx->newQuery($classname);
-    $c->select($modx->getSelectColumns($classname, $classname));
+    $c = $xpdo->newQuery($classname);
+    $c->select($xpdo->getSelectColumns($classname, $classname));
 
     if ($joins) {
         $modx->migx->prepareJoins($classname, $joins, $c);
@@ -111,7 +117,7 @@ if (!($scriptProperties['download'])) {
     //$c->prepare();
     //adie ($c->toSql());
 
-    $collection = $modx->getCollection($classname, $c);
+    $collection = $xpdo->getCollection($classname, $c);
 
     $collectfieldnames = false;
     if (isset($config['exportfields']) && !empty($config['exportfields'])) {
@@ -120,15 +126,15 @@ if (!($scriptProperties['download'])) {
         $collectfieldnames = true;
     }
 
-    
-    $excludeFields = $modx->getOption('excludeFields',$config);
+
+    $excludeFields = $modx->getOption('excludeFields', $config);
     $excludeFields = explode(',', $excludeFields);
 
     $rows = array();
     $i = 0;
     foreach ($collection as $row) {
         $tempRow = $row->toArray();
-        
+
         foreach ($tempRow as $tempfield => $tempvalue) {
             //get fieldnames from first record
 
@@ -148,35 +154,34 @@ if (!($scriptProperties['download'])) {
                 }
                 unset($tempRow[$tempfield]);
                 unset($exportFields[$tempfield]);
-                
+
             }
 
-            
+
             if (in_array($tempfield, $excludeFields)) {
                 unset($exportFields[$tempfield]);
                 unset($tempRow[$tempfield]);
             }
-            
+
             //print_r($tempRow);
 
 
         }
-        
-        
+
 
         /*
         $newRow = array();
 
         foreach ($exportFields as $key => $exportKey) {
-            if (isset($tempRow[$key])) {
-                $newRow[$exportKey] = $tempRow[$key];
-            }
+        if (isset($tempRow[$key])) {
+        $newRow[$exportKey] = $tempRow[$key];
+        }
         }
         */
         $rows[] = $tempRow;
         $i++;
     }
-    
+
     $temprows = $rows;
     $rows = array();
     foreach ($temprows as $row) {

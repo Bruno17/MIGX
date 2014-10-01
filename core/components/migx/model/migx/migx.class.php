@@ -151,13 +151,13 @@ class Migx {
 
         $where = $modx->getOption('where', $scriptProperties, array());
         $where = !empty($where) && !is_array($where) ? $modx->fromJSON($where) : $where;
-        $queries = $modx->getOption('queries', $scriptProperties, '');
-        $queries = !empty($queries) ? $modx->fromJSON($queries) : array();
-        $sortConfig = $modx->getOption('sortConfig', $scriptProperties, '');
-        $sortConfig = !empty($sortConfig) ? $modx->fromJSON($sortConfig) : array();
-        $joins = $modx->getOption('joins', $scriptProperties, '');
-        $joins = !empty($joins) ? $modx->fromJson($joins) : false;
-
+        $queries = $modx->getOption('queries', $scriptProperties, array());
+        $queries = !empty($queries) && !is_array($queries) ? $modx->fromJSON($queries) : $queries;
+        $sortConfig = $modx->getOption('sortConfig', $scriptProperties, array());
+        $sortConfig = !empty($sortConfig) && !is_array($sortConfig) ? $modx->fromJSON($sortConfig) : $sortConfig;
+        $joins = $modx->getOption('joins', $scriptProperties, array());
+        $joins = !empty($joins) && !is_array($joins) ? $modx->fromJSON($joins) : $joins;
+        
         $selectfields = $modx->getOption('selectfields', $scriptProperties, '');
         $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
         $classname = $scriptProperties['classname'];
@@ -169,7 +169,7 @@ class Migx {
 
         $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
 
-        if ($joins) {
+        if (is_array($joins) && count($joins)>0) {
             $this->prepareJoins($classname, $joins, $c);
         }
 
@@ -2101,7 +2101,6 @@ class Migx {
 
 
     public function prepareJoins($classname, $joins, &$c) {
-
 
         if (is_array($joins)) {
             foreach ($joins as $join) {

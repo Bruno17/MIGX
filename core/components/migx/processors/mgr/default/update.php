@@ -37,22 +37,33 @@ if (empty($scriptProperties['object_id'])) {
     $errormsg = $modx->lexicon('quip.thread_err_ns');
     return;
 }
-
+$errormsg = '';
 $config = $modx->migx->customconfigs;
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
-$errormsg = '';
-
 if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
     $prefix = isset($config['prefix']) ? $config['prefix'] : '';
 }
-$packageName = $config['packageName'];
 
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
-$modelpath = $packagepath . 'model/';
-$is_container = $modx->getOption('is_container', $config, false);
-if (is_dir($modelpath)) {
-    $modx->addPackage($packageName, $modelpath, $prefix);
+if (!empty($config['packageName'])) {
+    $packageNames = explode(',', $config['packageName']);
+
+    if (count($packageNames) == '1') {
+        //for now connecting also to foreign databases, only with one package by default possible
+        $xpdo = $modx->migx->getXpdoInstanceAndAddPackage($config);
+    } else {
+        //all packages must have the same prefix for now!
+        foreach ($packageNames as $packageName) {
+            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $modelpath = $packagepath . 'model/';
+            if (is_dir($modelpath)) {
+                $modx->addPackage($packageName, $modelpath, $prefix);
+            }
+
+        }
+        $xpdo = &$modx;
+    }
 }
+
 $classname = $config['classname'];
 
 $auto_create_tables = isset($config['auto_create_tables']) ? $config['auto_create_tables'] : true;
@@ -78,7 +89,7 @@ $has_jointable = false;
 
 if (!empty($joinalias)) {
     $has_jointable = isset($config['has_jointable']) && $config['has_jointable'] == 'no' ? false : true;
-    if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
+    if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
         if ($checkConnected && $fkMeta['owner'] == 'foreign') {
             $scriptProperties[$fkMeta['local']] = $resource_id;
@@ -94,7 +105,7 @@ $task = $modx->getOption('task', $scriptProperties, 'update');
 
 switch ($task) {
     case 'publish':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
         $object->set('publishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '1');
         $unpub = $object->get('unpub_date');
@@ -103,7 +114,7 @@ switch ($task) {
         }
         break;
     case 'unpublish':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
         $object->set('unpublishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '0');
         $object->set('unpublishedby', $modx->user->get('id')); //feld fehlt noch
@@ -113,13 +124,13 @@ switch ($task) {
         }
         break;
     case 'delete':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
         $object->set('deletedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('deleted', '1');
         $object->set('deletedby', $modx->user->get('id'));
         break;
     case 'recall':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
         $object->set('deleted', '0');
         break;
     default:
@@ -200,13 +211,13 @@ switch ($task) {
         }
 
         if ($scriptProperties['object_id'] == 'new') {
-            $object = $modx->newObject($classname);
+            $object = $xpdo->newObject($classname);
             $tempvalues['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
             $postvalues['createdby'] = $modx->user->get('id');
             //handle published
             $postvalues['published'] = isset($postvalues['published']) ? $postvalues['published'] : '1';
         } else {
-            $object = $modx->getObject($classname, $scriptProperties['object_id']);
+            $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
             if (empty($object))
                 return $modx->error->failure($modx->lexicon('quip.thread_err_nf'));
             $postvalues['editedon'] = strftime('%Y-%m-%d %H:%M:%S');
@@ -214,8 +225,7 @@ switch ($task) {
             $tempvalues['createdon'] = $object->get('createdon');
             $tempvalues['publishedon'] = $object->get('publishedon');
         }
-
-
+        
         if (isset($postvalues['published']) && $postvalues['published'] == '1') {
             $pub = $object->get('published');
             if (empty($pub)) {
@@ -271,13 +281,13 @@ if ($has_jointable && !empty($joinalias)) {
 
     //handle join-table
     //todo make it more flexible, not only for resource-connections with joinalias 'Resource'
-    if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')) {
+    if ($joinFkMeta = $xpdo->getFKDefinition($joinclass, 'Resource')) {
         $localkey = $joinFkMeta['local'];
 
-        if ($joinobject = $modx->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $object->get('id')))) {
+        if ($joinobject = $xpdo->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $object->get('id')))) {
             $joinobject->fromArray($joinvalues);
         } else {
-            $joinobject = $modx->newObject($joinclass);
+            $joinobject = $xpdo->newObject($joinclass);
             $joinobject->fromArray($joinvalues);
             $joinobject->set('active', '1');
             $joinobject->set('resource_id', $scriptProperties['resource_id']);

@@ -10,15 +10,30 @@ $config = $modx->migx->customconfigs;
 $modx->setOption(xPDO::OPT_AUTO_CREATE_TABLES, $config['auto_create_tables']);
 
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
-if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])){
-    $prefix = isset($config['prefix']) ? $config['prefix'] : '';  
+if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
+    $prefix = isset($config['prefix']) ? $config['prefix'] : '';
 }
-$packageName = $config['packageName'];
 
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
-$modelpath = $packagepath . 'model/';
+if (!empty($config['packageName'])) {
+    $packageNames = explode(',', $config['packageName']);
 
-$modx->addPackage($packageName, $modelpath, $prefix);
+    if (count($packageNames) == '1') {
+        //for now connecting also to foreign databases, only with one package by default possible
+        $xpdo = $modx->migx->getXpdoInstanceAndAddPackage($config);
+    } else {
+        //all packages must have the same prefix for now!
+        foreach ($packageNames as $packageName) {
+            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $modelpath = $packagepath . 'model/';
+            if (is_dir($modelpath)) {
+                $modx->addPackage($packageName, $modelpath, $prefix);
+            }
+
+        }
+        $xpdo = &$modx;
+    }
+}
+
 $classname = $config['classname'];
 
 $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
@@ -29,23 +44,23 @@ if ($modx->lexicon) {
 }
 
 if (!empty($joinalias)) {
-    if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
+    if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
         $joinvalues = array();
     } else {
         $joinalias = '';
     }
-    if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')) {
+    if ($joinFkMeta = $xpdo->getFKDefinition($joinclass, 'Resource')) {
         $localkey = $joinFkMeta['local'];
     }
 }
 
 switch ($scriptProperties['task']) {
     case 'activate':
-        if ($joinobject = $modx->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $scriptProperties['object_id']))) {
+        if ($joinobject = $xpdo->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $scriptProperties['object_id']))) {
             $joinobject->set('active', '1');
         } else {
-            $joinobject = $modx->newObject($joinclass);
+            $joinobject = $xpdo->newObject($joinclass);
             $joinobject->set('active', '1');
             $joinobject->set('resource_id', $scriptProperties['resource_id']);
             $joinobject->set($localkey, $scriptProperties['object_id']);
@@ -53,7 +68,7 @@ switch ($scriptProperties['task']) {
         $joinobject->save();
         break;
     case 'deactivate':
-        if ($joinobject = $modx->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $scriptProperties['object_id']))) {
+        if ($joinobject = $xpdo->getObject($joinclass, array('resource_id' => $scriptProperties['resource_id'], $localkey => $scriptProperties['object_id']))) {
             $joinobject->set('active', '0');
             $joinobject->save();
         }    

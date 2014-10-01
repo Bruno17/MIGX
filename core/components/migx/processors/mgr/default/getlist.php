@@ -9,29 +9,34 @@ if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix']))
     $prefix = isset($config['prefix']) ? $config['prefix'] : '';
 }
 
-$checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
-
 if (!empty($config['packageName'])) {
     $packageNames = explode(',', $config['packageName']);
-    //all packages must have the same prefix for now!
-    foreach ($packageNames as $packageName) {
-        $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
-        $modelpath = $packagepath . 'model/';
-        if (is_dir($modelpath)){
-            $modx->addPackage($packageName, $modelpath, $prefix);
-        } 
-        
+
+    if (count($packageNames) == '1') {
+        //for now connecting also to foreign databases, only with one package by default possible
+        $xpdo = $modx->migx->getXpdoInstanceAndAddPackage($config);
+    } else {
+        //all packages must have the same prefix for now!
+        foreach ($packageNames as $packageName) {
+            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $modelpath = $packagepath . 'model/';
+            if (is_dir($modelpath)) {
+                $modx->addPackage($packageName, $modelpath, $prefix);
+            }
+
+        }
+        $xpdo = &$modx;
     }
 }
 
 $classname = $config['classname'];
-
+$checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
 $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
 
 $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
 
 if (!empty($joinalias)) {
-    if ($fkMeta = $modx->getFKDefinition($classname, $joinalias)) {
+    if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
         $joinfield = $fkMeta[$fkMeta['owner']];
     } else {
@@ -58,11 +63,11 @@ $object_id = $modx->getOption('object_id', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
 $resource_id = !empty($object_id) ? $object_id : $resource_id;
 
-$sortConfig = $modx->getOption('sortconfig',$config,'');
+$sortConfig = $modx->getOption('sortconfig', $config, '');
 
 if (!empty($sortConfig)) {
     $sort = '';
-    if (!is_array($sortConfig)){
+    if (!is_array($sortConfig)) {
         $sortConfig = $modx->fromJson($sortConfig);
     }
 }
@@ -70,8 +75,8 @@ if (!empty($sortConfig)) {
 $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
 $where = $modx->getOption('where', $scriptProperties, $where);
 
-$c = $modx->newQuery($classname);
-$c->select($modx->getSelectColumns($classname, $classname));
+$c = $xpdo->newQuery($classname);
+$c->select($xpdo->getSelectColumns($classname, $classname));
 
 if (!empty($joinalias)) {
     /*
@@ -80,7 +85,7 @@ if (!empty($joinalias)) {
     }    
     */
     $c->leftjoin($joinclass, $joinalias);
-    $c->select($modx->getSelectColumns($joinclass, $joinalias, 'Joined_'));
+    $c->select($xpdo->getSelectColumns($joinclass, $joinalias, 'Joined_'));
 }
 
 if ($joins) {
@@ -102,9 +107,9 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
         if (!empty($filter['getlistwhere'])) {
 
             $requestvalue = $modx->getOption($filter['name'], $scriptProperties, 'all');
-            
+
             if (isset($scriptProperties[$filter['name']]) && $requestvalue != 'all') {
-                
+
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
                 $chunk->setContent($filter['getlistwhere']);
@@ -138,7 +143,7 @@ if (!empty($where)) {
     $c->where($modx->fromJson($where));
 }
 
-$count = $modx->getCount($classname, $c);
+$count = $xpdo->getCount($classname, $c);
 
 if (empty($sort)) {
     if (is_array($sortConfig)) {
@@ -159,8 +164,8 @@ if ($isCombo || $isLimit) {
 //$c->sortby($sort,$dir);
 //$c->prepare();echo $c->toSql();
 $rows = array();
-if ($collection = $modx->getCollection($classname, $c)) {
-    $pk = $modx->getPK($classname);
+if ($collection = $xpdo->getCollection($classname, $c)) {
+    $pk = $xpdo->getPK($classname);
     foreach ($collection as $object) {
         $row = $object->toArray();
         $row['id'] = !isset($row['id']) ? $row[$pk] : $row['id'];
