@@ -2,7 +2,7 @@
 /**
  * getImageList
  *
- * Copyright 2009-2011 by Bruno Perner <b.perner@gmx.de>
+ * Copyright 2009-2014 by Bruno Perner <b.perner@gmx.de>
  *
  * getImageList is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,7 +26,7 @@
  *
  * @version 1.4
  * @author Bruno Perner <b.perner@gmx.de>
- * @copyright Copyright &copy; 2009-2011
+ * @copyright Copyright &copy; 2009-2014
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License
  * version 2 or (at your option) any later version.
  * @package migx
@@ -139,7 +139,6 @@ if (empty($outputvalue)) {
 
 //echo $outputvalue.'<br/><br/>';
 
-
 $items = $modx->fromJSON($outputvalue);
 
 // where filter
@@ -148,11 +147,9 @@ if (is_array($where) && count($where) > 0) {
 }
 $modx->setPlaceholder($totalVar, count($items));
 
-
 if (!empty($reverse)) {
     $items = array_reverse($items);
 }
-
 
 // sort items
 if (is_array($sort) && count($sort) > 0) {
@@ -161,11 +158,10 @@ if (is_array($sort) && count($sort) > 0) {
 
 $summaries = array();
 $output = '';
+$items = $offset > 0 ? array_slice($items, $offset) : $items;
 $count = count($items);
 
 if ($count > 0) {
-    $items = $offset > 0 ? array_slice($items, $offset) : $items;
-
     $limit = $limit == 0 || $limit > $count ? $count : $limit;
     $preselectLimit = $preselectLimit > $count ? $count : $preselectLimit;
     //preselect important items

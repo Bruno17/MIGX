@@ -120,6 +120,9 @@ class Migx {
                 $xpdo = &$this->modx->$xpdo_name;
             } elseif (file_exists($packagepath . 'config/config.inc.php')) {
                 include ($packagepath . 'config/config.inc.php');
+                if (is_null($prefix) && isset($table_prefix)){
+                    $prefix = $table_prefix;
+                }                
                 $charset = '';
                 if (!empty($database_connection_charset)) {
                     $charset = ';charset=' . $database_connection_charset;
@@ -455,10 +458,15 @@ class Migx {
 
     function checkMultipleForms($formtabs, &$controller, &$allfields, &$record) {
         $multiple_formtabs = $this->modx->getOption('multiple_formtabs', $this->customconfigs, '');
+        $multiple_formtabs_label = $this->modx->getOption('multiple_formtabs_label', $this->customconfigs, 'Formname');
+        $multiple_formtabs_field = $this->modx->getOption('multiple_formtabs_field', $this->customconfigs, 'MIGX_formname');
+        
+        $controller->setPlaceholder('multiple_formtabs_label', $multiple_formtabs_label);
+        
         if (!empty($multiple_formtabs)) {
             if (isset($_REQUEST['loadaction']) && $_REQUEST['loadaction'] == 'switchForm') {
                 $data = $this->modx->fromJson($this->modx->getOption('record_json', $_REQUEST, ''));
-                if (is_array($data) && isset($data['MIGX_formname'])) {
+                if (is_array($data) && isset($data[$multiple_formtabs_field])) {
                     $record = array_merge($record, $data);
                 }
             }
@@ -472,14 +480,20 @@ class Migx {
                 $idx = 0;
                 $formtabs = false;
                 foreach ($collection as $object) {
+                    
+                    $ext = $object->get('extended');
+                    
+                    $text =  $this->modx->getOption('multiple_formtabs_optionstext',$ext,'');
+                    $value =  $this->modx->getOption('multiple_formtabs_optionsvalue',$ext,'');
+                                        
                     $formname = array();
-                    $formname['value'] = $object->get('name');
-                    $formname['text'] = $object->get('name');
+                    $formname['value'] = !empty($value) ? $value : $object->get('name');
+                    $formname['text'] = !empty($text) ? $text : $object->get('name');
                     $formname['selected'] = 0;
                     if ($idx == 0) {
                         $firstformtabs = $this->modx->fromJson($object->get('formtabs'));
                     }
-                    if (isset($record['MIGX_formname']) && $record['MIGX_formname'] == $object->get('name')) {
+                    if (isset($record[$multiple_formtabs_field]) && $record[$multiple_formtabs_field] == $formname['value']) {
                         $formname['selected'] = 1;
                         $formtabs = $this->modx->fromJson($object->get('formtabs'));
                     }
@@ -497,7 +511,7 @@ class Migx {
                 $controller->setPlaceholder('formnames', $formnames);
 
                 $field = array();
-                $field['field'] = 'MIGX_formname';
+                $field['field'] = $multiple_formtabs_field;
                 $field['tv_id'] = 'Formname';
                 $allfields[] = $field;
             }

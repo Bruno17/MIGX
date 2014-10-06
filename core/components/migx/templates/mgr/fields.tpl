@@ -21,7 +21,7 @@
 {if $smarty.foreach.cat.first}
     <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tvFormname-tr">
         <label for="tvFormname" class="modx-tv-label">
-            <span class="modx-tv-caption" id="tvFormname-caption">Formname</span>
+            <span class="modx-tv-caption" id="tvFormname-caption">{$multiple_formtabs_label}</span>
             <span class="modx-tv-reset" ></span> 
             {if $tv->descriptionX}<span class="modx-tv-description">{$tv->descriptionX}</span>{/if}
         </label>

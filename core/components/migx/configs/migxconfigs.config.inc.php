@@ -100,7 +100,11 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 ]},
 {"caption":"formtabs", "fields": [
     {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"},
-    {"field":"extended.multiple_formtabs","caption":"Multiple Formtabs","inputTVtype":"listbox-multiple","inputOptionValues":"' . implode('||', $mf_options) . '"}
+    {"field":"extended.multiple_formtabs","caption":"Multiple Formtabs","inputTVtype":"listbox-multiple","inputOptionValues":"' . implode('||', $mf_options) . '"},
+    {"field":"extended.multiple_formtabs_label","caption":"Multiple Formtabs Label","description":"Label for formtabs-selectbox"},
+    {"field":"extended.multiple_formtabs_field","caption":"Multiple Formtabs Field","description":"Fieldname for this value. Default:MIGX_formname"}, 
+    {"field":"extended.multiple_formtabs_optionstext","caption":"Multiple Formtabs Optionstext","description":"Text in formtabs-selectbox for this config"},
+    {"field":"extended.multiple_formtabs_optionsvalue","caption":"Multiple Formtabs Optionsvalue","description":"Value in formtabs-selectbox for this config. Default is the name of this config."}        
 ]},
 {"caption":"Columns", "fields": [
     {"field":"columns","caption":"Columns","inputTVtype":"' . $inputType . '","configs":"migxcolumns"}
