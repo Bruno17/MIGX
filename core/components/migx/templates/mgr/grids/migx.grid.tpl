@@ -5,13 +5,22 @@ MODx.grid.multiTVgrid = function(config) {
     var cols=[];
     // add empty pathconfig (source) to array to match number of col in renderimage
     var renderer = null;
+    //var editor = null;
 	for(i = 0; i <  config.columns.length; i++) {
         renderer = config.columns[i]['renderer'];
         if (typeof renderer != 'undefined'){
             config.columns[i]['renderer'] = {fn:eval(renderer),scope:this};
         }
+        editor = config.columns[i]['editor'];
+        if (typeof editor != 'undefined'){
+            editor = editor.replace('this.','');
+            if (this[editor]){
+                config.columns[i]['editor'] = this[editor](config.columns[i]);
+            }
+        } 
         cols.push(config.columns[i]);
     }
+    
     config.columns=cols;    
         
 	Ext.applyIf(config,{
@@ -26,7 +35,9 @@ MODx.grid.multiTVgrid = function(config) {
     enableDragDrop: true, // enable drag and drop of grid rows
 	viewConfig: {
         emptyText: 'No items found',
-        sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+        sm: new Ext.grid.RowSelectionModel({
+            singleSelect:true
+            }),
         forceFit: true,
 		autoFill: true
     }, 
@@ -35,6 +46,52 @@ MODx.grid.multiTVgrid = function(config) {
         "render": {
             scope: this,
             fn: function(grid) {
+                
+            var sm=grid.getSelectionModel();
+                
+            sm.onEditorKey = function(n, l) {
+        var d = l.getKey(),
+            h, i = this.grid,
+            p = i.lastEdit,
+            j = i.activeEditor,
+            b = l.shiftKey,
+            o, p, a, m;
+        if (d == l.TAB) {
+            l.stopEvent();
+            if (j){
+                j.completeEdit();
+            if (b) {
+                h = i.walkCells(j.row, j.col - 1, -1, this.acceptsNav, this)
+            } else {
+                h = i.walkCells(j.row, j.col + 1, 1, this.acceptsNav, this)
+            }            
+            }
+
+        } else {
+            if (d == l.ENTER) {
+                if (this.moveEditorOnEnter !== false) {
+                    if (b) {
+                        h = i.walkCells(p.row - 1, p.col, -1, this.acceptsNav, this)
+                    } else {
+                        h = i.walkCells(p.row + 1, p.col, 1, this.acceptsNav, this)
+                    }
+                }
+            }
+        }
+        if (h) {
+            a = h[0];
+            m = h[1];
+            
+            if (i.isEditor && i.editing) {
+                o = i.activeEditor;
+                if (o && o.field.triggerBlur) {
+                    console.log(o.field);
+                }
+            }
+            this.onEditorSelect(a, p.row);
+            i.startEditing(a, m)
+        }
+    };
 
             // Enable sorting Rows via Drag & Drop
             // this drop target listens for a row drop
@@ -122,6 +179,7 @@ MODx.grid.multiTVgrid = function(config) {
     MODx.grid.multiTVgrid.superclass.constructor.call(this,config)
     this._makeTemplates();
     this.getStore().pathconfigs=config.pathconfigs;
+    
 	this.loadData();
     this.on('click', this.onClick, this);  
 };
@@ -170,6 +228,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		return val;
 	}
     {/literal}{$customconfigs.gridfunctions}{literal}
+    
 	,loadData: function(){
 	    var items_string = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
         var items = [];
@@ -206,7 +265,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		this.syncSize();
         this.setWidth('100%');
     }
-
+    
     ,getSelectedAsList: function() {
         var sels = this.getSelectionModel().getSelections();
         if (sels.length <= 0) return false;
@@ -453,10 +512,34 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         rec.data.column_actions = m;
         rec.data.column_value = v;
         return this.tplRowActions.apply(rec.data);
-	}         
-	,collectItems: function(){
+	} 
+    ,setSelectedRecords:function(){
+        this.selected_records = this.getSelectionModel().getSelections();    
+    }        
+	,updateSelected: function(column,value){
+        var col = null;	 
+        var rec = null;        
+        if (column && column.dataIndex){
+            col = column.dataIndex;
+            console.log(value);
+		    var records = this.selected_records;
+            if (records){
+                for(i = 0; i < records.length; i++) {
+                rec = records[i];
+                    rec.json[col] = value;
+                    rec.set(col,value);           
+                }            
+            }
+         }
+         this.getView().refresh();
+         this.collectItems();
+         MODx.fireResourceFormChange();   
+	}
+    
+    ,collectItems: function(){
 		var items=[];
 		// read jsons from grid-store-items 
+
         var griddata=this.store.data;
 		for(i = 0; i <  griddata.length; i++) {
  			items.push(griddata.items[i].json);

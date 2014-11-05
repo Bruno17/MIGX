@@ -527,6 +527,7 @@ class Migx {
         $gridfunctions = array();
         $winfunctions = array();
         $renderer = array();
+        $editors = array();
         $gridfilters = array();
         $configs = array('migx_default');
         //$configs = array();
@@ -667,7 +668,7 @@ class Migx {
         $this->customconfigs['gridactionbuttons'] = $gridactionbuttons;
         $this->customconfigs['gridcontextmenus'] = $gridcontextmenus;
         $this->customconfigs['gridcolumnbuttons'] = $gridcolumnbuttons;
-        $this->customconfigs['gridfunctions'] = array_merge($gridfunctions, $renderer);
+        $this->customconfigs['gridfunctions'] = array_merge($gridfunctions, $renderer, $editors);
         $this->customconfigs['winfunctions'] = $winfunctions;
         $this->customconfigs['windowbuttons'] = $winbuttons;
         //$defaulttask = empty($this->customconfigs['join_alias']) ? 'default' : 'default_join';
@@ -1204,9 +1205,13 @@ class Migx {
 
                     if (isset($column['renderer']) && !empty($column['renderer'])) {
                         $col['renderer'] = $column['renderer'];
-
                         $handlers[] = $column['renderer'];
                     }
+                    if (isset($column['editor']) && !empty($column['editor'])) {
+                        $col['editor'] = $column['editor'];
+                        $handlers[] = $column['editor'];
+                    }                    
+                    
                     $cols[] = $col;
                     $pathconfigs[$colidx] = isset($inputTvs[$field['name']]) ? $this->prepareSourceForGrid($inputTvs[$field['name']]) : array();
                     $colidx++;
