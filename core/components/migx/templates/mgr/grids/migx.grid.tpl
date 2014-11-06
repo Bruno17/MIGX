@@ -287,25 +287,31 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             return;            
         }
         if (add_items_directly == '1'){
-            this.addEmptyItem();    
+            this.addNewItem();    
         }else{
             this.loadWin(btn,e,s.getCount(),'a');    
         }
 	}
-    ,addEmptyItem: function(){
+    ,addNewItem: function(item){
+            if (item){
+                var item = item;
+                var items = [];
+                items.push(item);
+            }else{
+                var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
+                var item = items[0];
+            }
             var s = this.getStore();
             var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt}{literal}';
-            var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
+            
 	        this.autoinc = parseInt(this.autoinc) +1; 
             s.loadData(items,true);
             idx=s.getCount()-1;
             var rec = s.getAt(idx);
             rec.set('MIGX_id',this.autoinc);
-            var item = items[0];
             item['MIGX_id'] = this.autoinc;
             rec.json = item;
-            console.log(rec);
-            
+          
             if (addNewItemAt == 'top'){
                 s.insert(0,rec);
             }
@@ -335,7 +341,16 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
       this.loadWin(btn,e,this.menu.recordIndex,'u');
     }
 	,duplicate: function(btn,e) {
-      this.loadWin(btn,e,this.menu.recordIndex,'d');
+	    var add_items_directly = '{/literal}{$customconfigs.add_items_directly}{literal}';
+        if (add_items_directly == '1'){
+            var s=this.getStore();
+            var rec = s.getAt(this.menu.recordIndex);
+            this.addNewItem(rec.json);    
+        }else{
+            this.loadWin(btn,e,this.menu.recordIndex,'d'); 
+        }       
+       
+      
     } 
 
 	,loadFromSource: function(btn,e) {

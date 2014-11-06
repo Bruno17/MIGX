@@ -37,3 +37,46 @@ $editors['this.textEditor'] = "
         });        
     }
 ";
+
+$editors['this.listboxEditor'] = "
+listboxEditor : function(column){
+            console.log(column);
+            return new MODx.combo.ComboBox({
+                typeAhead: true
+                ,triggerAction: 'all'
+                // transform the data already specified in html
+            ,url: '[[+config.connectorUrl]]'
+            ,fields: ['combo_id','combo_name']
+            ,displayField: 'combo_name'
+            ,valueField: 'combo_id'    
+            ,pageSize: 0
+            ,lazyInit: false
+            ,baseParams: { 
+                action: 'mgr/migxdb/process',
+                processaction: 'geteditorcombo',
+                configs: '[[+config.configs]]',
+                resource_id: '[[+config.resource_id]]',
+                field: column.dataIndex
+            }			
+            ,listeners: {
+                'select': {
+                    fn: function(tf,nv,ov){
+                        this.setSelectedRecords();
+                        this.updateSelected(column,tf.getValue());
+                    }, 
+                    scope: this
+                },
+                'load': {
+                    fn: function(tf,nv,ov){
+                        console.log('laod');
+                    }, 
+                    scope: this
+                }                
+            }
+            ,listClass: 'x-combo-list-small'
+     })
+}            
+        
+";
+?>
+
