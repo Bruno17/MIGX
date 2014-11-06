@@ -6,6 +6,11 @@ foreach ($renderer as $key => $value) {
     $renderers[] = $key;
 }
 
+$editorsoptions[] = '---==';
+foreach ($editors as $key => $value) {
+    $editorsoptions[] = $key;
+}
+
 $tabs = '
 [
 {"caption":"Column", "fields": [
@@ -21,6 +26,9 @@ $tabs = '
 {"field":"selectorconfig","caption":"SelectFromGrid config"},
 {"field":"renderchunktpl","caption":"renderChunk template","inputTVtype":"textarea"},
 {"field":"renderoptions","caption":"Renderoptions","inputTVtype":"migx","configs":"migxcolumnrenderoptions"}
+]},
+{"caption":"Cell Editor", "fields": [
+{"field":"editor","caption":"Editor","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $editorsoptions) . '"}
 ]}
 ] 
 ';

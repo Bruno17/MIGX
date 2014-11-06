@@ -46,7 +46,8 @@ MODx.grid.multiTVgrid = function(config) {
         "render": {
             scope: this,
             fn: function(grid) {
-                
+            
+            //Special Handling of Keystrokes within cell-editor, needs more improvements    
             var sm=grid.getSelectionModel();
                 
             sm.onEditorKey = function(n, l) {
@@ -279,13 +280,39 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     }
 	,addItem: function(btn,e) {
 	    var maxRecords =  parseInt('{/literal}{$customconfigs.maxRecords}{literal}');
+        var add_items_directly = '{/literal}{$customconfigs.add_items_directly}{literal}';
         var s=this.getStore();
         if(maxRecords != 0 && s.getCount() >= maxRecords){
             alert ('[[%migx.max_records_alert]]');
             return;            
         }
-		this.loadWin(btn,e,s.getCount(),'a');
+        if (add_items_directly == '1'){
+            this.addEmptyItem();    
+        }else{
+            this.loadWin(btn,e,s.getCount(),'a');    
+        }
 	}
+    ,addEmptyItem: function(){
+            var s = this.getStore();
+            var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt}{literal}';
+            var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
+	        this.autoinc = parseInt(this.autoinc) +1; 
+            s.loadData(items,true);
+            idx=s.getCount()-1;
+            var rec = s.getAt(idx);
+            rec.set('MIGX_id',this.autoinc);
+            var item = items[0];
+            item['MIGX_id'] = this.autoinc;
+            rec.json = item;
+            console.log(rec);
+            
+            if (addNewItemAt == 'top'){
+                s.insert(0,rec);
+            }
+            this.getView().refresh();
+            //this.call_collectmigxitems=true;
+            this.collectItems();        
+    }    
 	,preview: function(btn,e) {
 		var s=this.getStore();
 		this.loadPreviewWin(btn,e,s.getCount(),'a');
