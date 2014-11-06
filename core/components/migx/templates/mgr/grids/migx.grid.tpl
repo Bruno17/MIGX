@@ -541,7 +541,24 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             ,title: '{/literal}{$customconfigs.iframeWindowTitle}{literal}'
             ,iframeTpl: tpl
         });
-    }    	    
+    } 
+    ,moveToTop: function() {
+        var s=this.getStore();
+        var rec = s.getAt(this.menu.recordIndex);        
+        s.insert(0,rec);
+        this.getView().refresh();
+		this.collectItems();
+        MODx.fireResourceFormChange();        
+    }
+    ,moveToBottom: function() {
+        var s=this.getStore();
+        var rec = s.getAt(this.menu.recordIndex);        
+        idx=s.getCount()-1;
+        s.insert(idx,rec);
+        this.getView().refresh();
+		this.collectItems();
+        MODx.fireResourceFormChange();           
+    }         	    
     ,getMenu: function() {
 		var n = this.menu.record; 
         var m = [];
@@ -558,6 +575,15 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             text: '[[%migx.remove]]'
             ,handler: this.remove
         });
+        m.push('-');
+        m.push({
+            text: '[[%migx.move_to_top]]'
+            ,handler: this.moveToTop
+        }); 
+        m.push({
+            text: '[[%migx.move_to_bottom]]'
+            ,handler: this.moveToBottom
+        });                   
 		return m;
     }
     ,renderRowActions:function(v,md,rec) {
