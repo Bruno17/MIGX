@@ -78,9 +78,32 @@ if (empty($col)) {
 
 $modx->migx->loadConfigs();
 $renderoptions = $modx->migx->getColumnRenderOptions($col); 
-$columnrenderoption = $modx->fromJson($renderoptions[$idx]);
-$nextcolumnrenderoptions = isset($renderoptions[$idx+1]) ? $renderoptions[$idx+1] : $renderoptions[0]; 
-$nextcolumnrenderoptions = $modx->fromJson($nextcolumnrenderoptions);
+$fallback_idx = 'x';
+if (is_array($renderoptions)){
+    $newoptions = array();
+    foreach ($renderoptions as $key => $renderoption){
+        $option = $modx->fromJson($renderoption);
+        if (isset($option['use_as_fallback']) && !empty($option['use_as_fallback'])){
+            //don't add option, which was set to use_as_fallback
+            $fallback_idx = $key;
+        }else{
+            $newoptions[$key] = $option;
+        }
+    }
+    $renderoptions = $newoptions;
+}
+
+$first_idx = 0;
+if (empty($fallback_idx)){
+    $first_idx = 1;
+}
+if ($idx+1 == $fallback_idx){
+    $idx++;
+}
+
+$columnrenderoption = $renderoptions[$idx];
+$nextcolumnrenderoptions = isset($renderoptions[$idx+1]) ? $renderoptions[$idx+1] : $renderoptions[$first_idx];
+//$nextcolumnrenderoptions = $modx->fromJson($nextcolumnrenderoptions);
 
 $value = $nextcolumnrenderoptions['value']; 
 

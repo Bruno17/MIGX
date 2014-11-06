@@ -86,7 +86,7 @@ MODx.grid.multiTVgrid = function(config) {
             if (i.isEditor && i.editing) {
                 o = i.activeEditor;
                 if (o && o.field.triggerBlur) {
-                    console.log(o.field);
+                    //console.log(o.field);
                 }
             }
             this.onEditorSelect(a, p.row);
@@ -327,7 +327,20 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         var _this=this;
 		Ext.Msg.confirm(_('warning') || '','[[%migx.remove_confirm]]' || '',function(e) {
             if (e == 'yes') {
-				_this.getStore().removeAt(_this.menu.recordIndex);
+				
+        var sels = _this.getSelectionModel().getSelections();
+        if (sels.length <= 0) return false;
+        console.log(_this.getStore());
+        for (var i=0;i<sels.length;i++) {
+            var id = sels[i].id;
+            var index = _this.getStore().findBy(function(record){if(record.id == id){return true;}});
+            _this.getStore().removeAt(index);   
+        }                
+                
+                
+                //_this.getStore().removeAt(_this.menu.recordIndex);
+                
+                
                 _this.getView().refresh();
 		        _this.collectItems();
                 MODx.fireResourceFormChange();	
@@ -558,13 +571,12 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     ,setSelectedRecords:function(){
         this.selected_records = this.getSelectionModel().getSelections();    
     }        
-	,updateSelected: function(column,value){
+	,updateSelected: function(column,value,stopRefresh){
         var col = null;	 
         var rec = null;        
         if (column && column.dataIndex){
             col = column.dataIndex;
-            console.log(value);
-		    var records = this.selected_records;
+ 		    var records = this.selected_records;
             if (records){
                 for(i = 0; i < records.length; i++) {
                 rec = records[i];
@@ -573,8 +585,13 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 }            
             }
          }
-         this.getView().refresh();
-         this.collectItems();
+         if (stopRefresh){
+            
+         }else{
+             this.getView().refresh();
+             this.collectItems();            
+         }
+
          MODx.fireResourceFormChange();   
 	}
     

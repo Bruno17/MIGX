@@ -40,7 +40,7 @@ $editors['this.textEditor'] = "
 
 $editors['this.listboxEditor'] = "
 listboxEditor : function(column){
-            console.log(column);
+            //console.log(column);
             return new MODx.combo.ComboBox({
                 typeAhead: true
                 ,triggerAction: 'all'
@@ -65,13 +65,7 @@ listboxEditor : function(column){
                         this.updateSelected(column,tf.getValue());
                     }, 
                     scope: this
-                },
-                'load': {
-                    fn: function(tf,nv,ov){
-                        console.log('laod');
-                    }, 
-                    scope: this
-                }                
+                }               
             }
             ,listClass: 'x-combo-list-small'
      })

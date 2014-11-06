@@ -303,15 +303,17 @@ handleColumnSwitch: function(n,e,col) {
                     
                     res_object = res.object;
                     if (res_object.tv_type == 'migx'){
-                        this.menu.record.json[column] = res_object.value;	
-                        this.menu.record.json[column+'_ro'] = Ext.util.JSON.encode(res_object);
-                        this.getView().refresh();
-                        this.collectItems();
-                        MODx.fireResourceFormChange();                        	                         
+                        this.selected_records = this.getSelectionModel().getSelections(); 
+                        var columnobject = {dataIndex: column};
+                        this.updateSelected(columnobject,res_object.value,true);
+                        columnobject = {dataIndex: column+'_ro'};
+                        this.updateSelected(columnobject,Ext.util.JSON.encode(res_object));
                         return;
                     }
+                    else{
+                        this.refresh();
+                    }
                     
-                    this.refresh();
                     
                     },scope:this }
             }
@@ -631,7 +633,7 @@ $gridfunctions['this.showScreenshot'] = "
         //var data = this.lookup['gal-item-'+id];
         //if (!data) return false;
         
-        console.log(this.menu.record.json);
+        //console.log(this.menu.record.json);
         var data = this.menu.record.json;
         
         if (!this.ssWin) {

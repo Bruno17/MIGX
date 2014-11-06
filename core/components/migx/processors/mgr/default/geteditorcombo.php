@@ -6,11 +6,8 @@ $fields = $modx->migx->extractFieldsFromTabs($modx->fromJson($modx->getOption('f
 $fieldname = $modx->getOption('field', $scriptProperties, '');
 $field = $modx->getOption($fieldname, $fields, '');
 
-$options = $modx->getOption('inputOptionValues', $field);
-
 if (isset($field['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
-    //$params = $tv->get('input_properties');
-    //$params['inputTVid'] = $tv->get('id');
+
 }
 
 if (!empty($field['inputTVtype'])) {

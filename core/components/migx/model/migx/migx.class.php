@@ -120,9 +120,9 @@ class Migx {
                 $xpdo = &$this->modx->$xpdo_name;
             } elseif (file_exists($packagepath . 'config/config.inc.php')) {
                 include ($packagepath . 'config/config.inc.php');
-                if (is_null($prefix) && isset($table_prefix)){
+                if (is_null($prefix) && isset($table_prefix)) {
                     $prefix = $table_prefix;
-                }                
+                }
                 $charset = '';
                 if (!empty($database_connection_charset)) {
                     $charset = ';charset=' . $database_connection_charset;
@@ -160,7 +160,7 @@ class Migx {
         $sortConfig = !empty($sortConfig) && !is_array($sortConfig) ? $modx->fromJSON($sortConfig) : $sortConfig;
         $joins = $modx->getOption('joins', $scriptProperties, array());
         $joins = !empty($joins) && !is_array($joins) ? $modx->fromJSON($joins) : $joins;
-        
+
         $selectfields = $modx->getOption('selectfields', $scriptProperties, '');
         $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
         $classname = $scriptProperties['classname'];
@@ -172,7 +172,7 @@ class Migx {
 
         $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
 
-        if (is_array($joins) && count($joins)>0) {
+        if (is_array($joins) && count($joins) > 0) {
             $this->prepareJoins($classname, $joins, $c);
         }
 
@@ -460,9 +460,9 @@ class Migx {
         $multiple_formtabs = $this->modx->getOption('multiple_formtabs', $this->customconfigs, '');
         $multiple_formtabs_label = $this->modx->getOption('multiple_formtabs_label', $this->customconfigs, 'Formname');
         $multiple_formtabs_field = $this->modx->getOption('multiple_formtabs_field', $this->customconfigs, 'MIGX_formname');
-        
+
         $controller->setPlaceholder('multiple_formtabs_label', $multiple_formtabs_label);
-        
+
         if (!empty($multiple_formtabs)) {
             if (isset($_REQUEST['loadaction']) && $_REQUEST['loadaction'] == 'switchForm') {
                 $data = $this->modx->fromJson($this->modx->getOption('record_json', $_REQUEST, ''));
@@ -480,12 +480,12 @@ class Migx {
                 $idx = 0;
                 $formtabs = false;
                 foreach ($collection as $object) {
-                    
+
                     $ext = $object->get('extended');
-                    
-                    $text =  $this->modx->getOption('multiple_formtabs_optionstext',$ext,'');
-                    $value =  $this->modx->getOption('multiple_formtabs_optionsvalue',$ext,'');
-                                        
+
+                    $text = $this->modx->getOption('multiple_formtabs_optionstext', $ext, '');
+                    $value = $this->modx->getOption('multiple_formtabs_optionsvalue', $ext, '');
+
                     $formname = array();
                     $formname['value'] = !empty($value) ? $value : $object->get('name');
                     $formname['text'] = !empty($text) ? $text : $object->get('name');
@@ -1142,7 +1142,7 @@ class Migx {
         //multiple different Forms
         // Note: use same field-names and inputTVs in all forms
 
-        $inputTvs = $this->extractInputTvs($formtabs);
+        $inputTvs = $this->extractFieldsFromTabs($formtabs);
 
         /* get base path based on either TV param or filemanager_path */
         $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
@@ -1194,6 +1194,8 @@ class Migx {
                 $fields[] = $field;
                 $column['show_in_grid'] = isset($column['show_in_grid']) ? (int)$column['show_in_grid'] : 1;
 
+                $fieldconfig = $this->modx->getOption($field['name'], $inputTvs, '');
+
                 if (!empty($column['show_in_grid'])) {
                     $col = array();
                     $col['dataIndex'] = $column['dataIndex'];
@@ -1210,14 +1212,15 @@ class Migx {
                     if (isset($column['editor']) && !empty($column['editor'])) {
                         $col['editor'] = $column['editor'];
                         $handlers[] = $column['editor'];
-                    }                    
-                    
+                    }
+
                     $cols[] = $col;
                     $pathconfigs[$colidx] = isset($inputTvs[$field['name']]) ? $this->prepareSourceForGrid($inputTvs[$field['name']]) : array();
                     $colidx++;
                 }
 
-                $item[$field['name']] = isset($column['default']) ? $column['default'] : '';
+                $default = isset($fieldconfig['default']) ? (string )$fieldconfig['default'] : '';
+                $item[$field['name']] = isset($column['default']) ? $column['default'] : $default;
 
 
             }
@@ -1314,6 +1317,9 @@ class Migx {
                         $option['clickaction'] = empty($option['clickaction']) && !empty($defaultclickaction) ? $defaultclickaction : $option['clickaction'];
                         $option['selectorconfig'] = $this->modx->getOption('selectorconfig', $column, '');
                         $option['selectorconfig'] = empty($option['selectorconfig']) && !empty($defaultselectorconfig) ? $defaultselectorconfig : $option['selectorconfig'];
+                        if (isset($option['use_as_fallback']) && !empty($option['use_as_fallback'])) {
+                            $option['value'] = 'use_as_fallback';
+                        }
                         $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
                     }
                 } elseif (!empty($renderer) && $renderer == 'this.renderChunk') {
@@ -1349,8 +1355,10 @@ class Migx {
 
                 foreach ($columnrenderoptions as $column => $options) {
                     $value = $this->modx->getOption($column, $row, '');
-
                     $row[$column . '_ro'] = isset($options[$value]) ? $this->modx->toJson($options[$value]) : '';
+                    if (empty($row[$column . '_ro']) && isset($options['use_as_fallback'])) {
+                        $row[$column . '_ro'] = $this->modx->toJson($options['use_as_fallback']);
+                    }
                     foreach ($options as $option) {
                         if ($option['_renderer'] == 'this.renderChunk') {
                             $row['_this.value'] = $value;
@@ -1874,13 +1882,9 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);
