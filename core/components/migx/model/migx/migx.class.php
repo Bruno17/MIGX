@@ -931,8 +931,13 @@ class Migx {
                 foreach ($this->customconfigs['windowbuttons'] as $button) {
                     if (!empty($button['active'])) {
                         unset($button['active']);
-                        if (isset($button['handler']) && !in_array($button['handler'], $handlers)) {
-                            $handlers[] = $button['handler'];
+                        if (isset($button['handler'])) {
+                            $handlerarr = explode(',', $button['handler']);
+                            foreach ($handlerarr as $handler) {
+                                if (!in_array($handler, $handlers)) {
+                                    $handlers[] = $handler;
+                                }
+                            }
                         }
                         $buttons_a[] = str_replace('"', '', $this->modx->toJson($button));
                     }
@@ -961,8 +966,15 @@ class Migx {
             foreach ($this->customconfigs['gridactionbuttons'] as $button) {
                 if (!empty($button['active'])) {
                     unset($button['active']);
-                    if (isset($button['handler']) && !in_array($button['handler'], $handlers)) {
-                        $handlers[] = $button['handler'];
+                    if (isset($button['handler'])) {
+                        $handlerarr = explode(',', $button['handler']);
+                        $button['handler'] = $handlerarr[0];//can have only one handler, use the first one
+                        //load one or multiple handlers
+                        foreach ($handlerarr as $handler) {
+                            if (!in_array($handler, $handlers)) {
+                                $handlers[] = $handler;
+                            }
+                        }
                     }
                     if (isset($button['menu']) && is_array($button['menu'])) {
                         foreach ($button['menu'] as $menu) {
@@ -1225,6 +1237,8 @@ class Migx {
 
             }
         }
+        
+        $newitem[] = $item;
 
         $gf = '';
         $wf = '';
@@ -1250,6 +1264,7 @@ class Migx {
             }
             if (count($gridfunctions) > 0) {
                 $gf = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
+                $gf = str_replace('[[+newitem]]',$this->modx->toJson($newitem),$gf);
             }
             if (count($winfunctions) > 0) {
                 $wf = ',' . str_replace($search, $replace, implode(',', $winfunctions));
@@ -1259,7 +1274,7 @@ class Migx {
         $this->customconfigs['gridfunctions'] = $gf;
         $this->customconfigs['winfunctions'] = $wf;
 
-        $newitem[] = $item;
+        
 
         //print_r(array_keys($this->customconfigs));
 
@@ -1882,9 +1897,13 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
+                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
+                                ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
+                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
+                                ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);

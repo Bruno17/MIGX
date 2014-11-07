@@ -197,7 +197,46 @@ $gridfunctions['gridfilter'] = "
 
 $gridfunctions['this.addItem'] = "
 addItem: function(btn,e) {
-		this.loadWin(btn,e,'a');
+        var add_items_directly = '[[+config.add_items_directly]]';
+        console.log(add_items_directly);
+        if (add_items_directly == '1'){
+            this.addNewItem();    
+        }else{
+            this.loadWin(btn,e,'a');   
+        }        
+	}
+";
+
+$gridfunctions['this.addNewItem'] = "
+addNewItem: function(item) {
+            if (item){
+                var item = item;
+                var items = [];
+                items.push(item);
+            }else{
+                var items=Ext.util.JSON.decode('[[+newitem]]');
+                var item = items[0];
+            }
+                    MODx.Ajax.request({
+                        url: this.url
+                        ,params: {
+                            action: 'mgr/migxdb/update'
+                            ,data: Ext.util.JSON.encode(item)
+				            ,configs: this.configs
+                            ,resource_id: this.resource_id
+                            ,co_id: this.co_id
+                            ,object_id: 'new'
+                            ,tv_id: this.baseParams.tv_id
+                            ,wctx: this.baseParams.wctx
+                        }
+                        ,listeners: {
+                            'success': {
+                                fn:function(){
+                                    this.refresh();
+                                }
+                                ,scope:this} 
+                        }
+                    });                      
 	}
 ";
 

@@ -1,7 +1,7 @@
 <?php
 
 $gridactionbuttons['addItem']['text'] = "'[[%migx.add]]'";
-$gridactionbuttons['addItem']['handler'] = 'this.addItem';
+$gridactionbuttons['addItem']['handler'] = 'this.addItem,this.addNewItem';
 $gridactionbuttons['addItem']['scope'] = 'this';
 
 $gridactionbuttons['bulk']['text'] = "'[[%migx.bulk_actions]]'";
