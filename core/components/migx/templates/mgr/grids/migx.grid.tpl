@@ -333,16 +333,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 				
         var sels = _this.getSelectionModel().getSelections();
         if (sels.length <= 0) return false;
-        console.log(_this.getStore());
         for (var i=0;i<sels.length;i++) {
             var id = sels[i].id;
             var index = _this.getStore().findBy(function(record){if(record.id == id){return true;}});
             _this.getStore().removeAt(index);   
         }                
-                
-                
-                //_this.getStore().removeAt(_this.menu.recordIndex);
-                
                 
                 _this.getView().refresh();
 		        _this.collectItems();
@@ -402,7 +397,10 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                         
 		                this.getStore().sortInfo = null;
 		                this.getStore().loadData(items);
-                        this.collectItems();                                                    
+                        var call_collectmigxitems = this.call_collectmigxitems;
+                        this.call_collectmigxitems=true;
+                        this.collectItems(); 
+                        this.call_collectmigxitems = call_collectmigxitems;                                             
                     }
                     
                 },scope:this}
@@ -547,8 +545,13 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     } 
     ,moveToTop: function() {
         var s=this.getStore();
-        var rec = s.getAt(this.menu.recordIndex);        
-        s.insert(0,rec);
+        var rec = s.getAt(this.menu.recordIndex);
+        
+        var sels = this.getSelectionModel().getSelections();
+        if (sels.length <= 0) return false;
+        for (var i=0;i<sels.length;i++) {
+            s.insert(i,sels[i]);
+        }         
         this.getView().refresh();
 		this.collectItems();
         MODx.fireResourceFormChange();        
@@ -557,7 +560,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         var s=this.getStore();
         var rec = s.getAt(this.menu.recordIndex);        
         idx=s.getCount()-1;
-        s.insert(idx,rec);
+        var sels = this.getSelectionModel().getSelections();
+        if (sels.length <= 0) return false;
+        for (var i=0;i<sels.length;i++) {
+            s.insert(idx,sels[i]);
+        }          
         this.getView().refresh();
 		this.collectItems();
         MODx.fireResourceFormChange();           
