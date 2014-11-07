@@ -43,6 +43,8 @@ $_lang['migx.recall'] = 'Wiederherstellen';
 $_lang['migx.remove'] = 'Entfernen';
 $_lang['migx.new'] = 'neu';
 $_lang['migx.filters'] = 'Filter';
+$_lang['migx.move_to_top'] = 'Nach oben verschieben';
+$_lang['migx.move_to_bottom'] = 'Nach unten verschieben';
 
 $_lang['migx.add_replacement'] = 'Andere Beschriftung für den Button "Datensatz erstellen"';
 $_lang['migx.activate'] = 'Aktivieren';

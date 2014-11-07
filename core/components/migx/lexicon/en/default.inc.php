@@ -43,6 +43,8 @@ $_lang['migx.recall'] = 'Recall';
 $_lang['migx.remove'] = 'Remove';
 $_lang['migx.new'] = 'new';
 $_lang['migx.filters'] = 'Filters';
+$_lang['migx.move_to_top'] = 'Move to Top';
+$_lang['migx.move_to_bottom'] = 'Move to Bottom';
 
 $_lang['migx.add_replacement'] = '"Add Item" Replacement';
 $_lang['migx.activate'] = 'Activate';
