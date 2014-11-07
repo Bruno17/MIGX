@@ -25,6 +25,8 @@ if (!empty($config['packageName'])) {
         }
         $xpdo = &$modx;
     }
+}else{
+    $xpdo = &$modx;    
 }
 
 $sender = 'default/fields';

@@ -20,6 +20,13 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
         if (typeof renderer != 'undefined'){
             config.columns[i]['renderer'] = {fn:eval(renderer),scope:this};
         }
+        editor = config.columns[i]['editor'];
+        if (typeof editor != 'undefined'){
+            editor = editor.replace('this.','');
+            if (this[editor]){
+                config.columns[i]['editor'] = this[editor](config.columns[i]);
+            }
+        }         
         cols.push(config.columns[i]);
         pc.push(config.pathconfigs[i]);
     }
@@ -275,6 +282,52 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         rec.data.column_actions = m;
         rec.data.column_value = v;
         return this.tplRowActions.apply(rec.data);
+	}    
+    ,setSelectedRecords:function(){
+        this.selected_records = this.getSelectionModel().getSelections();    
+    }        
+	,updateSelected: function(column,value,stopRefresh){
+        var col = null;	 
+        var rec = null;        
+        if (column && column.dataIndex){
+            col = column.dataIndex;
+ 		    var records = this.selected_records;
+            if (records){
+                for(i = 0; i < records.length; i++) {
+                    rec = records[i];
+                    var object_id = rec.id;
+                    var item = {};
+                    item[col] = value;
+                    MODx.Ajax.request({
+                        url: this.url
+                        ,params: {
+                            action: 'mgr/migxdb/update'
+                            ,data: Ext.util.JSON.encode(item)
+				            ,configs: this.configs
+                            ,resource_id: this.resource_id
+                            ,co_id: this.co_id
+                            ,object_id: object_id
+                            ,tv_id: this.baseParams.tv_id
+                            ,wctx: this.baseParams.wctx
+                        }
+                        ,listeners: {
+                            'success': {
+                                fn:function(){
+                                    this.refresh();
+                                }
+                                ,scope:this} 
+                        }
+                    });
+                 }
+             }
+         }
+         if (stopRefresh){
+            
+         }else{
+                  
+         }
+
+         MODx.fireResourceFormChange();   
 	} 
 	,onClick: function(e){
         var t = e.getTarget();

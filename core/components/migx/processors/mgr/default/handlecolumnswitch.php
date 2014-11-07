@@ -61,6 +61,8 @@ if (!empty($config['packageName'])) {
         }
         $xpdo = &$modx;
     }
+}else{
+    $xpdo = &$modx;    
 }
 $classname = $config['classname'];
 
