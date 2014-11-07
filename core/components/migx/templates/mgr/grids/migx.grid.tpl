@@ -316,8 +316,11 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 s.insert(0,rec);
             }
             this.getView().refresh();
-            //this.call_collectmigxitems=true;
-            this.collectItems();        
+            
+            var call_collectmigxitems = this.call_collectmigxitems;
+            this.call_collectmigxitems=true;
+            this.collectItems(); 
+            this.call_collectmigxitems = call_collectmigxitems;       
     }    
 	,preview: function(btn,e) {
 		var s=this.getStore();
