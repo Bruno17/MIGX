@@ -70,6 +70,8 @@ $addfields = !empty($addfields) ? explode(',', $addfields) : null;
 $splits = $modx->fromJson($modx->getOption('splits', $scriptProperties, 0));
 $splitTpl = $modx->getOption('splitTpl', $scriptProperties, '');
 $splitSeparator = $modx->getOption('splitSeparator', $scriptProperties, '');
+$inheritFrom = $modx->getOption('inheritFrom', $scriptProperties, ''); //commaseparated list of resource-ids or/and the keyword 'parents' where to inherit from
+$inheritFrom = !empty($inheritFrom) ? explode(',',$inheritFrom) : '';
 
 $modx->setPlaceholder('docid', $docid);
 
@@ -116,7 +118,21 @@ if (!empty($tvname)) {
             $jsonVarKey = $properties['jsonvarkey'];
             $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
         }
-        $outputvalue = empty($outputvalue) ? $tv->renderOutput($docid) : $outputvalue;
+        
+        if (empty($outputvalue)){
+            $outputvalue = $tv->renderOutput($docid);
+            if (empty($outputvalue) && !empty($inheritFrom)){
+                foreach ($inheritFrom as $from){
+                    if ($from == 'parents'){
+                        $outputvalue = $tv->processInheritBinding('',$docid);
+                    }else{
+                        $outputvalue = $tv->renderOutput($from);
+                    }
+                }
+            }
+        }
+        
+        
         /*
         *   get inputTvs 
         */
