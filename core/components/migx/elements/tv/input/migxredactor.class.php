@@ -17,6 +17,12 @@ class modTemplateVarInputRenderRedactor extends modTemplateVarInputRender {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[Redactor/MIGX] Error loading Redactor for use in MIGX from ' . $corePath);
             return;
         }
+        if ($this->modx->resource instanceof modResource) {
+            $redactor->setResource($modx->resource);
+        }
+        elseif (isset($_REQUEST['resource_id'])) {
+            $redactor->setResource($_REQUEST['resource_id']);
+        }
 
         if (!empty($params['buttons']) && !is_array($params['buttons'])  ){
             $params['buttons'] = explode(',',$params['buttons']);
