@@ -1,5 +1,21 @@
 Changelog for MIGX.
 
+MIGX 2.9
+==============
+[migxLoopCollection] allow use of foreign database
+Sottwell's improvements on migxresourcemediapath
+new snippet: migxGetCollectionTree
+access to foreign database from default processors
+improvements on multiple formtabs
+make inline-editing for MIGX - grid possible
+option to add MIGX-items directly without modal
+listbox-cell-editor
+movetotop,movetobottom - buttons for MIGX-grid
+cell-editing for MIgXdb - grids
+option to add MIGXdb-items directly without modal
+[getImageList] &inheritFrom - inherit MIGX-items from parents or other resources
+some migxredactor - fixes 
+
 MIGX 2.8.1
 ==============
 lets disable the 'Add Item' - button
