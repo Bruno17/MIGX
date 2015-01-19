@@ -1438,11 +1438,8 @@ class Migx {
                 return $mediasource;
             }
         }
-        
-        $tv_id = $tv->get('id');// if empty, then no TV was passed
-        // If no TV then use default Media Source for the current MIGX TV: 
-        // Else (it has been assumed) a TV has been assigned/passed 
-        if ($this->source && ( $sourcefrom == 'migx' || empty($tv_id) ) {
+
+        if ($this->source && $sourcefrom == 'migx') {
             //use global MIGX-mediasource for all TVs
             $tv->setSource($this->source);
             $mediasource = $this->source;
