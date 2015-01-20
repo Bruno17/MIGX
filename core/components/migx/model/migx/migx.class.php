@@ -558,7 +558,7 @@ class Migx {
             $req_configs = $this->modx->getOption('configs', $_REQUEST, '');
 
             $preloadGridConfigs = false;
-            if ($sender == 'mgr/fields' && $req_configs == 'migxcolumns') {
+            if ($sender == 'mgr/fields' && ($req_configs == 'migxcolumns' || $req_configs == 'migxdbfilters')) {
                 $preloadGridConfigs = true;
                 $configs_id = $this->modx->getOption('co_id', $_REQUEST, '');
                 $this->configsObject = $this->modx->getObject('migxConfig', $configs_id);
@@ -968,7 +968,7 @@ class Migx {
                     unset($button['active']);
                     if (isset($button['handler'])) {
                         $handlerarr = explode(',', $button['handler']);
-                        $button['handler'] = $handlerarr[0];//can have only one handler, use the first one
+                        $button['handler'] = $handlerarr[0]; //can have only one handler, use the first one
                         //load one or multiple handlers
                         foreach ($handlerarr as $handler) {
                             if (!in_array($handler, $handlers)) {
@@ -1237,7 +1237,7 @@ class Migx {
 
             }
         }
-        
+
         $newitem[] = $item;
 
         $gf = '';
@@ -1264,7 +1264,7 @@ class Migx {
             }
             if (count($gridfunctions) > 0) {
                 $gf = ',' . str_replace($search, $replace, implode(',', $gridfunctions));
-                $gf = str_replace('[[+newitem]]',$this->modx->toJson($newitem),$gf);
+                $gf = str_replace('[[+newitem]]', $this->modx->toJson($newitem), $gf);
             }
             if (count($winfunctions) > 0) {
                 $wf = ',' . str_replace($search, $replace, implode(',', $winfunctions));
@@ -1274,7 +1274,6 @@ class Migx {
         $this->customconfigs['gridfunctions'] = $gf;
         $this->customconfigs['winfunctions'] = $wf;
 
-        
 
         //print_r(array_keys($this->customconfigs));
 
@@ -1438,11 +1437,8 @@ class Migx {
                 return $mediasource;
             }
         }
-        
-        $tv_id = $tv->get('id');// if empty, then no TV was passed
-        // If no TV then use default Media Source for the current MIGX TV: 
-        // Else (it has been assumed) a TV has been assigned/passed 
-        if ($this->source && ( $sourcefrom == 'migx' || empty($tv_id) ) {
+
+        if ($this->source && $sourcefrom == 'migx') {
             //use global MIGX-mediasource for all TVs
             $tv->setSource($this->source);
             $mediasource = $this->source;
@@ -1900,13 +1896,9 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);
@@ -2187,6 +2179,169 @@ class Migx {
         }
     }
 
+    public function addRelatedLinkIds(&$object, &$record, $config) {
+        $modx = &$this->modx;
+        $xpdo = &$object->xpdo;
+
+        $link_classname = $modx->getOption('link_classname', $config, '');
+        $link_alias = $modx->getOption('link_alias', $config, '');
+        $postfield = $modx->getOption('postfield', $config, '');
+        $id_field = $modx->getOption('id_field', $config, '');
+        $link_field = $modx->getOption('link_field', $config, '');
+
+        $ids = array();
+        if ($collection = $object->getMany($link_alias)) {
+            foreach ($collection as $link_object) {
+                $ids[] = $link_object->get($link_field);
+                //print_r($object->toArray());
+            }
+        }
+
+        $record[$postfield] = implode('||', $ids);
+    }
+
+    public function handleRelatedLinks(&$object, $postvalues, $config = array()) {
+        $modx = &$this->modx;
+        $xpdo = &$object->xpdo;
+
+        $link_classname = $modx->getOption('link_classname', $config, '');
+        $link_alias = $modx->getOption('link_alias', $config, '');
+        $postfield = $modx->getOption('postfield', $config, '');
+        $id_field = $modx->getOption('id_field', $config, '');
+        $link_field = $modx->getOption('link_field', $config, '');
+
+        $attributes = explode('||', $modx->getOption($postfield, $postvalues, ''));
+        $old_attributes = array();
+
+        if ($attr_collection = $object->getMany($link_alias)) {
+            foreach ($attr_collection as $attr_o) {
+                $old_attributes[$attr_o->get($link_field)] = $attr_o;
+            }
+        }
+
+        foreach ($attributes as $attribute) {
+            if (!empty($attribute)) {
+                if (isset($old_attributes[$attribute])) {
+                    unset($old_attributes[$attribute]);
+                } else {
+                    $attr_o = $xpdo->newObject($link_classname);
+                    $attr_o->set($link_field, $attribute);
+                    $attr_o->set($id_field, $object->get('id'));
+                    $attr_o->save();
+                }
+            }
+        }
+    }
+    
+    public function handleRelatedLinksFromMIGX(&$object, $postvalues, $config) {
+        $modx = &$this->modx;
+        $xpdo = &$object->xpdo;
+        
+        $link_classname = $modx->getOption('link_classname', $config, '');
+        $link_alias = $modx->getOption('link_alias', $config, '');
+        $postfield = $modx->getOption('postfield', $config, '');
+        $id_field = $modx->getOption('id_field', $config, '');
+        $link_field = $modx->getOption('link_field', $config, '');
+        $pos_field = $modx->getOption('pos_field', $config, 'pos');
+        $resave_object = $modx->getOption('resave_object', $config, 0);
+        $extrafields = explode(',',$modx->getOption('extrafields', $config, ''));        
+        
+        $products = $modx->fromJson($modx->getOption($postfield, $postvalues, ''));
+        $old_products = array();
+
+        if ($product_collection = $object->getMany($link_alias)) {
+            foreach ($product_collection as $product_o) {
+                $old_products[$product_o->get('id')] = $product_o;
+            }
+        }
+
+        $pos = 1;
+        $new_products = array();
+        foreach ($products as $product) {
+            $product_id = $modx->getOption($link_field, $product, '');
+            $migx_id = $modx->getOption('MIGX_id', $product, '');
+            $id = $modx->getOption('id', $product, 'new');
+            if (!empty($product_id)) {
+                if (isset($old_products[$id])) {
+                    $product_o = $old_products[$id];
+                    unset($old_products[$id]);
+                } else {
+                    $product_o = $xpdo->newObject($link_classname);
+                }
+                $product_o->set($pos_field, $pos);
+                foreach ($extrafields as $extrafield){
+                    $value = $modx->getOption($extrafield, $product, '');
+                    $product_o->set($extrafield, $value);
+                }
+                
+                $product_o->set($link_field, $product_id);
+                $product_o->set($id_field, $object->get('id'));
+                $product_o->save();
+                $new_product = $product_o->toArray();
+                $new_product['MIGX_id'] = $migx_id;
+                $new_products[] = $new_product;
+                $pos++;
+            }
+        }
+
+        //save cleaned json
+        $object->set($postfield, $modx->toJson($new_products));
+        if (!empty($resave_object)){
+            $object->save();
+        }
+
+        foreach ($old_products as $product_o) {
+            $product_o->remove();
+        }
+    }    
+    
+    public function handleTranslations(&$object, $postvalues, $config) {
+        $modx = &$this->modx;
+        $xpdo = &$object->xpdo;
+		
+        $link_classname = $modx->getOption('link_classname', $config, '');
+        $link_alias = $modx->getOption('link_alias', $config, 'Translations');
+        $postfield = $modx->getOption('postfield', $config, '');
+        $id_field = $modx->getOption('id_field', $config, '');
+        $link_field = $modx->getOption('link_field', $config, 'iso_code');
+        $languages = $modx->getOption('languages', $config, array());		
+		
+        $old_translations = array();
+        if ($trans_collection = $object->getMany($link_alias)) {
+            foreach ($trans_collection as $trans_o) {
+                $old_translations[$trans_o->get($link_field)] = $trans_o;
+            }
+        }
+
+        foreach ($languages as $language) {
+            $iso_code = $modx->getOption($link_field, $language, '');
+            if (!empty($iso_code)) {
+                if (isset($old_translations[$iso_code])) {
+                    $trans_o = $old_translations[$iso_code];
+                    unset($old_translations[$iso_code]);
+                } else {
+                    $trans_o = $xpdo->newObject($link_classname);
+                    $trans_o->set($link_field, $iso_code);
+                    $trans_o->set($id_field, $object->get('id'));
+                }
+                foreach ($postvalues as $field => $value) {
+                    $fieldparts = explode('_', $field);
+                    $fieldparts = array_reverse($fieldparts);
+                    if ($fieldparts[0] == $iso_code) {
+                        $fieldname = str_replace('_' . $iso_code, '', $field);
+                        $trans_o->set($fieldname, $value);
+                    }
+                }
+                $trans_o->save();
+
+            }
+        }
+
+        foreach ($old_translations as $trans_o) {
+            $trans_o->remove();
+        }
+    }	    
+
     public function getTemplate($rowtpl, $template = array()) {
         if (!isset($template[$rowtpl])) {
             if (substr($rowtpl, 0, 6) == "@FILE:") {
@@ -2231,6 +2386,7 @@ class Migx {
     function importconfig($array) {
         $excludekeys_ifarray = array(
             'getlistwhere',
+            'hooksnippets',
             'joins',
             'configs');
         $array = $this->recursive_encode($array, $excludekeys_ifarray);
