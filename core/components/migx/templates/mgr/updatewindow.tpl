@@ -64,7 +64,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                 }                  
             }
         }
-
+        this.destroy();
     }
     {/literal}{$customconfigs.winfunctions}{literal}
     ,getFormValues: function(){

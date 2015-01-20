@@ -157,7 +157,8 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var isnew = (action == 'u') ? '0':'1';
         var isduplicate = (action == 'd') ? '1':'0';
         var win_xtype = 'modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}';
-		
+		this.windows[win_xtype] = null;
+        /*
         if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv_id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
@@ -177,7 +178,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             //this.setWinPosition(10,10);
             
     	}
-        
+        */
         /*
         if (this.windows[win_xtype]){
              //this.windows[win_xtype].destroy();

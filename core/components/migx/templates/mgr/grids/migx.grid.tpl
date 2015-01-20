@@ -434,6 +434,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         var isduplicate = (action == 'd') ? '1':'0';
 		
         var win_xtype = 'modx-window-tv-item-update-{/literal}{$tv->id}{literal}';
+        this.windows[win_xtype] = null;
+        /*        
 		if (this.windows[win_xtype]){
 			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
 			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
@@ -450,6 +452,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 			this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
 		}
+        */
 		this.loadWindow(btn,e,{
             xtype: win_xtype
             ,record: data

@@ -84,7 +84,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                 }                  
             }
         }
-
+        this.destroy();
     },      
     submit: function() {
         var v = this.fp.getForm().getValues();
