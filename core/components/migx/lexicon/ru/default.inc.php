@@ -45,8 +45,8 @@ $_lang['migx.new'] = 'новый';
 $_lang['migx.filters'] = 'Фильтры';
 
 $_lang['migx.add_replacement'] = 'Замена "Добавить элемент"';
-$_lang['migx.activate'] = 'Активизировать';
-$_lang['migx.deactivate'] = 'Деактивизировать';
+$_lang['migx.activate'] = 'Активировать';
+$_lang['migx.deactivate'] = 'Деактивировать';
 
 $_lang['migx.import_from_package'] = 'Импорт из пакета';
 $_lang['migx.export_to_package'] = 'Экспорт в пакет';
