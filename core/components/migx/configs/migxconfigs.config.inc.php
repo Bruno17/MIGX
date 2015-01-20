@@ -148,7 +148,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.join_alias","caption":"Join Alias"},
     {"field":"extended.has_jointable","caption":"Has Extra Connection Table","inputTVtype":"listbox","inputOptionValues":"yes||no","default":"yes"},
     {"field":"extended.getlistwhere","caption":"Where"},
-    {"field":"extended.joins","caption":"Joins","inputTVtype":"textarea"}
+    {"field":"extended.joins","caption":"Joins","inputTVtype":"textarea"},
+    {"field":"extended.hooksnippets","caption":"Hook Snippets","description":"Example:{\"aftersave\":\"myaftersave_snippet\"}","inputTVtype":"textarea"}
 ]},
 {"caption":"CMP-Settings", "fields": [
     {"field":"extended.cmpmaincaption","caption":"Main Caption"},

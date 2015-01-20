@@ -39,6 +39,12 @@ if (empty($scriptProperties['object_id'])) {
 }
 $errormsg = '';
 $config = $modx->migx->customconfigs;
+
+$hooksnippets = $modx->fromJson($modx->getOption('hooksnippets',$config,''));
+if (is_array($hooksnippets)){
+    $hooksnippet_aftersave = $modx->getOption('aftersave',$hooksnippets,'');
+}
+
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
     $prefix = isset($config['prefix']) ? $config['prefix'] : '';
@@ -277,6 +283,24 @@ if ($object->save() == false) {
     $updateerror = true;
     $errormsg = $modx->lexicon('quip.thread_err_save');
     return;
+}
+
+
+//$hooksnippet_aftersave = 'viacor_aftersave';
+$snippetProperties = array();
+$snippetProperties['object'] = &$object;
+$snippetProperties['postvalues'] = $postvalues;
+$snippetProperties['scriptProperties'] = $scriptProperties;
+
+if (!empty($hooksnippet_aftersave)){
+	$result = $modx->runSnippet($hooksnippet_aftersave,$snippetProperties);
+	$result = $modx->fromJson($result);
+	$error  = $modx->getOption('error',$result,'');
+    if (!empty($error)) {
+        $updateerror = true;
+        $errormsg = $error;
+        return;
+    }	
 }
 
 if ($has_jointable && !empty($joinalias)) {
