@@ -2,6 +2,11 @@
 $object_id = 'new';
 $config = $modx->migx->customconfigs;
 
+$hooksnippets = $modx->fromJson($modx->getOption('hooksnippets',$config,''));
+if (is_array($hooksnippets)){
+    $hooksnippet_aftergetfields = $modx->getOption('aftergetfields',$hooksnippets,'');
+}
+
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
     $prefix = isset($config['prefix']) ? $config['prefix'] : '';
@@ -83,6 +88,22 @@ else{
     $record = array();
 }
 
+//$hooksnippet_aftergetfields = 'viacor_aftergetfields';
+if (!empty($hooksnippet_aftergetfields)) {
+    $object->set('record_fields', $record);
+    $snippetProperties = array();
+    $snippetProperties['object'] = &$object;
+    $snippetProperties['scriptProperties'] = $scriptProperties;
+    $result = $modx->runSnippet($hooksnippet_aftergetfields, $snippetProperties);
+    $result = $modx->fromJson($result);
+    $error = $modx->getOption('error', $result, '');
+    if (!empty($error)) {
+        $updateerror = true;
+        $errormsg = $error;
+        return;
+    }
+    $record = $object->get('record_fields');
+}
 
 foreach ($record as $field => $fieldvalue) {
     if (!empty($fieldvalue) && is_array($fieldvalue)) {

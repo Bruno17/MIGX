@@ -2231,6 +2231,10 @@ class Migx {
                 }
             }
         }
+        
+        foreach ($old_attributes as $attr_o) {
+            $attr_o->remove();
+        }        
     }
     
     public function handleRelatedLinksFromMIGX(&$object, $postvalues, $config) {
