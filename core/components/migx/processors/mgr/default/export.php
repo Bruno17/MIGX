@@ -4,8 +4,7 @@
  * Generatting CSV formatted string from an array.
  * By Sergey Gurevich.
  */
-function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n", $qut = '"')
-{
+function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n", $qut = '"') {
     if (!is_array($array) or !is_array($array[0]))
         return false;
 
@@ -60,8 +59,8 @@ if (!($scriptProperties['download'])) {
             }
             $xpdo = &$modx;
         }
-    }else{
-        $xpdo = &$modx;    
+    } else {
+        $xpdo = &$modx;
     }
     $classname = $config['classname'];
     $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
@@ -209,23 +208,26 @@ if (!($scriptProperties['download'])) {
 
     $cacheManager = $modx->getCacheManager();
     $cacheManager->writeFile($cacheName, $output);
-
+    $_SESSION['csv_filedownload'] = basename($cacheName);
     return $modx->error->success(basename($cacheName));
 } else {
     $configs = $modx->getOption('configs', $scriptProperties, '');
     $cacheName = $scriptProperties['download'];
-    $cacheName = $modx->getOption('core_path') . 'export/' . $cacheName;
+    $output = 'Export error: ' . $cacheName . ' unknown/no permission';
+    if (isset($_SESSION['csv_filedownload']) && $cacheName == $_SESSION['filedownload']) {
+        $cacheName = $modx->getOption('core_path') . 'export/' . $cacheName;
 
-    if (!is_file($cacheName)) {
-        return 'Export error: Export ' . $cacheName . ' does not exist';
-    } else {
-        $output = file_get_contents($cacheName);
+        if (!is_file($cacheName)) {
+            return 'Export error: Export ' . $cacheName . ' does not exist';
+        } else {
+            $output = file_get_contents($cacheName);
+        }
+
+        $filename = strftime('%Y-%m-%d') . '_' . $configs . '_report.csv';
+
+        header('Content-type: text/csv');
+        header('Content-Disposition: attachment; filename=' . $filename);
     }
-
-    $filename = strftime('%Y-%m-%d') . '_' . $configs . '_report.csv';
-
-    header('Content-type: text/csv');
-    header('Content-Disposition: attachment; filename=' . $filename);
 
     return $output;
 }
