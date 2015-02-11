@@ -72,5 +72,3 @@ listboxEditor : function(column){
 }            
         
 ";
-?>
-
