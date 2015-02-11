@@ -18,7 +18,7 @@ class modTemplateVarInputRenderRedactor extends modTemplateVarInputRender {
             return;
         }
         if ($this->modx->resource instanceof modResource) {
-            $redactor->setResource($modx->resource);
+            $redactor->setResource($this->modx->resource);
         }
         elseif (isset($_REQUEST['resource_id'])) {
             $redactor->setResource($_REQUEST['resource_id']);
