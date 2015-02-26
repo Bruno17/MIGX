@@ -128,6 +128,9 @@ if (!empty($tvname)) {
                     }else{
                         $outputvalue = $tv->renderOutput($from);
                     }
+                    if (!empty($outputvalue)){
+                        break;
+                    }                    
                 }
             }
         }
