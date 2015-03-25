@@ -102,6 +102,8 @@ class Migx {
 
         $prefix = isset($scriptProperties['prefix']) ? $scriptProperties['prefix'] : '';
         $usecustomprefix = $modx->getOption('useCustomPrefix', $scriptProperties, '');
+        $usecustomprefix = empty($usecustomprefix) ? $modx->getOption('usecustomprefix', $scriptProperties, '') : $usecustomprefix;
+        $usecustomprefix = empty($usecustomprefix) ? $modx->getOption('use_custom_prefix', $scriptProperties, '') : $usecustomprefix;
 
         if (empty($prefix)) {
             $prefix = !empty($usecustomprefix) ? $prefix : null;
