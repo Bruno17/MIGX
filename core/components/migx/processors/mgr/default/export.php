@@ -214,7 +214,7 @@ if (!($scriptProperties['download'])) {
     $configs = $modx->getOption('configs', $scriptProperties, '');
     $cacheName = $scriptProperties['download'];
     $output = 'Export error: ' . $cacheName . ' unknown/no permission';
-    if (isset($_SESSION['csv_filedownload']) && $cacheName == $_SESSION['filedownload']) {
+    if (isset($_SESSION['csv_filedownload']) && $cacheName == $_SESSION['csv_filedownload']) {
         $cacheName = $modx->getOption('core_path') . 'export/' . $cacheName;
 
         if (!is_file($cacheName)) {

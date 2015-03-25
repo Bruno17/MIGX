@@ -1484,6 +1484,7 @@ class Migx {
         $input_prefix = $this->modx->getOption('input_prefix', $scriptProperties, '');
         $input_prefix = !empty($input_prefix) ? $input_prefix . '_' : '';
         $rte = isset($scriptProperties['which_editor']) ? $scriptProperties['which_editor'] : $this->modx->getOption('which_editor', '', $this->modx->_userConfig);
+        
 
         foreach ($tabs as $tabid => $tab) {
             $tvs = array();
@@ -1529,7 +1530,7 @@ class Migx {
 
                     $o_type = $tv->get('type');
                     if ($tv->get('type') == 'richtext') {
-                        $tv->set('type', 'migx' . strtolower($rte));
+                        $tv->set('type', 'migx' . str_replace(' ','_',strtolower($rte)));
                     }
 
                     //we change the phptype, that way we can use any id, not only integers (issues on windows-systems with big integers!)
