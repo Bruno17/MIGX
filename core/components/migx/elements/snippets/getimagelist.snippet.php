@@ -147,6 +147,7 @@ if (!empty($tvname)) {
             $inputTvs = $migx->extractInputTvs($formtabs);
         }
         $migx->source = $tv->getSource($migx->working_context, false);
+        $migx->source->initialize();
     }
 
 
