@@ -366,7 +366,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 
 	,loadFromSource: function(btn,e) {
         MODx.Ajax.request({
-            url: MODx.config.assets_url+'components/migx/connector.php'
+            url: '{/literal}{$config.connectorUrl}{literal}'
             ,params: {
                 action: 'mgr/loadfromsource'
                 ,resource_id: '{/literal}{$resource.id}{literal}'
@@ -507,7 +507,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
         var object_id = '{/literal}{$request.object_id}{literal}';
-        var url = MODx.config.assets_url+'components/migx/connector.php';
+        var url = '{/literal}{$config.connectorUrl}{literal}';
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
         if (jsonvarkey == ''){
@@ -646,7 +646,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         if (this.call_collectmigxitems){
         items = Ext.util.JSON.encode(items); 
         MODx.Ajax.request({
-            url: MODx.config.assets_url+'components/migx/connector.php'
+            url: '{/literal}{$config.connectorUrl}{literal}'
             ,params: {
                 action: 'mgr/migxdb/process'
                 ,processaction: 'collectmigxitems'

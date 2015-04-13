@@ -27,6 +27,7 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender
         $grid = $this->migx->getGrid();
         //$gridfile = $this->migx->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
         $filenames = array();
+        $this->modx->controller->setPlaceholder('config',$this->migx->config);
         $defaultpath = $this->migx->config['templatesPath'] . '/mgr/grids/';
         $filename = $grid . '.grid.tpl';
         if ($gridfile = $this->migx->findGrid($defaultpath, $filename, $filenames)) {

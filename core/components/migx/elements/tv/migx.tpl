@@ -256,7 +256,7 @@ Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
 		var a = {
-            url: MODx.config.assets_url+'components/migx/connector.php'
+            url: '{/literal}{$config.connectorUrl}{literal}'
             //url: config.url
 			,method: 'POST'
             ,params: config.baseParams
@@ -454,7 +454,8 @@ var lang = '{/literal}{$migx_lang}{literal}';
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'
             ,tv_type: '{/literal}{$tv_type}{literal}'
-            ,url: MODx.config.assets_url+'components/migx/connector.php'
+            //,url: MODx.config.assets_url+'components/migx/connector.php' 
+            ,url: '{/literal}{$config.connectorUrl}{literal}'
             ,width: '97%'			
         });
   

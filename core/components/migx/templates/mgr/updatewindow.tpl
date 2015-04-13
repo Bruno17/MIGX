@@ -246,7 +246,7 @@ Ext.extend(MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal},MODx.FormPanel,
         var self = this; 
         
 		return a = {
-            url: MODx.config.assets_url+'components/migx/connector.php'
+            url: '{/literal}{$config.connectorUrl}{literal}'
             //url: config.url
 			,method: 'POST'
             ,params: config.baseParams

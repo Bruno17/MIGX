@@ -18,7 +18,7 @@
         pathconfigs: Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}'),
         fields: Ext.util.JSON.decode('{/literal}{$fields}{literal}'),
         wctx: '{/literal}{$myctx}{literal}',
-        url: MODx.config.assets_url + 'components/migx/connector.php',
+        url: Migx.config.connectorUrl,
         auth: '{/literal}{$auth}{literal}',
         resource_id: '{/literal}{$resource.id}{literal}',
         co_id: '{/literal}{$connected_object_id}{literal}',

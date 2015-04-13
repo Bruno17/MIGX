@@ -29,7 +29,7 @@ Migx.page.Object = function(config) {
 			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'
-            ,url: MODx.config.assets_url+'components/migx/connector.php'
+            ,url: '{/literal}{$config.connectorUrl}{literal}'
             ,auth: '{/literal}{$auth}{literal}'
             ,resource_id: '{/literal}{$resource.id}{literal}' 
             ,co_id: '{/literal}{$connected_object_id}{literal}' 

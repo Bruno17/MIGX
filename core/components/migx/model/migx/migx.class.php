@@ -781,6 +781,7 @@ class Migx {
                 $tabdescription = empty($this->customconfigs['cmptabdescription']) ? 'undefined' : $this->customconfigs['cmptabdescription'];
                 $maincaption = empty($this->customconfigs['cmpmaincaption']) ? $maincaption : "'" . $this->replaceLang($this->customconfigs['cmpmaincaption']) . "'";
 
+                $controller->setPlaceholder('config', $this->config);
                 $controller->setPlaceholder('cmptabcaption', $tabcaption);
                 $controller->setPlaceholder('cmptabdescription', $tabdescription);
 

@@ -215,7 +215,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
 	,loadIframeWin: function(btn,e,tpl,action) {
         var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
-        var url = MODx.config.assets_url+'components/migx/connector.php';
+        var url = '{/literal}{$config.connectorUrl}{literal}';
         var tv = Ext.get('tv{/literal}{$tv_id}{literal}');
         var items = tv ? tv.dom.value : '';
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
@@ -396,7 +396,7 @@ Ext.extend(MODx.MigxTreeCombo,Ext.form.ComboBox,{
             var listeners = this.treelisteners;
             this.tree = new Ext.tree.TreePanel({
 			    loader: new Ext.tree.TreeLoader({
-			        dataUrl: MODx.config.assets_url+'components/migx/connector.php',
+			        dataUrl: '{/literal}{$config.connectorUrl}{literal}',
                     baseParams: baseParams
 			    }),
                 root: root,

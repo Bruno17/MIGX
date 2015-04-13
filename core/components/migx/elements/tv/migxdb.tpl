@@ -100,7 +100,7 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
 			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'
-            ,url: MODx.config.assets_url+'components/migx/connector.php'
+            ,url: '{/literal}{$config.connectorUrl}{literal}'
             ,tv_type: '{/literal}{$tv_type}{literal}'
             ,configs: '{/literal}{$properties.configs}{literal}'
             ,auth: '{/literal}{$auth}{literal}'
@@ -147,7 +147,7 @@ if ('{/literal}{$customconfigs.gridload_mode}{literal}' == '2'){
 			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'
-            ,url: MODx.config.assets_url+'components/migx/connector.php'
+            ,url: '{/literal}{$config.connectorUrl}{literal}'
             ,configs: '{/literal}{$properties.configs}{literal}'
             ,auth: '{/literal}{$auth}{literal}'
             ,resource_id: '{/literal}{$resource.id}{literal}' 
