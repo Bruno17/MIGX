@@ -42,3 +42,8 @@ $gridactionbuttons['resetwinposition']['scope'] = 'this';
 $gridactionbuttons['emptyThrash']['text'] = "'[[%migx.emptythrash]]'";
 $gridactionbuttons['emptyThrash']['handler'] = 'this.emptyThrash';
 $gridactionbuttons['emptyThrash']['scope'] = 'this';
+
+$gridactionbuttons['uploadfiles']['text'] = "'[[%migx.upload_images]]'";
+$gridactionbuttons['uploadfiles']['handler'] = 'this.uploadFiles,this.uploadSuccess,this.loadFromSource';
+$gridactionbuttons['uploadfiles']['scope'] = 'this';
+$gridactionbuttons['uploadfiles']['standalone'] = '1';

@@ -30,9 +30,13 @@ $path = str_replace('{id}', $objectid, $pathTpl);
 $fullpath = $modx->getOption('base_path') . $path;
 
 if ($createpath && !file_exists($fullpath)) {
-        $permissions = octdec($modx->getOption('new_folder_permissions', null, 0755, true));
+        $permissions = octdec('0' . (int)($modx->getOption('new_folder_permissions', null, '755', true)));
         if (!@mkdir($fullpath, $permissions, true)) {
             $modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migxResourceMediaPath]: could not create directory %s).', $fullpath));
+        }
+        else{
+            chmod($fullpath, $permissions); 
+        }
 }
 
 return $path;

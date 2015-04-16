@@ -104,12 +104,51 @@ $gridcontextmenus['remove']['code']="
 ";
 $gridcontextmenus['remove']['handler'] = 'this.removeObject';
 
+
+$gridcontextmenus['edit_migx']['code']="
+        m.push({
+            text: '[[%migx.edit]]'
+            ,handler: this.migx_update
+        });					
+";
+
+$gridcontextmenus['duplicate_migx']['code']="
+        m.push({
+            text: '[[%migx.duplicate]]'
+            ,handler: this.migx_duplicate
+        });        					
+";
+
 $gridcontextmenus['remove_migx']['code']="
         m.push({
             className : 'remove', 
             text: '[[%migx.remove]]',
-            handler: 'this.remove'
+            handler: 'this.migx_remove'
         });						
+";
+
+$gridcontextmenus['remove_migx_and_image']['code']="
+        m.push({
+            className : 'remove', 
+            text: '[[%migx.remove]]',
+            handler: 'this.migx_removeMigxAndImage'
+        });						
+";
+$gridcontextmenus['remove_migx_and_image']['handler'] = 'this.migx_removeMigxAndImage';
+
+
+$gridcontextmenus['movetotop_migx']['code']="
+        m.push({
+            text: '[[%migx.move_to_top]]'
+            ,handler: this.moveToTop
+        }); 				
+";
+
+$gridcontextmenus['movetotop_bottom']['code']="
+        m.push({
+            text: '[[%migx.move_to_bottom]]'
+            ,handler: this.moveToBottom
+        }); 			
 ";
 
 $gridcontextmenus['publishtarget']['code']="

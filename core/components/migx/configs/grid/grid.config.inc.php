@@ -701,3 +701,43 @@ $gridfunctions['this.showScreenshot'] = "
     }     
 ";
 
+$gridfunctions['this.uploadFiles'] = "
+    uploadFiles: function(btn,e) {
+        if (!this.uploader) {
+            this.uploader = new MODx.util.MultiUploadDialog.Dialog({
+                url: MODx.config.connector_url
+                ,base_params: {
+                    action: 'browser/file/upload'
+                    ,wctx: MODx.ctx || ''
+                    ,source: 3
+                    ,path:'/'
+                }
+                ,cls: 'ext-ux-uploaddialog-dialog modx-upload-window'
+            });
+            //this.uploader.on('show',this.beforeUpload,this);
+            this.uploader.on('uploadsuccess',this.uploadSuccess,this);
+            //this.uploader.on('uploaderror',this.uploadError,this);
+            //this.uploader.on('uploadfailed',this.uploadFailed,this);
+        }
+        this.uploader.base_params.source = 3;
+        this.uploader.show(btn);
+    } 	
+";
+
+$gridfunctions['this.uploadSuccess'] = "
+    uploadSuccess: function() {
+        this.loadFromSource();
+    } 	
+";
+
+$gridfunctions['this.migx_removeMigxAndImage'] = "
+    migx_removeMigxAndImage: function() {
+        var _this=this;
+		Ext.Msg.confirm(_('warning') || '','[[%migx.remove_confirm]]' || '',function(e) {
+            if (e == 'yes') {
+                _this.loadFromSource(null,null,'removeimage');				
+            }
+        }),this;		        
+    } 	
+";
+

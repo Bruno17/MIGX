@@ -872,6 +872,7 @@ class Migx {
 
     public function prepareGrid($properties, &$controller, &$tv, $columns = array()) {
 
+        
         $this->loadConfigs(false);
         //$lang = $this->modx->lexicon->fetch();
 
@@ -882,7 +883,9 @@ class Migx {
 
         if (is_object($tv)) {
             $win_id = $tv->get('id');
+            $tv_type = $tv->get('type');
         } else {
+            $tv_type = '';
             $win_id = 'migxdb';
             $tv = $this->modx->newObject('modTemplateVar');
             $controller->setPlaceholder('tv', $tv);
@@ -1113,6 +1116,34 @@ class Migx {
                 }
 
             }
+        } 
+        
+        if ($tv_type == 'migx' && empty($menues)){
+            //default context-menues for migx
+            $menues = "
+        m.push({
+            text: '[[%migx.edit]]'
+            ,handler: this.migx_update
+        });
+        m.push({
+            text: '[[%migx.duplicate]]'
+            ,handler: this.migx_duplicate
+        });        
+        m.push('-');
+        m.push({
+            text: '[[%migx.remove]]'
+            ,handler: this.migx_remove
+        });
+        m.push('-');
+        m.push({
+            text: '[[%migx.move_to_top]]'
+            ,handler: this.moveToTop
+        }); 
+        m.push({
+            text: '[[%migx.move_to_bottom]]'
+            ,handler: this.moveToBottom
+        });                  
+            ";
         }
         $this->customconfigs['gridcontextmenus'] = $menues;
 

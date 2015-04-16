@@ -326,7 +326,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
 		var s=this.getStore();
 		this.loadPreviewWin(btn,e,s.getCount(),'a');
 	}    	
-	,remove: function() {
+	,migx_remove: function() {
         var _this=this;
 		Ext.Msg.confirm(_('warning') || '','[[%migx.remove_confirm]]' || '',function(e) {
             if (e == 'yes') {
@@ -341,17 +341,17 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 
                 _this.getView().refresh();
 		        _this.collectItems();
-                MODx.fireResourceFormChange();	
-                }
+                MODx.fireResourceFormChange();
+               }
             }),this;		
 	}
 	,refresh: function() {
         return;
     }       
-	,update: function(btn,e) {
+	,migx_update: function(btn,e) {
       this.loadWin(btn,e,this.menu.recordIndex,'u');
     }
-	,duplicate: function(btn,e) {
+	,migx_duplicate: function(btn,e) {
 	    var add_items_directly = '{/literal}{$customconfigs.add_items_directly}{literal}';
         if (add_items_directly == '1'){
             var s=this.getStore();
@@ -364,7 +364,9 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
       
     } 
 
-	,loadFromSource: function(btn,e) {
+	,loadFromSource: function(btn,e,extra_params) {
+        var recordIndex = this.menu.recordIndex || 'none'; 
+        var extra_params = extra_params || ''; 
         MODx.Ajax.request({
             url: '{/literal}{$config.connectorUrl}{literal}'
             ,params: {
@@ -372,7 +374,9 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
                 ,resource_id: '{/literal}{$resource.id}{literal}'
 				,co_id: '{/literal}{$connected_object_id}{literal}'
                 ,tv_name: '{/literal}{$tv->name}{literal}'
-                ,items: Ext.get('tv{/literal}{$tv->id}{literal}').dom.value 
+                ,items: Ext.get('tv{/literal}{$tv->id}{literal}').dom.value
+                ,record_index: recordIndex
+                ,extra_params: extra_params
             }
             ,listeners: {
                 'success': {fn:function(res){
@@ -575,29 +579,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     ,getMenu: function() {
 		var n = this.menu.record; 
         var m = [];
-        m.push({
-            text: '[[%migx.edit]]'
-            ,handler: this.update
-        });
-        m.push({
-            text: '[[%migx.duplicate]]'
-            ,handler: this.duplicate
-        });        
-        m.push('-');
-        m.push({
-            text: '[[%migx.remove]]'
-            ,handler: this.remove
-        });
-        m.push('-');
-        m.push({
-            text: '[[%migx.move_to_top]]'
-            ,handler: this.moveToTop
-        }); 
-        m.push({
-            text: '[[%migx.move_to_bottom]]'
-            ,handler: this.moveToBottom
-        });                   
-		return m;
+        {/literal}{$customconfigs.gridcontextmenus}{literal}
+    	return m;
     }
     ,renderRowActions:function(v,md,rec) {
         var n = rec.data;

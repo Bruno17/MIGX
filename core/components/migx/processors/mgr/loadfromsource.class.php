@@ -19,8 +19,10 @@ class migxFormProcessor extends modProcessor {
         $tvname = $this->modx->getOption('tv_name', $scriptProperties, '');
         $items = $this->modx->getOption('items', $scriptProperties, '');
         $items = !empty($items) ? $this->modx->fromJson($items) : array();
-
-
+        $extra_params = $this->modx->getOption('extra_params', $scriptProperties, '');
+        $record_index = $this->modx->getOption('record_index', $scriptProperties, '');
+        $remove_item = $extra_params == 'removeimage' ? true : false;
+        
         $this->modx->migx->working_context = 'web';
         $limit = 100;
 
@@ -39,7 +41,16 @@ class migxFormProcessor extends modProcessor {
 
                     //echo '<pre>' . print_r($sourceProperties,1) . '</pre>';
                     $filefield = $this->modx->getOption('migxFileFieldname', $sourceProperties, 'image');
-
+                    
+                    //remove a file
+                    if ($remove_item && isset($items[$record_index])){
+                        $item = $items[$record_index];
+                        if (isset($item[$filefield])){
+                            $filename = $item[$filefield];
+                            $source->removeObject($filename);
+                        }
+                    }
+                    
                     $files = $source->getObjectsInContainer('');
                     $i = 1;
                     foreach ($files as $file) {
