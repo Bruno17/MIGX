@@ -75,6 +75,7 @@ class migxFormProcessor extends modProcessor {
                             if (isset($item['MIGX_id']) && $item['MIGX_id'] > $maxID) {
                                 $maxID = $item['MIGX_id'];
                             }
+                            $item['published'] = $this->modx->getOption('published',$item,'1');
                             $newitems[] = $item;
                         }
                     }
@@ -84,6 +85,7 @@ class migxFormProcessor extends modProcessor {
                         $item['MIGX_id'] = (string )$maxID;
                         $item[$filefield] = $image['url'];
                         $item['deleted'] = '0';
+                        $item['published'] = '1';
                         $newitems[] = $item;
                     }
                     $output = $newitems;

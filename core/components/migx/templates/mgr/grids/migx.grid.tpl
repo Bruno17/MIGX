@@ -292,15 +292,15 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             this.loadWin(btn,e,s.getCount(),'a');    
         }
 	}
-    ,addNewItem: function(item){
-            if (item){
-                var item = item;
-                var items = [];
-                items.push(item);
+    ,addNewItem: function(olditem){
+            if (olditem){
+                var json = '[' + Ext.util.JSON.encode(olditem) + ']';
             }else{
-                var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
-                var item = items[0];
+                var json = '{/literal}{$newitem}{literal}';
             }
+       
+            var items=Ext.util.JSON.decode(json);
+            var item = items[0];            
             var s = this.getStore();
             var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt}{literal}';
             
@@ -321,7 +321,7 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
             this.call_collectmigxitems=true;
             this.collectItems(); 
             this.call_collectmigxitems = call_collectmigxitems;       
-    }    
+    }
 	,preview: function(btn,e) {
 		var s=this.getStore();
 		this.loadPreviewWin(btn,e,s.getCount(),'a');
