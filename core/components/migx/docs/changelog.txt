@@ -1,5 +1,22 @@
 Changelog for MIGX.
 
+MIGX 2.9.3
+==============
+basic support for new TinyMCE RTE
+fix assetsUrl/connectorUrl - settings
+MIGX-TV MODX multifile-uploader/autocreate items  
+MIGX-TV configurable contextmenues
+
+MIGX 2.9.2
+==============
+some smaller fixes
+
+MIGX 2.9.1
+==============
+add hook-snippet setting
+some handleRelated - update - functions
+destroy updatewindow on close
+
 MIGX 2.9
 ==============
 [migxLoopCollection] allow use of foreign database
