@@ -92,6 +92,7 @@ if ($resource = $modx->getObject('modResource', $docid)) {
         $path = str_replace('{pagetitle}', $resource->get('pagetitle'), $path);
         $path = str_replace('{alias}', $resource->get('alias'), $path);
         $path = str_replace('{parent}', $resource->get('parent'), $path);
+        $path = str_replace('{context_key}', $resource->get('context_key'), $path);
         $path = str_replace('{ultimateparent}', $ultimateParent, $path);
         if ($template = $resource->getOne('Template')) {
             $path = str_replace('{templatename}', $template->get('templatename'), $path);
