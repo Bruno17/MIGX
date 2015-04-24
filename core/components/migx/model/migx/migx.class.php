@@ -1471,7 +1471,6 @@ class Migx {
                 return $mediasource;
             }
         }
-
         if ($this->source && $sourcefrom == 'migx') {
             //use global MIGX-mediasource for all TVs
             $tv->setSource($this->source);

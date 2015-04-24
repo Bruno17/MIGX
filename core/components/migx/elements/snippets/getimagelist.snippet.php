@@ -134,8 +134,8 @@ if (!empty($tvname)) {
                 }
             }
         }
-        
-        
+
+       
         /*
         *   get inputTvs 
         */
@@ -244,6 +244,7 @@ if ($count > 0) {
 
 
             $inputTVkey = $formname . $field;
+
             if ($processTVs && isset($inputTvs[$inputTVkey])) {
                 if (isset($inputTvs[$inputTVkey]['inputTV']) && $tv = $modx->getObject('modTemplateVar', array('name' => $inputTvs[$inputTVkey]['inputTV']))) {
 

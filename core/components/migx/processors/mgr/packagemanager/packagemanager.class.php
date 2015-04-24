@@ -88,7 +88,7 @@ class migxCreatePackageProcessor extends modProcessor {
             $generator->parseSchema($schemafile, $modelpath);
         }
 
-        if ($properties['task'] == 'addmissing' || $properties['task'] == 'removedeleted' || $properties['task'] == 'checkindexes') {
+        if ($properties['task'] == 'alterfields' || $properties['task'] == 'addmissing' || $properties['task'] == 'removedeleted' || $properties['task'] == 'checkindexes') {
             $prefix = empty($prefix) ? null : $prefix;
             $options['addmissing'] = 0;
             $options['removedeleted'] = 0;

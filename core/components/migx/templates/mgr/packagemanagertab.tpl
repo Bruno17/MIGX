@@ -167,6 +167,23 @@
                     scope: this
                 }]
             },{
+                title: 'Alter fields',
+                layout:'form',
+                defaults: {
+                    autoHeight: true
+                },
+                items: [{
+                    html: '<p>Alter fields from schema</p>',
+                    bodyCssClass: 'panel-desc',
+                    border: false
+                },
+                {
+                    xtype: 'button',
+                    handler: function(){this.updatePackage('alterfields')},
+                    text: 'Alter fields',
+                    scope: this
+                }]
+            },{
                 title: 'Xml Schema',
                 layout:'form',
                 defaults: {

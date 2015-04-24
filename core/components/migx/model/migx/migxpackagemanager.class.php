@@ -29,6 +29,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
         $addmissing = $this->modx->getOption('addmissing', $options, false);
         $removedeleted = $this->modx->getOption('removedeleted', $options, false);
         $checkindexes = $this->modx->getOption('checkindexes', $options, false);
+        $alterfields = $this->modx->getOption('alterfields', $options, false);
         $modfields = array();
         if (count($this->packageClasses) > 0) {
             foreach ($this->packageClasses as $class => $value) {
@@ -41,9 +42,25 @@ class MigxPackageManager extends xPDOGenerator_mysql {
                 if ($removedeleted) {
                     $this->removeDeletedFields($class, $modfields);
                 }
+                if ($alterfields) {
+                    $this->alterFields($class, $modfields);
+                }                
             }
         }
         return $modfields;
+    }
+    
+    public function alterFields($class, $modfields){
+        $table = $this->modx->getTableName($class);
+        $fieldsStmt = $this->modx->query('SHOW COLUMNS FROM ' . $table);
+        if ($fieldsStmt) {
+            $fields = $fieldsStmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+        if (count($fields) > 0) {
+            foreach ($fields as $field) {
+                $this->manager->alterField($class, $field['Field']);
+            }
+        }
     }
 
     public function checkIndexes($class, &$modfields) {
