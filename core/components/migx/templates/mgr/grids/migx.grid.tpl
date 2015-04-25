@@ -1,5 +1,5 @@
 {literal}
-MODx.grid.multiTVgrid = function(config) {
+MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
     config = config || {};
     //var cols=[this.sm];
     var cols=[];
@@ -136,7 +136,7 @@ MODx.grid.multiTVgrid = function(config) {
                       }
                    }) 
 		
-		this.setWidth('99%');
+		//this.setWidth('99%');
         
 		//this.syncSize();
                    // load the grid store
@@ -172,19 +172,16 @@ MODx.grid.multiTVgrid = function(config) {
         {$customconfigs.tbar}
         {/if}{literal}
         ]        
-		,viewConfig: {
-            forceFit:true
-        }
     });
 	
-    MODx.grid.multiTVgrid.superclass.constructor.call(this,config)
+    MODx.grid.multiTVgrid{/literal}{$tv->id}{literal}.superclass.constructor.call(this,config)
     this._makeTemplates();
     this.getStore().pathconfigs=config.pathconfigs;
     
 	this.loadData();
     this.on('click', this.onClick, this);  
 };
-Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
+Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid,{
     _renderUrl: function(v,md,rec) {
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
@@ -263,8 +260,8 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
         
         
 			
-		this.syncSize();
-        this.setWidth('100%');
+		//this.syncSize();
+        //this.setWidth('100%');
     }
     
     ,getSelectedAsList: function() {
@@ -697,5 +694,5 @@ Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
  		}
 	}       
 });
-Ext.reg('modx-grid-multitvgrid-{/literal}{$tv->id}{literal}',MODx.grid.multiTVgrid);
+Ext.reg('modx-grid-multitvgrid-{/literal}{$tv->id}{literal}',MODx.grid.multiTVgrid{/literal}{$tv->id}{literal});
 {/literal}

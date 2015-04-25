@@ -1,5 +1,5 @@
 <input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv_value|escape}"{$style} tvtype="{$tv->type}" />
-<div id="tvpanel{$tv->id}" style="width:650px">
+<div id="tvpanel{$tv->id}" style="width:100%">
 </div>
 <div id="tvpanel2{$tv->id}">
 </div>
@@ -436,17 +436,20 @@ Ext.extend(MODx.window.MiPreview,Ext.Window,{
 });
 Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
 
+
 Ext.onReady(function() {
 var lang = '{/literal}{$migx_lang}{literal}';
   for (var name in lang) {
     MODx.lang[name] = lang[name];
   }
+  
+});
 
         MODx.load({
             xtype: 'modx-grid-multitvgrid-{/literal}{$tv->id}{literal}'
             ,renderTo: 'tvpanel{/literal}{$tv->id}{literal}'
             ,tv: '{/literal}{$tv->id}{literal}'
-            ,cls:'tv{/literal}{$tv->id}{literal}_items'
+            ,cls: 'tv_modx-grid-multitvgrid_items'
             ,id:'tv{/literal}{$tv->id}{literal}_items'
 			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
             ,configs: '{/literal}{$properties.configs}{literal}'
@@ -456,12 +459,21 @@ var lang = '{/literal}{$migx_lang}{literal}';
             ,tv_type: '{/literal}{$tv_type}{literal}'
             //,url: MODx.config.assets_url+'components/migx/connector.php' 
             ,url: '{/literal}{$config.connectorUrl}{literal}'
-            ,width: '97%'			
         });
-  
+
+Ext.ComponentMgr.onAvailable('modx-resource-tabs', function() {
+    Ext.apply(this, {
+		listeners: {
+            tabchange: function() {
+                var grids = this.el.select('.tv_modx-grid-multitvgrid_items');
+                grids.each(function(grid){
+                    Ext.getCmp(grid.id).getView().refresh();
+                });           
+            }
+        }
+	});
+    
 });
-
-
 
 
 {/literal}
