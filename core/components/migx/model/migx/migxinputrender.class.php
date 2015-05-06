@@ -90,7 +90,7 @@ class migxInputRender extends modTemplateVarInputRender {
         $this->migx->migxlang['migx.add'] = $lang['migx_add'];
 
         $this->migx->prepareGrid($params, $this, $this->tv, $columns);
-        //$grid = $this->migx->getGrid();
+        $grid = $this->migx->getGrid();
 
         $filenames = array();
         $defaultpath = $this->migx->config['templatesPath'] . 'mgr/';
@@ -179,10 +179,15 @@ class migxInputRender extends modTemplateVarInputRender {
         $this->setPlaceholder('base_url', $this->modx->getOption('base_url'));
         $this->setPlaceholder('myctx', $wctx);
         $this->setPlaceholder('config', $this->migx->config);
-        $grid = 'migx';
-        $gridfile = $this->migx->config['templatesPath'] . '/mgr/grids/' . $grid . '.grid.tpl';
-        $this->setPlaceholder('grid', $this->migx->replaceLang($this->modx->controller->fetchTemplate($gridfile)));
-
+        
+        $grid = $grid == 'default' ? 'migx' : $grid;
+        
+        $filenames = array();
+        $defaultpath = $this->migx->config['templatesPath'] . '/mgr/grids/';
+        $filename = $grid . '.grid.tpl';
+        if ($gridfile = $this->migx->findGrid($defaultpath, $filename, $filenames)) {
+            $this->setPlaceholder('grid', $this->migx->replaceLang($this->modx->controller->fetchTemplate($gridfile)));
+        }        
     }
 
     /**
