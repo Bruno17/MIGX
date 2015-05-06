@@ -1477,7 +1477,16 @@ class Migx {
             $mediasource = $this->source;
         } else {
             //useTV-specific mediasource
-            $mediasource = $tv->getSource($this->working_context);
+            $mediasource = $tv->getSource($this->working_context,false);
+        }
+        
+        //try to get the context-default-media-source
+        if (!$mediasource){
+            $defaultSourceId = null;
+            if ($contextSetting = $this->modx->getObject('modContextSetting',array('key'=>'default_media_source','context_key'=>$this->working_context))){
+                $defaultSourceId = $contextSetting->get('value');
+            }
+            $mediasource = modMediaSource::getDefaultSource($this->modx,$defaultSourceId);
         }
 
         return $mediasource;
