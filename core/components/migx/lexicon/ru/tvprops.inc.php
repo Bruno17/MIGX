@@ -3,7 +3,7 @@
  * migx
  *
  * @package migx
- * @language en
+ * @language ru
  */
 
 
