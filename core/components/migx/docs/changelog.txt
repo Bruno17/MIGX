@@ -1,5 +1,13 @@
 Changelog for MIGX.
 
+MIGX 2.9.4
+==============
+[migxResourcemediapath] add context_key as path option
+button for 'alter fields from schema'
+fix MIGX-grid width
+custom grid for MIGX-TV
+respect context-default-media-source - setting
+
 MIGX 2.9.3
 ==============
 basic support for new TinyMCE RTE
