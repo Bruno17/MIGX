@@ -685,6 +685,8 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             var migxid = record.data.MIGX_id;
             if (migxid){
                 this.menu.recordIndex = record.store.find('MIGX_id',migxid);        
+            }else{
+                this.menu.recordIndex = record.store.indexOfId(record.id);      
             }
             this.menu.record = record;
             var fn = eval(handler);

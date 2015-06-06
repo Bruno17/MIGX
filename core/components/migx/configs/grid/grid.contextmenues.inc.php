@@ -107,15 +107,17 @@ $gridcontextmenus['remove']['handler'] = 'this.removeObject';
 
 $gridcontextmenus['edit_migx']['code']="
         m.push({
+            className : 'editmigx',
             text: '[[%migx.edit]]'
-            ,handler: this.migx_update
+            ,handler: 'this.migx_update'
         });					
 ";
 
 $gridcontextmenus['duplicate_migx']['code']="
         m.push({
+            className : 'duplicatemigx',
             text: '[[%migx.duplicate]]'
-            ,handler: this.migx_duplicate
+            ,handler: 'this.migx_duplicate'
         });        					
 ";
 
