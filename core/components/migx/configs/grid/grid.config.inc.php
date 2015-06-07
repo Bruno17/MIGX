@@ -741,3 +741,10 @@ $gridfunctions['this.migx_removeMigxAndImage'] = "
     } 	
 ";
 
+$gridfunctions['this.exportMigxItems'] = "
+	exportMigxItems: function(btn,e) {
+      this.loadWin(btn,e,this.menu.recordIndex,'e');
+    }
+";
+
+

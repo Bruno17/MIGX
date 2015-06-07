@@ -191,6 +191,12 @@ renderChunk : function(val, md, rec, row, col, s) {
 }
 ";
 
+$renderer['ImagePlus.MIGX_Renderer'] = "
+	dummyImagePlus:function(v,md,rec) {
+        // this function is included with the ImagePlus - TV
+	} 
+";
+
 $renderer['this.renderDate'] = "
 renderDate : function(val, md, rec, row, col, s) {
     var date;

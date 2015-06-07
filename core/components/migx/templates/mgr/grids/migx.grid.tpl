@@ -419,8 +419,15 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             return;
         }
         {/literal}{/if}{literal}        
+
+        var isnew = (action == 'u') ? '0':'1';
+        var isduplicate = (action == 'd') ? '1':'0';
        
-        if (action == 'a'){
+        if (action == 'e'){
+           var json=Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
+           var data={};
+           isnew = '0';
+        }else if (action == 'a'){
            var json='{/literal}{$newitem}{literal}';
            var data=Ext.util.JSON.decode(json);
         }else{
@@ -428,12 +435,9 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
            var rec = s.getAt(index)            
            var data = rec.data;
            var json = Ext.util.JSON.encode(rec.json);
-           
         }
         
-        var isnew = (action == 'u') ? '0':'1';
-        var isduplicate = (action == 'd') ? '1':'0';
-		
+	
         var win_xtype = 'modx-window-tv-item-update-{/literal}{$tv->id}{literal}';
         this.windows[win_xtype] = null;
         /*        
@@ -474,7 +478,8 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
                 resource_id : resource_id,
                 object_id: object_id,
                 co_id : co_id,
-                input_prefix: input_prefix
+                input_prefix: input_prefix,
+                internal_action: action
 			}
         });
     }

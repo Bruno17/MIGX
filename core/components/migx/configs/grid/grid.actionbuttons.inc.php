@@ -25,6 +25,11 @@ $gridactionbuttons['exportview']['handler'] = 'this.csvExport';
 $gridactionbuttons['exportview']['scope'] = 'this';
 $gridactionbuttons['exportview']['enableToggle'] = 'true';
 
+$gridactionbuttons['exportimportmigx']['text'] = "'[[%migx.export_import]]'";
+$gridactionbuttons['exportimportmigx']['handler'] = 'this.exportMigxItems';
+$gridactionbuttons['exportimportmigx']['scope'] = 'this';
+$gridactionbuttons['exportimportmigx']['standalone'] = '1';
+
 $gridactionbuttons['upload']['text'] = "'[[%migx.upload_images]]'";
 $gridactionbuttons['upload']['handler'] = 'this.uploadImages';
 $gridactionbuttons['upload']['scope'] = 'this';

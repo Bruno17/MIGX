@@ -9,11 +9,9 @@
  * @subpackage processors
  */
 
-class migxFormProcessor extends modProcessor
-{
+class migxFormProcessor extends modProcessor {
 
-    public function process()
-    {
+    public function process() {
         //require_once dirname(dirname(dirname(__file__))) . '/model/migx/migx.class.php';
         //$migx = new Migx($this->modx);
         $sender = 'mgr/fields';
@@ -47,7 +45,7 @@ class migxFormProcessor extends modProcessor
 
         //get the MIGX-TV
         $properties = array();
-        
+
         if ($tv = $this->modx->getObject('modTemplateVar', array('name' => $scriptProperties['tv_name']))) {
             $this->modx->migx->source = $tv->getSource($this->modx->migx->working_context, false);
             $properties = $tv->get('input_properties');
@@ -59,12 +57,11 @@ class migxFormProcessor extends modProcessor
 
         if (!empty($configs)) {
             $this->modx->migx->config['configs'] = $configs;
-            $this->modx->migx->loadConfigs(true,true,$scriptProperties,$sender);
-            
-            
+            $this->modx->migx->loadConfigs(true, true, $scriptProperties, $sender);
+
 
         }
-        
+
         $formtabs = $this->modx->migx->getTabs();
         $fieldid = 0;
         /*actual record */
@@ -83,17 +80,25 @@ class migxFormProcessor extends modProcessor
             $migxid = $record['MIGX_id'];
         }
         $controller->setPlaceholder('migxid', $migxid);
-        
-        $formtabs = $this->modx->migx->checkMultipleForms($formtabs,$controller,$allfields,$record);
+
+        $formtabs = $this->modx->migx->checkMultipleForms($formtabs, $controller, $allfields, $record);
+
+        $internal_action = $this->modx->getOption('internal_action', $scriptProperties, '');
+
+        if ($internal_action == 'e') {
+            //export to textarea
+            $record = array();
+            $record['jsonexport'] = $this->modx->getOption('record_json', $scriptProperties, '');
+            $formtabs = $this->modx->fromJSON('[{"caption":"","fields":[{"field":"jsonexport","caption":"[[%migx.export_import]]","inputTVtype":"textarea"}]}]');
+        }
+
 
         if (empty($formtabs)) {
 
             //old stuff
             $default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
-            $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties,
-                $default_formtabs));
-            $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) :
-                $formtabs;
+            $formtabs = $this->modx->fromJSON($this->modx->getOption('formtabs', $properties, $default_formtabs));
+            $formtabs = empty($properties['formtabs']) ? $this->modx->fromJSON($default_formtabs) : $formtabs;
             $fieldid = 0;
             $tabid = 0;
 
@@ -135,9 +140,9 @@ class migxFormProcessor extends modProcessor
 
         $categories = array();
         $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
-        $formcaption = $this->modx->getOption('formcaption' , $this->modx->migx->customconfigs,'');
-        $formcaption = !empty($formcaption) ? $this->modx->migx->renderChunk($formcaption,$record,false,false) : '';
-        $controller->setPlaceholder('formcaption', $formcaption);        
+        $formcaption = $this->modx->getOption('formcaption', $this->modx->migx->customconfigs, '');
+        $formcaption = !empty($formcaption) ? $this->modx->migx->renderChunk($formcaption, $record, false, false) : '';
+        $controller->setPlaceholder('formcaption', $formcaption);
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
         $controller->setPlaceholder('categories', $categories);
