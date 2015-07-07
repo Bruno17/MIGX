@@ -53,6 +53,7 @@ class migxFormProcessor extends modProcessor {
                     
                     $files = $source->getObjectsInContainer('');
                     $i = 1;
+                    $imageList = array();
                     foreach ($files as $file) {
                         if (isset($limit) && $i > $limit) {
                             break;
