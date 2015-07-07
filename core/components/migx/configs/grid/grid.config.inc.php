@@ -709,7 +709,7 @@ $gridfunctions['this.uploadFiles'] = "
                 ,base_params: {
                     action: 'browser/file/upload'
                     ,wctx: MODx.ctx || ''
-                    ,source: 3
+                    ,source: [[+config.media_source_id]]
                     ,path:'/'
                 }
                 ,cls: 'ext-ux-uploaddialog-dialog modx-upload-window'
@@ -719,7 +719,7 @@ $gridfunctions['this.uploadFiles'] = "
             //this.uploader.on('uploaderror',this.uploadError,this);
             //this.uploader.on('uploadfailed',this.uploadFailed,this);
         }
-        this.uploader.base_params.source = 3;
+        this.uploader.base_params.source = [[+config.media_source_id]];
         this.uploader.show(btn);
     } 	
 ";

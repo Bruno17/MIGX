@@ -880,6 +880,7 @@ class Migx {
         $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
         $this->config['connected_object_id'] = $this->modx->getOption('object_id', $_REQUEST, '');
         $this->config['req_configs'] = $this->modx->getOption('configs', $_REQUEST, '');
+        $this->config['media_source_id'] = $this->source->id;
 
         if (is_object($tv)) {
             $win_id = $tv->get('id');
