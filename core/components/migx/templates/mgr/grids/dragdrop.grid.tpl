@@ -12,16 +12,23 @@
     var renderer = null;
     var pageSize = '{/literal}{$customconfigs.gridpagesize}{literal}';
     if (pageSize != ''){
-        config.pageSize=parseInt(pageSize);
+        config.pageSize=parseInt(pageSize); 
     }
-
-    for(i = 0; i <  config.columns.length; i++) {
-    renderer = config.columns[i]['renderer'];
-    if (typeof renderer != 'undefined'){
-    config.columns[i]['renderer'] = {fn:eval(renderer),scope:this};
-    }
-    cols.push(config.columns[i]);
-    pc.push(config.pathconfigs[i]);
+   
+	for(i = 0; i <  config.columns.length; i++) {
+        renderer = config.columns[i]['renderer'];
+        if (typeof renderer != 'undefined'){
+            config.columns[i]['renderer'] = {fn:eval(renderer),scope:this};
+        }
+        editor = config.columns[i]['editor'];
+        if (typeof editor != 'undefined'){
+            editor = editor.replace('this.','');
+            if (this[editor]){
+                config.columns[i]['editor'] = this[editor](config.columns[i]);
+            }
+        }         
+        cols.push(config.columns[i]);
+        pc.push(config.pathconfigs[i]);
     }
     config.pathconfigs = pc;
     config.columns=cols;
@@ -230,81 +237,87 @@
 
     ,setWinPosition: function(x,y){
     var win = Ext.getCmp('{/literal}modx-window-mi-grid-update-{$win_id}{literal}');
-    win.setPosition(x,y);
-
-    }
-
-    ,loadWin: function(btn,e,action,tempParams) {
-
-    var storeParams = Ext.util.JSON.encode(this.store.baseParams);
-    var resource_id = '{/literal}{$resource.id}{literal}';
-    var tempParams = tempParams || null;
-    var input_prefix = Ext.id(null,'inp_');
-    var co_id = '{/literal}{$connected_object_id}{literal}';
-{/literal}{if $properties.autoResourceFolders == 'true'}{literal}
-    if (resource_id == 0){
-    alert (_('migx.save_resource'));
-    return;
-    }
-{/literal}{/if}{literal}
-
-    if (action == 'a'){
-    var object_id = 'new';
-    }else{
-    var object_id = this.menu.record.id;
-    }
-
-    var isnew = (action == 'u') ? '0':'1';
-    var win_xtype = 'modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}';
-
-    if (this.windows[win_xtype]){
-    this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv_id}{literal}';
-    this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
-    this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
-    this.windows[win_xtype].fp.autoLoad.params.input_prefix=input_prefix;
-    this.windows[win_xtype].fp.autoLoad.params.configs=this.config.configs;
-    this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
-    this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
-    this.windows[win_xtype].fp.autoLoad.params.tempParams=tempParams;
-    this.windows[win_xtype].fp.autoLoad.params.storeParams=storeParams;
-    this.windows[win_xtype].fp.autoLoad.params.loadaction='';
-    this.windows[win_xtype].grid=this;
-    this.windows[win_xtype].action=action;
-
-    //this.setWinPosition(10,10);
-
-    }
-
-    /*
-    if (this.windows[win_xtype]){
-    //this.windows[win_xtype].destroy();
-    //console.log(this.windows[win_xtype]);
-    delete this.windows[win_xtype];
-    }
-    */
-
-    //console.log('loadwin');
-
-    this.loadWindow(btn,e,{
-    xtype: win_xtype
-    ,grid: this
-    ,action: action
-    ,baseParams : {
-    action: 'mgr/migxdb/fields',
-    tv_id: '{/literal}{$tv_id}{literal}',
-    tv_name: '{/literal}{$tv->name}{literal}',
-    'class_key': 'modDocument',
-    'wctx':'{/literal}{$myctx}{literal}',
-    object_id: object_id,
-    configs: this.config.configs,
-    resource_id : resource_id,
-    co_id : co_id,
-    tempParams: tempParams,
-    storeParams: storeParams,
-    input_prefix: input_prefix,
-    loadaction:''
-    }
-    });
+    win.setPosition(x,y);     
+        
+    }	
+                	     
+	,loadWin: function(btn,e,action,tempParams) {
+        
+        var storeParams = Ext.util.JSON.encode(this.store.baseParams); 
+        var resource_id = '{/literal}{$resource.id}{literal}';
+        var tempParams = tempParams || null;
+        var input_prefix = Ext.id(null,'inp_');
+        var co_id = '{/literal}{$connected_object_id}{literal}';
+        {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
+        if (resource_id == 0){
+            alert (_('migx.save_resource'));
+            return;
+        }
+        {/literal}{/if}{literal}        
+       
+        if (action == 'a'){
+           var object_id = 'new';
+        }else{
+           var object_id = this.menu.record.id;
+        }
+        
+        var isnew = (action == 'u') ? '0':'1';
+        var isduplicate = (action == 'd') ? '1':'0';
+        var win_xtype = 'modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}';
+		this.windows[win_xtype] = null;
+        /*
+        if (this.windows[win_xtype]){
+			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv_id}{literal}';
+			this.windows[win_xtype].fp.autoLoad.params.resource_id=resource_id;
+            this.windows[win_xtype].fp.autoLoad.params.co_id=co_id;
+            this.windows[win_xtype].fp.autoLoad.params.input_prefix=input_prefix;
+            this.windows[win_xtype].fp.autoLoad.params.configs=this.config.configs;
+            this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
+            this.windows[win_xtype].fp.autoLoad.params.object_id=object_id;
+            this.windows[win_xtype].fp.autoLoad.params.tempParams=tempParams;
+            this.windows[win_xtype].fp.autoLoad.params.storeParams=storeParams;
+            this.windows[win_xtype].fp.autoLoad.params.loadaction='';
+            this.windows[win_xtype].fp.autoLoad.params.isnew=isnew;
+            this.windows[win_xtype].fp.autoLoad.params.isduplicate=isduplicate;            
+			this.windows[win_xtype].grid=this;
+            this.windows[win_xtype].action=action;
+            
+            //this.setWinPosition(10,10);
+            
+    	}
+        */
+        /*
+        if (this.windows[win_xtype]){
+             //this.windows[win_xtype].destroy();
+             //console.log(this.windows[win_xtype]);
+             delete this.windows[win_xtype]; 
+        }
+        */
+        
+        //console.log('loadwin');
+        
+		this.loadWindow(btn,e,{
+            xtype: win_xtype
+			,grid: this
+            ,action: action
+            ,baseParams : {
+			    action: 'mgr/migxdb/fields',
+				tv_id: '{/literal}{$tv_id}{literal}',
+				tv_name: '{/literal}{$tv->name}{literal}',
+				'class_key': 'modDocument',
+                'wctx':'{/literal}{$myctx}{literal}',
+                object_id: object_id,
+                configs: this.config.configs,
+                resource_id : resource_id,
+                co_id : co_id,
+                isnew : isnew,
+                isduplicate : isduplicate,                
+                tempParams: tempParams,
+                storeParams: storeParams,
+                input_prefix: input_prefix,
+                loadaction:''
+			}
+        });
     }
     ,loadIframeWin: function(btn,e,tpl,action) {
     var resource_id = '{/literal}{$resource.id}{literal}';
@@ -371,30 +384,76 @@
     return m;
     }
     ,renderRowActions:function(v,md,rec) {
-    var n = rec.data;
-    var m = [];
-{/literal}{$customconfigs.gridcolumnbuttons}{literal}
-    rec.data.column_actions = m;
-    rec.data.column_value = v;
-    return this.tplRowActions.apply(rec.data);
-    }
-    ,onClick: function(e){
-    var t = e.getTarget();
-    var elm = t.className.split(' ')[0];
-    if(elm == 'controlBtn') {
-    var handler = t.className.split(' ')[2];
-    var col = t.className.split(' ')[3];
-    var record = this.getSelectionModel().getSelected();
-    this.menu.record = record;
-    var fn = eval(handler);
-    fn = fn.createDelegate(this);
-    fn(null,e,col);
-    e.stopEvent();
-    }
-    }
+        var n = rec.data;
+        var m = [];	   
+        {/literal}{$customconfigs.gridcolumnbuttons}{literal} 
+        rec.data.column_actions = m;
+        rec.data.column_value = v;
+        return this.tplRowActions.apply(rec.data);
+	}    
+    ,setSelectedRecords:function(){
+        this.selected_records = this.getSelectionModel().getSelections();    
+    }        
+	,updateSelected: function(column,value,stopRefresh){
+        var col = null;	 
+        var rec = null;        
+        if (column && column.dataIndex){
+            col = column.dataIndex;
+ 		    var records = this.selected_records;
+            if (records){
+                for(i = 0; i < records.length; i++) {
+                    rec = records[i];
+                    var object_id = rec.id;
+                    var item = {};
+                    item[col] = value;
+                    MODx.Ajax.request({
+                        url: this.url
+                        ,params: {
+                            action: 'mgr/migxdb/update'
+                            ,data: Ext.util.JSON.encode(item)
+				            ,configs: this.configs
+                            ,resource_id: this.resource_id
+                            ,co_id: this.co_id
+                            ,object_id: object_id
+                            ,tv_id: this.baseParams.tv_id
+                            ,wctx: this.baseParams.wctx
+                        }
+                        ,listeners: {
+                            'success': {
+                                fn:function(){
+                                    this.refresh();
+                                }
+                                ,scope:this} 
+                        }
+                    });
+                 }
+             }
+         }
+         if (stopRefresh){
+            
+         }else{
+                  
+         }
 
-    });
-    Ext.reg('modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}',MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal});
+         MODx.fireResourceFormChange();   
+	} 
+	,onClick: function(e){
+        var t = e.getTarget();
+        var elm = t.className.split(' ')[0];
+		if(elm == 'controlBtn') {
+            var handler = t.className.split(' ')[2];
+            var col = t.className.split(' ')[3];
+			var record = this.getSelectionModel().getSelected();
+            this.menu.record = record;
+            var fn = eval(handler);
+            fn = fn.createDelegate(this);
+            fn(null,e,col);
+            e.stopEvent();
+ 		}
+	} 
+  
+});
+Ext.reg('modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}',MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal});
 
     MODx.MigxTreeCombo = function(config) {
     config = config || {};
@@ -487,4 +546,3 @@
     Ext.reg('migx-treecombo', MODx.MigxTreeCombo);
 
 {/literal}
-
