@@ -1465,7 +1465,7 @@ class Migx {
             }
 
         }
-
+        
         if (isset($sources[$this->working_context]) && !empty($sources[$this->working_context])) {
             //try using field-specific mediasource from config
             if ($mediasource = $this->modx->getObject('sources.modMediaSource', $sources[$this->working_context])) {
@@ -1637,6 +1637,7 @@ class Migx {
 
                     $field['array_tv_id'] = $field['tv_id'] . '[]';
                     $mediasource = $this->getFieldSource($field, $tv);
+                    
                     $tv->setSource($mediasource);
                     $tv->set('id', $field['tv_id']);
 
