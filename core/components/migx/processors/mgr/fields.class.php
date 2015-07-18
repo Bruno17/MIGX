@@ -88,7 +88,7 @@ class migxFormProcessor extends modProcessor {
         if ($internal_action == 'e') {
             //export to textarea
             $record = array();
-            $record['jsonexport'] = $this->modx->getOption('record_json', $scriptProperties, '');
+            $record['jsonexport'] = $this->modx->migx->indent($this->modx->getOption('record_json', $scriptProperties, ''));
             $formtabs = $this->modx->fromJSON('[{"caption":"","fields":[{"field":"jsonexport","caption":"[[%migx.export_import]]","inputTVtype":"textarea"}]}]');
         }
 
