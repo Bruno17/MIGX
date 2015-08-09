@@ -3,18 +3,30 @@
 //if (!$modx->hasPermission('quip.thread_list')) return $modx->error->failure($modx->lexicon('access_denied'));
 
 $config = $modx->migx->customconfigs;
+$searchname = $modx->getOption('searchname', $scriptProperties, '');
+$gridfilters = $modx->getOption('gridfilters', $config, '');
+$filterconfig = $modx->getOption($searchname, $gridfilters, '');
+$where = $modx->getOption('combowhere', $filterconfig, '');
 
-$textfield = $config['gridfilters'][$scriptProperties['searchname']]['combotextfield'];
-$idfield = $config['gridfilters'][$scriptProperties['searchname']]['comboidfield'];
+$textfield = $modx->getOption('combotextfield', $filterconfig, '');
+$idfield = $modx->getOption('comboidfield', $filterconfig, '');
 $idfield = empty($idfield) ? $textfield : $idfield;
 
-$prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
+$packageName = $modx->getOption('packageName', $config, '');
+$packageName = isset($filterconfig['combopackagename']) && !empty($filterconfig['combopackagename']) ? $filterconfig['combopackagename'] : $packageName;
+
+$prefix = null;
+
 if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
     $prefix = isset($config['prefix']) ? $config['prefix'] : '';
 }
+if (isset($filterconfig['combo_use_custom_prefix']) && !empty($filterconfig['combo_use_custom_prefix'])) {
+    $prefix = isset($filterconfig['comboprefix']) ? $filterconfig['comboprefix'] : '';
+}
 
-if (!empty($config['packageName'])) {
-    $packageNames = explode(',', $config['packageName']);
+
+if (!empty($packageName)) {
+    $packageNames = explode(',', $packageName);
 
     if (count($packageNames) == '1') {
         //for now connecting also to foreign databases, only with one package by default possible
@@ -31,17 +43,26 @@ if (!empty($config['packageName'])) {
         }
         $xpdo = &$modx;
     }
-}else{
-    $xpdo = &$modx;    
+} else {
+    $xpdo = &$modx;
 }
-$classname = $config['classname'];
+$classname = $modx->getOption('classname',$config,'');
+$comboclassname = $modx->getOption('comboclassname',$filterconfig,'');
 $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
+$joinalias = '';
+
+//if specific classname was set, use specific classname and joins
+if (!empty($comboclassname)){
+    $classname = $comboclassname;
+    $joins = isset($filterconfig['combojoins']) && !empty($config['combojoins']) ? $modx->fromJson($config['combojoins']) : false;    
+
+}else{
+    $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';    
+}
 
 if ($this->modx->lexicon) {
     $this->modx->lexicon->load($packageName . ':default');
 }
-
-$joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
 
 if (!empty($joinalias)) {
     if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
@@ -83,13 +104,13 @@ switch ($mode) {
 
         break;
     default:
-        $sort = $modx->getOption('sort', $scriptProperties,  $textfield );
+        $sort = $modx->getOption('sort', $scriptProperties, $textfield);
         $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
         if (!empty($joinalias)) {
             $c->leftjoin($joinclass, $joinalias);
             //$c->select($modx->getSelectColumns($joinclass, $joinalias, $joinalias . '_'));
         }
-        $c->select($classname.'.id, ' . $idfield . ' as combo_id, ' . $textfield . ' as combo_name');
+        $c->select($classname . '.id, ' . $idfield . ' as combo_id, ' . $textfield . ' as combo_name');
         break;
 }
 
@@ -98,6 +119,17 @@ if ($joins) {
 }
 
 if ($execute) {
+
+    if (!empty($where)) {
+
+        $chunk = $modx->newObject('modChunk');
+        $chunk->setCacheable(false);
+        $chunk->setContent($where);
+        $fwhere = $chunk->process($scriptProperties);
+        $fwhere = strpos($fwhere, '{') === 0 ? $modx->fromJson($fwhere) : $fwhere;
+        
+        $c->where($fwhere);
+    }
 
     $c->groupby('combo_name');
     $c->sortby($sort, $dir);
@@ -109,7 +141,7 @@ if ($execute) {
 
 $count = count($rows);
 
-$emtpytext = $config['gridfilters'][$scriptProperties['searchname']]['emptytext'];
+$emtpytext = $modx->getOption('emptytext', $filterconfig, '');
 $emtpytext = empty($emtpytext) ? 'all' : $emtpytext;
 
 $rows = array_merge(array(array('combo_id' => 'all', 'combo_name' => $emtpytext)), $rows);

@@ -21,6 +21,7 @@ $tabs = '
 {"field":"show_in_grid","caption":"Show in Grid","inputTVtype":"listbox","inputOptionValues":"yes==1||no==0","default":"1"}
 ]},
 {"caption":"Renderer", "fields": [
+{"field":"customrenderer","caption":"Custom Renderer"},
 {"field":"renderer","caption":"Renderer","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $renderers) . '"},
 {"field":"clickaction","caption":"on Click","inputTVtype":"listbox","inputOptionValues":"||switchOption||selectFromGrid"},
 {"field":"selectorconfig","caption":"SelectFromGrid config"},

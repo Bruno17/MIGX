@@ -16,6 +16,12 @@ $tabs = '
 {"field":"getcomboprocessor","caption":"getcombo processor"},
 {"field":"combotextfield","caption":"getcombo textfield"},
 {"field":"comboidfield","caption":"getcombo idfield (optional)"},
+{"field":"combowhere","caption":"getcombo where (optional)"},
+{"field":"comboclassname","caption":"getcombo classname (optional)"},
+{"field":"combopackagename","caption":"getcombo packageName (optional)"},
+{"field":"combo_use_custom_prefix","caption":"Prefix","inputTVtype":"listbox","inputOptionValues":"' . implode('||', $prefixes) . '"},
+{"field":"comboprefix","caption":"Custom Prefix"},
+{"field":"combojoins","caption":"getcombo joins (optional)"},
 {"field":"comboparent","caption":"parent combobox (name)"},
 {"field":"default","caption":"default value"}
 ]}

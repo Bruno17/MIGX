@@ -162,9 +162,10 @@ switch ($task) {
             $tempvalues['publishedon'] = $object->get('publishedon');
         }
 
+        $newtabs = array();
         if (isset($postvalues['formtabs'])) {
             $formtabs = $modx->fromJson($postvalues['formtabs']);
-            if (is_array($formtabs && count($formtabs) > 0)) {
+            if (is_array($formtabs) && count($formtabs) > 0) {
                 foreach ($formtabs as $tab) {
                     $fields = is_array($tab['fields']) ? $fields : $modx->fromJson($tab['fields']);
                     $tab['fields'] = $fields;
@@ -174,6 +175,22 @@ switch ($task) {
             }
 
         }
+        
+        $newcolumns = array();
+        if (isset($postvalues['columns'])) {
+            $columns = $modx->fromJson($postvalues['columns']);
+            if (is_array($columns) && count($columns) > 0){ 
+                foreach ($columns as $column) {
+                    if (isset($column['customrenderer']) && !empty($column['customrenderer'])){
+                        $column['renderer'] = $column['customrenderer'];
+                        
+                    }
+                    $newcolumns[] = $column;
+                }
+                $postvalues['columns'] = $modx->toJson($newcolumns);
+            }
+
+        }        
 
         //handle published
         $postvalues['published'] = isset($postvalues['published']) ? $postvalues['published'] : '1';
