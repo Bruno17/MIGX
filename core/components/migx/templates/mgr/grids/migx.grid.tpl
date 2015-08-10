@@ -362,7 +362,14 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
     } 
 
 	,loadFromSource: function(btn,e,extra_params) {
-        var recordIndex = this.menu.recordIndex || 'none'; 
+	   
+        var recordIndex = 'none';
+        if (this.menu.recordIndex == 0){
+            recordIndex = 0; 
+        }else{
+            recordIndex = this.menu.recordIndex || 'none';     
+        }
+                
         var extra_params = extra_params || ''; 
         MODx.Ajax.request({
             url: '{/literal}{$config.connectorUrl}{literal}'
