@@ -43,6 +43,8 @@ $_lang['migx.recall'] = 'Отмена';
 $_lang['migx.remove'] = 'Удалить';
 $_lang['migx.new'] = 'новый';
 $_lang['migx.filters'] = 'Фильтры';
+$_lang['migx.move_to_top'] = 'Переместить вниз';
+$_lang['migx.move_to_bottom'] = 'Переместить вверх';
 
 $_lang['migx.add_replacement'] = 'Замена "Добавить элемент"';
 $_lang['migx.activate'] = 'Активировать';
