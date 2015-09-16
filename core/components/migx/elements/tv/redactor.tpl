@@ -1,4 +1,3 @@
-<script type="text/javascript" src="{$assetsUrl}redactor-{$redactorVersion}.min.js"></script>
 <textarea id="tv{$tv->id}" name="tv{$tv->id}" class="rtf-tinymcetv tv{$tv->id}" {literal}onchange="MODx.fireResourceFormChange();"{/literal}>{$tv->get('value')|escape}</textarea>
 
 <script type="text/javascript">
@@ -10,16 +9,13 @@ Ext.onReady(function() {
     var tvid = 'tv{$tv->id}';
     var field = (Ext.get('tv{$tv->id}'));
     
-    
     {literal}
     field.onLoad = function(){
-        var $redTv = $redTv || ((typeof($red) != 'undefined') ? $red : $.noConflict());
-        $redTv(document).ready(function($) {
-          {/literal}
-          var tv{$tv->id}Options = {$params_json};
-          $('#tv{$tv->id}').redactor(tv{$tv->id}Options);
-          {literal}
-        });        
+        if (MODx.loadRTE) {
+            MODx.loadRTE(tvid);
+        } else if (window.console) {
+            console.error('Unable to instantiate editor to #' + tvid + ' - MODx.loadRTE is not defined');
+        }
     };
 
     // We don't need any specific handling for onHide or onBeforeSubmit.
