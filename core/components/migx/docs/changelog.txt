@@ -1,5 +1,13 @@
 Changelog for MIGX.
 
+MIGX 2.9.5
+==============
+column-actionbuttons also for MIGX
+export/import MIGX-items from/into MIGX-TV
+get tinymcewrapper working
+more config-options for combo-filter
+Fix and simplify Redactor implementation to use MODx.loadRTE()
+
 MIGX 2.9.4
 ==============
 [migxResourcemediapath] add context_key as path option

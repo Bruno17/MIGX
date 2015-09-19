@@ -1,5 +1,5 @@
 <input id="tv{$tv->id}_checkbox" onchange="{$tv->id}onmouseup(event,this)" data-tiny="tv{$tv->id}" checked="checked" title="Disable TinyMCE" type="checkbox" class="tinyTVcheck" />
-<textarea rows="15" style="width:99%;" id="tv{$tv->id}" name="tv{$tv->id}" class="modx-richtext rtf-tinymcetv tv{$tv->id}" {literal}onchange="MODx.fireResourceFormChange();"{/literal}>{$tv->get('value')|escape}</textarea>
+<textarea rows="15" style="width:99%;" id="tv{$tv->id}" name="tv{$tv->id}" class="modx-richtext rtf-tinymcetv tv{$tv->id} migx-richtext" {literal}onchange="MODx.fireResourceFormChange();"{/literal}>{$tv->get('value')|escape}</textarea>
 
 <script type="text/javascript">
 
