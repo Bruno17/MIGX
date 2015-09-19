@@ -24,7 +24,7 @@ $_lang['migx.preview'] = 'Anteprima';
 $_lang['migx.save_resource'] = 'Prima di aggiungere nuovi elementi, devi salvare questa risorsa!';
 $_lang['migx.save_object'] = 'Prima di aggiungere nuovi elementi, devi salvare questo Object!';
 
-$_lang['migx.show_trash'] = 'Vista Trash';
+$_lang['migx.show_trash'] = 'Vedi cestino';
 $_lang['migx.show_normal'] = 'Vista normale';
 $_lang['migx.loadgrid'] = 'Carica Griglia';
 
@@ -39,10 +39,12 @@ $_lang['migx.unpublish_selected'] = 'Ritira selezionati';
 $_lang['migx.delete_selected'] = 'Elimina selezionati';
 $_lang['migx.remove_selected'] = 'Rimuovi selezionati'; 
 $_lang['migx.export_current_view'] = 'Esporta la Vista Corrente';
-$_lang['migx.recall'] = 'Recall';
+$_lang['migx.recall'] = 'Ripristina';
 $_lang['migx.remove'] = 'Rimuovi';
 $_lang['migx.new'] = 'nuovo';
 $_lang['migx.filters'] = 'Filtri';
+$_lang['migx.move_to_top'] = 'Sposta in cima';
+$_lang['migx.move_to_bottom'] = 'Sposta in fondo';
 
 $_lang['migx.add_replacement'] = 'Sostituzione "Aggiungi Elemento"';
 $_lang['migx.activate'] = 'Attiva';
@@ -56,4 +58,11 @@ $_lang['migx.year'] = 'Anno';
 
 $_lang['migx.upload_images'] = 'Carica Files';
 $_lang['migx.load_from_source'] = 'Carica da sorgente media';
-$_lang['migx.max_records_alert'] = 'Max amount of records reached';
+$_lang['migx.max_records_alert'] = 'Numero massimo di record consentiti raggiunto';
+
+$_lang['migx.selector_options'] = 'Opzioni';
+
+$_lang['migx.emptythrash_confirm'] = 'Svuota cestino. Sei sicuro?';
+$_lang['migx.emptythrash'] = 'Svuota cestino';
+$_lang['migx.search'] = 'Cerca...';
+$_lang['migx.reset_all'] = 'Reset all';
