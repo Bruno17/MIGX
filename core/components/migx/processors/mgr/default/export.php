@@ -33,6 +33,23 @@ function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n
 
 $config = $modx->migx->customconfigs;
 
+$hooksnippets = $modx->fromJson($modx->getOption('hooksnippets',$config,''));
+if (is_array($hooksnippets)){
+    $hooksnippet_getcustomconfigs = $modx->getOption('getcustomconfigs',$hooksnippets,'');
+}
+
+$snippetProperties = array();
+$snippetProperties['scriptProperties'] = $scriptProperties;
+$snippetProperties['processor'] = 'export';
+
+if (!empty($hooksnippet_getcustomconfigs)){
+    $customconfigs = $modx->runSnippet($hooksnippet_getcustomconfigs,$snippetProperties);
+    $customconfigs = $modx->fromJson($customconfigs);
+    if (is_array($customconfigs)){
+        $config = array_merge($config,$customconfigs);    
+    }
+}
+
 $output = '';
 if (!($scriptProperties['download'])) {
 
@@ -76,6 +93,9 @@ if (!($scriptProperties['download'])) {
     $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
     $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 
+    $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
+    $where = $modx->getOption('where', $scriptProperties, $where);
+
     $c = $xpdo->newQuery($classname);
     $c->select($xpdo->getSelectColumns($classname, $classname));
 
@@ -111,6 +131,11 @@ if (!($scriptProperties['download'])) {
             $c->where(array($classname . '.deleted' => '0'));
         }
     }
+
+    if (!empty($where)) {
+        $c->where($modx->fromJson($where));
+    }
+
     $count = $modx->getCount($classname, $c);
 
     $c->sortby($sort, $dir);
@@ -197,7 +222,6 @@ if (!($scriptProperties['download'])) {
         $rows[] = $newRow;
 
     }
-
 
     //die(print_r($rows, true));
 
