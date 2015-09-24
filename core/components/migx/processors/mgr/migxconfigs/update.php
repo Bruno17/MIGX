@@ -167,7 +167,7 @@ switch ($task) {
             $formtabs = $modx->fromJson($postvalues['formtabs']);
             if (is_array($formtabs) && count($formtabs) > 0) {
                 foreach ($formtabs as $tab) {
-                    $fields = is_array($tab['fields']) ? $fields : $modx->fromJson($tab['fields']);
+                    $fields = is_array($tab['fields']) ? $tab['fields'] : $modx->fromJson($tab['fields']);
                     $tab['fields'] = $fields;
                     $newtabs[] = $tab;
                 }
