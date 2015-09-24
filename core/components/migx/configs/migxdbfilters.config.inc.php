@@ -5,6 +5,10 @@ foreach ($gridfilters as $key => $value) {
     $filters[] = $key;
 }
 
+$prefixes = array();
+$prefixes[] = 'default Prefix==0';
+$prefixes[] = 'Custom Prefix==1';
+
 $tabs = '
 [
 {"caption":"Filter", "fields": [
