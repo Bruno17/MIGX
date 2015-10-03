@@ -872,7 +872,7 @@ class Migx {
 
     public function prepareGrid($properties, &$controller, &$tv, $columns = array()) {
 
-        
+
         $this->loadConfigs(false);
         //$lang = $this->modx->lexicon->fetch();
 
@@ -880,7 +880,7 @@ class Migx {
         $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
         $this->config['connected_object_id'] = $this->modx->getOption('object_id', $_REQUEST, '');
         $this->config['req_configs'] = $this->modx->getOption('configs', $_REQUEST, '');
-        $this->config['media_source_id'] = $this->source->id;
+        $this->config['media_source_id'] = is_object($this->source) ? $this->source->id : $this->getDefaultSource();
 
         if (is_object($tv)) {
             $win_id = $tv->get('id');
@@ -1117,9 +1117,9 @@ class Migx {
                 }
 
             }
-        } 
-        
-        if ($tv_type == 'migx' && empty($menues)){
+        }
+
+        if ($tv_type == 'migx' && empty($menues)) {
             //default context-menues for migx
             $menues = "
         m.push({
@@ -1465,7 +1465,7 @@ class Migx {
             }
 
         }
-        
+
         if (isset($sources[$this->working_context]) && !empty($sources[$this->working_context])) {
             //try using field-specific mediasource from config
             if ($mediasource = $this->modx->getObject('sources.modMediaSource', $sources[$this->working_context])) {
@@ -1478,18 +1478,23 @@ class Migx {
             $mediasource = $this->source;
         } else {
             //useTV-specific mediasource
-            $mediasource = $tv->getSource($this->working_context,false);
-        }
-        
-        //try to get the context-default-media-source
-        if (!$mediasource){
-            $defaultSourceId = null;
-            if ($contextSetting = $this->modx->getObject('modContextSetting',array('key'=>'default_media_source','context_key'=>$this->working_context))){
-                $defaultSourceId = $contextSetting->get('value');
-            }
-            $mediasource = modMediaSource::getDefaultSource($this->modx,$defaultSourceId);
+            $mediasource = $tv->getSource($this->working_context, false);
         }
 
+        //try to get the context-default-media-source
+        if (!$mediasource) {
+            $mediasource = $this->getDefaultSource();
+        }
+
+        return $mediasource;
+    }
+
+    function getDefaultSource() {
+        $defaultSourceId = null;
+        if ($contextSetting = $this->modx->getObject('modContextSetting', array('key' => 'default_media_source', 'context_key' => $this->working_context))) {
+            $defaultSourceId = $contextSetting->get('value');
+        }
+        $mediasource = modMediaSource::getDefaultSource($this->modx, $defaultSourceId);
         return $mediasource;
     }
 
@@ -1527,7 +1532,7 @@ class Migx {
         $input_prefix = $this->modx->getOption('input_prefix', $scriptProperties, '');
         $input_prefix = !empty($input_prefix) ? $input_prefix . '_' : '';
         $rte = isset($scriptProperties['which_editor']) ? $scriptProperties['which_editor'] : $this->modx->getOption('which_editor', '', $this->modx->_userConfig);
-        
+
 
         foreach ($tabs as $tabid => $tab) {
             $tvs = array();
@@ -1573,7 +1578,7 @@ class Migx {
 
                     $o_type = $tv->get('type');
                     if ($tv->get('type') == 'richtext') {
-                        $tv->set('type', 'migx' . str_replace(' ','_',strtolower($rte)));
+                        $tv->set('type', 'migx' . str_replace(' ', '_', strtolower($rte)));
                     }
 
                     //we change the phptype, that way we can use any id, not only integers (issues on windows-systems with big integers!)
@@ -1637,7 +1642,7 @@ class Migx {
 
                     $field['array_tv_id'] = $field['tv_id'] . '[]';
                     $mediasource = $this->getFieldSource($field, $tv);
-                    
+
                     $tv->setSource($mediasource);
                     $tv->set('id', $field['tv_id']);
 
@@ -1941,9 +1946,13 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
+                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
+                                ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
+                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
+                                ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);
@@ -2276,16 +2285,16 @@ class Migx {
                 }
             }
         }
-        
+
         foreach ($old_attributes as $attr_o) {
             $attr_o->remove();
-        }        
+        }
     }
-    
+
     public function handleRelatedLinksFromMIGX(&$object, $postvalues, $config) {
         $modx = &$this->modx;
         $xpdo = &$object->xpdo;
-        
+
         $link_classname = $modx->getOption('link_classname', $config, '');
         $link_alias = $modx->getOption('link_alias', $config, '');
         $postfield = $modx->getOption('postfield', $config, '');
@@ -2293,8 +2302,8 @@ class Migx {
         $link_field = $modx->getOption('link_field', $config, '');
         $pos_field = $modx->getOption('pos_field', $config, 'pos');
         $resave_object = $modx->getOption('resave_object', $config, 0);
-        $extrafields = explode(',',$modx->getOption('extrafields', $config, ''));        
-        
+        $extrafields = explode(',', $modx->getOption('extrafields', $config, ''));
+
         $products = $modx->fromJson($modx->getOption($postfield, $postvalues, ''));
         $old_products = array();
 
@@ -2318,11 +2327,11 @@ class Migx {
                     $product_o = $xpdo->newObject($link_classname);
                 }
                 $product_o->set($pos_field, $pos);
-                foreach ($extrafields as $extrafield){
+                foreach ($extrafields as $extrafield) {
                     $value = $modx->getOption($extrafield, $product, '');
                     $product_o->set($extrafield, $value);
                 }
-                
+
                 $product_o->set($link_field, $product_id);
                 $product_o->set($id_field, $object->get('id'));
                 $product_o->save();
@@ -2335,26 +2344,26 @@ class Migx {
 
         //save cleaned json
         $object->set($postfield, $modx->toJson($new_products));
-        if (!empty($resave_object)){
+        if (!empty($resave_object)) {
             $object->save();
         }
 
         foreach ($old_products as $product_o) {
             $product_o->remove();
         }
-    }    
-    
+    }
+
     public function handleTranslations(&$object, $postvalues, $config) {
         $modx = &$this->modx;
         $xpdo = &$object->xpdo;
-		
+
         $link_classname = $modx->getOption('link_classname', $config, '');
         $link_alias = $modx->getOption('link_alias', $config, 'Translations');
         $postfield = $modx->getOption('postfield', $config, '');
         $id_field = $modx->getOption('id_field', $config, '');
         $link_field = $modx->getOption('link_field', $config, 'iso_code');
-        $languages = $modx->getOption('languages', $config, array());		
-		
+        $languages = $modx->getOption('languages', $config, array());
+
         $old_translations = array();
         if ($trans_collection = $object->getMany($link_alias)) {
             foreach ($trans_collection as $trans_o) {
@@ -2389,7 +2398,7 @@ class Migx {
         foreach ($old_translations as $trans_o) {
             $trans_o->remove();
         }
-    }	    
+    }
 
     public function getTemplate($rowtpl, $template = array()) {
         if (!isset($template[$rowtpl])) {
