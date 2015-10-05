@@ -880,7 +880,7 @@ class Migx {
         $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
         $this->config['connected_object_id'] = $this->modx->getOption('object_id', $_REQUEST, '');
         $this->config['req_configs'] = $this->modx->getOption('configs', $_REQUEST, '');
-        $this->config['media_source_id'] = is_object($this->source) ? $this->source->id : $this->getDefaultSource();
+        $this->config['media_source_id'] = is_object($this->source) ? $this->source->id : $this->getDefaultSource('id');
 
         if (is_object($tv)) {
             $win_id = $tv->get('id');
@@ -1489,13 +1489,14 @@ class Migx {
         return $mediasource;
     }
 
-    function getDefaultSource() {
+    function getDefaultSource($return = 'object') {
         $defaultSourceId = null;
         if ($contextSetting = $this->modx->getObject('modContextSetting', array('key' => 'default_media_source', 'context_key' => $this->working_context))) {
             $defaultSourceId = $contextSetting->get('value');
         }
         $mediasource = modMediaSource::getDefaultSource($this->modx, $defaultSourceId);
-        return $mediasource;
+        
+        return $return == 'object' ? $mediasource : $mediasource->get($return);
     }
 
     function generateTvTab($tvnames) {
