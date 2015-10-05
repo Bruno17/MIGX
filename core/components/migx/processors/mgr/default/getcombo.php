@@ -54,7 +54,7 @@ $joinalias = '';
 //if specific classname was set, use specific classname and joins
 if (!empty($comboclassname)){
     $classname = $comboclassname;
-    $joins = isset($filterconfig['combojoins']) && !empty($config['combojoins']) ? $modx->fromJson($config['combojoins']) : false;    
+    $joins = isset($filterconfig['combojoins']) && !empty($filterconfig['combojoins']) ? $modx->fromJson($filterconfig['combojoins']) : false;    
 
 }else{
     $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';    
