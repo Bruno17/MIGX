@@ -238,6 +238,7 @@ class Migx {
 
         $tpl = $modx->getOption('tpl', $scriptProperties, '');
         $wrapperTpl = $modx->getOption('wrapperTpl', $scriptProperties, '');
+        $emptyTpl = $modx->getOption('emptyTpl', $scriptProperties, '');        
         $tplFirst = $modx->getOption('tplFirst', $scriptProperties, '');
         $tplLast = $modx->getOption('tplLast', $scriptProperties, '');
 
@@ -365,7 +366,7 @@ class Migx {
         } else {
             $o = $output;
         }
-
+        
         if (!empty($o) && !empty($wrapperTpl)) {
             $template = $this->getTemplate($wrapperTpl);
             if ($template[$wrapperTpl]) {
@@ -376,6 +377,17 @@ class Migx {
                 $o = $chunk->process($properties);
             }
         }
+
+        if (empty($o)) {
+            $template = $this->getTemplate($emptyTpl);
+            if ($template[$emptyTpl]) {
+                $chunk = $modx->newObject('modChunk');
+                $chunk->setCacheable(false);
+                $chunk->setContent($template[$emptyTpl]);
+                $o = $chunk->process($properties);
+            }
+        }        
+        
 
         if (!empty($toPlaceholder)) {
             $modx->setPlaceholder($toPlaceholder, $o);
