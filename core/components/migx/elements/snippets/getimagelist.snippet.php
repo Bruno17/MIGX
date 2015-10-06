@@ -39,6 +39,7 @@
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
 $wrapperTpl = $modx->getOption('wrapperTpl', $scriptProperties, '');
+$emptyTpl = $modx->getOption('emptyTpl', $scriptProperties, '');
 $limit = $modx->getOption('limit', $scriptProperties, '0');
 $offset = $modx->getOption('offset', $scriptProperties, 0);
 $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
@@ -156,7 +157,11 @@ if (!empty($tvname)) {
 }
 
 if (empty($outputvalue)) {
-    return '';
+    if ($emptyTpl) {
+        return $modx->getChunk($emptyTpl, $scriptProperties);
+    } else {
+        return '';
+    }
 }
 
 //echo $outputvalue.'<br/><br/>';
