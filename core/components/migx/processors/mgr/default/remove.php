@@ -47,6 +47,7 @@ if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix']))
 
 if (!empty($config['packageName'])) {
     $packageNames = explode(',', $config['packageName']);
+    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';    
 
     if (count($packageNames) == '1') {
         //for now connecting also to foreign databases, only with one package by default possible
@@ -63,14 +64,13 @@ if (!empty($config['packageName'])) {
         }
         $xpdo = &$modx;
     }
+    if ($this->modx->lexicon) {
+        $this->modx->lexicon->load($packageName . ':default');
+    }    
 }else{
     $xpdo = &$modx;    
 }
 $classname = $config['classname'];
-
-if ($modx->lexicon) {
-    $modx->lexicon->load($packageName . ':default');
-}
 
 switch ($scriptProperties['task']) {
     case 'removeone':

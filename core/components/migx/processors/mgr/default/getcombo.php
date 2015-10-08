@@ -25,8 +25,9 @@ if (isset($filterconfig['combo_use_custom_prefix']) && !empty($filterconfig['com
 }
 
 
-if (!empty($packageName)) {
-    $packageNames = explode(',', $packageName);
+if (!empty($config['packageName'])) {
+    $packageNames = explode(',', $config['packageName']);
+    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';    
 
     if (count($packageNames) == '1') {
         //for now connecting also to foreign databases, only with one package by default possible
@@ -43,8 +44,11 @@ if (!empty($packageName)) {
         }
         $xpdo = &$modx;
     }
-} else {
-    $xpdo = &$modx;
+    if ($this->modx->lexicon) {
+        $this->modx->lexicon->load($packageName . ':default');
+    }    
+}else{
+    $xpdo = &$modx;    
 }
 $classname = $modx->getOption('classname',$config,'');
 $comboclassname = $modx->getOption('comboclassname',$filterconfig,'');
@@ -58,10 +62,6 @@ if (!empty($comboclassname)){
 
 }else{
     $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';    
-}
-
-if ($this->modx->lexicon) {
-    $this->modx->lexicon->load($packageName . ':default');
 }
 
 if (!empty($joinalias)) {

@@ -1,10 +1,11 @@
 <?php
+
 $object_id = 'new';
 $config = $modx->migx->customconfigs;
 
-$hooksnippets = $modx->fromJson($modx->getOption('hooksnippets',$config,''));
-if (is_array($hooksnippets)){
-    $hooksnippet_aftergetfields = $modx->getOption('aftergetfields',$hooksnippets,'');
+$hooksnippets = $modx->fromJson($modx->getOption('hooksnippets', $config, ''));
+if (is_array($hooksnippets)) {
+    $hooksnippet_aftergetfields = $modx->getOption('aftergetfields', $hooksnippets, '');
 }
 
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
@@ -14,7 +15,8 @@ if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix']))
 
 if (!empty($config['packageName'])) {
     $packageNames = explode(',', $config['packageName']);
-
+    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';
+   
     if (count($packageNames) == '1') {
         //for now connecting also to foreign databases, only with one package by default possible
         $xpdo = $modx->migx->getXpdoInstanceAndAddPackage($config);
@@ -30,8 +32,13 @@ if (!empty($config['packageName'])) {
         }
         $xpdo = &$modx;
     }
-}else{
-    $xpdo = &$modx;    
+
+    if ($this->modx->lexicon) {
+        $this->modx->lexicon->load($packageName . ':default');
+    }
+
+} else {
+    $xpdo = &$modx;
 }
 
 $sender = 'default/fields';
@@ -50,15 +57,11 @@ if (!empty($joinalias)) {
     }
 }
 
-if ($this->modx->lexicon) {
-    $this->modx->lexicon->load($packageName . ':default');
-}
-
 if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == 'new') {
-    if ($object = $xpdo->newObject($classname)){
+    if ($object = $xpdo->newObject($classname)) {
         $object->set('object_id', 'new');
     }
-    
+
 } else {
     $c = $xpdo->newQuery($classname, $scriptProperties['object_id']);
     $pk = $xpdo->getPK($classname);
@@ -73,7 +76,7 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
     if ($joins) {
         $modx->migx->prepareJoins($classname, $joins, $c);
     }
-    if ($object = $xpdo->getObject($classname, $c)){
+    if ($object = $xpdo->getObject($classname, $c)) {
         $object_id = $object->get('id');
     }
 }
@@ -81,10 +84,9 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
 $_SESSION['migxWorkingObjectid'] = $object_id;
 
 //handle json fields
-if ($object){
+if ($object) {
     $record = $object->toArray();
-}
-else{
+} else {
     $record = array();
 }
 
