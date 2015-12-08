@@ -270,7 +270,8 @@ switch ($task) {
             $postvalues['publishedon'] = $tempvalues['publishedon'];
         }
 
-        if (!$is_container && !empty($postvalues['resource_id'])) {
+           
+        if (isset($is_container) && !$is_container && !empty($postvalues['resource_id'])) {
             $postvalues['customerid'] = $postvalues['resource_id'];
         }
 

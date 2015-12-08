@@ -378,7 +378,7 @@ class Migx {
             }
         }
 
-        if (empty($o)) {
+        if (empty($o) && !empty($emptyTpl)) {
             $template = $this->getTemplate($emptyTpl);
             if ($template[$emptyTpl]) {
                 $chunk = $modx->newObject('modChunk');
@@ -1212,7 +1212,7 @@ class Migx {
         if (!empty($wctx)) {
             $workingContext = $this->modx->getContext($wctx);
             if (!$workingContext) {
-                return $modx->error->failure($this->modx->lexicon('permission_denied'));
+                return $this->modx->error->failure($this->modx->lexicon('permission_denied'));
             }
             $wctx = $workingContext->get('key');
         } else {

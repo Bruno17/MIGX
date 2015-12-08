@@ -470,18 +470,24 @@ var lang = '{/literal}{$migx_lang}{literal}';
             ,url: '{/literal}{$config.connectorUrl}{literal}'
         });
 
+var MIGx = MIGx || {};
+ 
+MIGx.updateGrid = function() {
+    var grids = this.el.select('.tv_modx-grid-multitvgrid_items');
+    grids.each(function(grid){
+        Ext.getCmp(grid.id).getView().refresh();
+    });  
+};
+ 
 Ext.ComponentMgr.onAvailable('modx-resource-tabs', function() {
     Ext.apply(this, {
-		listeners: {
-            tabchange: function() {
-                var grids = this.el.select('.tv_modx-grid-multitvgrid_items');
-                grids.each(function(grid){
-                    Ext.getCmp(grid.id).getView().refresh();
-                });           
-            }
+        listeners: {
+            tabchange: MIGx.updateGrid,
+            afterlayout: MIGx.updateGrid,
+            resize: MIGx.updateGrid
         }
-	});
-    
+    });
+     
 });
 
 

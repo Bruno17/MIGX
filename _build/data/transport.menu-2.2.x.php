@@ -11,7 +11,8 @@
  */
 
 if (!function_exists('stripPhpTags')) {
-    function stripPhpTags($filename) {
+    function stripPhpTags($filename)
+    {
         $o = file_get_contents($filename);
         $o = str_replace('<' . '?' . 'php', '', $o);
         $o = str_replace('?>', '', $o);
@@ -23,31 +24,40 @@ if (!function_exists('stripPhpTags')) {
 /* @var $sources array */
 /* @var xPDOObject[] $menus */
 
+$menus = array();
 
-$action = $modx->newObject('modAction');
-$action->fromArray(array(
-    'namespace' => 'migx',
-    'controller' => 'index',
-    'haslayout' => 1,
-    'lang_topics' => 'example:default',
-    'assets' => '',
-    'help_url' => '',
-    'id' => 1,
-    ), '', true, true);
+if (is_array($menuprops)) {
+    $i = 1;
+    foreach ($menuprops as $m_props) {
+        $action = $modx->newObject('modAction');
+        $action->fromArray(array(
+            'namespace' => !empty($m_props['action.namespace']) ? $m_props['action.namespace'] : 'migx',
+            'controller' => !empty($m_props['action.controller']) ? $m_props['action.controller'] : 'index',
+            'haslayout' => !empty($m_props['action.haslayout']) ? $m_props['action.haslayout'] : 0,
+            'lang_topics' => !empty($m_props['action.lang_topics']) ? $m_props['action.lang_topics'] : 'example:default',
+            'assets' => !empty($m_props['action.assets']) ? $m_props['action.assets'] : '',
+            'help_url' => !empty($m_props['action.help_url']) ? $m_props['action.help_url'] : '',
+            'id' => $i,
+            ), '', true, true);
 
 
-$menus[1] = $modx->newObject('modMenu');
-$menus[1]->fromArray(array(
-    'text' => 'migx',
-    'parent' => 'components',
-    'description' => '',
-    'icon' => '',
-    'menuindex' => 0,
-    'params' => '&configs=packagemanager||migxconfigs||setup',
-    'handler' => '',
-    'permissions' => '',
-    ), '', true, true);
+        $menus[$i] = $modx->newObject('modMenu');
+        $menus[$i]->fromArray(array(
+            'text' => !empty($m_props['text']) ? $m_props['text'] : '',
+            'parent' => !empty($m_props['parent']) ? $m_props['parent'] : '',
+            'description' => !empty($m_props['description']) ? $m_props['description'] : '',
+            'icon' => !empty($m_props['icon']) ? $m_props['icon'] : '',
+            'menuindex' => !empty($m_props['menuindex']) ? $m_props['menuindex'] : 0,
+            'params' => !empty($m_props['params']) ? $m_props['params'] : '',
+            'handler' => !empty($m_props['handler']) ? $m_props['handler'] : '',
+            'permissions' => !empty($m_props['permissions']) ? $m_props['permissions'] : '',
+            ), '', true, true);
 
-$menus[1]->addOne($action);
+        $menus[$i]->addOne($action);
+        $i++;
+    }
+
+}
+
 
 return $menus;

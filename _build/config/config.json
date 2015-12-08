@@ -1,0 +1,8 @@
+{
+  "id":1,
+  "package":"MIGX",
+  "packageDescription":"",
+  "version":"2.9.6",
+  "release":"pl",
+  "menus":"[{\"MIGX_id\":\"1\",\"text\":\"migx\",\"parent\":\"\",\"description\":\"\",\"icon\":\"\",\"menuindex\":\"\",\"params\":\"&configs=packagemanager||migxconfigs||setup\",\"handler\":\"\",\"permissions\":\"\",\"action.id\":\"\",\"action.namespace\":\"\",\"action.controller\":\"\",\"action.haslayout\":\"0\",\"action.lang_topics\":\"\",\"action.assets\":\"\"}]"
+}
