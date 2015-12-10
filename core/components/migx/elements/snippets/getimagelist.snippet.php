@@ -1,5 +1,4 @@
 <?php
-
 /**
  * getImageList
  *
@@ -158,6 +157,7 @@ if (!empty($tvname)) {
 }
 
 if (empty($outputvalue)) {
+    $modx->setPlaceholder($totalVar, 0);
     return '';
 }
 
@@ -425,7 +425,7 @@ if (!empty($o) && !empty($wrapperTpl)) {
     }
 }
 
-if (empty($o) && !empty($emptyTpl)) {
+if (empty($o)) {
     $template = $migx->getTemplate($emptyTpl);
     if ($template[$emptyTpl]) {
         $chunk = $modx->newObject('modChunk');

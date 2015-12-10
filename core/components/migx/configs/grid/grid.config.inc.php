@@ -747,4 +747,88 @@ $gridfunctions['this.exportMigxItems'] = "
     }
 ";
 
+$gridfunctions['this.selectImportFile'] = "
+    selectImportFile: function(btn,e) {
+            this.browser = MODx.load({
+                xtype: 'modx-browser'
+                ,closeAction: 'close'
+                ,id: Ext.id()
+                ,multiple: true
+                ,source: [[+config.media_source_id]] || MODx.config.default_media_source
+                ,hideFiles: this.config.hideFiles || false
+                ,rootVisible: this.config.rootVisible || false
+                ,allowedFileTypes: this.config.allowedFileTypes || ''
+                ,wctx: this.config.wctx || 'web'
+                ,openTo: this.config.openTo || ''
+                ,rootId: this.config.rootId || '/'
+                ,hideSourceCombo: this.config.hideSourceCombo || false
+                ,listeners: {
+                    'select': {fn: function(data) {
+                        //console.log(this.config);
+                        this.importCsvMigx(data);
+                        //this.fireEvent('select',data);
+                    },scope:this}
+                }
+            });
+        //}
+        this.browser.show(btn);
+        return true;
+    } 	
+";
+
+$gridfunctions['this.importCsvMigx'] = "
+    importCsvMigx: function(data) {
+        var recordIndex = 'none';
+        var pathname = data.pathname;
+        if (this.menu.recordIndex == 0){
+            recordIndex = 0; 
+        }else{
+            recordIndex = this.menu.recordIndex || 'none';     
+        }
+        var tv_id =  this.config.tv;        
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/migxdb/process'
+                ,processaction: 'importcsvmigx'
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]' 
+                ,items: Ext.get('tv' + tv_id).dom.value
+                ,record_index: recordIndex
+                ,pathname: pathname
+            }
+            ,listeners: {
+                'success': {fn:function(res){
+                    if (res.message==''){
+                        var items = res.object;
+                        var item = null;
+                        Ext.get('tv' + tv_id).dom.value = Ext.util.JSON.encode(items);
+                        this.autoinc = 0;
+                        for(i = 0; i <  items.length; i++) {
+ 		                    item = items[i];
+                            if (item.MIGX_id){
+                                
+                                if (parseInt(item.MIGX_id)  > this.autoinc){
+                                    this.autoinc = item.MIGX_id;
+                                }
+                            }else{
+                                item.MIGX_id = this.autoinc +1 ;
+                                this.autoinc = item.MIGX_id;                 
+                            }	
+                            items[i] = item;  
+                        } 
+                        
+		                this.getStore().sortInfo = null;
+		                this.getStore().loadData(items);
+                        var call_collectmigxitems = this.call_collectmigxitems;
+                        this.call_collectmigxitems=true;
+                        this.collectItems(); 
+                        this.call_collectmigxitems = call_collectmigxitems;                                             
+                    }
+                    
+                },scope:this}
+            }
+        });          
+	}     
+";
 
