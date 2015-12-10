@@ -1,5 +1,16 @@
 Changelog for MIGX.
 
+MIGX 2.9.7
+==============
+add emtpyTpl
+fix some MIGX-grid width - issues
+import csv to MIGX
+
+MIGX 2.9.6
+==============
+hooksnippet getcustomconfigs for export-processor
+fix missing formtabs after saving
+
 MIGX 2.9.5
 ==============
 column-actionbuttons also for MIGX
