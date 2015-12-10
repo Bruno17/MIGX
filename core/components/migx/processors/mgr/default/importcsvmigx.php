@@ -1,7 +1,25 @@
 <?php
 
 //print_r($scriptProperties);
-//todo: modify scriptProperties by hook-snippet
+
+$config = $modx->migx->customconfigs;
+
+$hooksnippets = $modx->fromJson($modx->getOption('hooksnippets',$config,''));
+if (is_array($hooksnippets)){
+    $hooksnippet_getcustomconfigs = $modx->getOption('getcustomconfigs',$hooksnippets,'');
+}
+
+$snippetProperties = array();
+$snippetProperties['scriptProperties'] = $scriptProperties;
+$snippetProperties['processor'] = 'importcsvmigx';
+
+if (!empty($hooksnippet_getcustomconfigs)){
+    $customconfigs = $modx->runSnippet($hooksnippet_getcustomconfigs,$snippetProperties);
+    $customconfigs = $modx->fromJson($customconfigs);
+    if (is_array($customconfigs)){
+        $config = array_merge($config,$customconfigs);    
+    }
+}
 
 $reference_field = $modx->getOption('reference_field', $scriptProperties, 'id');
 $items = $modx->getOption('items', $scriptProperties, '');
@@ -10,7 +28,10 @@ $items = !empty($items) ? $this->modx->fromJson($items) : array();
 
 
 if (!function_exists('parse_csv_file')) {
-    function parse_csv_file($file, $columnheadings = true, $delimiter = ',', $enclosure = "\"") {
+    function parse_csv_file($file, $config ) {
+        $columnheadings = true;
+        $delimiter = isset($config['delimiter']) ? $config['delimiter'] : ',';
+        $enclosure = isset($config['enclosure']) ? $config['enclosure'] : "\"";
         $row = 1;
         $rows = array();
         $handle = fopen($file, 'r');
@@ -41,7 +62,7 @@ if (!function_exists('parse_csv_file')) {
     }
 }
 
-$result = parse_csv_file($pathname);
+$result = parse_csv_file($pathname, $config);
 //print_r($result);
 
 $newitems = array();
