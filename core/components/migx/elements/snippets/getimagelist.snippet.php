@@ -425,7 +425,7 @@ if (!empty($o) && !empty($wrapperTpl)) {
     }
 }
 
-if (empty($o)) {
+if (empty($o) && !empty($emptyTpl)) {
     $template = $migx->getTemplate($emptyTpl);
     if ($template[$emptyTpl]) {
         $chunk = $modx->newObject('modChunk');
