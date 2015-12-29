@@ -1539,7 +1539,7 @@ class Migx {
     }
 
 
-    function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties, &$js) {
+    function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
         $fieldid = 0;
 
         $input_prefix = $this->modx->getOption('input_prefix', $scriptProperties, '');

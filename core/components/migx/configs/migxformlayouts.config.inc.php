@@ -77,6 +77,9 @@ switch($type){
     break;  
     case 'column':
     $tabs = $tabs_column;    
+    break;
+    default:
+    $tabs = '';
     break;      
 }
 
