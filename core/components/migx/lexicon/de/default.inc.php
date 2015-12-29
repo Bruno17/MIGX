@@ -67,3 +67,7 @@ $_lang['migx.emptythrash'] = 'Papierkorb leeren';
 $_lang['migx.search'] = 'Suche...';
 $_lang['migx.reset_all'] = 'Alle zurücksetzen';
 $_lang['migx.import_csv'] = 'CSV Importieren';
+$_lang['migx.add_field'] = 'Neues Feld';
+$_lang['migx.add_formtab'] = 'Formtab erstellen';
+$_lang['migx.add_formlayout'] = 'Layout';
+$_lang['migx.add_layoutcolumn'] = 'Layout Spalte';

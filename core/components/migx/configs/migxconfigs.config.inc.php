@@ -64,6 +64,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 ';
 } else {
     $inputType = !empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'raw' ? 'textarea' : 'migx';
+    
+    //$field_formtabs = '{"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"},';
 
     $menus = array();
     foreach ($gridcontextmenus as $key => $value) {
@@ -100,7 +102,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.addNewItemAt","caption":"Add new MIGX records at","inputTVtype":"listbox","inputOptionValues":"bottom||top","default":"bottom"}
 ]},
 {"caption":"formtabs", "fields": [
-    {"field":"formtabs","caption":"Formtabs","inputTVtype":"' . $inputType . '","configs":"migxformtabs"},
+    {"field":"formlayouts","caption":"Fields","inputTVtype":"migx","configs":"migxformlayouts"},
     {"field":"extended.multiple_formtabs","caption":"Multiple Formtabs","inputTVtype":"listbox-multiple","inputOptionValues":"' . implode('||', $mf_options) . '"},
     {"field":"extended.multiple_formtabs_label","caption":"Multiple Formtabs Label","description":"Label for formtabs-selectbox"},
     {"field":"extended.multiple_formtabs_field","caption":"Multiple Formtabs Field","description":"Fieldname for this value. Default:MIGX_formname"}, 

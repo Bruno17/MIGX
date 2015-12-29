@@ -139,13 +139,18 @@ class migxFormProcessor extends modProcessor {
 
 
         $categories = array();
-        $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
+        $js = '';
+        $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties, $js);
         $formcaption = $this->modx->getOption('formcaption', $this->modx->migx->customconfigs, '');
         $formcaption = !empty($formcaption) ? $this->modx->migx->renderChunk($formcaption, $record, false, false) : '';
+        
+        //echo '<pre>' . print_r($categories,1) . '</pre>';
+        
         $controller->setPlaceholder('formcaption', $formcaption);
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
         $controller->setPlaceholder('categories', $categories);
+        $controller->setPlaceholder('scripts', $js);
         $controller->setPlaceholder('properties', $scriptProperties);
         $controller->setPlaceholder('win_id', $scriptProperties['tv_id']);
 

@@ -67,3 +67,7 @@ $_lang['migx.emptythrash'] = 'Empty Trash';
 $_lang['migx.search'] = 'Search...';
 $_lang['migx.reset_all'] = 'Reset all';
 $_lang['migx.import_csv'] = 'Import CSV';
+$_lang['migx.add_field'] = 'Add Field';
+$_lang['migx.add_formtab'] = 'Add Formtab';
+$_lang['migx.add_formlayout'] = 'Layout';
+$_lang['migx.add_layoutcolumn'] = 'Layout Column';

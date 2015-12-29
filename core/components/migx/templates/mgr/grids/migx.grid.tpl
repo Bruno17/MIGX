@@ -415,11 +415,12 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             }
         });          
 	}      
-	,loadWin: function(btn,e,index,action) {
+	,loadWin: function(btn,e,index,action,tempParams) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
         var object_id = '{/literal}{$request.object_id}{literal}';
         var input_prefix = Ext.id(null,'inp_');
+        var tempParams = tempParams || null;
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
         if (resource_id == 0){
             alert ('[[%migx.save_resource]]');
@@ -486,7 +487,8 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
                 object_id: object_id,
                 co_id : co_id,
                 input_prefix: input_prefix,
-                internal_action: action
+                internal_action: action,
+                tempParams: tempParams                
 			}
         });
     }

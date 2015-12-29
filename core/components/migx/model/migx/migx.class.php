@@ -1539,7 +1539,7 @@ class Migx {
     }
 
 
-    function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
+    function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties, &$js) {
         $fieldid = 0;
 
         $input_prefix = $this->modx->getOption('input_prefix', $scriptProperties, '');
@@ -1548,7 +1548,10 @@ class Migx {
 
 
         foreach ($tabs as $tabid => $tab) {
+            $layouts = array();
+            $layoutcolumns = array();
             $tvs = array();
+
             $fields = $this->modx->getOption('fields', $tab, array());
             $fields = is_array($fields) ? $fields : $this->modx->fromJson($fields);
             if (is_array($fields) && count($fields) > 0) {
@@ -1572,7 +1575,6 @@ class Migx {
                     $field['tv_id'] = $input_prefix . $scriptProperties['tv_id'] . '_' . $fieldid;
                     $params = array();
                     $tv = false;
-
 
                     if (isset($field['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
                         $params = $tv->get('input_properties');
@@ -1749,6 +1751,17 @@ class Migx {
                     }
 
                     $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
+
+/*
+//extract scripts from content                    
+$pattern = '#<script(.*?)</script>#is'; 
+preg_match_all($pattern, $inputForm, $matches); 
+foreach ($matches[0] as $jsvalue) {
+    $js .= $jsvalue;
+}               
+$inputForm = preg_replace($pattern, '', $inputForm);
+*/
+                    
                     if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
                         $props = $record;
                         unset($field['description']);
@@ -1766,23 +1779,52 @@ class Migx {
                         $tv->set('formElement', str_replace(array('[+[+value]]', '[+[+tv_formElement]]'), array($tempvalue, $inputForm), $this->renderChunk($desc, $props, false, false)));
                         $tv->set('type', 'description_is_code');
                     } else {
-
-
                         if (empty($inputForm))
                             continue;
 
                         $tv->set('formElement', $inputForm);
                     }
 
-                    $tvs[] = $tv;
+                    //$tvs[] = $tv;
+                    
+                    $layout_id = isset($field['MIGXlayoutid']) ? $field['MIGXlayoutid'] : 0;
+                    $column_id = isset($field['MIGXcolumnid']) ? $field['MIGXcolumnid'] : 0;
+                    $column_width = $this->modx->getOption('MIGXcolumnwidth', $field, '');
+                    
+                    $column_width_parts = explode('.',$column_width);
+                    $column_width_output = '';
+                    if (empty($column_width) || $column_width == '1'){
+                        $column_width_output = '100%';
+                    }
+                    
+                    if (isset($column_width_parts[1])){
+                        $width = '0.' . $column_width_parts[1];
+                        $width = 100 * $width;
+                        $column_width_output = $width . '%' ; 
+                    }
+                    
+                    $layouts[$layout_id]['columns'][$column_id]['tvs'][] = $tv;
+                    $layouts[$layout_id]['columns'][$column_id]['width'] = $column_width_output;                     
+
                 }
             }
+            
+            //echo '<pre>' . print_r($layouts,1) . '</pre>';
+            
+            //$layoutcolumn = array();
+            //$layoutcolumn['tvs'] = $tvs;
+            //$layoutcolumns[] = $layoutcolumn;
+            
+            //$layout = array();
+            //$layout['columns'] = $layoutcolumns;
+            //$layouts[] = $layout;
 
             $cat = array();
             $cat['category'] = $this->modx->getOption('caption', $tab, 'undefined');
             $cat['print_before_tabs'] = isset($tab['print_before_tabs']) && !empty($tab['print_before_tabs']) ? true : false;
             $cat['id'] = $tabid;
-            $cat['tvs'] = $tvs;
+            $cat['layouts'] = $layouts;
+            //$cat['tvs'] = $tvs;
             $categories[] = $cat;
 
         }

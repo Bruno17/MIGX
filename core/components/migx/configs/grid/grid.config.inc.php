@@ -198,7 +198,6 @@ $gridfunctions['gridfilter'] = "
 $gridfunctions['this.addItem'] = "
 addItem: function(btn,e) {
         var add_items_directly = '[[+config.add_items_directly]]';
-        console.log(add_items_directly);
         if (add_items_directly == '1'){
             this.addNewItem();    
         }else{

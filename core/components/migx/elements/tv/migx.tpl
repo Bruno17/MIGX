@@ -57,11 +57,13 @@ MODx.window.UpdateTvItem = function(config) {
 
     //this.on('show',this.onShow,this);
     this.on('hide',this.onHideWindow,this);
+    this.on('resize',this.onResizeWindow,this);
     this.addEvents({
         success: true
         ,failure: true
         ,beforeSubmit: true
 		,hide:true
+        ,resize:true
 		//,show:true
     });
     this._loadForm();	
@@ -70,6 +72,10 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     cancel: function(){
 
         this.hide();
+    },         
+    onResizeWindow: function(){
+        var tabs = Ext.get('{/literal}modx-window-mi-grid-update-{$tv->id}-tabs{literal}');
+        //console.log(tabs);        
     },         
     onHideWindow: function(){
    
@@ -242,7 +248,7 @@ Ext.reg('modx-window-tv-item-update-{/literal}{$tv->id}{literal}',MODx.window.Up
 MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal} = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-        id: 'xdbedit-panel-object-{/literal}{$tv->id}{literal}'
+        id: 'migxdb-panel-object-{/literal}{$tv->id}{literal}'
 		,title: ''
         ,url: config.url
         ,baseParams: config.baseParams	
@@ -250,7 +256,10 @@ MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal} = function(config) {
         ,bodyStyle: 'padding: 15px;'
         //,autoSize: true
         ,autoLoad: this.autoload(config)
-        ,width: '950'
+        ,layout: 'anchor'
+        ,width:'98%'
+        , height:'98%'            
+        ,anchorSize: {width:'98%', height:'98%'}   
         ,listeners: {
             //'beforeSubmit': {fn:this.beforeSubmit,scope:this},
             //'success': {fn:this.success,scope:this}
@@ -316,7 +325,7 @@ Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
 		return '';
 	 }
 });
-Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal});
+Ext.reg('migxdb-panel-object',MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal});
 
 {/literal}
 {$iframewindow}
