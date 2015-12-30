@@ -134,7 +134,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
         }
         return false;
     },
-    onSubmitSuccess: function(){
+    onSubmitSuccess: function(r){
             this.grid.refresh();
             //this.grid.collectItems();
             //this.onDirty();

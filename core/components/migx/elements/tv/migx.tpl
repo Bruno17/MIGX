@@ -74,8 +74,12 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         this.hide();
     },         
     onResizeWindow: function(){
-        var tabs = Ext.get('{/literal}modx-window-mi-grid-update-{$tv->id}-tabs{literal}');
-        //console.log(tabs);        
+        var tabs = Ext.getCmp('{/literal}modx-window-mi-grid-update-{$tv->id}{literal}');
+        //console.log(tabs);
+        if (typeof(this.tabs) != 'undefined'){
+            this.tabs.doLayout();
+        }
+        //        
     },         
     onHideWindow: function(){
    

@@ -38,7 +38,7 @@
       {
         "pluginid":"MIGX",
         "event":"OnTVInputRenderList",
-        "priority":0,
+        "priority":1,
         "propertyset":0,
         "name":"OnTVInputRenderList",
         "service":1,

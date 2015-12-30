@@ -121,7 +121,7 @@
 <script type="text/javascript">
 // <![CDATA[
 Ext.onReady(function() {    
-    MODx.load({
+    var tabs = MODx.load({
         xtype: 'modx-tabs'
         ,applyTo: '{/literal}modx-window-mi-grid-update-{$win_id}-tabs{literal}'
         ,activeTab: 0
@@ -136,6 +136,9 @@ Ext.onReady(function() {
         }
         ,deferredRender: false
     });
+    var win = Ext.getCmp('{/literal}modx-window-mi-grid-update-{$win_id}{literal}');    
+    win.tabs = tabs;
+    
 	{/literal}{if $tvcount GT 0}{literal}
     {/literal}{/if}{literal}
 });    
