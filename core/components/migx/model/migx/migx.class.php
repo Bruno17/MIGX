@@ -1793,21 +1793,21 @@ $inputForm = preg_replace($pattern, '', $inputForm);
                     $layout_id = isset($field['MIGXlayoutid']) ? $field['MIGXlayoutid'] : 0;
                     $column_id = isset($field['MIGXcolumnid']) ? $field['MIGXcolumnid'] : 0;
                     $column_width = $this->modx->getOption('MIGXcolumnwidth', $field, '');
+                    $column_minwidth = $this->modx->getOption('MIGXcolumnminwidth', $field, '');
                     
-                    $column_width_parts = explode('.',$column_width);
-                    $column_width_output = '';
-                    if (empty($column_width) || $column_width == '1'){
-                        $column_width_output = '100%';
+                    if (empty($column_width)){
+                        $column_width = '100%';
                     }
                     
-                    if (isset($column_width_parts[1])){
-                        $width = '0.' . $column_width_parts[1];
-                        $width = 100 * $width;
-                        $column_width_output = $width . '%' ; 
-                    }
+                    $column_minwidth = empty($column_minwidth) ? '0' : $column_minwidth;
                     
+                    $layouts[$layout_id]['caption'] = $this->modx->getOption('MIGXlayoutcaption', $field, '');
+                    $layouts[$layout_id]['style'] = $this->modx->getOption('MIGXlayoutstyle', $field, '');  
                     $layouts[$layout_id]['columns'][$column_id]['tvs'][] = $tv;
-                    $layouts[$layout_id]['columns'][$column_id]['width'] = $column_width_output;                     
+                    $layouts[$layout_id]['columns'][$column_id]['width'] = $column_width; 
+                    $layouts[$layout_id]['columns'][$column_id]['minwidth'] = $column_minwidth;
+                    $layouts[$layout_id]['columns'][$column_id]['style'] = $this->modx->getOption('MIGXcolumnstyle', $field, ''); 
+                    $layouts[$layout_id]['columns'][$column_id]['caption'] = $this->modx->getOption('MIGXcolumncaption', $field, '');                   
 
                 }
             }

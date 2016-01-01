@@ -186,6 +186,11 @@ switch ($task) {
                 $layout_id = 0; 
                 $column_id = 0;
                 $columnwidth = 0;
+                $columncaption = '';
+                $columnstyle = '';
+                $columnminwidth = '';                          
+                $layoutcaption = '';
+                $layoutstyle = '';                   
                 foreach ($formlayouts as $formlayout) {
                     $type = $modx->getOption('MIGXtype', $formlayout, '');
                     switch ($type) {
@@ -199,16 +204,29 @@ switch ($task) {
                             $tab = $formlayout;
                             $layout_id = 0; 
                             $column_id = 0;
-                            $columnwidth = 0;                            
+                            $columnwidth = 0; 
+                            $columncaption = '';
+                            $columnstyle = '';
+                            $columnminwidth = '';                          
+                            $layoutcaption = '';
+                            $layoutstyle = '';                                                         
                             break;
                         case 'layout':
                             $layout_id++;
                             $column_id = 0;
                             $columnwidth = 0;
+                            $columncaption = '';
+                            $columnstyle = '';
+                            $columnminwidth = '';                          
+                            $layoutcaption = $modx->getOption('MIGXlayoutcaption', $formlayout, '');
+                            $layoutstyle = $modx->getOption('MIGXlayoutstyle', $formlayout, '');                            
                             break;
                         case 'column':
                             $column_id++;
                             $columnwidth = $modx->getOption('field', $formlayout, '');
+                            $columnminwidth = $modx->getOption('MIGXcolumnminwidth', $formlayout, '');
+                            $columncaption = $modx->getOption('MIGXcolumncaption', $formlayout, '');
+                            $columnstyle = $modx->getOption('MIGXcolumnstyle', $formlayout, '');
                             break;
                         case 'field':
                             if (!$tab) {
@@ -219,6 +237,11 @@ switch ($task) {
                             $field['MIGXlayoutid'] = $layout_id;
                             $field['MIGXcolumnid'] = $column_id;
                             $field['MIGXcolumnwidth'] = $columnwidth;
+                            $field['MIGXcolumnminwidth'] = $columnminwidth;
+                            $field['MIGXcolumnstyle'] = $columnstyle;
+                            $field['MIGXcolumncaption'] = $columncaption;
+                            $field['MIGXlayoutstyle'] = $layoutstyle;
+                            $field['MIGXlayoutcaption'] = $layoutcaption;                            
                             $fields[] = $field;
                             break;
                     }

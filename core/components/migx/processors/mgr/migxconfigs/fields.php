@@ -77,6 +77,8 @@ if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] =
                         $tmp_field = array();
                         $tmp_field['MIGXtype'] = 'layout';
                         $tmp_field['MIGXtyperender'] = '<h3>.' . $tmp_field['MIGXtype'] . '</h3>';
+                        $tmp_field['MIGXlayoutcaption'] = $modx->getOption('MIGXlayoutcaption', $field, '');
+                        $tmp_field['MIGXlayoutstyle'] = $modx->getOption('MIGXlayoutstyle', $field, '');                        
                         $newfields[] = $tmp_field;
                     }
                     if (isset($field['MIGXcolumnid']) && $field['MIGXcolumnid'] != $column_id) {
@@ -85,6 +87,9 @@ if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] =
                         $tmp_field['MIGXtype'] = 'column';
                         $tmp_field['MIGXtyperender'] = '<h3>..' . $tmp_field['MIGXtype'] . '</h3>';
                         $tmp_field['field'] = $modx->getOption('MIGXcolumnwidth', $field, '');
+                        $tmp_field['MIGXcolumnminwidth'] = $modx->getOption('MIGXcolumnminwidth', $field, '');
+                        $tmp_field['MIGXcolumncaption'] = $modx->getOption('MIGXcolumncaption', $field, '');
+                        $tmp_field['MIGXcolumnstyle'] = $modx->getOption('MIGXcolumnstyle', $field, '');
                         $newfields[] = $tmp_field;
                     }
 

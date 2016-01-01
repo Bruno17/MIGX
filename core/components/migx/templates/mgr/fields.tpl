@@ -77,9 +77,15 @@
             {/if}
 
             {foreach from=$category.layouts item=layout name='layout'}
-                <div class="layout" style="width:100%;clear:both;">
+                <div class="layout" style="width:100%;clear:both;float:left;{$layout.style}">
+                    {if $layout.caption != ''}
+                        <h3>{$layout.caption}</h3>
+                    {/if}                    
                     {foreach from=$layout.columns item=layoutcolumn name='layoutcolumn'}
-                        <div class="column" style="{if !$smarty.foreach.layoutcolumn.first}padding-left: 10px;{/if}width:{$layoutcolumn.width};float:left;">
+                        <div class="column" style="{if !$smarty.foreach.layoutcolumn.last}padding-right: 10px;{/if}width:{$layoutcolumn.width};min-width:{$layoutcolumn.minwidth};float:left;{$layoutcolumn.style}">
+                            {if $layoutcolumn.caption != ''}
+                                <h4>{$layoutcolumn.caption}</h4>
+                            {/if}                              
                             {foreach from=$layoutcolumn.tvs item=tv name='tv'}
                                 {if $tv->type EQ "description_is_code"}
                                     {$tv->get('formElement')}

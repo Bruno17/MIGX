@@ -23,7 +23,8 @@ $tabs_layout ='
 {"caption":"Layout", "fields": [
 {"field":"MIGXtype","inputTVtype":"hidden","default":"layout"},
 {"field":"MIGXtyperender","inputTVtype":"hidden","default":"<h3>.layout</h3>"},
-{"field":"caption","caption":"Caption"}
+{"field":"MIGXlayoutcaption","caption":"Caption"},
+{"field":"MIGXlayoutstyle","caption":"Style"}
 ]}
 ] 
 ';
@@ -33,7 +34,10 @@ $tabs_column ='
 {"caption":"Column", "fields": [
 {"field":"MIGXtype","inputTVtype":"hidden","default":"column"},
 {"field":"MIGXtyperender","inputTVtype":"hidden","default":"<h3>..column</h3>"},
-{"field":"field","caption":"Column width","description":"Example: use .3 for 30% width"}
+{"field":"field","caption":"Column width","description":"default:100% - For two columns try: calc(50% - 10px)"},
+{"field":"MIGXcolumnminwidth","caption":"Column min-width","description":"if you have inputTVtypes with hardcoded width (ex: listbox), try to set a min-with"},
+{"field":"MIGXcolumncaption","caption":"Caption"},
+{"field":"MIGXcolumnstyle","caption":"Style"}
 ]}
 ] 
 ';                    
