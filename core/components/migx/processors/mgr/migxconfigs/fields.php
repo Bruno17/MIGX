@@ -68,6 +68,8 @@ if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] =
             $field['MIGXtyperender'] = '<h3>' . $field['MIGXtype'] . '</h3>';
             $allfields[] = $field;
             $fields = is_array($tab['fields']) ? $tab['fields'] : $modx->fromJson($tab['fields']);
+            $tab['fields'] = $fields;
+            $formtabs[] = $tab;            
             $newfields = array();
             if (is_array($fields)) {
                 foreach ($fields as $field) {
@@ -100,12 +102,11 @@ if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] =
             }
 
             $tab['fields'] = $newfields;
-            $formtabs[] = $tab;
             $allfields = array_merge($allfields, $newfields);
         }
     }
 
-    $record['formtabs'] = $modx->toJson($formtabs);
+    $record['formtabs'] = $modx->migx->indent($modx->toJson($formtabs));
     $record['formlayouts'] = $modx->toJson($allfields);
 
 }

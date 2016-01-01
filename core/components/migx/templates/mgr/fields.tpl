@@ -7,14 +7,9 @@
 <input type="hidden" class="mulititems_grid_item_fields" name="mulititems_grid_item_fields" value='{$fields}' />
 <input type="hidden" class="tvmigxid" name="tvmigxid" value='{$migxid}' />
 
-<div id="modx-window-mi-grid-update-{$win_id}-tabs">
+
     {foreach from=$categories item=category name=cat}
         {if count($category.layouts) > 0}
-            {if count($categories) < 2 OR ($smarty.foreach.cat.first AND $category.print_before_tabs)}
-            <div id="modx-tv-tab{$category.id}" >
-            {else}
-            <div id="modx-tv-tab{$category.id}" class="x-tab" title="{$category.category|default:$_lang.uncategorized|ucfirst}">
-            {/if}
             {if count($formnames) > 0}
                 {if $smarty.foreach.cat.first}
                     <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tvFormname-tr">
@@ -75,7 +70,14 @@
                     </script>    
                 {/if}
             {/if}
-
+            {if count($categories) > 1 AND !$category.print_before_tabs}
+            <div id="modx-window-mi-grid-update-{$win_id}-tabs">    
+            {/if}
+            {if count($categories) < 2 OR ($smarty.foreach.cat.first AND $category.print_before_tabs)}
+            <div id="modx-tv-tab{$category.id}" >
+            {else}
+            <div id="modx-tv-tab{$category.id}" class="x-tab" title="{$category.category|default:$_lang.uncategorized|ucfirst}">
+            {/if}
             {foreach from=$category.layouts item=layout name='layout'}
                 <div class="layout" style="width:100%;clear:both;float:left;{$layout.style}">
                     {if $layout.caption != ''}
@@ -117,9 +119,16 @@
                 </div> <!-- layout  -->
             {/foreach}<!-- $category.layouts  -->
             </div>
+            {if $smarty.foreach.cat.first AND $category.print_before_tabs}
+                <br class="clear" />
+            {/if}            
+            {if count($categories) > 1 AND ($smarty.foreach.cat.last)}
+            </div>    
+            {/if}         
         {/if}
+       
     {/foreach}<!-- $categories  -->
-</div>
+
 
 {if count($categories) > 1}
 {literal}

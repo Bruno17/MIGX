@@ -76,6 +76,7 @@ switch($type){
     break;
     case 'formtab':
     $tabs = $tabs_formtab;
+    break;
     case 'layout':
     $tabs = $tabs_layout;    
     break;  
