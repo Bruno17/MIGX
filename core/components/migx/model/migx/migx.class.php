@@ -1546,6 +1546,9 @@ class Migx {
         $input_prefix = !empty($input_prefix) ? $input_prefix . '_' : '';
         $rte = isset($scriptProperties['which_editor']) ? $scriptProperties['which_editor'] : $this->modx->getOption('which_editor', '', $this->modx->_userConfig);
 
+        if (!is_array($tabs)){
+            return array('error'=>'There seems to be an error in the formtabs-config');            
+        }
 
         foreach ($tabs as $tabid => $tab) {
             $layouts = array();

@@ -74,12 +74,14 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         this.hide();
     },         
     onResizeWindow: function(){
-        var tabs = Ext.getCmp('{/literal}modx-window-mi-grid-update-{$tv->id}{literal}');
-        //console.log(tabs);
         if (typeof(this.tabs) != 'undefined'){
             this.tabs.doLayout();
+            //workarround for tab-resizing-issue
+            var activeTab = this.tabs.getActiveTab();
+            var id = activeTab.getItemId();
+            this.tabs.setActiveTab(100);
+            this.tabs.setActiveTab(id);
         }
-        //        
     },         
     onHideWindow: function(){
    
@@ -257,11 +259,9 @@ MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal} = function(config) {
         ,url: config.url
         ,baseParams: config.baseParams	
         ,class_key: ''
-        ,bodyStyle: 'padding: 15px;'
         //,autoSize: true
         ,autoLoad: this.autoload(config)
         ,layout: 'anchor'
-        ,width:'98%'
         , height:'98%'            
         ,anchorSize: {width:'98%', height:'98%'}   
         ,listeners: {

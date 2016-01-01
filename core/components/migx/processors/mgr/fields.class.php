@@ -140,11 +140,15 @@ class migxFormProcessor extends modProcessor {
 
         $categories = array();
         //$js = '';
-        $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
+        $result = $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
         $formcaption = $this->modx->getOption('formcaption', $this->modx->migx->customconfigs, '');
         $formcaption = !empty($formcaption) ? $this->modx->migx->renderChunk($formcaption, $record, false, false) : '';
         
         //echo '<pre>' . print_r($categories,1) . '</pre>';
+        
+        if (isset($result['error'])){
+            $controller->setPlaceholder('error', $result['error']);
+        }
         
         $controller->setPlaceholder('formcaption', $formcaption);
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));

@@ -1,5 +1,5 @@
 {$OnResourceTVFormPrerender}
-
+{$error}
 {if $formcaption != ''}
     <h2>{$formcaption}</h2>
 {/if} 
@@ -79,13 +79,13 @@
             {foreach from=$category.layouts item=layout name='layout'}
                 <div class="layout" style="width:100%;clear:both;">
                     {foreach from=$layout.columns item=layoutcolumn name='layoutcolumn'}
-                        <div class="column" style="width:{$layoutcolumn.width};float:left;">
+                        <div class="column" style="{if !$smarty.foreach.layoutcolumn.first}padding-left: 10px;{/if}width:{$layoutcolumn.width};float:left;">
                             {foreach from=$layoutcolumn.tvs item=tv name='tv'}
                                 {if $tv->type EQ "description_is_code"}
                                     {$tv->get('formElement')}
                                 {elseif $tv->type NEQ "hidden"}
-                                    <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="padding: 10px 0 0 ;{if $tv->display EQ "none"}display:none;{/if} ">
-                                        <label for="tv{$tv->id}" class="x-form-item-label modx-tv-label" style="width: auto;margin-bottom: 10px;">
+                                    <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="width: calc(100% - 5px); padding:0 !important;{if $tv->display EQ "none"}display:none;{/if} ">
+                                        <label for="tv{$tv->id}" class="x-form-item-label modx-tv-label" style="width: auto;">
                                             <div class="modx-tv-label-title"> 
                                                 {if $showCheckbox}<input type="checkbox" name="tv{$tv->id}-checkbox" class="modx-tv-checkbox" value="1" />{/if}
                                                 <span class="modx-tv-caption" id="tv{$tv->id}-caption">{$tv->caption}</span>
@@ -99,8 +99,7 @@
                                             <input type="hidden" id="tvdef{$tv->id}" value="{$tv->default_text|escape}" />
                                             {$tv->get('formElement')}
                                         </div>
-                                        <br class="clear" />
-                                    </div>
+                                     </div>
                                     <script type="text/javascript">{literal}Ext.onReady(function() { new Ext.ToolTip({{/literal}target: 'tv{$tv->id}-caption',html: '[[*{$tv->name}]]'{literal}});});{/literal}</script>
                                 {else}
                                     <input type="hidden" id="tvdef{$tv->id}" value="{$tv->default_text|escape}" />
@@ -128,7 +127,6 @@ Ext.onReady(function() {
         ,autoTabs: true
         ,border: false
         ,plain: true
-        ,width: '98%'
         ,hideMode: 'offsets'
         ,defaults: {
             bodyStyle: 'padding: 5px;'
