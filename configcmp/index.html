@@ -88,6 +88,14 @@
                 
                     <li><a class="toctree-l4" href="#form-caption">Form Caption</a></li>
                 
+                    <li><a class="toctree-l4" href="#window-title">Window Title</a></li>
+                
+                    <li><a class="toctree-l4" href="#unique-migx-id">unique MIGX ID</a></li>
+                
+                    <li><a class="toctree-l4" href="#max-migx-records">max MIGX records</a></li>
+                
+                    <li><a class="toctree-l4" href="#add-new-migx-records-at">Add new MIGX records at</a></li>
+                
             
                 <li class="toctree-l3"><a href="#formtabs">Formtabs</a></li>
                 
@@ -105,6 +113,10 @@
                 
             
                 <li class="toctree-l3"><a href="#columns">Columns</a></li>
+                
+                    <li><a class="toctree-l4" href="#options-for-columns_1">Options for Columns</a></li>
+                
+                    <li><a class="toctree-l4" href="#renderers">Renderers</a></li>
                 
             
             </ul>
@@ -161,6 +173,10 @@
 <h3 id="disable-add-items">Disable Add Items</h3>
 <h3 id="add-items-directly">Add Items directly</h3>
 <h3 id="form-caption">Form Caption</h3>
+<h3 id="window-title">Window Title</h3>
+<h3 id="unique-migx-id">unique MIGX ID</h3>
+<h3 id="max-migx-records">max MIGX records</h3>
+<h3 id="add-new-migx-records-at">Add new MIGX records at</h3>
 <h2 id="formtabs">Formtabs</h2>
 <h3 id="fields">Fields</h3>
 <p>This is the MIGX-grid, where you create the formlayout.
@@ -324,6 +340,129 @@ You can:</p>
 <h3 id="multiple-formtabs-optionstext">Multiple Formtabs Optionstext</h3>
 <h3 id="multiple-formtabs-optionsvalue">Multiple Formtabs Optionsvalue</h3>
 <h2 id="columns">Columns</h2>
+<p>Define all the grid-columns here.
+If this is for a MIGXdb - grid, dont't forget to add the id-field. 
+Otherwise MIGX doesn't know, which record to edit. 
+This column can also be hidden, if you don't want to schow it in the grid.</p>
+<h4 id="options-for-columns_1">Options for Columns</h4>
+<table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Column</td>
+<td>Header</td>
+<td>The Caption for that column</td>
+</tr>
+<tr>
+<td></td>
+<td>Field</td>
+<td>the fieldname of that column</td>
+</tr>
+<tr>
+<td></td>
+<td>Column width</td>
+<td>the proportional with of columns to each other</td>
+</tr>
+<tr>
+<td></td>
+<td>Sortable</td>
+<td>if the column should be sortable</td>
+</tr>
+<tr>
+<td></td>
+<td>Show in Grid</td>
+<td>if the column shoulc be shown of hidden from grid. In some situations, the column is needed to get its value, but you don't want to show it in the grid.</td>
+</tr>
+<tr>
+<td>Renderer</td>
+<td>Custom Renderer</td>
+<td>If you want to use a custom-renderer, which isn't in the list. Example: ImagePlus.MIGX_Renderer</td>
+</tr>
+<tr>
+<td></td>
+<td>Renderer</td>
+<td>Select a renderer for that column. See the next table for Renderer-descriptions.</td>
+</tr>
+<tr>
+<td>Cell Editor</td>
+<td>Editor</td>
+<td>For ingrid-editing, select an Editor for this column. <ul><li>this.textEditor - simple Text-input</li><li>this.listboxEditor - shows a listbox with the input-options of that field</li></ul></td>
+</tr>
+</tbody>
+</table>
+<h4 id="renderers">Renderers</h4>
+<table>
+<thead>
+<tr>
+<th>Renderer</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>this.renderimage</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderImageFromHtml</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderPlaceholder</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderFirst</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderLimited</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderCrossTick</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderClickCrossTick</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderSwitchStatusOptions</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderPositionSelector</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderRowActions</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderChunk</td>
+<td></td>
+</tr>
+<tr>
+<td>ImagePlus.MIGX_Renderer</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderDate</td>
+<td></td>
+</tr>
+<tr>
+<td>this.renderOptionSelector</td>
+<td></td>
+</tr>
+</tbody>
+</table>
               
             </div>
           </div>
