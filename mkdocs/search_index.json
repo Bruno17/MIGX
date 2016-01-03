@@ -1,0 +1,69 @@
+{
+    "docs": [
+        {
+            "location": "/",
+            "text": "MIGX\n\n\nMulti-Items-Grid for MODX-Revolution.\n\n\nWhat it is",
+            "title": "Home"
+        },
+        {
+            "location": "/#migx",
+            "text": "Multi-Items-Grid for MODX-Revolution.",
+            "title": "MIGX"
+        },
+        {
+            "location": "/#what-it-is",
+            "text": "",
+            "title": "What it is"
+        },
+        {
+            "location": "/installation/",
+            "text": "Install from MODX Extras\n\n\nSearch for MIGX in the Package Manager of MODX and install it.\n\n\nManual installation\n\n\nIf you can't access the MODX Extras Repository from your MODX installation, you can install MIGX manually.\n\n\n\n\nDownload the transport package from \nMODX Extras\n\n  (or one of the pre built transport packages in \n_packages\n)\n\n\nUpload the zip file to your MODX installation's \ncore/packages\n folder.\n\n\nIn the MODX Manager, navigate to the Package Manager page, and select 'Search locally for packages' from the dropdown \n  button.\n\n\nMIGX should now show up in the list of available packages. Click the corresponding 'Install' button and follow \n  instructions to complete the installation.",
+            "title": "Installation"
+        },
+        {
+            "location": "/installation/#install-from-modx-extras",
+            "text": "Search for MIGX in the Package Manager of MODX and install it.",
+            "title": "Install from MODX Extras"
+        },
+        {
+            "location": "/installation/#manual-installation",
+            "text": "If you can't access the MODX Extras Repository from your MODX installation, you can install MIGX manually.   Download the transport package from  MODX Extras \n  (or one of the pre built transport packages in  _packages )  Upload the zip file to your MODX installation's  core/packages  folder.  In the MODX Manager, navigate to the Package Manager page, and select 'Search locally for packages' from the dropdown \n  button.  MIGX should now show up in the list of available packages. Click the corresponding 'Install' button and follow \n  instructions to complete the installation.",
+            "title": "Manual installation"
+        },
+        {
+            "location": "/tvconfig/",
+            "text": "Input Options\n\n\nConfigs\n\n\nFormtabs\n\n\nColumns",
+            "title": "TV Configuration"
+        },
+        {
+            "location": "/tvconfig/#input-options",
+            "text": "Configs  Formtabs  Columns",
+            "title": "Input Options"
+        },
+        {
+            "location": "/configcmp/",
+            "text": "Settings\n\n\nName\n\n\n\"Add Item\" Replacement\n\n\nDisable Add Items\n\n\nAdd Items directly\n\n\nForm Caption\n\n\nFormtabs\n\n\nFields\n\n\nThis is the MIGX-grid, where you create the formlayout.\nYou can:\n\n\n\n\nCreate Tabs with 'Add Formtab'\n\n\nAdd Fields to the Tab with 'Add Field'\n\n\nCreate Layout-Rows for Column-Groups with 'Add Layout'\n\n\nAdd Columns to Layout-Rows with 'Add Column'\n\n\n\n\nOptions for Formtabs\n\n\nOptions for Fields\n\n\nOptions for Layouts\n\n\nOptions for Columns\n\n\nMultiple Formtabs\n\n\nMultiple Formtabs Label\n\n\nMultiple Formtabs Field",
+            "title": "MIGX Configurator CMP"
+        },
+        {
+            "location": "/configcmp/#settings",
+            "text": "Name  \"Add Item\" Replacement  Disable Add Items  Add Items directly  Form Caption",
+            "title": "Settings"
+        },
+        {
+            "location": "/configcmp/#formtabs",
+            "text": "Fields  This is the MIGX-grid, where you create the formlayout.\nYou can:   Create Tabs with 'Add Formtab'  Add Fields to the Tab with 'Add Field'  Create Layout-Rows for Column-Groups with 'Add Layout'  Add Columns to Layout-Rows with 'Add Column'   Options for Formtabs  Options for Fields  Options for Layouts  Options for Columns  Multiple Formtabs  Multiple Formtabs Label  Multiple Formtabs Field",
+            "title": "Formtabs"
+        },
+        {
+            "location": "/donate/",
+            "text": "Support MIGX\n\n\nMIGX\n is and always will be free and open-source, but it still requires many man-hours of development and bug-fixing \nbetween the releases.\n\n\nPlease support the ongoing and past development of \nMIGX\n by making a donation below.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThanks!",
+            "title": "Donate"
+        },
+        {
+            "location": "/donate/#support-migx",
+            "text": "MIGX  is and always will be free and open-source, but it still requires many man-hours of development and bug-fixing \nbetween the releases.  Please support the ongoing and past development of  MIGX  by making a donation below.         \nThanks!",
+            "title": "Support MIGX"
+        }
+    ]
+}
