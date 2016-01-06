@@ -8,6 +8,7 @@ function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n
     if (!is_array($array) or !is_array($array[0]))
         return false;
 
+	$output = '';
     //Header row.
     if ($header_row) {
         foreach ($array[0] as $key => $val) {
@@ -51,7 +52,7 @@ if (!empty($hooksnippet_getcustomconfigs)){
 }
 
 $output = '';
-if (!($scriptProperties['download'])) {
+if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
 
     $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
     if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
@@ -83,7 +84,7 @@ if (!($scriptProperties['download'])) {
     $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
     $checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
 
-    if ($this->modx->lexicon) {
+    if ($this->modx->lexicon && isset($packageName)) {
         $this->modx->lexicon->load($packageName . ':default');
     }
 
