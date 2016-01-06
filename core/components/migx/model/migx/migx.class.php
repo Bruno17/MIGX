@@ -1387,9 +1387,9 @@ class Migx {
                     $option['idx'] = 0;
                     $option['_renderer'] = $renderer;
                     $option['_renderchunktpl'] = $renderchunktpl;
-					if (isset($option[$indexfield])) {
-					  	$columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
-					}
+                    if (isset($option[$indexfield])) {
+                    	$columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
+                    }
                 }
             }
         }
@@ -1548,9 +1548,15 @@ class Migx {
         $input_prefix = !empty($input_prefix) ? $input_prefix . '_' : '';
         $rte = isset($scriptProperties['which_editor']) ? $scriptProperties['which_editor'] : $this->modx->getOption('which_editor', '', $this->modx->_userConfig);
 
+        if (!is_array($tabs)){
+            return array('error'=>'There seems to be an error in the formtabs-config');            
+        }
 
         foreach ($tabs as $tabid => $tab) {
+            $layouts = array();
+            $layoutcolumns = array();
             $tvs = array();
+
             $fields = $this->modx->getOption('fields', $tab, array());
             $fields = is_array($fields) ? $fields : $this->modx->fromJson($fields);
             if (is_array($fields) && count($fields) > 0) {
@@ -1574,7 +1580,6 @@ class Migx {
                     $field['tv_id'] = $input_prefix . $scriptProperties['tv_id'] . '_' . $fieldid;
                     $params = array();
                     $tv = false;
-
 
                     if (isset($field['inputTV']) && $tv = $this->modx->getObject('modTemplateVar', array('name' => $field['inputTV']))) {
                         $params = $tv->get('input_properties');
@@ -1751,6 +1756,17 @@ class Migx {
                     }
 
                     $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
+
+/*
+//extract scripts from content                    
+$pattern = '#<script(.*?)</script>#is'; 
+preg_match_all($pattern, $inputForm, $matches); 
+foreach ($matches[0] as $jsvalue) {
+    $js .= $jsvalue;
+}               
+$inputForm = preg_replace($pattern, '', $inputForm);
+*/
+                    
                     if (isset($field['description_is_code']) && !empty($field['description_is_code'])) {
                         $props = $record;
                         unset($field['description']);
@@ -1768,23 +1784,52 @@ class Migx {
                         $tv->set('formElement', str_replace(array('[+[+value]]', '[+[+tv_formElement]]'), array($tempvalue, $inputForm), $this->renderChunk($desc, $props, false, false)));
                         $tv->set('type', 'description_is_code');
                     } else {
-
-
                         if (empty($inputForm))
                             continue;
 
                         $tv->set('formElement', $inputForm);
                     }
 
-                    $tvs[] = $tv;
+                    //$tvs[] = $tv;
+                    
+                    $layout_id = isset($field['MIGXlayoutid']) ? $field['MIGXlayoutid'] : 0;
+                    $column_id = isset($field['MIGXcolumnid']) ? $field['MIGXcolumnid'] : 0;
+                    $column_width = $this->modx->getOption('MIGXcolumnwidth', $field, '');
+                    $column_minwidth = $this->modx->getOption('MIGXcolumnminwidth', $field, '');
+                    
+                    if (empty($column_width)){
+                        $column_width = '100%';
+                    }
+                    
+                    $column_minwidth = empty($column_minwidth) ? '0' : $column_minwidth;
+                    
+                    $layouts[$layout_id]['caption'] = $this->modx->getOption('MIGXlayoutcaption', $field, '');
+                    $layouts[$layout_id]['style'] = $this->modx->getOption('MIGXlayoutstyle', $field, '');  
+                    $layouts[$layout_id]['columns'][$column_id]['tvs'][] = $tv;
+                    $layouts[$layout_id]['columns'][$column_id]['width'] = $column_width; 
+                    $layouts[$layout_id]['columns'][$column_id]['minwidth'] = $column_minwidth;
+                    $layouts[$layout_id]['columns'][$column_id]['style'] = $this->modx->getOption('MIGXcolumnstyle', $field, ''); 
+                    $layouts[$layout_id]['columns'][$column_id]['caption'] = $this->modx->getOption('MIGXcolumncaption', $field, '');                   
+
                 }
             }
+            
+            //echo '<pre>' . print_r($layouts,1) . '</pre>';
+            
+            //$layoutcolumn = array();
+            //$layoutcolumn['tvs'] = $tvs;
+            //$layoutcolumns[] = $layoutcolumn;
+            
+            //$layout = array();
+            //$layout['columns'] = $layoutcolumns;
+            //$layouts[] = $layout;
 
             $cat = array();
             $cat['category'] = $this->modx->getOption('caption', $tab, 'undefined');
             $cat['print_before_tabs'] = isset($tab['print_before_tabs']) && !empty($tab['print_before_tabs']) ? true : false;
             $cat['id'] = $tabid;
-            $cat['tvs'] = $tvs;
+            $cat['layouts'] = $layouts;
+            //$cat['tvs'] = $tvs;
             $categories[] = $cat;
 
         }
