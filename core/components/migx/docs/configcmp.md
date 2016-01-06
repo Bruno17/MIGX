@@ -87,7 +87,7 @@ Style | Additional CSS-Style for that Column
 Define all the grid-columns here.
 If this is for a MIGXdb - grid, dont't forget to add the id-field. 
 Otherwise MIGX doesn't know, which record to edit. 
-This column can also be hidden, if you don't want to schow it in the grid.
+This column can also be hidden, if you don't want to show it in the grid.
 
 ####Options for Columns
 
