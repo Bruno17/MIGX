@@ -8,7 +8,7 @@ function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n
     if (!is_array($array) or !is_array($array[0]))
         return false;
 
-	$output = '';
+    $output = '';
     //Header row.
     if ($header_row) {
         foreach ($array[0] as $key => $val) {

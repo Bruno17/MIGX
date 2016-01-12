@@ -8,3 +8,4 @@ core/components/migx/configs/grid/grid.renderer.config.php
 packages/migx-2.8.3-pl.transport.zip
 packages/migx-2.8.3-beta1.transport.zip
 _build/site/
+.idea/

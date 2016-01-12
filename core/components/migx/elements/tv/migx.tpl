@@ -460,7 +460,7 @@ Ext.reg('modx-window-mi-preview',MODx.window.MiPreview);
 
 
 Ext.onReady(function() {
-var lang = '{/literal}{$migx_lang}{literal}';
+var lang = {/literal}{$migx_lang}{literal};
   for (var name in lang) {
     MODx.lang[name] = lang[name];
   }
