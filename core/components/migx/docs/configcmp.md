@@ -1,4 +1,4 @@
-##Settings
+##Tab Settings
 
 ###Name
 
@@ -18,7 +18,7 @@
 
 ###Add new MIGX records at
 
-##Formtabs
+##Tab Formtabs
 
 ###Fields
 
@@ -82,7 +82,7 @@ Style | Additional CSS-Style for that Column
 
 ###Multiple Formtabs Optionsvalue
 
-##Columns
+##Tab Columns
 
 Define all the grid-columns here.
 If this is for a MIGXdb - grid, dont't forget to add the id-field. 
@@ -120,6 +120,98 @@ this.renderChunk |
 ImagePlus.MIGX_Renderer |
 this.renderDate |
 this.renderOptionSelector |
+
+##Tab Contextmenues
+
+##Tab Columnbuttons
+
+##Tab Actionbuttons
+
+##Tab Window Buttons
+
+##Tab Handlers
+
+##Tab Db-Filters
+
+##Tab MIGXdb-Settings
+
+###Package
+
+###Classname
+
+###Processors Path
+
+###getlist defaultsort
+
+###getlist defaultsortdir
+
+###Sort Config
+
+multifield-sortconfig - json-format
+
+###Items per Page Default
+
+###Prefix
+
+Option   | Purpose
+---------|--------
+default Prefix | uses the default MODX-prefix
+Custom Prefix | uses the prefix, set with 'Custom Prefix'
+
+###Custom Prefix
+
+if you have a custom table-prefix, select 'Custom Prefix' above and put your prefix here. 
+This can also be empty.
+
+Option   | Purpose
+---------|--------
+by Button | if a MIGXdb - TV or a nested grid, this will show a Button to load the grid
+auto | this does allways autoload the grid. Doesn't work correctly with MIGXdb - TVs. Use 'by Button' for that case.
+
+###Check Resource
+
+Option   | Purpose
+---------|--------
+yes | if this is a config for a nested grid, this tries to show only connected records
+no | this will show all records in nested grids.
+
+###Check Resource TV
+
+set the value above by a TV of the current Resource, if this config is for a MIGXdb-TV
+
+###Join Alias
+
+if this is the config for a nested grid, the join-alias of the parent-object.
+
+###Has Extra Connection Table
+
+###Where
+a where-clause for the getlist-processor as json, to list only specific records
+
+###Joins
+
+Example: `[{"alias":"Profile"}]`
+
+you will have access in the CMP to fields and columns for example with: `Profile_fullname`
+The alias + `_` will be the prefix for your fields in the CMP
+
+###Hook Snippets
+Example: `{"aftersave":"myaftersave_snippet"}`
+
+Hook-snippets, currently supported by default-processors:
+
+Hook | Purpose | Example
+---- | ------- | ------
+aftersave | fires after the object was saved | [examples](tipsandtricks.md#working-with-joined-tables)  
+validate | fires on field-validation | [example](https://github.com/Bruno17/MIGX/blob/master/core/components/migx/elements/snippets/migx_example_validate.snippet.php)
+
+##Tab CMP-Settings
+
+
+
+
+
+
         
        
 

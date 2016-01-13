@@ -9,6 +9,7 @@ pages:
 - Installation: 'installation.md'
 - TV Configuration: 'tvconfig.md'
 - MIGX Configurator CMP: 'configcmp.md'
+- Tips and Tricks: 'tipsandtricks.md'
 - Donate: 'donate.md'
 
 theme: readthedocs
