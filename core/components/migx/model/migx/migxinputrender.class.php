@@ -11,7 +11,7 @@
 class migxInputRender extends modTemplateVarInputRender {
     
     public function process($value, array $params = array()) {
-
+        
         $namespace = 'migx';
         $this->modx->lexicon->load('tv_widget', $namespace . ':default');
         //$properties = isset($params['columns']) ? $params : $this->getProperties();
@@ -84,7 +84,11 @@ class migxInputRender extends modTemplateVarInputRender {
 
         $this->migx->loadLang();
         $lang = $this->modx->lexicon->fetch();
-        $lang['migx_add'] = !empty($properties['btntext']) ? $properties['btntext'] : $lang['migx.add'];
+        if (!empty($properties['btntext'])){
+            $lang['migx_add'] = $properties['btntext'];
+        }else{
+            $lang['migx_add'] = isset($lang['migx.add']) ? $lang['migx.add'] : 'Add Item';
+        }
         $lang['migx_add'] = str_replace("'", "\'", $lang['migx_add']);
         $this->migx->addLangValue('migx.add', $lang['migx_add']);
         $this->migx->migxlang['migx.add'] = $lang['migx_add'];

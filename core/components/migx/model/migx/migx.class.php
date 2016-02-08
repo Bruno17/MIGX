@@ -162,9 +162,11 @@ class Migx {
         $sortConfig = !empty($sortConfig) && !is_array($sortConfig) ? $modx->fromJSON($sortConfig) : $sortConfig;
         $joins = $modx->getOption('joins', $scriptProperties, array());
         $joins = !empty($joins) && !is_array($joins) ? $modx->fromJSON($joins) : $joins;
+        $having = $modx->getOption('having', $scriptProperties, '');
 
         $selectfields = $modx->getOption('selectfields', $scriptProperties, '');
         $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
+        $specialfields = $modx->getOption('specialfields', $scriptProperties, '');
         $classname = $scriptProperties['classname'];
         $groupby = $modx->getOption('groupby', $scriptProperties, '');
 
@@ -173,6 +175,9 @@ class Migx {
         $c = $xpdo->newQuery($classname);
 
         $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
+        if (!empty($specialfields)){
+            $c->select($specialfields);
+        }
 
         if (is_array($joins) && count($joins) > 0) {
             $this->prepareJoins($classname, $joins, $c);
@@ -193,6 +198,10 @@ class Migx {
                 $c->where($query, $key);
             }
 
+        }
+
+        if (!empty($having)) {
+            $c->having($having);
         }
 
         if (!empty($groupby)) {
@@ -490,9 +499,11 @@ class Migx {
             $c->select($this->modx->getSelectColumns($classname, $classname));
             $c->where(array('id:IN' => $mf_configs));
             $c->sortby('name');
+            $formnames = array();
             if ($collection = $this->modx->getCollection($classname, $c)) {
                 $idx = 0;
                 $formtabs = false;
+                
                 foreach ($collection as $object) {
 
                     $ext = $object->get('extended');
@@ -889,7 +900,7 @@ class Migx {
         //$lang = $this->modx->lexicon->fetch();
 
         $resource = is_object($this->modx->resource) ? $this->modx->resource->toArray() : array();
-        $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
+        $resource['id'] = $this->config['resource_id'] = $this->modx->getOption('id', $resource, '');
         $this->config['connected_object_id'] = $this->modx->getOption('object_id', $_REQUEST, '');
         $this->config['req_configs'] = $this->modx->getOption('configs', $_REQUEST, '');
         $this->config['media_source_id'] = is_object($this->source) ? $this->source->id : $this->getDefaultSource('id');
@@ -911,7 +922,9 @@ class Migx {
         $tv_id = empty($tv_id) && isset($properties['tv_id']) ? $properties['tv_id'] : $tv_id;
 
         $this->config['tv_id'] = $tv_id;
-
+        $search = array();
+        $replace = array();
+ 
         foreach ($this->config as $key => $value) {
             if (!is_array($value)) {
                 $replace['config_' . $key] = $value;
@@ -927,6 +940,7 @@ class Migx {
             }
         }
 
+        $this->migxlang['migx.add'] = isset($this->migxlang['migx.add']) ? $this->migxlang['migx.add'] : 'Add Item';
         $l['migx.add'] = !empty($this->customconfigs['migx_add']) ? $this->customconfigs['migx_add'] : $this->migxlang['migx.add'];
         $l['migx.add'] = str_replace("'", "\'", $l['migx.add']);
 
@@ -1035,8 +1049,10 @@ class Migx {
                     //print_r($filter);
                 }
                 foreach ($filter as $key => $value) {
-                    $replace[$key] = $value;
-                    $search[$key] = '[[+' . $key . ']]';
+                    if (!is_array($value)) {
+                        $replace[$key] = $value;
+                        $search[$key] = '[[+' . $key . ']]';
+                    }
                 }
                 $filtername = $filter['handler'] . '_' . $filter['name'];
                 if (isset($this->customconfigs['gridfunctions'][$filter['handler']])) {

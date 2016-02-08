@@ -137,7 +137,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                     var idx = this.baseParams.itemid; 
                 }else{
                     /*append record*/
-                    var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt}{literal}';
+                    var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt|default}{literal}';
                     var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
 		            s.loadData(items,true);
                 

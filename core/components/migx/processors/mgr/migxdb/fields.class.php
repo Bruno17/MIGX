@@ -73,6 +73,7 @@ class migxFormProcessor extends modProcessor {
         $sender = isset($sender) ? $sender : '';
 
         $this->modx->migx->loadConfigs(true, true, $scriptProperties, $sender);
+        $customconfigs = $this->modx->migx->customconfigs;
         $tabs = $this->modx->migx->getTabs();
         $fieldid = 0;
         $allfields[] = array();
@@ -81,15 +82,15 @@ class migxFormProcessor extends modProcessor {
         $tabs = $this->modx->migx->checkMultipleForms($tabs,$controller,$allfields,$record);
         
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
-        $formcaption = $this->modx->getOption('formcaption',$this->modx->migx->customconfigs,'');
+        $formcaption = $this->modx->getOption('formcaption',$customconfigs,'');
 
         $controller->setPlaceholder('formcaption', $this->modx->migx->renderChunk($formcaption,$record,false,false));
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
-        $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
+        $controller->setPlaceholder('customconfigs', $customconfigs);
         $controller->setPlaceholder('object', $object);
         $controller->setPlaceholder('categories', $categories);
         //$controller->setPlaceholder('win_id', $scriptProperties['tv_id']);
-        $controller->setPlaceholder('win_id', isset($this->modx->migx->customconfigs['win_id']) ? $this->modx->migx->customconfigs['win_id'] : $scriptProperties['tv_id']);
+        $controller->setPlaceholder('win_id', isset($customconfigs['win_id']) ? $customconfigs['win_id'] : $scriptProperties['tv_id']);
         //$c->setPlaceholder('id_update_window', 'modx-window-midb-grid-update');
 
         if (!empty($_REQUEST['showCheckbox'])) {

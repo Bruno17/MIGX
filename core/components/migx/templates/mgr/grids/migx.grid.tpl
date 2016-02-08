@@ -147,7 +147,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
 }
 
 		,tbar: [
-        {/literal}{if $customconfigs.disable_add_item != '1'}{literal}
+        {/literal}{if $customconfigs.disable_add_item|default != '1'}{literal}
         {
             text: '[[%migx.add]]',
 			handler: this.addItem
@@ -155,7 +155,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
         {/literal}{/if}{literal}        
         {/literal}{if $properties.previewurl != ''}{literal}
         {/literal}
-        {if $customconfigs.disable_add_item != '1'}
+        {if $customconfigs.disable_add_item|default != '1'}
         ,
         {/if}
         {literal}        
@@ -166,7 +166,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
         {/literal}{/if}{literal}
         
         {/literal}{if $customconfigs.tbar != ''}
-        {if $customconfigs.disable_add_item != '1'}
+        {if $customconfigs.disable_add_item|default != '1'}
         ,
         {/if}        
         {$customconfigs.tbar}
@@ -276,8 +276,8 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         return cs;
     }
 	,addItem: function(btn,e) {
-	    var maxRecords =  parseInt('{/literal}{$customconfigs.maxRecords}{literal}');
-        var add_items_directly = '{/literal}{$customconfigs.add_items_directly}{literal}';
+	    var maxRecords =  parseInt('{/literal}{$customconfigs.maxRecords|default}{literal}');
+        var add_items_directly = '{/literal}{$customconfigs.add_items_directly|default}{literal}';
         var s=this.getStore();
         if(maxRecords != 0 && s.getCount() >= maxRecords){
             alert ('[[%migx.max_records_alert]]');
@@ -299,7 +299,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             var items=Ext.util.JSON.decode(json);
             var item = items[0];            
             var s = this.getStore();
-            var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt}{literal}';
+            var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt|default}{literal}';
             
 	        this.autoinc = parseInt(this.autoinc) +1; 
             s.loadData(items,true);
@@ -349,7 +349,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
       this.loadWin(btn,e,this.menu.recordIndex,'u');
     }
 	,migx_duplicate: function(btn,e) {
-	    var add_items_directly = '{/literal}{$customconfigs.add_items_directly}{literal}';
+	    var add_items_directly = '{/literal}{$customconfigs.add_items_directly|default}{literal}';
         if (add_items_directly == '1'){
             var s=this.getStore();
             var rec = s.getAt(this.menu.recordIndex);
@@ -376,7 +376,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             ,params: {
                 action: 'mgr/loadfromsource'
                 ,resource_id: '{/literal}{$resource.id}{literal}'
-				,co_id: '{/literal}{$connected_object_id}{literal}'
+				,co_id: '{/literal}{$connected_object_id|default}{literal}'
                 ,tv_name: '{/literal}{$tv->name}{literal}'
                 ,items: Ext.get('tv{/literal}{$tv->id}{literal}').dom.value
                 ,record_index: recordIndex
@@ -417,8 +417,8 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
 	}      
 	,loadWin: function(btn,e,index,action,tempParams) {
 	    var resource_id = '{/literal}{$resource.id}{literal}';
-        var co_id = '{/literal}{$connected_object_id}{literal}';
-        var object_id = '{/literal}{$request.object_id}{literal}';
+        var co_id = '{/literal}{$connected_object_id|default}{literal}';
+        var object_id = '{/literal}{$request.object_id|default}{literal}';
         var input_prefix = Ext.id(null,'inp_');
         var tempParams = tempParams || null;
         {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
@@ -521,7 +521,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
 	,loadIframeWin: function(btn,e,tpl) {
         var resource_id = '{/literal}{$resource.id}{literal}';
         var co_id = '{/literal}{$connected_object_id}{literal}';
-        var object_id = '{/literal}{$request.object_id}{literal}';
+        var object_id = '{/literal}{$request.object_id|default}{literal}';
         var url = '{/literal}{$config.connectorUrl}{literal}';
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
         var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
@@ -557,7 +557,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             ,resource_id: resource_id
             ,object_id: object_id
             ,co_id: co_id
-            ,title: '{/literal}{$customconfigs.iframeWindowTitle}{literal}'
+            ,title: '{/literal}{$customconfigs.iframeWindowTitle|default}{literal}'
             ,iframeTpl: tpl
         });
     } 

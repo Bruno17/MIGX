@@ -12,7 +12,6 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender
 {
     public function process($value, array $params = array())
     {
-
         $namespace = 'migx';
         $this->modx->lexicon->load('tv_widget', $namespace . ':default');
         //$properties = isset($params['columns']) ? $params : $this->getProperties();
@@ -47,8 +46,9 @@ class modTemplateVarInputRenderMigxdb extends modTemplateVarInputRender
         if ($windowfile = $this->migx->findGrid($defaultpath, $filename, $filenames)) {
             $this->setPlaceholder('iframewindow', $this->migx->replaceLang($this->modx->controller->fetchTemplate($windowfile)));
         }        
-        
-        $this->setPlaceholder('i18n_migx_loadgrid', $this->migx->migxlang['migx.loadgrid']);
+        if (isset($this->migx->migxlang['migx.loadgrid'])){
+            $this->setPlaceholder('i18n_migx_loadgrid', $this->migx->migxlang['migx.loadgrid']);
+        }
         $this->setPlaceholder('tv_type', 'migxdb');
 
 

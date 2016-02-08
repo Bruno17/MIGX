@@ -70,7 +70,7 @@ Ext.extend(MODx.loadMIGXdbGridButton,Ext.Button,{
 	    var resource_id = '{/literal}{$resource.id}{literal}';
         var object_id = '{/literal}{$object_id}{literal}';
         
-        if ('{/literal}{$customconfigs.check_resid}{literal}' == '1'){
+        if ('{/literal}{$customconfigs.check_resid|default}{literal}' == '1'){
         if (object_id != ''){
             if (object_id == 'new'){
                 if (!init){

@@ -14,7 +14,8 @@ $_lang['migx.management_desc'] = 'Manage your MIGX - Configs here. You can edit 
 
 $_lang['migx.noitems'] = 'No items found';
 $_lang['migx.add'] = 'Add Item';
-$_lang['migx.remove_confirm'] = 'Remove Item?';
+$_lang['migx.remove_confirm'] = 'Remove Item?'; 
+$_lang['migx.remove_confirm'] = "Supprimer l\\'élément ?";
 $_lang['migx.edit'] = 'Edit';
 $_lang['migx.edit_raw'] = 'Edit raw';
 $_lang['migx.export_import'] = 'Export/Import';

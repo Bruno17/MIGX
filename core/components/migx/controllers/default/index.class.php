@@ -32,12 +32,10 @@ class MigxIndexManagerController extends MigxManagerController {
     
     public function process(array $scriptProperties = array())
     {
-
         $tv = '';
         $this->migx->loadLang();
         $params = array();
         $this->panelJs = $this->migx->prepareCmpTabs($params, $this, $tv);
-
     }
     public function getPageTitle()
     {

@@ -156,7 +156,8 @@ class migxFormProcessor extends modProcessor {
         $controller->setPlaceholder('categories', $categories);
         //$controller->setPlaceholder('scripts', $js);
         $controller->setPlaceholder('properties', $scriptProperties);
-        $controller->setPlaceholder('win_id', $scriptProperties['tv_id']);
+        //Todo: check for MIGX and MIGXdb, if tv_id is needed.
+        $controller->setPlaceholder('win_id', isset($scriptProperties['win_id']) ? $scriptProperties['win_id'] : $scriptProperties['tv_id']);
 
         if (!empty($_REQUEST['showCheckbox'])) {
             $controller->setPlaceholder('showCheckbox', 1);

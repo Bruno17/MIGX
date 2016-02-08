@@ -1,5 +1,5 @@
-{$OnResourceTVFormPrerender}
-{$error}
+{$OnResourceTVFormPrerender|default}
+{$error|default}
 {if $formcaption != ''}
     <h2>{$formcaption}</h2>
 {/if} 
@@ -10,7 +10,7 @@
 
     {foreach from=$categories item=category name=cat}
         {if count($category.layouts) > 0}
-            {if count($formnames) > 0}
+            {if isset($formnames) && count($formnames) > 0}
                 {if $smarty.foreach.cat.first}
                     <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tvFormname-tr">
                         <label for="tvFormname" class="modx-tv-label">
@@ -79,7 +79,7 @@
             <div id="modx-tv-tab{$category.id}" class="x-tab" title="{$category.category|default:$_lang.uncategorized|ucfirst}">
             {/if}
             {foreach from=$category.layouts item=layout name='layout'}
-                <div class="layout" style="width:100%;clear:both;float:left;{$layout.style}">
+                <div class="layout" style="width:100%;clear:both;float:left;{$layout.style|default}">
                     {if $layout.caption != ''}
                         <h3>{$layout.caption}</h3>
                     {/if}                    
@@ -95,7 +95,7 @@
                                     <div class="x-form-item x-tab-item {cycle values=",alt"} modx-tv" id="tv{$tv->id}-tr" style="width: calc(100% - 5px); padding:0 !important;{if $tv->display EQ "none"}display:none;{/if} ">
                                         <label for="tv{$tv->id}" class="x-form-item-label modx-tv-label" style="width: auto;">
                                             <div class="modx-tv-label-title"> 
-                                                {if $showCheckbox}<input type="checkbox" name="tv{$tv->id}-checkbox" class="modx-tv-checkbox" value="1" />{/if}
+                                                {if $showCheckbox|default}<input type="checkbox" name="tv{$tv->id}-checkbox" class="modx-tv-checkbox" value="1" />{/if}
                                                 <span class="modx-tv-caption" id="tv{$tv->id}-caption">{$tv->caption}</span>
                                             </div>    
                                             <a class="modx-tv-reset" id="modx-tv-reset-{$tv->id}" onclick="MODx.resetTV({$tv->id});" title="{$_lang.set_to_default}"></a>
@@ -160,6 +160,6 @@ Ext.onReady(function() {
 {/literal}
 
 {/if}
-{$scripts}
-{$OnResourceTVFormRender}
+{$scripts|default}
+{$OnResourceTVFormRender|default}
 <br class="clear" />
