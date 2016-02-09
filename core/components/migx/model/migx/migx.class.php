@@ -1397,17 +1397,15 @@ class Migx {
                         if (isset($option['use_as_fallback']) && !empty($option['use_as_fallback'])) {
                             $option['value'] = 'use_as_fallback';
                         }
-                        if (isset($option[$indexfield])) {
-                    	    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
-                        }
-                    }
+                        $option[$indexfield] = isset($option[$indexfield]) ? $option[$indexfield] : 0; 
+                   	    $columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
+                     }
                 } elseif (!empty($renderer) && $renderer == 'this.renderChunk') {
                     $option['idx'] = 0;
                     $option['_renderer'] = $renderer;
                     $option['_renderchunktpl'] = $renderchunktpl;
-                    if (isset($option[$indexfield])) {
-                    	$columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
-                    }
+                    $option[$indexfield] = isset($option[$indexfield]) ? $option[$indexfield] : 0; 
+                  	$columnrenderoptions[$column['dataIndex']][$option[$indexfield]] = $format == 'json' ? $this->modx->toJson($option) : $option;
                 }
             }
         }

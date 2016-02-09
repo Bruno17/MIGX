@@ -4,7 +4,7 @@
     <h2>{$formcaption}</h2>
 {/if} 
 
-<input type="hidden" class="mulititems_grid_item_fields" name="mulititems_grid_item_fields" value='{$fields}' />
+<input type="hidden" class="mulititems_grid_item_fields" name="mulititems_grid_item_fields" value='{$fields|escape}' />
 <input type="hidden" class="tvmigxid" name="tvmigxid" value='{$migxid}' />
 
 

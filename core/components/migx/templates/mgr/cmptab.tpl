@@ -1,11 +1,11 @@
 {literal}
 {
-    title: '{/literal}{$cmptabcaption}{literal}',
+    title: '{/literal}{$cmptabcaption|escape}{literal}',
     defaults: {
         autoHeight: true
     },
     items: [{
-        html: '<p>{/literal}{$cmptabdescription}{literal}</p>',
+        html: '<p>{/literal}{$cmptabdescription|escape}{literal}</p>',
         border: false,
         bodyCssClass: 'panel-desc'
     },
