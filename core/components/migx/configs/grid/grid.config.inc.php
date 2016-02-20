@@ -27,16 +27,16 @@ resetWinPosition: function(btn,e) {
     this.setWinPosition(10,10);     
 }";
 
-$gridfunctions['this.emptyThrash'] = "
-emptyThrash: function(btn,e) {
+$gridfunctions['this.emptyTrash'] = "
+emptyTrash: function(btn,e) {
     var _this=this;
-    Ext.Msg.confirm(_('warning') || '','[[%migx.emptythrash_confirm]]',function(e) {
+    Ext.Msg.confirm(_('warning') || '','[[%migx.emptytrash_confirm]]',function(e) {
         if (e == 'yes') {    
             MODx.Ajax.request({
                 url: _this.config.url
                 ,params: {
                     action: 'mgr/migxdb/process'
-                    ,processaction: 'emptythrash'                     
+                    ,processaction: 'emptytrash'                     
                     ,configs: _this.config.configs
                     ,resource_id: _this.config.resource_id
                     ,co_id: '[[+config.connected_object_id]]'                

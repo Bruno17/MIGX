@@ -62,8 +62,8 @@ $_lang['migx.max_records_alert'] = 'Maximale Anzahl an Datensätzen erreicht';
 
 $_lang['migx.selector_options'] = 'Optionen';
 
-$_lang['migx.emptythrash_confirm'] = 'Papierkorb wirklich leeren?';
-$_lang['migx.emptythrash'] = 'Papierkorb leeren';
+$_lang['migx.emptytrash_confirm'] = 'Papierkorb wirklich leeren?';
+$_lang['migx.emptytrash'] = 'Papierkorb leeren';
 $_lang['migx.search'] = 'Suche...';
 $_lang['migx.reset_all'] = 'Alle zurücksetzen';
 $_lang['migx.import_csv'] = 'CSV Importieren';

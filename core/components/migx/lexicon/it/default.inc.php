@@ -62,7 +62,7 @@ $_lang['migx.max_records_alert'] = 'Numero massimo di record consentiti raggiunt
 
 $_lang['migx.selector_options'] = 'Opzioni';
 
-$_lang['migx.emptythrash_confirm'] = 'Svuota cestino. Sei sicuro?';
-$_lang['migx.emptythrash'] = 'Svuota cestino';
+$_lang['migx.emptytrash_confirm'] = 'Svuota cestino. Sei sicuro?';
+$_lang['migx.emptytrash'] = 'Svuota cestino';
 $_lang['migx.search'] = 'Cerca...';
 $_lang['migx.reset_all'] = 'Reset all';

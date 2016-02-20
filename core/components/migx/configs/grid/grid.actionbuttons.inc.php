@@ -44,9 +44,9 @@ $gridactionbuttons['resetwinposition']['text'] = "'Reset Win Position'";
 $gridactionbuttons['resetwinposition']['handler'] = 'this.resetWinPosition';
 $gridactionbuttons['resetwinposition']['scope'] = 'this';
 
-$gridactionbuttons['emptyThrash']['text'] = "'[[%migx.emptythrash]]'";
-$gridactionbuttons['emptyThrash']['handler'] = 'this.emptyThrash';
-$gridactionbuttons['emptyThrash']['scope'] = 'this';
+$gridactionbuttons['emptyTrash']['text'] = "'[[%migx.emptytrash]]'";
+$gridactionbuttons['emptyTrash']['handler'] = 'this.emptyTrash';
+$gridactionbuttons['emptyTrash']['scope'] = 'this';
 
 $gridactionbuttons['uploadfiles']['text'] = "'[[%migx.upload_images]]'";
 $gridactionbuttons['uploadfiles']['handler'] = 'this.uploadFiles,this.uploadSuccess,this.loadFromSource';

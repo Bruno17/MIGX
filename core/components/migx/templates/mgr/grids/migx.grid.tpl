@@ -293,7 +293,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             if (olditem){
                 var json = '[' + Ext.util.JSON.encode(olditem) + ']';
             }else{
-                var json = '{/literal}{$newitem}{literal}';
+                var json = '{/literal}{$newitem|escape}{literal}';
             }
        
             var items=Ext.util.JSON.decode(json);

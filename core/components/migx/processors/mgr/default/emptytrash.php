@@ -41,4 +41,16 @@ $maxdate = strftime ('%Y-%m-%d %H:%M:%S',time() - (360 * 24 * 60 * 60));
 
 $xpdo->exec("delete from {$tablename} where deleted = 1");
 
+//clear cache for all contexts
+$collection = $modx->getCollection('modContext');
+foreach ($collection as $context) {
+    $contexts[] = $context->get('key');
+}
+$modx->cacheManager->refresh(array(
+    'db' => array(),
+    'auto_publish' => array('contexts' => $contexts),
+    'context_settings' => array('contexts' => $contexts),
+    'resource' => array('contexts' => $contexts),
+    ));
+
 return $modx->error->success();
