@@ -51,9 +51,11 @@ class MigxIndexManagerController extends MigxManagerController {
 
         $config = $this->migx->config['cmptabs'];
         $configObject = $this->modx->getObject('migxConfig', array('name' => $config));
-        $extended = $configObject->get('extended');
 
-        $windowTitle = $this->modx->getOption('update_win_title', $extended, '');
+        if ($configObject) {
+          $extended = $configObject->get('extended');
+          $windowTitle = $this->modx->getOption('update_win_title', $extended, '');
+        }
 
         return !empty($windowTitle) ? $windowTitle : $this->modx->lexicon('migx');
     }
