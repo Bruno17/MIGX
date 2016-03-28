@@ -224,6 +224,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     ,onShow: function() {
         //console.log('onshow');
         if (this.fp.isloading) return;
+        //console.log('onshow2');
         this.fp.isloading=true;
         this.fp.autoLoad.params.record_json=this.baseParams.record_json;
         this.fp.doAutoLoad();

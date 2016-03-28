@@ -17,6 +17,7 @@ $_lang['migx.add'] = 'Aggiungi Elemento';
 $_lang['migx.remove_confirm'] = 'Rimuovi Elemento?';
 $_lang['migx.edit'] = 'Modifica';
 $_lang['migx.edit_raw'] = 'Modifica raw';
+$_lang['migx.edit_flat'] = 'Flat formtabs';
 $_lang['migx.export_import'] = 'Esporta/Importa';
 $_lang['migx.remove'] = 'Rimuovi';
 $_lang['migx.duplicate'] = 'Duplica';

@@ -35,9 +35,25 @@ import_from_package: function() {
 ";
 
 if ($action != 'mgr/migxdb/fields'){
-    $gridfunctions['this.editRaw'] = "
-    editRaw: function(btn,e) {
-      this.loadWin(btn,e,'u','raw');
+    
+    $gridfunctions['this.editFlat'] = "
+    editFlat: function(btn,e) {
+      this.loadWin(btn,e,'u','flat');
+    }  
+    ";
+
+
+    $gridcontextmenus['editflat']['code'] = "
+        m.push({
+            text: '[[%migx.edit_flat]]'
+            ,handler: this.editFlat
+        });
+    ";
+    $gridcontextmenus['editflat']['handler'] = 'this.editFlat';    
+    
+    $gridfunctions['this.editFlat'] = "
+    editFlat: function(btn,e) {
+      this.loadWin(btn,e,'u','flat');
     }  
     ";
 
@@ -49,6 +65,8 @@ if ($action != 'mgr/migxdb/fields'){
         });
     ";
     $gridcontextmenus['editraw']['handler'] = 'this.editRaw';
+    
+    
 
 
     $gridfunctions['this.export_import'] = "

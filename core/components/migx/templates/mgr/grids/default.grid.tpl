@@ -152,6 +152,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
            var object_id = 'new';
         }else{
            var object_id = this.menu.record.id;
+           //var object_id = 3;
         }
         
         var isnew = (action == 'u') ? '0':'1';
@@ -438,6 +439,40 @@ Ext.extend(MODx.MigxTreeCombo,Ext.form.ComboBox,{
     }
 });
 Ext.reg('migx-treecombo', MODx.MigxTreeCombo);
+
+var MIGx = MIGx || {};
+ 
+MIGx.updateGrid = function() {
+    /*
+    var grids = this.el.select('.tv_modx-grid-multitvgrid_items');
+    grids.each(function(grid){
+        Ext.getCmp(grid.id).getView().refresh();
+    });
+    */  
+};
+ 
+Ext.ComponentMgr.onAvailable('modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}', function() {
+    /*
+    if (this.configs == 'memsnippets'){
+        console.log(this);
+        this.menu = this.menu || new Ext.menu.Menu(this.config.menuConfig);;
+        this.menu.record = this.menu.record || {};
+        this.menu.record.id = 3;
+        this.loadWin(null,'u');
+    }
+    */
+    /*
+    Ext.apply(this, {
+        listeners: {
+            tabchange: MIGx.updateGrid,
+            afterlayout: MIGx.updateGrid,
+            resize: MIGx.updateGrid
+        }
+    });
+    */
+     
+});
+
 
 {/literal}
 

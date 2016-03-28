@@ -1691,7 +1691,7 @@ class Migx {
 
                     $isnew = $this->modx->getOption('isnew', $scriptProperties, 0);
                     $isduplicate = $this->modx->getOption('isduplicate', $scriptProperties, 0);
-
+                    $existingvalue = $tv->get('value');
 
                     if (!empty($useDefaultIfEmpty)) {
                         //old behaviour minus use now default values for checkboxes, if new record
@@ -1708,7 +1708,7 @@ class Migx {
                         }
                     } else {
                         //set default value, only on new records
-                        if (!empty($isnew) && empty($isduplicate)) {
+                        if (empty($existingvalue) && !empty($isnew) && empty($isduplicate)) {
                             $v = $tv->get('default_text');
                             $tv->set('value', $v);
                         }

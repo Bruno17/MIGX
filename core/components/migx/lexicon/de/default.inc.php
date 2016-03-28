@@ -17,6 +17,7 @@ $_lang['migx.add'] = 'Datensatz erstellen';
 $_lang['migx.remove_confirm'] = 'Datensatz entfernen?';
 $_lang['migx.edit'] = 'Bearbeiten';
 $_lang['migx.edit_raw'] = 'Rohdaten bearbeiten';
+$_lang['migx.edit_flat'] = 'Flache Formtabs';
 $_lang['migx.export_import'] = 'Export/Import';
 $_lang['migx.remove'] = 'Entfernen';
 $_lang['migx.duplicate'] = 'Duplizieren';

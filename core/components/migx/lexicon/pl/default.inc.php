@@ -17,6 +17,7 @@ $_lang['migx.add'] = 'Dodaj';
 $_lang['migx.remove_confirm'] = 'Usunać ?';
 $_lang['migx.edit'] = 'Edycja';
 $_lang['migx.edit_raw'] = 'Edycja czystego kodu';
+$_lang['migx.edit_flat'] = 'Flat formtabs';
 $_lang['migx.export_import'] = 'Export/Import';
 $_lang['migx.remove'] = 'Usuń';
 

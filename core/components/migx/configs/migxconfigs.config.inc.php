@@ -65,7 +65,11 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
 } else {
     
     $inputType = 'migx';
-    $formtabs = '{"field":"formlayouts","caption":"Fields","inputTVtype":"migx","configs":"migxformlayouts"},';
+    $formtabs = '{"field":"formtabs","caption":"Fields","inputTVtype":"migx","configs":"migxformtabs"},';
+    if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'flat'){
+        $formtabs = '{"field":"formlayouts","caption":"Fields","inputTVtype":"migx","configs":"migxformlayouts"},';
+    }    
+    
     if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'raw'){
         $formtabs = '{"field":"formtabs","caption":"Formtabs","inputTVtype":"textarea","configs":"migxformtabs"},';
         $inputType = 'textarea';
@@ -253,6 +257,7 @@ $filter['getlistwhere'] = '{"name:LIKE":"%[[+searchconfig]]%"}';
 $this->customconfigs['filters'] = array();
 $this->customconfigs['filters'][] = $filter;
 
+$gridcontextmenus['editflat']['active'] = 1;
 $gridcontextmenus['editraw']['active'] = 1;
 $gridcontextmenus['export_import']['active'] = 1;
 $gridcontextmenus['export_to_package']['active'] = 1;

@@ -19,6 +19,7 @@ $_lang['migx.add'] = 'Přidat položku';
 $_lang['migx.remove_confirm'] = 'Odstranit položku?';
 $_lang['migx.edit'] = 'Upravit';
 $_lang['migx.edit_raw'] = 'Edit raw';
+$_lang['migx.edit_flat'] = 'Flat formtabs';
 $_lang['migx.export_import'] = 'Export/Import';
 $_lang['migx.remove'] = 'Smazat';
 $_lang['migx.duplicate'] = 'Zkopírovat';

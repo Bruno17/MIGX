@@ -56,7 +56,7 @@ if ($modx->lexicon) {
 }
 
 if (isset($scriptProperties['data'])) {
-    $scriptProperties = array_merge($scriptProperties, $modx->fromJson($scriptProperties['data']));
+    $scriptProperties = array_merge($modx->fromJson($scriptProperties['data']),$scriptProperties);
 }
 
 
