@@ -107,7 +107,8 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.update_win_title","caption":"Window Title"},
     {"field":"extended.win_id","caption":"unique MIGX ID"},
     {"field":"extended.maxRecords","caption":"max MIGX records"},
-    {"field":"extended.addNewItemAt","caption":"Add new MIGX records at","inputTVtype":"listbox","inputOptionValues":"bottom||top","default":"bottom"}
+    {"field":"extended.addNewItemAt","caption":"Add new MIGX records at","inputTVtype":"listbox","inputOptionValues":"bottom||top","default":"bottom"},
+    {"field":"extended.media_source_id","caption":"Mediasource ID"}
 ]},
 {"caption":"formtabs", "fields": [
     ' . $formtabs . '

@@ -729,6 +729,31 @@ $gridfunctions['this.uploadSuccess'] = "
     } 	
 ";
 
+$gridfunctions['this.loadFromSource_db'] = "
+	loadFromSource: function(btn,e,extra_params) {
+	   
+        var extra_params = extra_params || ''; 
+        MODx.Ajax.request({
+            url: this.config.url
+            ,params: {
+                action: 'mgr/migxdb/process'
+                ,processaction: 'loadfromsource'                     
+                ,configs: this.config.configs
+                ,resource_id: this.config.resource_id
+                ,co_id: '[[+config.connected_object_id]]'                
+                ,reqConfigs: '[[+config.req_configs]]'
+                ,source: '[[+config.media_source_id]]'
+                ,extra_params: extra_params
+            }
+            ,listeners: {
+                'success': {fn:function(r) {
+                    this.refresh();
+                },scope:this}
+            }
+        });          
+	}
+";
+
 $gridfunctions['this.migx_removeMigxAndImage'] = "
     migx_removeMigxAndImage: function() {
         var _this=this;
