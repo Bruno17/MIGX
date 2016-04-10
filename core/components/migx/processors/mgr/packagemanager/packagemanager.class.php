@@ -28,6 +28,13 @@ class migxCreatePackageProcessor extends modProcessor {
         $tableList = isset($properties['tableList']) && !empty($properties['tableList']) ? $properties['tableList'] : null;
         //$tableList = array(array('table1'=>'classname1'),array('table2'=>'className2'));
 
+        if ($properties['task'] == 'addExtensionPackage') {
+            $this->modx->addExtensionPackage($packageName,"[[++core_path]]components/$packageName/model/");            
+            return $this->success('', array('content' => @file_get_contents($schemafile)));
+            //$this->setPlaceholder('schema', @file_get_contents($schemafile));
+            
+        }
+
 
         $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
         $modelpath = $packagepath . 'model/';

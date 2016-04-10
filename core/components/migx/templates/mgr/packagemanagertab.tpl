@@ -49,12 +49,12 @@
             },
             border: true,
             items: [{
-                title: 'Create Package',
+                title: 'Package',
                 defaults: {
                     autoHeight: true
                 },
                 items: [{
-                    html: '<p>Create new package-directory and an empty schema-file</p>',
+                    html: '<p>Create new package-directory and an empty schema-file with <strong>Create Package</strong></p><p>Add this package to Extension-Packages with <strong>Add Extension Package</strong></p>',
                     bodyCssClass: 'panel-desc',
                     border: false
                 },
@@ -63,15 +63,21 @@
                     handler: function(){this.updatePackage('createPackage')},
                     text: 'Create Package',
                     scope: this
+                },
+                {
+                    xtype: 'button',
+                    handler: function(){this.updatePackage('addExtensionPackage')},
+                    text: 'Add Extension Package',
+                    scope: this
                 }]
             },{
-                title: 'Write schema',
+                title: 'Schema',
                 layout:'form',
                 defaults: {
                     autoHeight: true
                 },
                 items: [{
-                    html: '<p>Write schema from existing tables</p>',
+                    html: '<p>Write schema from existing tables with <strong>Write Schema</strong></p><p>Create xpdo-classes and maps if new or manipulate existing maps from schema with <strong>Parse Schema</strong></p>',
                     bodyCssClass: 'panel-desc',
                     border: false
                 },
@@ -80,17 +86,6 @@
                     handler: function(){this.updatePackage('writeSchema')},
                     text: 'Write schema',
                     scope: this
-                }]
-            },{
-                title: 'parse Schema',
-                layout:'form',
-                defaults: {
-                    autoHeight: true
-                },
-                items: [{
-                    html: '<p>Create xpdo-classes and maps if new or manipulate existing maps from schema</p>',
-                    bodyCssClass: 'panel-desc',
-                    border: false
                 },
                 {
                     xtype: 'button',
@@ -105,7 +100,7 @@
                     autoHeight: true
                 },
                 items: [{
-                    html: '<p>Create tables from schema</p>',
+                    html: '<p>Create tables from schema </p>',
                     bodyCssClass: 'panel-desc',
                     border: false
                 },
