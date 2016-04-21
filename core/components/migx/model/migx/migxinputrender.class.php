@@ -80,6 +80,7 @@ class migxInputRender extends modTemplateVarInputRender {
         if (empty($columns)) {
             $columns = $this->modx->fromJSON($this->modx->getOption('columns', $properties, $default_columns));
             $columns = empty($properties['columns']) ? $this->modx->fromJSON($default_columns) : $columns;
+	    $this->migx->customconfigs['columns'] = $columns;
         }
 
         $this->migx->loadLang();
