@@ -34,20 +34,20 @@ function array_to_csv($array, $header_row = true, $col_sep = ",", $row_sep = "\n
 
 $config = $modx->migx->customconfigs;
 
-$hooksnippets = $modx->fromJson($modx->getOption('hooksnippets',$config,''));
-if (is_array($hooksnippets)){
-    $hooksnippet_getcustomconfigs = $modx->getOption('getcustomconfigs',$hooksnippets,'');
+$hooksnippets = $modx->fromJson($modx->getOption('hooksnippets', $config, ''));
+if (is_array($hooksnippets)) {
+    $hooksnippet_getcustomconfigs = $modx->getOption('getcustomconfigs', $hooksnippets, '');
 }
 
 $snippetProperties = array();
 $snippetProperties['scriptProperties'] = $scriptProperties;
 $snippetProperties['processor'] = 'export';
 
-if (!empty($hooksnippet_getcustomconfigs)){
-    $customconfigs = $modx->runSnippet($hooksnippet_getcustomconfigs,$snippetProperties);
+if (!empty($hooksnippet_getcustomconfigs)) {
+    $customconfigs = $modx->runSnippet($hooksnippet_getcustomconfigs, $snippetProperties);
     $customconfigs = $modx->fromJson($customconfigs);
-    if (is_array($customconfigs)){
-        $config = array_merge($config,$customconfigs);    
+    if (is_array($customconfigs)) {
+        $config = array_merge($config, $customconfigs);
     }
 }
 
@@ -82,6 +82,18 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     }
     $classname = $config['classname'];
     $joins = isset($config['joins']) && !empty($config['joins']) ? $modx->fromJson($config['joins']) : false;
+
+    $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
+
+    if (!empty($joinalias)) {
+        if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
+            $joinclass = $fkMeta['class'];
+            $joinfield = $fkMeta[$fkMeta['owner']];
+        } else {
+            $joinalias = '';
+        }
+    }
+
     $checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
 
     if ($this->modx->lexicon && isset($packageName)) {
@@ -93,12 +105,29 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     $sort = $modx->getOption('sort', $scriptProperties, 'id');
     $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
     $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
+    $object_id = $modx->getOption('object_id', $scriptProperties, '');
+    $resource_id = $modx->getOption('resource_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
+    $resource_id = !empty($object_id) ? $object_id : $resource_id;
 
     $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
     $where = $modx->getOption('where', $scriptProperties, $where);
 
     $c = $xpdo->newQuery($classname);
     $c->select($xpdo->getSelectColumns($classname, $classname));
+
+    if (!empty($joinalias)) {
+        /*
+        if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
+        $localkey = $joinFkMeta['local'];
+        }    
+        */
+        $c->leftjoin($joinclass, $joinalias);
+        $c->select($xpdo->getSelectColumns($joinclass, $joinalias, 'Joined_'));
+    }
+
+    if ($joins) {
+        $modx->migx->prepareJoins($classname, $joins, $c);
+    }
 
     if ($joins) {
         $modx->migx->prepareJoins($classname, $joins, $c);
@@ -124,6 +153,15 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
             }
         }
     }
+
+    if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
+        if (!empty($joinalias)) {
+            $c->where(array($joinalias . '.' . $joinfield => $resource_id));
+        } else {
+            $c->where(array($classname . '.resource_id' => $resource_id));
+        }
+    }
+
 
     if ($checkdeleted) {
         if (!empty($showtrash)) {

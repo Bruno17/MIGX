@@ -710,6 +710,9 @@ $gridfunctions['this.uploadFiles'] = "
                     ,wctx: MODx.ctx || ''
                     ,source: [[+config.media_source_id]]
                     ,path:'/'
+                    ,configs: this.config.configs
+                    ,object_id:'[[+config.connected_object_id]]'
+                    ,reqConfigs: '[[+config.req_configs]]'
                 }
                 ,cls: 'ext-ux-uploaddialog-dialog modx-upload-window'
             });

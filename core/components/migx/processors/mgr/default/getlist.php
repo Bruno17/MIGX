@@ -76,6 +76,11 @@ if (!empty($sortConfig)) {
 $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
 $where = $modx->getOption('where', $scriptProperties, $where);
 
+$chunk = $modx->newObject('modChunk');
+$chunk->setCacheable(false);
+$chunk->setContent($where);
+$where = $chunk->process($scriptProperties);
+
 $c = $xpdo->newQuery($classname);
 $c->select($xpdo->getSelectColumns($classname, $classname));
 

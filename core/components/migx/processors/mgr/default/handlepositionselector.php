@@ -25,18 +25,18 @@ if (!empty($config['packageName'])) {
         }
         $xpdo = &$modx;
     }
-}else{
-    $xpdo = &$modx;    
+} else {
+    $xpdo = &$modx;
 }
 
 $classname = $config['classname'];
-$checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) &&
-    !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
+$checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
 $newpos_id = $modx->getOption('new_pos_id', $scriptProperties, 0);
 $col = $modx->getOption('col', $scriptProperties, '');
 $object_id = $modx->getOption('object_id', $scriptProperties, 0);
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 
+$resource_id = $modx->getOption('co_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
 
 $col = explode(':', $col);
 if (!empty($newpos_id) && !empty($object_id) && count($col) > 1) {
@@ -44,9 +44,40 @@ if (!empty($newpos_id) && !empty($object_id) && count($col) > 1) {
     $posfield = $col[0];
     $position = $col[1];
 
+    $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
+
+    if (!empty($joinalias)) {
+        if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
+            $joinclass = $fkMeta['class'];
+            $joinfield = $fkMeta[$fkMeta['owner']];
+        } else {
+            $joinalias = '';
+        }
+    }
+
     //$parent = $workingobject->get('parent');
     $c = $xpdo->newQuery($classname);
     //$c->where(array('deleted'=>0 , 'parent'=>$parent));
+    $c->select($xpdo->getSelectColumns($classname, $classname));
+
+    if (!empty($joinalias)) {
+        /*
+        if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
+        $localkey = $joinFkMeta['local'];
+        }    
+        */
+        $c->leftjoin($joinclass, $joinalias);
+        $c->select($xpdo->getSelectColumns($joinclass, $joinalias, 'Joined_'));
+    }
+
+    if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
+        if (!empty($joinalias)) {
+            $c->where(array($joinalias . '.' . $joinfield => $resource_id));
+        } else {
+            $c->where(array($classname . '.resource_id' => $resource_id));
+        }
+    }
+
     if ($checkdeleted) {
         if (!empty($showtrash)) {
             $c->where(array($classname . '.deleted' => '1'));
@@ -54,10 +85,11 @@ if (!empty($newpos_id) && !empty($object_id) && count($col) > 1) {
             $c->where(array($classname . '.deleted' => '0'));
         }
     }
-    
+
+
     $c->sortby($posfield);
     //$c->sortby('name');
-    
+
     if ($collection = $xpdo->getCollection($classname, $c)) {
         $curpos = 1;
         foreach ($collection as $object) {
