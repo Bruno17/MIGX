@@ -102,6 +102,51 @@ $gridfilters['textbox']['code']=
 ";
 $gridfilters['textbox']['handler'] = 'gridfilter';
 
+$gridfilters['listbox-multiple']['code'] = "
+{
+    xtype: 'superboxselect'
+    ,id: '[[+name]]-migxdb-search-filter'
+    ,name: '[[+name]]'
+    ,hiddenName: '[[+name]]'
+    ,triggerAction: 'all'
+    ,extraItemCls: 'x-tag'
+    ,expandBtnCls: 'x-form-trigger'
+    ,clearBtnCls: 'x-form-trigger'    
+    ,fields: ['combo_id','combo_name']
+    ,displayField: 'combo_name'
+    ,valueField: 'combo_id'    
+    ,pageSize: 0
+    ,mode: 'remote'
+	,value: 'all'
+    ,store: new Ext.data.JsonStore({
+        id:'id',
+        root:'results',
+        fields: ['combo_id','combo_name'],
+        remoteSort: true,
+        url: '[[+config.connectorUrl]]',
+        baseParams: { 
+            action: 'mgr/migxdb/process',
+            processaction: '[[+getcomboprocessor]]',
+            configs: '[[+config.configs]]',
+            searchname: '[[+name]]',
+            resource_id: '[[+config.resource_id]]'
+        }		
+        ,listeners: {}
+    })
+    ,listeners: {
+        'additem': {
+            fn: this.filter[[+name]],
+            scope: this
+        }
+        ,'removeitem': {
+            fn: this.filter[[+name]],
+            scope: this
+        }
+    }    
+}
+";
+$gridfilters['listbox-multiple']['handler'] = 'gridfilter';
+
 
 $gridfilters['combobox']['code'] = "
 {
