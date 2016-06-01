@@ -79,7 +79,9 @@
     "category":0,
     "cache_type":0,
     "locked":false,
-    "properties":null,
+    "properties":[
+      
+    ],
     "moduleguid":"",
     "static":false,
     "static_file":"",

@@ -23,6 +23,8 @@
 $pathTpl = $modx->getOption('pathTpl', $scriptProperties, '');
 $docid = $modx->getOption('docid', $scriptProperties, '');
 $createfolder = $modx->getOption('createFolder', $scriptProperties, false);
+$tvname = $modx->getOption('tvname', $scriptProperties, '');
+
 $path = '';
 $createpath = false;
 
@@ -93,7 +95,10 @@ if ($resource = $modx->getObject('modResource', $docid)) {
         }
         $path = str_replace('{breadcrumb}', $breadcrumbpath, $path);
     }
-
+    
+    if (!empty($tvname)){
+        $path = str_replace('{tv_value}', $resource->getTVValue($tvname), $path);    
+    }
     $path = str_replace('{id}', $docid, $path);
     $path = str_replace('{pagetitle}', $resource->get('pagetitle'), $path);
     $path = str_replace('{alias}', $resource->get('alias'), $path);
