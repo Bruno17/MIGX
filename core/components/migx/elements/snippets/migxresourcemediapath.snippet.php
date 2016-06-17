@@ -74,7 +74,9 @@ if ($resource = $modx->getObject('modResource', $docid)) {
     $path = $pathTpl;
     $ultimateParent = '';
     if (strstr($path, '{breadcrumb}') || strstr($path, '{ultimateparent}')) {
-        $parentids = $modx->getParentIds($docid);
+        $depth = $modx->getOption('breadcrumbdepth', $scriptProperties, 10);
+        $ctx = $resource->get('context_key');
+        $parentids = $modx->getParentIds($docid, $depth, array('context' => $ctx));
         $breadcrumbdepth = $modx->getOption('breadcrumbdepth', $scriptProperties, count($parentids));
         $breadcrumbdepth = $breadcrumbdepth > count($parentids) ? count($parentids) : $breadcrumbdepth;
         if (count($parentids) > 1) {
