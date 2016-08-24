@@ -12,8 +12,9 @@ switch ($validation_type) {
         if ((int) $value > 25) {
 
         } else {
-            $error = $form_field;
-            $error['validation_type'] = $validation_type;
+            $error_message = $validation_type; // may be custom validation message
+            $error['caption'] = $form_field;
+            $error['validation_type'] = $error_message;
             $result['error'] = $error;
             $result = $modx->toJson($result);
         }
