@@ -36,12 +36,17 @@ import_from_package: function() {
 
 if ($action != 'mgr/migxdb/fields'){
     
+   $gridfunctions['this.editRaw'] = "
+   editRaw: function(btn,e) {
+     this.loadWin(btn,e,'u','raw');
+   }
+   ";
+    
     $gridfunctions['this.editFlat'] = "
     editFlat: function(btn,e) {
       this.loadWin(btn,e,'u','flat');
     }  
     ";
-
 
     $gridcontextmenus['editflat']['code'] = "
         m.push({
