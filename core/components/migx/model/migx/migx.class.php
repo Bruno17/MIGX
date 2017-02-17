@@ -498,7 +498,11 @@ class Migx {
             $c = $this->modx->newQuery($classname);
             $c->select($this->modx->getSelectColumns($classname, $classname));
             $c->where(array('id:IN' => $mf_configs));
+<<<<<<< HEAD
             $c->sortby('FIELD(' . $classname . '.id, ' . implode(',', $mf_configs) . ')');
+=======
+            $c->sortby('FIELD('.$classname.'.id, '.implode(',',$mf_configs).')');
+>>>>>>> origin/master
             $formnames = array();
             if ($collection = $this->modx->getCollection($classname, $c)) {
                 $idx = 0;
