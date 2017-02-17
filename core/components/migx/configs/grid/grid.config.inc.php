@@ -207,7 +207,7 @@ addItem: function(btn,e) {
 ";
 
 $gridfunctions['this.addNewItem'] = "
-addNewItem: function(item) {
+addNewItem: function(item,tempParams) {
             if (item){
                 var item = item;
                 var items = [];
@@ -227,6 +227,7 @@ addNewItem: function(item) {
                             ,object_id: 'new'
                             ,tv_id: this.baseParams.tv_id
                             ,wctx: this.baseParams.wctx
+                            ,tempParams: tempParams || ''
                         }
                         ,listeners: {
                             'success': {
@@ -277,9 +278,42 @@ update: function(btn,e) {
 $gridfunctions['this.duplicate'] = "
 duplicate: function(btn,e) {
       params = {
-          duplicate: '1'
+          duplicate: '1',
+          button: 'duplicate',
+          original_id: this.menu.record.id
       }          
       this.loadWin(btn,e,'d',Ext.util.JSON.encode(params));
+    }
+";
+
+$gridfunctions['this.addbefore'] = "
+addBefore: function(btn,e) {
+      params = {
+          button: 'addbefore',
+          original_id: this.menu.record.id
+      }
+        var add_items_directly = '[[+config.add_items_directly]]';
+        if (add_items_directly == '1'){
+            this.addNewItem(false,Ext.util.JSON.encode(params));    
+        }else{
+            this.loadWin(btn,e,'a',Ext.util.JSON.encode(params));   
+        }      
+    }
+";
+
+$gridfunctions['this.addafter'] = "
+addAfter: function(btn,e) {
+      params = {
+          button: 'addafter',
+          original_id: this.menu.record.id
+      }          
+     
+        var add_items_directly = '[[+config.add_items_directly]]';
+        if (add_items_directly == '1'){
+            this.addNewItem(false,Ext.util.JSON.encode(params));    
+        }else{
+            this.loadWin(btn,e,'a',Ext.util.JSON.encode(params));  
+        }         
     }
 ";
 

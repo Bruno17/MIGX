@@ -37,6 +37,7 @@
 
 
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
+$inherit_children_tvname = $modx->getOption('inherit_children_tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
 $wrapperTpl = $modx->getOption('wrapperTpl', $scriptProperties, '');
 $emptyTpl = $modx->getOption('emptyTpl', $scriptProperties, ''); 
@@ -125,7 +126,13 @@ if (!empty($tvname)) {
             if (empty($outputvalue) && !empty($inheritFrom)) {
                 foreach ($inheritFrom as $from) {
                     if ($from == 'parents') {
-                        $outputvalue = $tv->processInheritBinding('', $docid);
+                        if (!empty($inherit_children_tvname)){
+                            //try to get items from optional MIGX-TV for children
+                            if ($inh_tv = $modx->getObject('modTemplateVar', array('name' => $inherit_children_tvname))) {
+                                $outputvalue = $inh_tv->processInheritBinding('', $docid);    
+                            }
+                        }
+                        $outputvalue = empty($outputvalue) ? $tv->processInheritBinding('', $docid) : $outputvalue;
                     } else {
                         $outputvalue = $tv->renderOutput($from);
                     }

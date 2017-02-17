@@ -110,7 +110,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     }
     ,submit: function() {
         var object_id = this.baseParams.object_id;
-        
+               
         if (this.action == 'd'){
             MODx.fireResourceFormChange();
             object_id = 'new';     
@@ -135,6 +135,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                     ,object_id: object_id
                     ,tv_id: this.baseParams.tv_id
                     ,wctx: this.baseParams.wctx
+                    ,tempParams: this.baseParams.tempParams || ''
                 }
                 ,listeners: {
                     'success': {fn:this.onSubmitSuccess,scope:this}

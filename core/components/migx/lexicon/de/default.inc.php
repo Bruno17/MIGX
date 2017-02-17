@@ -72,3 +72,6 @@ $_lang['migx.add_field'] = 'Neues Feld';
 $_lang['migx.add_formtab'] = 'Formtab erstellen';
 $_lang['migx.add_formlayout'] = 'Layout';
 $_lang['migx.add_layoutcolumn'] = 'Layout Spalte';
+
+$_lang['migx.add_item_before'] = 'Datensatz davor einfügen';
+$_lang['migx.add_item_after'] = 'Datensatz danach einfügen';

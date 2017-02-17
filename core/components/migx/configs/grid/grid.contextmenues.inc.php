@@ -20,6 +20,26 @@ $gridcontextmenus['duplicate']['code']="
 ";
 $gridcontextmenus['duplicate']['handler'] = 'this.duplicate';
 
+$gridcontextmenus['addbefore']['code']="
+        m.push({
+            className : 'addbefore', 
+            text: '[[%migx.add_item_before]]',
+            handler: 'this.addBefore'
+        });
+        m.push('-');
+";
+$gridcontextmenus['addbefore']['handler'] = 'this.addbefore,this.addNewItem';
+
+$gridcontextmenus['addafter']['code']="
+        m.push({
+            className : 'addafter', 
+            text: '[[%migx.add_item_after]]',
+            handler: 'this.addAfter'
+        });
+        m.push('-');
+";
+$gridcontextmenus['addafter']['handler'] = 'this.addafter,this.addNewItem';
+
 $gridcontextmenus['publish']['code']="
         if (n.published == 0) {
             m.push({

@@ -72,3 +72,6 @@ $_lang['migx.add_field'] = 'Add Field';
 $_lang['migx.add_formtab'] = 'Add Formtab';
 $_lang['migx.add_formlayout'] = 'Layout';
 $_lang['migx.add_layoutcolumn'] = 'Layout Column';
+
+$_lang['migx.add_item_before'] = 'Add item before';
+$_lang['migx.add_item_after'] = 'Add item after';

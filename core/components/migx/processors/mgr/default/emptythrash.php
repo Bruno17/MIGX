@@ -2,6 +2,9 @@
 
 $config = $modx->migx->customconfigs;
 
+$reqConfigs = $modx->getOption('reqConfigs',$_REQUEST);
+$configs = $modx->getOption('configs',$_REQUEST);
+
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
 if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix'])) {
     $prefix = isset($config['prefix']) ? $config['prefix'] : '';
@@ -25,17 +28,17 @@ if (!empty($config['packageName'])) {
         }
         $xpdo = &$modx;
     }
-} else {
-    $xpdo = &$modx;
+}else{
+    $xpdo = &$modx;    
 }
+$classname = $config['classname'];
 
-$modx->migx->handleOrderPositions($xpdo,$config,$scriptProperties);
+$tablename = $xpdo->getTableName($classname);
 
+$maxdate = strftime ('%Y-%m-%d %H:%M:%S',time() - (360 * 24 * 60 * 60));
 
-$modx->cacheManager->refresh(array(
-    'db' => array(),
-    'auto_publish' => array('contexts' => $contexts),
-    'context_settings' => array('contexts' => $contexts),
-    'resource' => array('contexts' => $contexts),
-    ));
+//echo "update {$tablename} set deleted=1 where createdon < '{$maxdate}'";
+
+$xpdo->exec("delete from {$tablename} where deleted = 1");
+
 return $modx->error->success();
