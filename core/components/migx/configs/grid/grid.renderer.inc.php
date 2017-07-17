@@ -83,6 +83,7 @@ renderCrossTick : function(val, md, rec, row, col, s) {
         case 0:
         case '0':
         case '':
+        case null:
         case false:
             renderImage = '/assets/components/migx/style/images/cross.png';
             handler = 'this.publishObject';
@@ -110,6 +111,7 @@ renderClickCrossTick : function(val, md, rec, row, col, s) {
         case 0:
         case '0':
         case '':
+        case null:
         case false:
             renderImage = '/assets/components/migx/style/images/cross.png';
             handler = 'this.publishObject';
