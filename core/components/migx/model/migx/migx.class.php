@@ -250,7 +250,7 @@ class Migx {
         $tplFirst = $modx->getOption('tplFirst', $scriptProperties, '');
         $tplLast = $modx->getOption('tplLast', $scriptProperties, '');
         $groupingField = $modx->getOption('groupingField', $scriptProperties, '');
-        $prepareSnippet = $modx->getOption('prepareSnippet', $scriptProperties, '');        
+        $prepareSnippet = $modx->getOption('prepareSnippet', $scriptProperties, '');
         $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
         $total = $modx->getPlaceholder($totalVar);
 
@@ -300,11 +300,11 @@ class Migx {
                     $fields['idx'] = $fields['_idx'] = $idx;
 
                     $fields = array_merge($fields, $properties);
-                    
-                    if (!empty($prepareSnippet)){
-                        $result = $modx->runSnippet($prepareSnippet,array('fields' => &$fields));
-                    }                    
-                    
+
+                    if (!empty($prepareSnippet)) {
+                        $result = $modx->runSnippet($prepareSnippet, array('fields' => &$fields));
+                    }
+
                     $output[] = $fields;
                     //check grouping
                     if (!empty($groupingField)) {
@@ -1633,6 +1633,18 @@ class Migx {
 
     function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
         $fieldid = 0;
+        $config = $this->customconfigs;
+        $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));
+        if (is_array($hooksnippets)) {
+            $hooksnippet_beforecreateform = $this->modx->getOption('beforecreateform', $hooksnippets, '');
+            if (!empty($hooksnippet_beforecreateform)) {
+                $snippetProperties = array();
+                $snippetProperties['tabs'] = &$tabs;
+                $snippetProperties['record'] = &$record;
+                $snippetProperties['scriptProperties'] = &$scriptProperties;
+                $result = $this->modx->runSnippet($hooksnippet_beforecreateform, $snippetProperties);
+            }
+        }
 
         $input_prefix = $this->modx->getOption('input_prefix', $scriptProperties, '');
         $input_prefix = !empty($input_prefix) ? $input_prefix . '_' : '';
