@@ -1,8 +1,7 @@
 <input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv->get('value')|escape}"{$style} tvtype="{$tv->type}" />
 <div id="tvpanel{$tv->id}" style="width:650px">
 </div>
-<div id="tvpanel2{$tv->id}">
-</div>
+
 <br/>
 
 <script type="text/javascript">

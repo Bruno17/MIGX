@@ -57,6 +57,7 @@ $start = $modx->getOption('start', $scriptProperties, 0);
 $limit = $modx->getOption('limit', $scriptProperties, 20);
 $sort = !empty($config['getlistsort']) ? $config['getlistsort'] : $xpdo->getPK($classname);
 $sort = $modx->getOption('sort', $scriptProperties, $sort);
+$requestsort = $modx->getOption('sort', $scriptProperties, '');
 $dir = !empty($config['getlistsortdir']) ? $config['getlistsortdir'] : 'ASC';
 $dir = $modx->getOption('dir', $scriptProperties, $dir);
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
@@ -67,7 +68,7 @@ $resource_id = !empty($object_id) ? $object_id : $resource_id;
 $sortConfig = $modx->getOption('sortconfig', $config, '');
 
 if (!empty($sortConfig)) {
-    $sort = '';
+    $sort = !empty($requestsort) ? $requestsort : '';
     if (!is_array($sortConfig)) {
         $sortConfig = $modx->fromJson($sortConfig);
     }

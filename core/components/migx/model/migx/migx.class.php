@@ -242,7 +242,6 @@ class Migx {
     }
 
     public function renderOutput($rows, $scriptProperties) {
-
         $modx = &$this->modx;
 
         $tpl = $modx->getOption('tpl', $scriptProperties, '');
@@ -250,6 +249,10 @@ class Migx {
         $emptyTpl = $modx->getOption('emptyTpl', $scriptProperties, '');
         $tplFirst = $modx->getOption('tplFirst', $scriptProperties, '');
         $tplLast = $modx->getOption('tplLast', $scriptProperties, '');
+        $groupingField = $modx->getOption('groupingField', $scriptProperties, '');
+        $prepareSnippet = $modx->getOption('prepareSnippet', $scriptProperties, '');        
+        $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
+        $total = $modx->getPlaceholder($totalVar);
 
         $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
         $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
@@ -260,18 +263,23 @@ class Migx {
 
         $addfields = $modx->getOption('addfields', $scriptProperties, '');
         $addfields = !empty($addfields) ? explode(',', $addfields) : null;
-
+        $count = count($rows);
         $properties = array();
         foreach ($scriptProperties as $property => $value) {
             $properties['property.' . $property] = $value;
         }
+        $properties['_count'] = $count;
+        $properties['_total'] = $total;
 
-        $idx = 0;
+        $idx = $idx;
         $output = array();
+        $groupoutput = array();
         $template = array();
-        $count = count($rows);
+        $group_indexes = array();
+        $groups = array();
+
         if ($count > 0) {
-            foreach ($rows as $fields) {
+            foreach ($rows as $key => $fields) {
 
                 if (!empty($addfields)) {
                     foreach ($addfields as $addfield) {
@@ -289,8 +297,62 @@ class Migx {
                     $idx++;
                     $fields['_first'] = $idx == 1 ? true : '';
                     $fields['_last'] = $idx == $count ? true : '';
-                    $fields['idx'] = $idx;
+                    $fields['idx'] = $fields['_idx'] = $idx;
+
+                    $fields = array_merge($fields, $properties);
+                    
+                    if (!empty($prepareSnippet)){
+                        $result = $modx->runSnippet($prepareSnippet,array('fields' => &$fields));
+                    }                    
+                    
+                    $output[] = $fields;
+                    //check grouping
+                    if (!empty($groupingField)) {
+                        $newgroupvalue = isset($fields[$groupingField]) ? $fields[$groupingField] : '';
+                        if ($oldgroupvalue == $newgroupvalue) {
+                            if ($fields['_last']) {
+                                $group_keys[] = $key;
+                                $group_count = count($group_keys);
+                                $group_idx = 1;
+                                foreach ($group_keys as $group_key) {
+                                    $output[$group_key]['_groupcount'] = $group_count;
+                                    $output[$group_key]['_groupidx'] = $group_idx;
+                                    $group_idx++;
+                                }
+                            }
+                        } else {
+                            $group_count = count($group_keys);
+                            $group_idx = 1;
+                            foreach ($group_keys as $group_key) {
+                                $output[$group_key]['_groupcount'] = $group_count;
+                                $output[$group_key]['_groupidx'] = $group_idx;
+                                $group_idx++;
+                            }
+
+                            if ($fields['_last']) {
+                                $output[$key]['_groupcount'] = 1;
+                                $output[$key]['_groupidx'] = 1;
+                            }
+
+                            $oldgroupvalue = $newgroupvalue;
+                            $group_keys = array();
+                        }
+
+                        $group_keys[] = $key;
+                    }
+
+                }
+            }
+
+            if ($toJsonPlaceholder) {
+
+            } else {
+                $rows = $output;
+                $output = array();
+                foreach ($rows as $fields) {
+
                     $rowtpl = '';
+                    $idx = isset($fields['idx']) ? $fields['idx'] : 0;
                     //get changing tpls from field
                     if (substr($tpl, 0, 7) == "@FIELD:") {
                         $tplField = substr($tpl, 7);
@@ -321,8 +383,6 @@ class Migx {
                             }
                         }
                     }
-
-                    $fields = array_merge($fields, $properties);
 
                     //get changing tpls by running a snippet to determine the current tpl
                     if (substr($tpl, 0, 9) == "@SNIPPET:") {
@@ -404,6 +464,7 @@ class Migx {
         }
 
         return $o;
+
     }
 
     function findProcessor($processorspath, $filename, &$filenames) {
@@ -417,6 +478,8 @@ class Migx {
     function findCustomFile($defaultpath, $filename, &$filenames, $type = 'processors') {
         $config = $this->customconfigs;
         $packageName = $this->modx->getOption('packageName', $config);
+        $packageName = explode(',', $packageName);
+        $packageName = $packageName[0];
         $task = $this->getTask();
         if (!empty($packageName)) {
             $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
@@ -498,11 +561,7 @@ class Migx {
             $c = $this->modx->newQuery($classname);
             $c->select($this->modx->getSelectColumns($classname, $classname));
             $c->where(array('id:IN' => $mf_configs));
-<<<<<<< HEAD
             $c->sortby('FIELD(' . $classname . '.id, ' . implode(',', $mf_configs) . ')');
-=======
-            $c->sortby('FIELD('.$classname.'.id, '.implode(',',$mf_configs).')');
->>>>>>> origin/master
             $formnames = array();
             if ($collection = $this->modx->getCollection($classname, $c)) {
                 $idx = 0;
@@ -608,6 +667,8 @@ class Migx {
                 $extended = $this->configsObject->get('extended');
                 $packageName = $this->modx->getOption('packageName', $extended, '');
                 if (!empty($packageName)) {
+                    $packageName = explode(',', $packageName);
+                    $packageName = $packageName[0];
                     $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/grid/grid.' . $config . '.config.inc.php'; // [ file ]
                     if (file_exists($configFile)) {
                         include ($configFile);
@@ -632,6 +693,8 @@ class Migx {
                     $packageName = $this->modx->getOption('packageName', $extended, '');
                 }
                 if (isset($packageName)) {
+                    $packageName = explode(',', $packageName);
+                    $packageName = $packageName[0];
                     $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
                     $configpath = $packagepath . 'migxconfigs/';
                 }
@@ -2487,9 +2550,9 @@ class Migx {
         }
     }
 
-    public function handleOrderPositions(&$xpdo,$config,$scriptProperties) {
-        $modx = & $this->modx;
-        
+    public function handleOrderPositions(&$xpdo, $config, $scriptProperties) {
+        $modx = &$this->modx;
+
         $classname = $config['classname'];
         $checkdeleted = isset($config['gridactionbuttons']['toggletrash']['active']) && !empty($config['gridactionbuttons']['toggletrash']['active']) ? true : false;
         $newpos_id = $modx->getOption('new_pos_id', $scriptProperties, 0);
@@ -2580,7 +2643,7 @@ class Migx {
             if (substr($rowtpl, 0, 6) == "@FILE:") {
                 $template[$rowtpl] = file_get_contents($this->modx->config['base_path'] . substr($rowtpl, 6));
             } elseif (substr($rowtpl, 0, 6) == "@CODE:") {
-                $template[$rowtpl] = substr($rowtpl, 6);
+                $template[$rowtpl] = str_replace(array('{{', '}}'), array('[[', ']]'), substr($rowtpl, 6));
             } elseif ($chunk = $this->modx->getObject('modChunk', array('name' => $rowtpl), true)) {
                 $template[$rowtpl] = $chunk->getContent();
             } else {

@@ -31,6 +31,11 @@ if (!empty($config['packageName'])) {
 
 $modx->migx->handleOrderPositions($xpdo,$config,$scriptProperties);
 
+//clear cache for all contexts
+$collection = $modx->getCollection('modContext');
+foreach ($collection as $context) {
+    $contexts[] = $context->get('key');
+}
 
 $modx->cacheManager->refresh(array(
     'db' => array(),
