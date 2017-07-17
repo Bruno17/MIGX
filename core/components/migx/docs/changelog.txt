@@ -1,5 +1,22 @@
 Changelog for MIGX.
 
+MIGX 2.11.0
+==============
+groupingfield, preparesnippet, _total, _count, improve @CODE
+hooksnippet beforecreateform
+
+MIGX 2.10.0
+==============
+hooksnippet getcustomconfigs for importcsvmigx
+support layout-rows/columns in formtabs
+contextmenu 'flat formtabs'
+multiupload to db, resizeOnUpload - plugin
+[packagemanager] Add Extension Package - feature
+respect joinalias in export.php and handlepositionselector.php
+possible to use TV-value in migxresourcemediapath - snippet
+[getImageList] inherit_children_tvname
+MIGXdb add item before/after
+
 MIGX 2.9.7
 ==============
 add emtpyTpl

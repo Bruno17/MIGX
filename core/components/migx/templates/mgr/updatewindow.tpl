@@ -13,6 +13,7 @@ MODx.window.UpdateTvdbItem = function(config) {
         ,maximizable: true
         ,allowDrop: true
         ,height: '600'
+        ,constrain: true
         //,saveBtnText: _('done')
         ,forceLayout: true
         ,autoScroll: true
