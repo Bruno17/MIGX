@@ -95,11 +95,24 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     $prefixes = array();
     $prefixes[] = 'default Prefix==0';
     $prefixes[] = 'Custom Prefix==1';
+    
+    $c = $this->modx->newQuery($classname);
+    $c->sortby('category');
+    $c->groupby('category');
+    $categorylist = array();
+    $categorylist[] = 'select one==';
+    if ($collection = $this->modx->getCollection($classname,$c)){
+        foreach ($collection as $object){
+            $categorylist[] = $object->get('category');
+        }
+    }
 
     $tabs = '
 [
 {"caption":"Settings", "fields": [
     {"field":"name","caption":"Name"},
+    {"field":"category","caption":"Category","inputTVtype":"listbox","inputOptionValues":"'.implode('||',$categorylist).'"},
+    {"field":"newcategory","caption":"Add new Category"},
     {"field":"extended.migx_add","caption":"[[%migx.add_replacement]]"},
     {"field":"extended.disable_add_item","caption":"Disable Add Items","inputTVtype":"checkbox","inputOptionValues":"disabled==1"},
     {"field":"extended.add_items_directly","caption":"Add Items directly","description":"without modal window","inputTVtype":"checkbox","inputOptionValues":"add directly==1"},
@@ -248,14 +261,25 @@ $columns = '
 
 $this->customconfigs['columns'] = $this->modx->fromJson($columns);
 
+
+
+$this->customconfigs['filters'] = array();
 $filter = array();
 $filter['name'] = 'searchconfig';
 $filter['label'] = 'search';
 $filter['emptytext'] = 'search...';
 $filter['type'] = 'textbox';
 $filter['getlistwhere'] = '{"name:LIKE":"%[[+searchconfig]]%"}';
+$this->customconfigs['filters'][] = $filter;
+$filter = array();
+$filter['name'] = 'configcategory';
+$filter['label'] = 'search';
+$filter['emptytext'] = 'filter category...';
+$filter['type'] = 'combobox';
+$filter['getcomboprocessor'] = 'getcombo';
+$filter['combotextfield'] = 'category';
 
-$this->customconfigs['filters'] = array();
+$filter['getlistwhere'] = '{"category":"[[+configcategory]]"}';
 $this->customconfigs['filters'][] = $filter;
 
 $gridcontextmenus['editflat']['active'] = 1;

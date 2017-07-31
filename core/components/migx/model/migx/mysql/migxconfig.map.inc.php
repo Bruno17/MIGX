@@ -24,6 +24,7 @@ $xpdo_meta_map['migxConfig']= array (
     'published' => 0,
     'publishedon' => NULL,
     'publishedby' => 0,
+    'category' => '',
   ),
   'fieldMeta' => 
   array (
@@ -157,6 +158,15 @@ $xpdo_meta_map['migxConfig']= array (
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
+    ),
+    'category' => 
+    array (
+      'dbtype' => 'varchar',
+      'phptype' => 'string',
+      'precision' => '255',
+      'null' => false,
+      'default' => '',
+      'index' => 'index',
     ),
   ),
   'composites' => 

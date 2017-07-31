@@ -143,12 +143,12 @@ switch ($task) {
 
 
         }
-
+        if (isset($postvalues['newcategory']) && !empty($postvalues['newcategory'])) {
+            $postvalues['category'] = $postvalues['newcategory'];
+        }
         if (isset($postvalues['jsonexport'])) {
             $postvalues = $modx->migx->importconfig($modx->fromJson($postvalues['jsonexport']));
         }
-
-
         if ($scriptProperties['object_id'] == 'new') {
             $object = $modx->newObject($classname);
             $tempvalues['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
@@ -315,6 +315,7 @@ switch ($task) {
         if (isset($tempvalues['publishedon']) && empty($postvalues['ow_publishedon'])) {
             $postvalues['publishedon'] = $tempvalues['publishedon'];
         }
+      
         /* handle alias
         if (empty($postvalues['ow_alias'])) {
 

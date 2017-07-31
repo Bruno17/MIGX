@@ -20,7 +20,8 @@
 		<field key="deletedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="published" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />        
 		<field key="publishedon" dbtype="datetime" phptype="datetime" null="true" />
-		<field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />        
+		<field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="category" dbtype="varchar" phptype="string" precision="255" null="false" default="" index="index" />        
 
         <aggregate alias="ConfigElements" class="migxConfigElement" local="id" foreign="config_id" cardinality="many" owner="local" /> 
         <composite alias="Formtabs" class="migxFormtab" local="id" foreign="config_id" cardinality="many" owner="local" /> 
