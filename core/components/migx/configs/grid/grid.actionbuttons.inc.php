@@ -62,3 +62,4 @@ $gridactionbuttons['importcsvmigx']['text'] = "'[[%migx.import_csv]]'";
 $gridactionbuttons['importcsvmigx']['handler'] = 'this.selectImportFile,this.importCsvMigx';
 $gridactionbuttons['importcsvmigx']['scope'] = 'this';
 $gridactionbuttons['importcsvmigx']['standalone'] = '1';
+

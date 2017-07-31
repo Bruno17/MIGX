@@ -75,3 +75,6 @@ $_lang['migx.add_layoutcolumn'] = 'Layout Column';
 
 $_lang['migx.add_item_before'] = 'Add item before';
 $_lang['migx.add_item_after'] = 'Add item after';
+
+$_lang['migx.select_dbfields'] = 'Select db-fields';
+$_lang['migx.select_dbfields_desc'] = 'Before you can select db-fields, put something into the packageName, classname and joins - configs and save the config!';

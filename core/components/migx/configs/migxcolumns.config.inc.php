@@ -34,6 +34,17 @@ $tabs = '
 ] 
 ';
 
+include 'selectdbfields.inc.php';
+
+$gridfunctions['this.selectDbFields'] = "
+selectDbFields: function(btn,e) {
+        this.call_collectmigxitems_once=true;
+        var formtabs = '';
+        var fields = Ext.get('tv' + this.tv).getValue();
+        this.loadWin(btn,e,0,'a',Ext.util.JSON.encode({'selectDbFields':1,'formtabs':formtabs,'fields':fields}));
+	}
+";
+
 $columns = '
 [
 {

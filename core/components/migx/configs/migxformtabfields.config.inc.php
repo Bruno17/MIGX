@@ -1,6 +1,6 @@
 <?php
 
-$tabs ='
+$tabs = '
 [
 {"caption":"Field", "fields": [
 {"field":"field","caption":"Fieldname"},
@@ -24,7 +24,19 @@ $tabs ='
 {"field":"useDefaultIfEmpty","caption":"Use Default if Empty","inputTVtype":"listbox","inputOptionValues":"no==0||yes==1","description":"for example, when working with real TVs of resources, you would set this to yes, otherwise, the default-value is only used for new items"}
 ]}
 ] 
-';         
+';
+
+include 'selectdbfields.inc.php';
+
+$gridfunctions['this.selectDbFields'] = "
+selectDbFields: function(btn,e) {
+        this.call_collectmigxitems_once=true;
+        var formtabs = Ext.get(" . $tv_id . ").getValue();
+        var fields = Ext.get('tv' + this.tv).getValue();
+        this.loadWin(btn,e,0,'a',Ext.util.JSON.encode({'selectDbFields':1,'formtabs':formtabs,'fields':fields}));
+	}
+";
+
 
 $columns = '
 [
@@ -50,6 +62,8 @@ $columns = '
 }]
 ';
 
-$this->customconfigs['win_id']= 'migxformtabfields';                         
-$this->customconfigs['tabs']= $this->modx->fromJson($tabs);   
-$this->customconfigs['columns'] = $this->modx->fromJson($columns); 
+$this->customconfigs['win_id'] = 'migxformtabfields';
+$this->customconfigs['tabs'] = $this->modx->fromJson($tabs);
+$this->customconfigs['columns'] = $this->modx->fromJson($columns);
+
+

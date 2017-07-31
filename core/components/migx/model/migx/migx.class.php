@@ -271,7 +271,7 @@ class Migx {
         $properties['_count'] = $count;
         $properties['_total'] = $total;
 
-        $idx = $idx;
+        $idx = $modx->getOption('idx', $scriptProperties, 0);
         $output = array();
         $groupoutput = array();
         $template = array();
@@ -2354,7 +2354,7 @@ class Migx {
 
 
     public function prepareJoins($classname, $joins, &$c) {
-
+        $selectcolumns = array();
         if (is_array($joins)) {
             foreach ($joins as $join) {
                 $jalias = $this->modx->getOption('alias', $join, '');
@@ -2387,12 +2387,17 @@ class Migx {
                                 $c->leftjoin($joinclass, $jalias, $on);
                                 break;
                         }
-
-                        $c->select($c->xpdo->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
+                        if ($object = $c->xpdo->newObject($joinclass)){
+                            $columns = $object->toArray($jalias . '_');
+                            $selectcolumns = array_merge($selectcolumns,$columns);
+                            $c->select($c->xpdo->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
+                        }
+                        
                     }
                 }
             }
         }
+        return $selectcolumns;
     }
 
     public function addRelatedLinkIds(&$object, &$record, $config) {

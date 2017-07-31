@@ -75,3 +75,6 @@ $_lang['migx.add_layoutcolumn'] = 'Layout Spalte';
 
 $_lang['migx.add_item_before'] = 'Datensatz davor einfügen';
 $_lang['migx.add_item_after'] = 'Datensatz danach einfügen';
+
+$_lang['migx.select_dbfields'] = 'DB Felder auswählen';
+$_lang['migx.select_dbfields_desc'] = 'Bevor Datenbankfelder ausgewählt werden können, müssen die packageName, classname und joins - Konfigurationen befüllt sein und die Konfiguration gespeichert werden!';
