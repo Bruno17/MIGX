@@ -3,15 +3,19 @@ $configs = $modx->getOption('configs', $_REQUEST, '');
 
 $rows = $modx->getOption('rows', $scriptProperties, array());
 $newrows = array();
+
+
 if (is_array($rows)) {
     $max_id = 0;
     $dbfields = array();
+    $existing_dbfields = array();
     foreach ($rows as $key => $row) {
         if (isset($row['MIGX_id']) && $row['MIGX_id'] > $max_id) {
             $max_id = $row['MIGX_id'];
         }
-        if (isset($row['selected_dbfields']) && $row['existing_dbfields']) {
-            $dbfields = $row['selected_dbfields'];
+        if (isset($row['selected_dbfields']) && isset($row['existing_dbfields'])) {
+            $dbfields = is_array($row['selected_dbfields']) ? $row['selected_dbfields'] : array($row['selected_dbfields']);
+            
             $existing_dbfields = explode('||', $row['existing_dbfields']);
             //echo '<pre>' . print_r($existing_dbfields,1) . '</pre>';die();
 
@@ -22,7 +26,7 @@ if (is_array($rows)) {
     }
 
     foreach ($dbfields as $dbfield) {
-        if (!in_array($dbfield, $existing_dbfields)) {
+        if (!empty($dbfield) && !in_array($dbfield, $existing_dbfields)) {
             $max_id++;
             $newrow = array();
             $newrow['MIGX_id'] = $max_id;
