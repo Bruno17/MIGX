@@ -292,11 +292,11 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
     ,addNewItem: function(olditem){
             if (olditem){
                 var json = '[' + Ext.util.JSON.encode(olditem) + ']';
+                var items=Ext.util.JSON.decode(json);
             }else{
-                var json = '{/literal}{$newitem|escape}{literal}';
+                var items = {/literal}{$newitem}{literal};
             }
-       
-            var items=Ext.util.JSON.decode(json);
+            
             var item = items[0];            
             var s = this.getStore();
             var addNewItemAt = '{/literal}{$customconfigs.addNewItemAt|default}{literal}';

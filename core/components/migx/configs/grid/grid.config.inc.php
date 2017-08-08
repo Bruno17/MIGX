@@ -213,6 +213,7 @@ addNewItem: function(item,tempParams) {
                 var items = [];
                 items.push(item);
             }else{
+                
                 var items=Ext.util.JSON.decode('[[+newitem]]');
                 var item = items[0];
             }
