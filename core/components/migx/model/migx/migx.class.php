@@ -245,6 +245,17 @@ class Migx {
         if (!empty($groupingField)) {
             $newgroupvalue = isset($fields[$groupingField]) ? $fields[$groupingField] : '';
             $gr_level = empty($level) ? '' : $level;
+            
+            /*
+            print_r($oldgroupvalue);
+            echo 'old:' . $oldgroupvalue[$level];
+            echo ' ';
+            echo 'new:' . $newgroupvalue;
+            echo ' ';
+            echo $gr_level;
+            echo ' ';
+            echo $level . ' - ';
+            */
 
             if ($oldgroupvalue[$level] == $newgroupvalue) {
                 //still the same group
@@ -329,7 +340,7 @@ class Migx {
         $groupoutput = array();
         $group_indexes = array();
         $groups = array();
-        $oldgroupvalue = '';
+        $oldgroupvalue = array();
         $group_keys = array();
 
         if ($count > 0) {
