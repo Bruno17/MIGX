@@ -241,6 +241,56 @@ class Migx {
         return $rows;
     }
 
+    public function checkGrouping($fields, $groupingField, $key, &$oldgroupvalue, &$group_keys, $output, $level = 0) {
+        if (!empty($groupingField)) {
+            $newgroupvalue = isset($fields[$groupingField]) ? $fields[$groupingField] : '';
+            $gr_level = empty($level) ? '' : $level;
+
+            if ($oldgroupvalue[$level] == $newgroupvalue) {
+                //still the same group
+                if ($fields['_last']) {
+                    //last item at all
+                    $group_keys[$level][] = $key;
+                    $group_count = count($group_keys[$level]);
+                    $group_idx = 1;
+                    foreach ($group_keys[$level] as $group_key) {
+                        $output[$group_key]['_groupcount' . $gr_level] = $group_count;
+                        $output[$group_key]['_groupidx' . $gr_level] = $group_idx;
+                        $output[$group_key]['_groupfirst' . $gr_level] = $group_idx == 1 ? true : '';
+                        $output[$group_key]['_grouplast' . $gr_level] = $group_idx == $group_count ? true : '';
+                        $group_idx++;
+                    }
+                }
+            } else {
+                //new group has started
+                $group_count = count($group_keys[$level]);
+                $group_idx = 1;
+                foreach ($group_keys[$level] as $group_key) {
+                    $output[$group_key]['_groupcount' . $gr_level] = $group_count;
+                    $output[$group_key]['_groupidx' . $gr_level] = $group_idx;
+                    $output[$group_key]['_groupfirst' . $gr_level] = $group_idx == 1 ? true : '';
+                    $output[$group_key]['_grouplast' . $gr_level] = $group_idx == $group_count ? true : '';
+                    $group_idx++;
+                }
+
+                if ($fields['_last']) {
+                    $output[$key]['_groupcount' . $gr_level] = 1;
+                    $output[$key]['_groupidx' . $gr_level] = 1;
+                    $output[$key]['_groupfirst' . $gr_level] = true;
+                    $output[$key]['_grouplast' . $gr_level] = true;
+                }
+
+                $oldgroupvalue[$level] = $newgroupvalue;
+                $group_keys[$level] = array();
+            }
+
+            $group_keys[$level][] = $key;
+        }
+
+
+        return $output;
+    }
+
     public function renderOutput($rows, $scriptProperties) {
         $modx = &$this->modx;
 
@@ -250,6 +300,7 @@ class Migx {
         $tplFirst = $modx->getOption('tplFirst', $scriptProperties, '');
         $tplLast = $modx->getOption('tplLast', $scriptProperties, '');
         $groupingField = $modx->getOption('groupingField', $scriptProperties, '');
+        $groupingField = $modx->getOption('groupingFields', $scriptProperties, $groupingField);
         $prepareSnippet = $modx->getOption('prepareSnippet', $scriptProperties, '');
         $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
         $total = $modx->getPlaceholder($totalVar);
@@ -273,10 +324,13 @@ class Migx {
 
         $idx = $modx->getOption('idx', $scriptProperties, 0);
         $output = array();
-        $groupoutput = array();
         $template = array();
+
+        $groupoutput = array();
         $group_indexes = array();
         $groups = array();
+        $oldgroupvalue = '';
+        $group_keys = array();
 
         if ($count > 0) {
             foreach ($rows as $key => $fields) {
@@ -307,39 +361,12 @@ class Migx {
 
                     $output[] = $fields;
                     //check grouping
-                    if (!empty($groupingField)) {
-                        $newgroupvalue = isset($fields[$groupingField]) ? $fields[$groupingField] : '';
-                        if ($oldgroupvalue == $newgroupvalue) {
-                            if ($fields['_last']) {
-                                $group_keys[] = $key;
-                                $group_count = count($group_keys);
-                                $group_idx = 1;
-                                foreach ($group_keys as $group_key) {
-                                    $output[$group_key]['_groupcount'] = $group_count;
-                                    $output[$group_key]['_groupidx'] = $group_idx;
-                                    $group_idx++;
-                                }
-                            }
-                        } else {
-                            $group_count = count($group_keys);
-                            $group_idx = 1;
-                            foreach ($group_keys as $group_key) {
-                                $output[$group_key]['_groupcount'] = $group_count;
-                                $output[$group_key]['_groupidx'] = $group_idx;
-                                $group_idx++;
-                            }
 
-                            if ($fields['_last']) {
-                                $output[$key]['_groupcount'] = 1;
-                                $output[$key]['_groupidx'] = 1;
-                            }
-
-                            $oldgroupvalue = $newgroupvalue;
-                            $group_keys = array();
-                        }
-
-                        $group_keys[] = $key;
+                    $groupingFields = explode(',', $groupingField);
+                    foreach ($groupingFields as $level => $gr_field) {
+                        $output = $this->checkGrouping($fields, $gr_field, $key, $oldgroupvalue, $group_keys, $output, $level);
                     }
+
 
                 }
             }
@@ -2108,13 +2135,9 @@ class Migx {
                             $tvValue = $this->modx->quote($f[1]);
                         }
                         if ($multiple) {
-                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup[] = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         } else {
-                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " .
-                                "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " .
-                                ")";
+                            $filterGroup = "(EXISTS (SELECT 1 FROM {$tmplVarResourceTbl} tvr JOIN {$tmplVarTbl} tv ON {$tvValueField} {$sqlOperator} {$tvValue} AND tv.name = {$tvName} AND tv.id = tvr.tmplvarid WHERE tvr.contentid = modResource.id) " . "OR EXISTS (SELECT 1 FROM {$tmplVarTbl} tv WHERE tv.name = {$tvName} AND {$tvDefaultField} {$sqlOperator} {$tvValue} AND tv.id NOT IN (SELECT tmplvarid FROM {$tmplVarResourceTbl} WHERE contentid = modResource.id)) " . ")";
                         }
                     } elseif (count($f) == 1) {
                         $tvValue = $this->modx->quote($f[0]);
@@ -2387,12 +2410,12 @@ class Migx {
                                 $c->leftjoin($joinclass, $jalias, $on);
                                 break;
                         }
-                        if ($object = $c->xpdo->newObject($joinclass)){
+
+                        if ($object = $c->xpdo->newObject($joinclass)) {
                             $columns = $object->toArray($jalias . '_');
-                            $selectcolumns = array_merge($selectcolumns,$columns);
+                            $selectcolumns = array_merge($selectcolumns, $columns);
                             $c->select($c->xpdo->getSelectColumns($joinclass, $jalias, $jalias . '_', $selectfields));
                         }
-                        
                     }
                 }
             }
