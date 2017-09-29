@@ -43,8 +43,16 @@ $joinalias = isset($config['join_alias']) ? $config['join_alias'] : '';
 
 if (!empty($joinalias)) {
     if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
+        //print_r($fkMeta);
+
         $joinclass = $fkMeta['class'];
-        $joinfield = $fkMeta[$fkMeta['owner']];
+        if($fkMeta['owner'] == 'foreign'){
+            $joinfield = $fkMeta['foreign'];
+		    //$parent_joinfield = $fkMeta['local']; 
+		} elseif ($fkMeta['owner'] == 'local'){
+            $joinfield = $fkMeta['local'];
+		    //$parent_joinfield = $fkMeta['foreign']; 
+		}
     } else {
         $joinalias = '';
     }
@@ -131,8 +139,13 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
 
 
 if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
+
     if (!empty($joinalias)) {
-        $c->where(array($joinalias . '.' . $joinfield => $resource_id));
+        $joinvalue = $resource_id;
+        if ($parent_object = $modx->getObject($joinclass,$resource_id)){
+			$joinvalue = $parent_object->get($joinfield);
+        }
+        $c->where(array($joinalias . '.' . $joinfield => $joinvalue));
     } else {
         $c->where(array($classname . '.resource_id' => $resource_id));
     }

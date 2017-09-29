@@ -31,6 +31,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
         $checkindexes = $this->modx->getOption('checkindexes', $options, false);
         $alterfields = $this->modx->getOption('alterfields', $options, false);
         $modfields = array();
+
         if (count($this->packageClasses) > 0) {
             foreach ($this->packageClasses as $class => $value) {
                 if ($checkindexes) {
@@ -44,15 +45,20 @@ class MigxPackageManager extends xPDOGenerator_mysql {
                 }
                 if ($alterfields) {
                     $this->alterFields($class, $modfields);
-                }                
+                }
             }
         }
         return $modfields;
     }
-    
-    public function alterFields($class, $modfields){
-        $table = $this->modx->getTableName($class);
-        $fieldsStmt = $this->modx->query('SHOW COLUMNS FROM ' . $table);
+
+    public function alterFields($class, $modfields) {
+        if (isset($this->xpdo2)) {
+            $xpdo = &$this->xpdo2;
+        } else {
+            $xpdo = &$this->modx;
+        }        
+        $table = $xpdo->getTableName($class);
+        $fieldsStmt = $xpdo->query('SHOW COLUMNS FROM ' . $table);
         if ($fieldsStmt) {
             $fields = $fieldsStmt->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -64,10 +70,14 @@ class MigxPackageManager extends xPDOGenerator_mysql {
     }
 
     public function checkIndexes($class, &$modfields) {
-
+        if (isset($this->xpdo2)) {
+            $xpdo = &$this->xpdo2;
+        } else {
+            $xpdo = &$this->modx;
+        }    
         //get current indexes from table
-        $table = $this->modx->getTableName($class);
-        $indexStmt = $this->modx->query('SHOW INDEX FROM ' . $table);
+        $table = $xpdo->getTableName($class);
+        $indexStmt = $xpdo->query('SHOW INDEX FROM ' . $table);
         if ($indexStmt) {
             $indexes = $indexStmt->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -78,7 +88,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
         }
 
         //get fieldmeta from schema
-        $meta = $this->modx->getFieldMeta($class);
+        $meta = $xpdo->getFieldMeta($class);
         if (is_array($meta) && count($meta) > 0) {
             //check for new indexes in fielddefinitions
             foreach ($meta as $field => $value) {
@@ -95,8 +105,8 @@ class MigxPackageManager extends xPDOGenerator_mysql {
                             $columns[$field] = $column;
                             $indexmeta['columns'] = $columns;
                             //add field-indexmeta to xpdo-index-map, otherwise addIndex does not work
-                            $this->modx->map[$class]['indexes'][$field] = $indexmeta;
-                            
+                            $xpdo->map[$class]['indexes'][$field] = $indexmeta;
+
                             $this->manager->addIndex($class, $field);
                             $modfields['index_added'][] = $class . ':' . $field;
                             break;
@@ -110,35 +120,45 @@ class MigxPackageManager extends xPDOGenerator_mysql {
 
     public function addIndex($class, $name, array $options = array()) {
         $result = false;
-        if ($this->xpdo->getConnection(array(xPDO::OPT_CONN_MUTABLE => true))) {
-            $className = $this->xpdo->loadClass($class);
+        if (isset($this->xpdo2)) {
+            $xpdo = &$this->xpdo2;
+        } else {
+            $xpdo = &$this->modx;
+        }        
+        if ($xpdo->getConnection(array(xPDO::OPT_CONN_MUTABLE => true))) {
+            $className = $xpdo->loadClass($class);
             if ($className) {
-                $meta = $this->xpdo->getIndexMeta($className);
+                $meta = $xpdo->getIndexMeta($className);
                 if (is_array($meta) && array_key_exists($name, $meta)) {
                     $idxDef = $this->getIndexDef($className, $name, $meta[$name]);
                     if (!empty($idxDef)) {
-                        $sql = "ALTER TABLE {$this->xpdo->getTableName($className)} ADD {$idxDef}";
-                        if ($this->xpdo->exec($sql) !== false) {
+                        $sql = "ALTER TABLE {$xpdo->getTableName($className)} ADD {$idxDef}";
+                        if ($xpdo->exec($sql) !== false) {
                             $result = true;
                         } else {
-                            $this->xpdo->log(xPDO::LOG_LEVEL_ERROR, "Error adding index {$name} to {$class}: " . print_r($this->xpdo->errorInfo(), true), '', __method__, __file__, __line__);
+                            $xpdo->log(xPDO::LOG_LEVEL_ERROR, "Error adding index {$name} to {$class}: " . print_r($xpdo->errorInfo(), true), '', __method__, __file__, __line__);
                         }
                     } else {
-                        $this->xpdo->log(xPDO::LOG_LEVEL_ERROR, "Error adding index {$name} to {$class}: Could not get index definition");
+                        $xpdo->log(xPDO::LOG_LEVEL_ERROR, "Error adding index {$name} to {$class}: Could not get index definition");
                     }
                 } else {
-                    $this->xpdo->log(xPDO::LOG_LEVEL_ERROR, "Error adding index {$name} to {$class}: No metadata defined");
+                    $xpdo->log(xPDO::LOG_LEVEL_ERROR, "Error adding index {$name} to {$class}: No metadata defined");
                 }
             }
         } else {
-            $this->xpdo->log(xPDO::LOG_LEVEL_ERROR, "Could not get writable connection", '', __method__, __file__, __line__);
+            $xpdo->log(xPDO::LOG_LEVEL_ERROR, "Could not get writable connection", '', __method__, __file__, __line__);
         }
         return $result;
     }
 
     public function addMissingFields($class, &$modfields) {
-        $table = $this->modx->getTableName($class);
-        $fieldsStmt = $this->modx->query('SHOW COLUMNS FROM ' . $table);
+        if (isset($this->xpdo2)) {
+            $xpdo = &$this->xpdo2;
+        } else {
+            $xpdo = &$this->modx;
+        }                
+        $table = $xpdo->getTableName($class);
+        $fieldsStmt = $xpdo->query('SHOW COLUMNS FROM ' . $table);
         if ($fieldsStmt) {
             $fields = $fieldsStmt->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -148,7 +168,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
             }
         }
 
-        $classfields = $this->modx->getFields($class);
+        $classfields = $xpdo->getFields($class);
         if (count($classfields) > 0) {
             foreach ($classfields as $field => $value) {
                 if (!in_array($field, $tablefields)) {
@@ -164,8 +184,13 @@ class MigxPackageManager extends xPDOGenerator_mysql {
         //. '</psre>';
     }
     public function removeDeletedFields($class, &$modfields) {
-        $table = $this->modx->getTableName($class);
-        $fieldsStmt = $this->modx->query('SHOW COLUMNS FROM ' . $table);
+        if (isset($this->xpdo2)) {
+            $xpdo = &$this->xpdo2;
+        } else {
+            $xpdo = &$this->modx;
+        }          
+        $table = $xpdo->getTableName($class);
+        $fieldsStmt = $xpdo->query('SHOW COLUMNS FROM ' . $table);
         if ($fieldsStmt) {
             $fields = $fieldsStmt->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -175,7 +200,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
             }
         }
 
-        $classfields = $this->modx->getFields($class);
+        $classfields = $xpdo->getFields($class);
         if (count($tablefields) > 0) {
             foreach ($tablefields as $field) {
                 if (!array_key_exists($field, $classfields)) {

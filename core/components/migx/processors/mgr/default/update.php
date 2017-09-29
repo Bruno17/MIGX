@@ -46,7 +46,7 @@ if (is_array($hooksnippets)) {
     $hooksnippet_validate = $modx->getOption('validate', $hooksnippets, '');
 }
 
-$tempparams = json_decode($modx->getOption('tempParams', $scriptProperties, ''),true);
+$tempparams = json_decode($modx->getOption('tempParams', $scriptProperties, ''), true);
 $button = $modx->getOption('button', $tempparams, '');
 
 $prefix = isset($config['prefix']) && !empty($config['prefix']) ? $config['prefix'] : null;
@@ -108,7 +108,12 @@ if (!empty($joinalias)) {
     if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];
         if ($checkConnected && $fkMeta['owner'] == 'foreign') {
-            $scriptProperties[$fkMeta['local']] = $resource_id;
+            $joinfield = $fkMeta['foreign'];
+            $joinvalue = $resource_id;
+            if ($parent_object = $modx->getObject($joinclass, $resource_id)) {
+                $joinvalue = $parent_object->get($joinfield);
+            }
+            $scriptProperties[$fkMeta['local']] = $joinvalue;
         }
         $joinvalues = array();
     } else {
@@ -351,13 +356,13 @@ if ($has_jointable && !empty($joinalias)) {
     }
 }
 
-if ($button == 'addbefore' || $button == 'addafter'){
+if ($button == 'addbefore' || $button == 'addafter') {
     $pos_field = !empty($config['getlistsort']) ? $config['getlistsort'] : 'pos';
     $position = $button == 'addbefore' ? 'before' : 'after';
     $scriptProperties['col'] = $pos_field . ':' . $position;
     $scriptProperties['new_pos_id'] = $modx->getOption('original_id', $tempparams, '');
     $scriptProperties['object_id'] = $object->get('id');
-    $modx->migx->handleOrderPositions($xpdo,$config,$scriptProperties);    
+    $modx->migx->handleOrderPositions($xpdo, $config, $scriptProperties);
 }
 
 

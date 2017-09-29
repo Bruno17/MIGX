@@ -101,9 +101,10 @@ class migxCreatePackageProcessor extends modProcessor {
             $options['removedeleted'] = 0;
             $options[$properties['task']] = 1;
 
-            $this->modx->addPackage($packageName, $modelpath, $prefix);
+            $xpdo->addPackage($packageName, $modelpath, $prefix);
             $pkgman = $this->modx->migx->loadPackageManager();
-
+            $pkgman->xpdo2 = &$xpdo;
+            $pkgman->manager = $xpdo->getManager();
             $pkgman->parseSchema($schemafile, $modelpath, true);
 
             $pkgman->checkClassesFields($options);
@@ -119,8 +120,9 @@ class migxCreatePackageProcessor extends modProcessor {
 
         if ($properties['task'] == 'createTables') {
             //$prefix = empty($prefix) ? null : $prefix;
-            $this->modx->addPackage($packageName, $modelpath, $prefix);
+            $xpdo->addPackage($packageName, $modelpath, $prefix);
             $pkgman = $this->modx->migx->loadPackageManager();
+            $pkgman->manager = $xpdo->getManager();
             $pkgman->parseSchema($schemafile, $modelpath, true);
             $pkgman->createTables();
         }
