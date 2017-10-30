@@ -322,6 +322,7 @@ class Migx {
         //$placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
         $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'id');
         $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
+        $processedToJson = $modx->getOption('processedFieldsToJson', $scriptProperties, false);
 
         $addfields = $modx->getOption('addfields', $scriptProperties, '');
         $addfields = !empty($addfields) ? explode(',', $addfields) : null;
@@ -355,7 +356,7 @@ class Migx {
                     }
                 }
 
-                if ($toJsonPlaceholder) {
+                if ($toJsonPlaceholder && !$processedToJson) {
                     $output[] = $fields;
                 } else {
                     $fields['_alt'] = $idx % 2;
@@ -604,6 +605,7 @@ class Migx {
             if ($collection = $this->modx->getCollection($classname, $c)) {
                 $idx = 0;
                 $formtabs = false;
+                $firstformtabs = array();                
 
                 foreach ($collection as $object) {
 
@@ -633,6 +635,18 @@ class Migx {
                 }
 
                 $formtabs = $formtabs ? $formtabs : $firstformtabs;
+ 
+                $config = $this->customconfigs; 
+                $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));       
+                
+                if (is_array($hooksnippets)) {
+                    $hooksnippet = $this->modx->getOption('getformnames', $hooksnippets, '');
+                    if (!empty($hooksnippet)) {
+                        $snippetProperties = array();
+                        $snippetProperties['formnames'] = &$formnames;
+                        $result = $this->modx->runSnippet($hooksnippet, $snippetProperties);
+                    }
+                }                
 
                 $controller->setPlaceholder('formnames', $formnames);
 
@@ -1672,7 +1686,7 @@ class Migx {
     function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
         $fieldid = 0;
         $config = $this->customconfigs;
-        $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));
+        $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));       
         if (is_array($hooksnippets)) {
             $hooksnippet_beforecreateform = $this->modx->getOption('beforecreateform', $hooksnippets, '');
             if (!empty($hooksnippet_beforecreateform)) {

@@ -58,9 +58,9 @@ class migxFormProcessor extends modProcessor {
         if (!empty($configs)) {
             $this->modx->migx->config['configs'] = $configs;
             $this->modx->migx->loadConfigs(true, true, $scriptProperties, $sender);
-
-
         }
+
+        $config = $this->modx->migx->customconfigs;
 
         $formtabs = $this->modx->migx->getTabs();
         $fieldid = 0;
@@ -120,6 +120,17 @@ class migxFormProcessor extends modProcessor {
                         $tabs[$form['formname']][] = $tab;
                     }
                 }
+
+                $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));       
+ 
+                if (is_array($hooksnippets)) {
+                    $hooksnippet = $this->modx->getOption('getformnames', $hooksnippets, '');
+                    if (!empty($hooksnippet)) {
+                        $snippetProperties = array();
+                        $snippetProperties['formnames'] = &$formnames;
+                        $result = $this->modx->runSnippet($hooksnippet, $snippetProperties);
+                    }
+                }                
 
                 $controller->setPlaceholder('formnames', $formnames);
 
