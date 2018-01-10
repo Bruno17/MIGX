@@ -926,6 +926,7 @@ class Migx {
                 $controller->setPlaceholder('config', $this->config);
                 $controller->setPlaceholder('cmptabcaption', $tabcaption);
                 $controller->setPlaceholder('cmptabdescription', $tabdescription);
+                $controller->setPlaceholder('win_id', $tab_idx);
 
                 $cmptabfile = $this->config['templatesPath'] . 'mgr/cmptab.tpl';
                 if (!empty($this->customconfigs['cmptabcontroller'])) {
