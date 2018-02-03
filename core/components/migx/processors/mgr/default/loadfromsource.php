@@ -63,7 +63,8 @@ if (!empty($joinalias)) {
 //$dir = !empty($config['getlistsortdir']) ? $config['getlistsortdir'] : 'ASC';
 //$dir = $modx->getOption('dir', $scriptProperties, $dir);
 $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
-$object_id = $modx->getOption('object_id', $scriptProperties, '');
+//$object_id = $modx->getOption('object_id', $scriptProperties, '');
+$object_id = $modx->getOption('co_id', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, is_object($modx->resource) ? $modx->resource->get('id') : false);
 $resource_id = !empty($object_id) ? $object_id : $resource_id;
 $source_id = $modx->getOption('source', $scriptProperties, '');
@@ -173,6 +174,7 @@ $rows = array();
 
 if ($source = $modx->getObject('sources.modMediaSource', $source_id)) {
     $this->modx->setPlaceholder('objectid', $object_id);
+	$this->modx->setPlaceholder('mediasource_docid',$resource_id);
     $source->initialize();
     $sourceProperties = $source->getPropertyList();
 
