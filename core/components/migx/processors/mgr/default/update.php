@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * MIGXdb
@@ -42,6 +42,7 @@ $config = $modx->migx->customconfigs;
 
 $hooksnippets = $modx->fromJson($modx->getOption('hooksnippets', $config, ''));
 if (is_array($hooksnippets)) {
+	$hooksnippet_beforesave = $modx->getOption('beforesave', $hooksnippets, '');
     $hooksnippet_aftersave = $modx->getOption('aftersave', $hooksnippets, '');
     $hooksnippet_validate = $modx->getOption('validate', $hooksnippets, '');
 }
@@ -78,6 +79,21 @@ if (!empty($config['packageName'])) {
     }
 } else {
     $xpdo = &$modx;
+}
+
+$snippetProperties = array();
+$snippetProperties['config'] = &$config;
+$snippetProperties['scriptProperties'] = &$scriptProperties;
+
+if (!empty($hooksnippet_beforesave)) {
+    $result = $modx->runSnippet($hooksnippet_beforesave, $snippetProperties);
+    $result = $modx->fromJson($result);
+    $error = $modx->getOption('error', $result, '');
+    if (!empty($error)) {
+        $updateerror = true;
+        $errormsg = $error;
+        return;
+    }
 }
 
 $classname = $config['classname'];
