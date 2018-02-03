@@ -155,7 +155,7 @@ class Migx {
         $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
 
         $where = $modx->getOption('where', $scriptProperties, array());
-        $where = !empty($where) && !is_array($where) ? $modx->fromJSON($where) : $where;
+        //$where = !empty($where) && !is_array($where) ? $modx->fromJSON($where) : $where;
         $queries = $modx->getOption('queries', $scriptProperties, array());
         $queries = !empty($queries) && !is_array($queries) ? $modx->fromJSON($queries) : $queries;
         $sortConfig = $modx->getOption('sortConfig', $scriptProperties, array());
@@ -184,11 +184,19 @@ class Migx {
         }
 
         if (!empty($where)) {
-            foreach ($where as $key => $value) {
-                if (strstr($key, 'MONTH') || strstr($key, 'YEAR') || strstr($key, 'DATE')) {
-                    $c->where($key . " = " . $value, xPDOQuery::SQL_AND);
-                    unset($where[$key]);
+
+            if (is_string($where) && ($where[0] == '{' || $where[0] == '[')) {
+                $where = json_decode($where, true);
+            }
+            if (is_array($where)) {
+                foreach ($where as $key => $value) {
+                    if (strstr($key, 'MONTH') || strstr($key, 'YEAR') || strstr($key, 'DATE')) {
+                        $c->where($key . " = " . $value, xPDOQuery::SQL_AND);
+                        unset($where[$key]);
+                    }
                 }
+            } else {
+               $where = array($where);
             }
             $c->where($where);
         }
