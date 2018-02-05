@@ -170,7 +170,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
         {/if}        
         {$customconfigs.tbar}
         {/if}{literal}
-        ]        
+        ]
     });
 	
     MODx.grid.multiTVgrid{/literal}{$tv->id}{literal}.superclass.constructor.call(this,config)
@@ -179,7 +179,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
     
 	this.loadData();
     this.on('click', this.onClick, this); 
-     
+
 };
 Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid,{
     _renderUrl: function(v,md,rec) {

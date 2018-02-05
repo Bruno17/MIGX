@@ -3,7 +3,7 @@ class MigxFormController extends modManagerController {
 
     public function process(array $scriptProperties = array()) {
     
-
+        $this->prepareLanguage(); 
         $tpl = $this->getTemplateFile();
         if ($this->isFailure) {
             $this->setPlaceholder('_e', $this->modx->error->failure($this->failureMessage));
