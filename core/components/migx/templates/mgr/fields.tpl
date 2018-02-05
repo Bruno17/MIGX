@@ -5,7 +5,7 @@
 {/if} 
 
 <input type="hidden" class="mulititems_grid_item_fields" name="mulititems_grid_item_fields" value='{$fields|escape}' />
-<input type="hidden" class="tvmigxid" name="tvmigxid" value='{$migxid}' />
+<input type="hidden" class="tvmigxid" name="tvmigxid" value='{$migxid|default}' />
 
 
     {foreach from=$categories item=category name=cat}
