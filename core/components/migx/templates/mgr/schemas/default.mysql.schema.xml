@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model package="[[+package]]" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" phpdoc-package="" phpdoc-subpackage="" version="1.1">
+
+    <object class="[[+package]]Group" table="[[+package]]_groups" extends="xPDOSimpleObject">
+        <field key="title" dbtype="varchar" phptype="string" precision="100" null="false" default="" />
+        <field key="description" dbtype="text" phptype="string" null="false" default="" />
+        <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+    	<field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="editedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="deleted" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="deletedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="deletedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="published" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="publishedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="group_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+
+        <composite alias="Item" class="[[+package]]Item" local="id" foreign="group_id" cardinality="many" owner="local" />
+    </object>
+
+    <object class="[[+package]]Item" table="[[+package]]_items" extends="xPDOSimpleObject">
+        <field key="title" dbtype="varchar" phptype="string" precision="100" null="false" default="" />
+        <field key="description" dbtype="text" phptype="string" null="false" default="" />
+        <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0" index="index" />
+        <field key="pos" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+        <field key="images" dbtype="text" phptype="string" null="false" default="" />
+        <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+    	<field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="editedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="deleted" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="deletedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="deletedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="published" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="publishedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="group_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
+
+        <aggregate alias="Group" class="[[+package]]Group" local="group_id" foreign="id" cardinality="one" owner="foreign" />
+    </object>
+
+</model>
