@@ -1,5 +1,17 @@
 Changelog for MIGX.
 
+MIGX 2.12.0
+==============
+select db-fields from defined class and its joins for formtabs and columns
+add categories and a category-filter to MIGX Configs
+multiple grouping-levels for &groupingField
+hooksnippet getformnames
+add snippet migxAutoPublish for publishing by Cronjobs
+add beforesave - hook to update-processor
+allow string in where-property
+add a default schema-template, used at create package
+and some bugfixes
+
 MIGX 2.11.0
 ==============
 groupingfield, preparesnippet, _total, _count, improve @CODE
