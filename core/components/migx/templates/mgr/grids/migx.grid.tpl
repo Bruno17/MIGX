@@ -152,7 +152,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
 			handler: this.addItem
         }
         {/literal}{/if}{literal}        
-        {/literal}{if $properties.previewurl != ''}{literal}
+        {/literal}{if $properties.previewurl|default != ''}{literal}
         {/literal}
         {if $customconfigs.disable_add_item|default != '1'}
         ,
@@ -421,7 +421,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         var object_id = '{/literal}{$request.object_id|default}{literal}';
         var input_prefix = Ext.id(null,'inp_');
         var tempParams = tempParams || null;
-        {/literal}{if $properties.autoResourceFolders == 'true'}{literal}
+        {/literal}{if $properties.autoResourceFolders|default == 'true'}{literal}
         if (resource_id == 0){
             alert ('[[%migx.save_resource]]');
             return;
@@ -476,7 +476,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
 			    action: 'mgr/fields',
 				tv_id: '{/literal}{$tv->id}{literal}',
 				tv_name: '{/literal}{$tv->name}{literal}',
-                configs: '{/literal}{$properties.configs}{literal}',
+                configs: '{/literal}{$properties.configs|default}{literal}',
 				'class_key': 'modDocument',
                 'wctx':'{/literal}{$myctx}{literal}',
 				itemid : index,
@@ -494,7 +494,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
     }
 	,loadPreviewWin: function(btn,e,index,action) {
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
-        var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
+        var jsonvarkey = '{/literal}{$properties.jsonvarkey|default}{literal}';
         if (jsonvarkey == ''){
             jsonvarkey = 'migx_outputvalue';
         }
@@ -504,14 +504,14 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
 			//this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
 		    //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
             //this.windows[win_xtype].fp.autoLoad.params.record_json=json;
-            this.windows[win_xtype].src='{/literal}{$properties.previewurl}{literal}';
+            this.windows[win_xtype].src='{/literal}{$properties.previewurl|default}{literal}';
 			this.windows[win_xtype].json=items;
             this.windows[win_xtype].jsonvarkey=jsonvarkey;
             this.windows[win_xtype].action=action;
 		}
 		this.loadWindow(btn,e,{
             xtype: win_xtype
-            ,src: '{/literal}{$properties.previewurl}{literal}'
+            ,src: '{/literal}{$properties.previewurl|default}{literal}'
             ,jsonvarkey:jsonvarkey
             ,json: items
 			,grid: this
@@ -524,7 +524,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         var object_id = '{/literal}{$request.object_id|default}{literal}';
         var url = '{/literal}{$config.connectorUrl}{literal}';
         var items = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
-        var jsonvarkey = '{/literal}{$properties.jsonvarkey}{literal}';
+        var jsonvarkey = '{/literal}{$properties.jsonvarkey|default}{literal}';
         if (jsonvarkey == ''){
             jsonvarkey = 'migx_outputvalue';
         }
@@ -596,7 +596,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
     ,renderRowActions:function(v,md,rec) {
         var n = rec.data;
         var m = [];	   
-        {/literal}{$customconfigs.gridcolumnbuttons}{literal} 
+        {/literal}{$customconfigs.gridcolumnbuttons}{literal}
         rec.data.column_actions = m;
         rec.data.column_value = v;
         return this.tplRowActions.apply(rec.data);
@@ -664,7 +664,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
 				,co_id: '{/literal}{$connected_object_id}{literal}'
                 ,tv_name: '{/literal}{$tv->name}{literal}'
                 ,items: items 
-                ,configs: '{/literal}{$properties.configs}{literal}'      
+                ,configs: '{/literal}{$properties.configs|default}{literal}'
                 
             }
             ,listeners: {

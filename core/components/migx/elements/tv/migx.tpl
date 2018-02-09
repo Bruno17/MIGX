@@ -1,4 +1,5 @@
-<input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv_value|escape}"{$style} tvtype="{$tv->type}" />
+<input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv_value|escape}"{$style|default} tvtype="{$tv->type}" />
+
 <div id="tvpanel{$tv->id}" style="width:100%">
 </div>
 
@@ -359,7 +360,7 @@ Ext.ux.IFrameComponent = function(config) {
     Ext.applyIf(config,{
         layout:'fit'
         ,id: 'modx-iframe-mi-preview'
-        ,url: 'http://www.gitrevo.webcmsolutions.de/preview1.html' 
+        ,url: 'http://www.gitrevo.webcmsolutions.de/preview1.html'
     });
     Ext.ux.IFrameComponent.superclass.constructor.call(this,config);
 };
@@ -474,8 +475,8 @@ var lang = {/literal}{$migx_lang}{literal};
             ,cls: 'tv_modx-grid-multitvgrid_items'
             ,id:'tv{/literal}{$tv->id}{literal}_items'
 			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
-            ,configs: '{/literal}{$properties.configs}{literal}'
-			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
+            ,configs: '{/literal}{$properties.configs|default}{literal}'
+			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs|default}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
             ,wctx: '{/literal}{$myctx}{literal}'
             ,tv_type: '{/literal}{$tv_type}{literal}'

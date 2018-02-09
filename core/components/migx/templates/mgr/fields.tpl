@@ -152,8 +152,7 @@ Ext.onReady(function() {
     var win = Ext.getCmp('{/literal}modx-window-mi-grid-update-{$win_id}{literal}');    
     win.tabs = tabs;
     
-	{/literal}{if $tvcount GT 0}{literal}
-    {/literal}{/if}{literal}
+
 });    
 // ]]>
 </script>
