@@ -43,6 +43,7 @@ require_once $miTVCorePath.'model/migx/migx.class.php';
 require_once $modx->getOption('core_path').'model/modx/modmanagercontroller.class.php';
 $modx->migx = new Migx($modx);
 $modx->migx->config['configs'] = isset($_REQUEST['configs']) ? $_REQUEST['configs'] : '';
+$modx->migx->config['tvname'] = isset($_REQUEST['tv_name']) ? $_REQUEST['tv_name'] : ''; 
 $modx->migx->loadConfigs();
 
 $modx->request->handleRequest(array(
