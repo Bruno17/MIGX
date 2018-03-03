@@ -4,10 +4,6 @@ $xpdo_meta_map['migxFormtab']= array (
   'version' => '1.1',
   'table' => 'migx_formtabs',
   'extends' => 'xPDOSimpleObject',
-  'tableMeta' => 
-  array (
-    'engine' => 'MyISAM',
-  ),
   'fields' => 
   array (
     'config_id' => 0,
