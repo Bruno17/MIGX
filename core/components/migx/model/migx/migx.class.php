@@ -327,6 +327,7 @@ class Migx {
 
         $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
         $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
+        $toPlaceholders = $modx->getOption('toPlaceholders', $scriptProperties, false);
         $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
         //$placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'MIGX_id');
         $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'id');
@@ -398,6 +399,14 @@ class Migx {
                 $rows = $output;
                 $output = array();
                 foreach ($rows as $fields) {
+                    if ($toPlaceholders){
+                        //works only for one row - output the fields to placeholders
+                        if ($toPlaceholders == 'print_r'){
+                            return '<pre>' . print_r($fields, 1) . '</pre>';
+                        }
+                        $modx->toPlaceholders($fields, $toPlaceholders);
+                        return '';
+                    }
 
                     $rowtpl = '';
                     $idx = isset($fields['idx']) ? $fields['idx'] : 0;
