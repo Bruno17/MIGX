@@ -241,6 +241,7 @@ class Migx {
 
     public function getCollection($c) {
         $rows = array();
+        $this->modx->exec('SET SQL_BIG_SELECTS = 1');
         if ($c->stmt->execute()) {
             if (!$rows = $c->stmt->fetchAll(PDO::FETCH_ASSOC)) {
                 $rows = array();
