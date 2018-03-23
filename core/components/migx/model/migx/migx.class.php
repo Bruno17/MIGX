@@ -333,6 +333,7 @@ class Migx {
         $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperties, 'id');
         $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
         $processedToJson = $modx->getOption('processedFieldsToJson', $scriptProperties, false);
+        $createChunk = $modx->getOption('createChunk', $scriptProperties, false);
 
         $addfields = $modx->getOption('addfields', $scriptProperties, '');
         $addfields = !empty($addfields) ? explode(',', $addfields) : null;
@@ -398,7 +399,23 @@ class Migx {
             } else {
                 $rows = $output;
                 $output = array();
+                $i = 0;
                 foreach ($rows as $fields) {
+                    if ($i==0 && $createChunk){
+                        if ($chunk = $modx->getObject('modChunk',array('name'=>$createChunk))){
+
+                        }else{
+                            $ph_prefix = !empty($toPlaceholders) ? $toPlaceholders . '.' : '';
+                            $chunk = $modx->newObject('modChunk');
+                            $chunk->set('name',$createChunk);
+                            $chunk_content = array();
+                            foreach ($fields as $field=>$value){
+                                $chunk_content[] = '[[+' . $ph_prefix . $field . ']]';
+                            }
+                            $chunk->set('content',implode("\n",$chunk_content));
+                            $chunk->save();
+                        }
+                    }
                     if ($toPlaceholders){
                         //works only for one row - output the fields to placeholders
                         if ($toPlaceholders == 'print_r'){
@@ -422,6 +439,7 @@ class Migx {
                     if ($fields['_last'] && empty($rowtpl) && !empty($tplLast)) {
                         $rowtpl = $tplLast;
                     }
+
                     $tplidx = 'tpl_' . $idx;
                     if (empty($rowtpl) && !empty($scriptProperties[$tplidx])) {
                         $rowtpl = $scriptProperties[$tplidx];
@@ -473,6 +491,7 @@ class Migx {
                             $output[] = '<pre>' . print_r($fields, 1) . '</pre>';
                         }
                     }
+                    $i++;
                 }
             }
         }
