@@ -12,6 +12,7 @@
     {
         xtype: 'form',
         id: 'migx_setup_form',
+        cls:'main-wrapper',
         standardSubmit: true,
         url: config.src,
         items: [{
@@ -36,6 +37,7 @@
                 {
                     xtype: 'button',
                     handler: function(){this.setupmigx('setupmigx')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Setup',
                     scope: this
                 }]
@@ -54,6 +56,7 @@
                 {
                     xtype: 'button',
                     handler: function(){this.setupmigx('upgrademigx')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Upgrade',
                     scope: this
                 }]

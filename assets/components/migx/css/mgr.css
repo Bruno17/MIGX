@@ -36,3 +36,8 @@
 .actions a.orange:hover {
     background: -moz-linear-gradient(center bottom , #FEC95B 0%, #FEE1A0 100%) repeat scroll 0 0 transparent;
 }
+
+.migxcmp-button {
+    margin-top: 15px;
+    margin-left:5px;
+}

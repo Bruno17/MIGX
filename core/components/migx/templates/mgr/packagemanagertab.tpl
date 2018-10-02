@@ -14,6 +14,7 @@
         id: 'migx_packagemanager_form',
         standardSubmit: true,
         url: config.src,
+        cls:'main-wrapper',
         items: [{
             xtype: 'textfield',
             name: 'packageName',
@@ -61,12 +62,14 @@
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('createPackage')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Create Package',
                     scope: this
                 },
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('addExtensionPackage')},
+                    cls: 'primary-button migxcmp-button',                  
                     text: 'Add Extension Package',
                     scope: this
                 }]
@@ -84,12 +87,14 @@
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('writeSchema')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Write schema',
                     scope: this
                 },
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('parseSchema')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'parse Schema',
                     scope: this
                 }]
@@ -107,6 +112,7 @@
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('createTables')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'create Tables',
                     scope: this
                 }]
@@ -124,6 +130,7 @@
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('addmissing')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Add fields',
                     scope: this
                 }]
@@ -141,6 +148,7 @@
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('removedeleted')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Remove fields',
                     scope: this
                 }]
@@ -158,6 +166,7 @@
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('checkindexes')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Update indexes',
                     scope: this
                 }]
@@ -175,6 +184,7 @@
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('alterfields')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Alter fields',
                     scope: this
                 }]
@@ -200,12 +210,14 @@
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('loadSchema')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Load schema',
                     scope: this
                 },
                 {
                     xtype: 'button',
                     handler: function(){this.updatePackage('saveSchema')},
+                    cls: 'primary-button migxcmp-button',
                     text: 'Save schema',
                     scope: this
                 }]
