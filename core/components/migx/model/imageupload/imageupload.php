@@ -194,7 +194,6 @@ if ($ajaxId || $ajaxUrl) {
     $output = str_replace('[+files+]', implode("\r\n", $fileList), $output);
     $output = str_replace('[+uid+]', $formUid, $output);
     return $output;
-    break;
 } else {
     return;
 }
