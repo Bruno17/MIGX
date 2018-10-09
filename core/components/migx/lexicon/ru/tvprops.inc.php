@@ -13,4 +13,4 @@ $_lang['mig.btntext'] = 'Замена кнопки "Добавить элеме�
 $_lang['mig.previewurl'] = 'Просмотр Url';
 $_lang['mig.jsonvarkey'] = 'Просмотр JsonVarKey';
 $_lang['mig.configs'] = 'Конфигурации';
-$_lang['mig.autoResourceFolders'] = 'Auto Resource Folders';
+$_lang['mig.autoResourceFolders'] = 'Автоматическая папка для ресурса (Устарело)';
