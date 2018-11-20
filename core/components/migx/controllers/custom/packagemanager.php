@@ -10,7 +10,7 @@ updatePackage: function(task) {
     if (task == 'saveSchema') {
         schema = Ext.get('migxpm_schema').dom.value;
     }
-    if (task == 'writeSchema' || task == 'createTables' || task == 'addmissing' || task == 'removedeleted') {
+    if (task == 'writeSchema' || task == 'createTables' || task == 'addmissing' || task == 'removedeleted' || task == 'checkindexes' || task == 'alterfields') {
         usecustomprefix = Ext.getCmp('migxpm_use_custom_prefix').getValue();
         prefix = Ext.get('migxpm_prefix').dom.value;
     }
