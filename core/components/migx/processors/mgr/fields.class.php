@@ -25,7 +25,7 @@ class migxFormProcessor extends modProcessor {
 
         $this->modx->migx->working_context = 'web';
 
-        if ($this->modx->resource = $this->modx->getObject('modResource', $scriptProperties['resource_id'])) {
+        if ($this->modx->resource = $this->modx->getObject('modResource', array('id' => $scriptProperties['resource_id']))) {
             $this->modx->migx->working_context = $this->modx->resource->get('context_key');
 
             //$_REQUEST['id']=$scriptProperties['resource_id'];
@@ -121,8 +121,8 @@ class migxFormProcessor extends modProcessor {
                     }
                 }
 
-                $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));       
- 
+                $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));
+
                 if (is_array($hooksnippets)) {
                     $hooksnippet = $this->modx->getOption('getformnames', $hooksnippets, '');
                     if (!empty($hooksnippet)) {
@@ -130,7 +130,7 @@ class migxFormProcessor extends modProcessor {
                         $snippetProperties['formnames'] = &$formnames;
                         $result = $this->modx->runSnippet($hooksnippet, $snippetProperties);
                     }
-                }                
+                }
 
                 $controller->setPlaceholder('formnames', $formnames);
 
@@ -154,13 +154,13 @@ class migxFormProcessor extends modProcessor {
         $result = $this->modx->migx->createForm($formtabs, $record, $allfields, $categories, $scriptProperties);
         $formcaption = $this->modx->getOption('formcaption', $this->modx->migx->customconfigs, '');
         $formcaption = !empty($formcaption) ? $this->modx->migx->renderChunk($formcaption, $record, false, false) : '';
-        
+
         //echo '<pre>' . print_r($categories,1) . '</pre>';
-        
+
         if (isset($result['error'])){
             $controller->setPlaceholder('error', $result['error']);
         }
-        
+
         $controller->setPlaceholder('formcaption', $formcaption);
         $controller->setPlaceholder('fields', $this->modx->toJSON($allfields));
         $controller->setPlaceholder('customconfigs', $this->modx->migx->customconfigs);
@@ -176,7 +176,7 @@ class migxFormProcessor extends modProcessor {
         /*
         $miTVCorePath = $this->modx->getOption('migx.core_path', null, $this->modx->getOption('core_path') . 'components/migx/');
         $this->modx->smarty->template_dir = $miTVCorePath . 'templates/';
-        return $this->modx->smarty->fetch('mgr/fields.tpl');        
+        return $this->modx->smarty->fetch('mgr/fields.tpl');
         */
 
         return $controller->process($scriptProperties);

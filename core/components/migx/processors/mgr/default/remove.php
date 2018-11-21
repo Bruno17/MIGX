@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * XdbEdit; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package xdbedit
  */
@@ -47,7 +47,7 @@ if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix']))
 
 if (!empty($config['packageName'])) {
     $packageNames = explode(',', $config['packageName']);
-    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';    
+    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';
 
     if (count($packageNames) == '1') {
         //for now connecting also to foreign databases, only with one package by default possible
@@ -66,15 +66,15 @@ if (!empty($config['packageName'])) {
     }
     if ($this->modx->lexicon) {
         $this->modx->lexicon->load($packageName . ':default');
-    }    
+    }
 }else{
-    $xpdo = &$modx;    
+    $xpdo = &$modx;
 }
 $classname = $config['classname'];
 
 switch ($scriptProperties['task']) {
     case 'removeone':
-        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, (int)$scriptProperties['object_id']);
         if ($object->remove() === false) {
             return $modx->error->failure($modx->lexicon('quip.comment_err_remove'));
         }

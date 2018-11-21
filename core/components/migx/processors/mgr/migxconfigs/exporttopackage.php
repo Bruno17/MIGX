@@ -9,7 +9,7 @@ $modelpath = $packagepath . 'model/';
 $modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
 
-if ($object = $modx->getObject($classname, $scriptProperties['object_id'])) {
+if ($object = $modx->getObject($classname, (int)$scriptProperties['object_id'])) {
     $row = $modx->migx->recursive_decode($object->toArray());
     $packageName = $row['extended']['packageName'];
     if (!empty($packageName)) {

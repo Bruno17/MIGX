@@ -33,7 +33,7 @@ if (!empty($_REQUEST['tempParams'])) {
 
     $selectcolumns = array();
     //echo '<pre>' . print_r($_REQUEST,1) . '</pre>';
-    $object_id = isset($_REQUEST['object_id']) ? $_REQUEST['object_id'] : '';
+    $object_id = isset($_REQUEST['object_id']) ? (int)$_REQUEST['object_id'] : '';
     if (!empty($object_id) && $config_o = $this->modx->getObject('migxConfig', $object_id)) {
         $configs = $config_o->toArray();
         //echo '<pre>' . print_r($configs,1) . '</pre>';

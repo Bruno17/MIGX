@@ -19,24 +19,24 @@ if (empty($scriptProperties['objects'])) {
 $objectIds = explode(',',$scriptProperties['objects']);
 
 foreach ($objectIds as $id) {
-    $object = $modx->getObject($classname,$id);
+    $object = $modx->getObject($classname, (int)$id);
     if ($object == null) continue;
 switch ($scriptProperties['task']) {
 	case 'publish':
         $object->set('published','1');
         $object->set('publishedon',strftime('%Y-%m-%d %H:%M:%S'));
-        $object->set('publishedby',$modx->user->get('id'));  
+        $object->set('publishedby',$modx->user->get('id'));
 	    break;
 	case 'delete':
         $object->set('deleted','1');
         $object->set('deletedon',strftime('%Y-%m-%d %H:%M:%S'));
-        $object->set('deletedby',$modx->user->get('id'));  
-	    break;				
+        $object->set('deletedby',$modx->user->get('id'));
+	    break;
 	case 'unpublish':
         $object->set('unpublishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '0');
-		$object->set('unpublishedby',$modx->user->get('id'));//feld fehlt noch	    
-	    break;		
+		$object->set('unpublishedby',$modx->user->get('id'));//feld fehlt noch
+	    break;
     default:
 	break;
 	}

@@ -4,7 +4,7 @@ $config = $modx->migx->customconfigs;
 $resource_id = $modx->getOption('resource_id', $scriptProperties, '');
 $tvname = $modx->getOption('tv_name', $scriptProperties, '');
 
-if ($resource = $modx->getObject('modResource', $resource_id)) {
+if ($resource = $modx->getObject('modResource', array('id' => $resource_id))) {
     $wctx = $resource->get('context_key');
 } else {
     $resource = $modx->newObject('modResource');
@@ -42,7 +42,7 @@ if ($source instanceof modMediaSource) {
     $baseUrl = $modx->getOption('site_url') . $source->getBaseUrl();
     $baseUrl = $baseUrl . $dirTree;
     $sourceProperties = $source->getPropertyList();
-    
+
     //echo '<pre>' . print_r($sourceProperties,1) . '</pre>';
     $allowedExtensions = $modx->getOption('allowedFileTypes', $sourceProperties, '');
     $allowedExtensions = empty($allowedExtensions) ? 'jpg,jpeg,png,gif' : $allowedExtensions;
@@ -59,8 +59,8 @@ if ($source instanceof modMediaSource) {
     $onImageUpload = $modx->getOption('onImageUpload', $sourceProperties, '');
     $onImageRemove = $modx->getOption('onImageRemove', $sourceProperties, '');
     $cleanalias = $modx->getOption('cleanFilename', $sourceProperties, false);
-    
-    
+
+
 
 
     define('AIU_BASE_PATH', $modx->getOption('core_path') . 'components/migx/model/imageupload/');
@@ -118,7 +118,7 @@ if ($source instanceof modMediaSource) {
             unlink($file['path'] . $file['thumbName']);
             if (!empty($onImageRemove)){
             $modx->runSnippet($onImageRemove,array('action'=>'remove','name'=>$file['uniqueName']));
-            }                        
+            }
             }
             }
             $_SESSION['AjaxImageUpload'][$formUid] = array();

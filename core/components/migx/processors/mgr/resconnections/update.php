@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * XdbEdit; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package xdbedit
  */
@@ -57,7 +57,7 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
 
     switch ($scriptProperties['task']) {
         case 'publish':
-            $object = $modx->getObject($classname, $scriptProperties['object_id']);
+            $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
             $object->set('publishedon', time());
             $object->set('published', '1');
             $unpub = $object->get('unpub_date');
@@ -66,7 +66,7 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
             }
             break;
         case 'unpublish':
-            $object = $modx->getObject($classname, $scriptProperties['object_id']);
+            $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
             $object->set('unpublishedon', time());
             $object->set('published', '0');
             $object->set('unpublishedby', $modx->user->get('id')); //feld fehlt noch
@@ -76,16 +76,16 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
             }
             break;
         case 'delete':
-            $object = $modx->getObject($classname, $scriptProperties['object_id']);
+            $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
             $object->set('deletedon', time());
             $object->set('deleted', '1');
             $object->set('deletedby', $modx->user->get('id'));
             break;
         case 'recall':
-            $object = $modx->getObject($classname, $scriptProperties['object_id']);
+            $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
             $object->set('deleted', '0');
             break;
-            
+
         default:
 
             // set context_key and load fields from config-file
@@ -107,7 +107,7 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
                 }
                 break;
                 default:
-                // handles checkboxes & multiple selects elements 
+                // handles checkboxes & multiple selects elements
                 if (is_array($value)) {
                 $featureInsert = array();
                 while (list($featureValue, $featureItem) = each($value)) {
@@ -135,7 +135,7 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
                 $postvalues['createdby'] = $modx->user->get('id');
                 $postvalues[$config['idfield_local']] = $resource_id;
             } else {
-                $object = $modx->getObject($classname, $scriptProperties['object_id']);
+                $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
                 if (empty($object)) return $modx->error->failure($modx->lexicon('quip.thread_err_nf'));
                 $postvalues['editedon'] = time();
                 $postvalues['editedby'] = $modx->user->get('id');
@@ -170,7 +170,7 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
             }
             else{
             $tempvalues['alias'] = $oldalias;
-            } 
+            }
             */
             //overwrites
             if (empty($postvalues['ow_createdon'])) {
@@ -181,8 +181,8 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
             }
             /* handle alias
             if (empty($postvalues['ow_alias'])) {
-            
-            $postvalues['alias'] = $tempvalues['alias']; 
+
+            $postvalues['alias'] = $tempvalues['alias'];
             }
             else{
             //if posted empty alias generate new one from pagetitle
@@ -191,14 +191,14 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
             }
             else{
             $postvalues['alias'] = $resource->cleanAlias($postvalues['alias']);
-            } 			
+            }
             }
             //if new alias was created check if same alias exists for same day
 
             //$configs['classname']=$classname;
-            $getnews = $modx->getService('getnews','Getnews',$modx->getOption('core_path').'components/newsandmore/model/newsandmore/',$configs);    	
+            $getnews = $modx->getService('getnews','Getnews',$modx->getOption('core_path').'components/newsandmore/model/newsandmore/',$configs);
             $createdon = strtotime($postvalues['createdon']);
-            
+
             $params['year']=strftime('%Y', $createdon);
             $params['month']=strftime('%m', $createdon);
             $params['day']=strftime('%d', $createdon);
@@ -206,7 +206,7 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
             $params['published']='all';
             $params['deleted']='all';
             $params['exclude']=$scriptProperties['object_id'];
-            
+
             $existingobject=$getnews->getpage($params);
             if ($getnews->lastcount>0){
             $updateerror=true;
@@ -216,12 +216,12 @@ $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
             Bitte manuell einen eindeutigen Alias eintragen.<br/>
             alias: '.$postvalues['alias'].'<br/>
             Erstellungsdatum: '.strftime('%d.%m.%Y', $createdon).'<br/>
-            
+
             ';
-            return ;						
+            return ;
             }
-            
-            
+
+
             unset($resource);
             */
             //$postvalues['context_key']=$scriptProperties['context_key'];

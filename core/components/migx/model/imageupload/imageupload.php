@@ -6,7 +6,7 @@ $tvname = $modx->getOption('tv_name', $scriptProperties, '');
 
 //$uniqueFilenames = $modx->getOption('uniqueFilenames', $config, false);
 
-if ($resource = $modx->getObject('modResource', $resource_id)) {
+if ($resource = $modx->getObject('modResource', array('id' => $resource_id))) {
     $wctx = $resource->get('context_key');
 }
 
@@ -29,13 +29,13 @@ if ($source) {
 }
 
 if (!($source instanceof modMediaSource)) {
-    return 'mediasource couldn not be loaded';    
-}    
+    return 'mediasource couldn not be loaded';
+}
     $modx->setPlaceholder('docid', $resource_id);
     $source->initialize();
     $sourceProperties = $source->getPropertyList();
     $dirTree = $modx->getOption('dirtree', $_REQUEST, '');
-    
+
     $modx->setPlaceholder('debugSourceProperties', '<pre>' . print_r($sourceProperties, 1) . '</pre>');
     $modx->toPlaceholders($sourceProperties, 'sourceProperty');
     $basePath = $modx->getOption('basePath', $sourceProperties);
@@ -51,8 +51,8 @@ if (!($source instanceof modMediaSource)) {
     $thumbscontainer = $modx->getOption('thumbscontainer', $sourceProperties, 'thumbs/');
     $imageExtensions = $modx->getOption('imageExtensions', $sourceProperties, 'jpg,jpeg,png,gif');
     $imageExtensions = explode(',', $imageExtensions);
-    
-    
+
+
 
 
 

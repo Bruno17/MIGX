@@ -88,7 +88,7 @@ if (!empty($joinalias)) {
     /*
     if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
     $localkey = $joinFkMeta['local'];
-    }    
+    }
     */
     $c->leftjoin($joinclass, $joinalias);
     $c->select($xpdo->getSelectColumns($joinclass, $joinalias, 'Joined_'));
@@ -172,7 +172,7 @@ $c->limit($limit, $start);
 //$c->prepare();echo $c->toSql();
 $rows = array();
 
-if ($source = $modx->getObject('sources.modMediaSource', $source_id)) {
+if ($source = $modx->getObject('sources.modMediaSource', array('id' => $source_id))) {
     $this->modx->setPlaceholder('objectid', $object_id);
 	$this->modx->setPlaceholder('mediasource_docid',$resource_id);
     $source->initialize();
@@ -226,7 +226,7 @@ if ($source = $modx->getObject('sources.modMediaSource', $source_id)) {
         }
         $object = $modx->newObject($classname);
         $object->fromArray($item);
-        $object->save();       
+        $object->save();
     }
     $message = '';
 

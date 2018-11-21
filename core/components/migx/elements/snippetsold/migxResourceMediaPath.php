@@ -2,10 +2,10 @@
 /**
  * @name migxResourceMediaPath
  * @description Dynamically calculates the upload path for a given resource
- * 
+ *
  * This Snippet is meant to dynamically calculate your baseBath attribute
  * for custom Media Sources.  This is useful if you wish to shepard uploaded
- * images to a folder dedicated to a given resource.  E.g. page 123 would 
+ * images to a folder dedicated to a given resource.  E.g. page 123 would
  * have its own images that page 456 could not reference.
  *
  * USAGE:
@@ -14,7 +14,7 @@
  * [[migxResourceMediaPath? &pathTpl=`assets/test/{breadcrumb}` &breadcrumbdepth=`2`]]
  *
  * PARAMETERS
- * &pathTpl string formatting string specifying the file path. 
+ * &pathTpl string formatting string specifying the file path.
  *		Relative to MODX base_path
  *		Available placeholders: {id}, {pagetitle}, {parent}
  * &docid (optional) integer page id
@@ -62,7 +62,7 @@ if (empty($docid)) {
     return;
 }
 
-if ($resource = $modx->getObject('modResource', $docid)) {
+if ($resource = $modx->getObject('modResource', array('id' => $docid))) {
     $path = $pathTpl;
     $ultimateParent = '';
     if (strstr($path, '{breadcrumb}') || strstr($path, '{ultimateparent}')) {
@@ -83,7 +83,7 @@ if ($resource = $modx->getObject('modResource', $docid)) {
     if (strstr($path, '{breadcrumb}')) {
         $breadcrumbpath = '';
         for ($i = 1; $i <= $breadcrumbdepth; $i++) {
-           $breadcrumbpath .= $parentids[$i].'/';                
+           $breadcrumbpath .= $parentids[$i].'/';
         }
         $path = str_replace('{breadcrumb}', $breadcrumbpath, $path);
 

@@ -22,14 +22,14 @@ class migxFormProcessor extends modProcessor {
         $extra_params = $this->modx->getOption('extra_params', $scriptProperties, '');
         $record_index = $this->modx->getOption('record_index', $scriptProperties, '');
         $remove_item = $extra_params == 'removeimage' ? true : false;
-        
+
         $this->modx->migx->working_context = 'web';
         $limit = 100;
 
         $output = array();
         $message = 'no mediasource found';
 
-        if ($resource = $this->modx->getObject('modResource', $resource_id)) {
+        if ($resource = $this->modx->getObject('modResource', array('id' => $resource_id))) {
             $wctx = $resource->get('context_key');
             $this->modx->migx->working_context = $wctx;
 
@@ -41,7 +41,7 @@ class migxFormProcessor extends modProcessor {
 
                     //echo '<pre>' . print_r($sourceProperties,1) . '</pre>';
                     $filefield = $this->modx->getOption('migxFileFieldname', $sourceProperties, 'image');
-                    
+
                     //remove a file
                     if ($remove_item && isset($items[$record_index])){
                         $item = $items[$record_index];
@@ -50,7 +50,7 @@ class migxFormProcessor extends modProcessor {
                             $source->removeObject($filename);
                         }
                     }
-                    
+
                     $files = $source->getObjectsInContainer('');
                     $i = 1;
                     $imageList = array();

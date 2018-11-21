@@ -11,7 +11,7 @@ if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix']))
 
 if (!empty($config['packageName'])) {
     $packageNames = explode(',', $config['packageName']);
-    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';    
+    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';
 
     if (count($packageNames) == '1') {
         //for now connecting also to foreign databases, only with one package by default possible
@@ -30,9 +30,9 @@ if (!empty($config['packageName'])) {
     }
     if ($this->modx->lexicon) {
         $this->modx->lexicon->load($packageName . ':default');
-    }    
+    }
 }else{
-    $xpdo = &$modx;    
+    $xpdo = &$modx;
 }
 
 $classname = $config['classname'];
@@ -48,10 +48,10 @@ if (!empty($joinalias)) {
         $joinclass = $fkMeta['class'];
         if($fkMeta['owner'] == 'foreign'){
             $joinfield = $fkMeta['foreign'];
-		    //$parent_joinfield = $fkMeta['local']; 
+		    //$parent_joinfield = $fkMeta['local'];
 		} elseif ($fkMeta['owner'] == 'local'){
             $joinfield = $fkMeta['local'];
-		    //$parent_joinfield = $fkMeta['foreign']; 
+		    //$parent_joinfield = $fkMeta['foreign'];
 		}
     } else {
         $joinalias = '';
@@ -97,7 +97,7 @@ if (!empty($joinalias)) {
     /*
     if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
     $localkey = $joinFkMeta['local'];
-    }    
+    }
     */
     $c->leftjoin($joinclass, $joinalias);
     $c->select($xpdo->getSelectColumns($joinclass, $joinalias, 'Joined_'));
@@ -142,7 +142,7 @@ if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
 
     if (!empty($joinalias)) {
         $joinvalue = $resource_id;
-        if ($parent_object = $modx->getObject($joinclass,$resource_id)){
+        if ($parent_object = $modx->getObject($joinclass, (int)$resource_id)){
 			$joinvalue = $parent_object->get($joinfield);
         }
         $c->where(array($joinalias . '.' . $joinfield => $joinvalue));

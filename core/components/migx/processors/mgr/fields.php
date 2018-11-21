@@ -23,7 +23,7 @@ if (file_exists(MODX_CORE_PATH . 'model/modx/modmanagercontroller.class.php')) {
     $modx->controller = call_user_func_array(array($c, 'getInstance'), array($modx, 'modManagerControllerDeprecated', array()));
 }
 
-$modx->resource = ($modx->getObject('modResource', $scriptProperties['resource_id']));
+$modx->resource = $modx->getObject('modResource', array('id' => $scriptProperties['resource_id']));
 $migx->working_context = $modx->resource->get('context_key');
 //$_REQUEST['id']=$scriptProperties['resource_id'];
 

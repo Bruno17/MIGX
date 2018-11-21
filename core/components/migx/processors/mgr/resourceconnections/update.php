@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * MIGXdb; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package migx
  */
@@ -74,7 +74,7 @@ if (!empty($joinalias)) {
 
 switch ($scriptProperties['task']) {
     case 'publish':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('publishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '1');
         $unpub = $object->get('unpub_date');
@@ -83,7 +83,7 @@ switch ($scriptProperties['task']) {
         }
         break;
     case 'unpublish':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('unpublishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '0');
         $object->set('unpublishedby', $modx->user->get('id')); //feld fehlt noch
@@ -93,13 +93,13 @@ switch ($scriptProperties['task']) {
         }
         break;
     case 'delete':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('deletedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('deleted', '1');
         $object->set('deletedby', $modx->user->get('id'));
         break;
     case 'recall':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('deleted', '0');
         break;
     default:
@@ -135,7 +135,7 @@ switch ($scriptProperties['task']) {
                 if (substr($field[0], 0, 7) == 'Joined_') {
                     $joinvalues[substr($field[0], 7)] = $value;
                     unset($postvalues[$field[0]]);
-                } 
+                }
             }
         }
 
@@ -146,7 +146,7 @@ switch ($scriptProperties['task']) {
             //handle published
             $postvalues['published'] = isset($postvalues['published']) ? $postvalues['published'] : '1';
         } else {
-            $object = $modx->getObject($classname, $scriptProperties['object_id']);
+            $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
             if (empty($object)) return $modx->error->failure($modx->lexicon('quip.thread_err_nf'));
             $postvalues['editedon'] = strftime('%Y-%m-%d %H:%M:%S');
             $postvalues['editedby'] = $modx->user->get('id');

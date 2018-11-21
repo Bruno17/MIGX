@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * MIGXdb; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package migx
  */
@@ -45,7 +45,7 @@ if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix']))
 
 if (!empty($config['packageName'])) {
     $packageNames = explode(',', $config['packageName']);
-    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';    
+    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';
 
     if (count($packageNames) == '1') {
         //for now connecting also to foreign databases, only with one package by default possible
@@ -64,9 +64,9 @@ if (!empty($config['packageName'])) {
     }
     if ($this->modx->lexicon) {
         $this->modx->lexicon->load($packageName . ':default');
-    }    
+    }
 }else{
-    $xpdo = &$modx;    
+    $xpdo = &$modx;
 }
 $classname = $config['classname'];
 
@@ -79,7 +79,7 @@ if (empty($col)) {
 }
 
 $modx->migx->loadConfigs();
-$renderoptions = $modx->migx->getColumnRenderOptions($col); 
+$renderoptions = $modx->migx->getColumnRenderOptions($col);
 $fallback_idx = 'x';
 if (is_array($renderoptions)){
     $newoptions = array();
@@ -107,14 +107,14 @@ $columnrenderoption = $renderoptions[$idx];
 $nextcolumnrenderoptions = isset($renderoptions[$idx+1]) ? $renderoptions[$idx+1] : $renderoptions[$first_idx];
 //$nextcolumnrenderoptions = $modx->fromJson($nextcolumnrenderoptions);
 
-$value = $nextcolumnrenderoptions['value']; 
+$value = $nextcolumnrenderoptions['value'];
 
 if ($tv_type == 'migx'){
     $nextcolumnrenderoptions['tv_type'] = 'migx';
-    return $modx->error->success('',$nextcolumnrenderoptions);    
+    return $modx->error->success('',$nextcolumnrenderoptions);
 }
 
-$object = $xpdo->getObject($classname, $scriptProperties['object_id']);
+$object = $xpdo->getObject($classname, (int)$scriptProperties['object_id']);
 $object->set($col, $value);
 switch ($col) {
     case 'published':
@@ -130,7 +130,7 @@ switch ($col) {
     case 'deleted':
         if ($value == '1'){
             $object->set('deletedon', strftime('%Y-%m-%d %H:%M:%S'));
-            $object->set('deletedby', $modx->user->get('id'));            
+            $object->set('deletedby', $modx->user->get('id'));
         }
         break;
 }

@@ -45,7 +45,7 @@ class migxFormProcessor extends modProcessor {
         // ok let's see when we need this.
         $this->modx->migx->working_context = 'web';
 
-        if ($this->modx->resource = $this->modx->getObject('modResource', $scriptProperties['resource_id'])) {
+        if ($this->modx->resource = $this->modx->getObject('modResource', array('id' => $scriptProperties['resource_id']))) {
             $this->modx->migx->working_context = $this->modx->resource->get('context_key');
 
             //$_REQUEST['id']=$scriptProperties['resource_id'];
@@ -78,9 +78,9 @@ class migxFormProcessor extends modProcessor {
         $fieldid = 0;
         $allfields[] = array();
         $categories = array();
-        
+
         $tabs = $this->modx->migx->checkMultipleForms($tabs,$controller,$allfields,$record);
-        
+
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
         $formcaption = $this->modx->getOption('formcaption',$customconfigs,'');
 

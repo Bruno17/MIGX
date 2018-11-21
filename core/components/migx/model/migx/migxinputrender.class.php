@@ -9,9 +9,9 @@
  * @subpackage processors.element.tv.renders.mgr.input
  */
 class migxInputRender extends modTemplateVarInputRender {
-    
+
     public function process($value, array $params = array()) {
-        
+
         $namespace = 'migx';
         $this->modx->lexicon->load('tv_widget', $namespace . ':default');
         //$properties = isset($params['columns']) ? $params : $this->getProperties();
@@ -20,7 +20,7 @@ class migxInputRender extends modTemplateVarInputRender {
         require_once dirname(dirname(dirname(__file__)))  . '/model/migx/migx.class.php';
         $this->migx = new Migx($this->modx, $properties);
         /* get input-tvs */
-        $this->migx->config['tvname'] = $this->tv->get('name');           
+        $this->migx->config['tvname'] = $this->tv->get('name');
         $this->migx->loadConfigs();
 
         //$default_formtabs = '[{"caption":"Default", "fields": [{"field":"title","caption":"Title"}]}]';
@@ -70,7 +70,7 @@ class migxInputRender extends modTemplateVarInputRender {
         /* from image-TV do we need this somehow here?
         $source->setRequestProperties($_REQUEST);
         $source->initialize();
-        $this->modx->controller->setPlaceholder('source',$source->get('id'));     
+        $this->modx->controller->setPlaceholder('source',$source->get('id'));
         */
 
         //$base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
@@ -106,7 +106,7 @@ class migxInputRender extends modTemplateVarInputRender {
 
         //$newitem[] = $item;
         $tv_value = $this->tv->processBindings($this->tv->get('value'));
-        if ($temp = $this->modx->getObject('modTemplateVar', $this->tv->get('id'))) {
+        if ($temp = $this->modx->getObject('modTemplateVar', array('id' => $this->tv->get('id')))) {
             $default_value = $this->tv->processBindings($temp->get('default_text'), $resource_id);
         } else {
             $default_value = $this->tv->processBindings($this->tv->get('default_text'), $resource_id);
@@ -117,7 +117,7 @@ class migxInputRender extends modTemplateVarInputRender {
         }
 
         $options = $this->getInputOptions();
-        
+
         $disable_add_item = $this->modx->getOption('disable_add_item',$this->migx->customconfigs,false);
 
         if (is_array($options) && !empty($options)) {
@@ -184,15 +184,15 @@ class migxInputRender extends modTemplateVarInputRender {
         $this->setPlaceholder('base_url', $this->modx->getOption('base_url'));
         $this->setPlaceholder('myctx', $wctx);
         $this->setPlaceholder('config', $this->migx->config);
-        
+
         $grid = $grid == 'default' ? 'migx' : $grid;
-        
+
         $filenames = array();
         $defaultpath = $this->migx->config['templatesPath'] . '/mgr/grids/';
         $filename = $grid . '.grid.tpl';
         if ($gridfile = $this->migx->findGrid($defaultpath, $filename, $filenames)) {
             $this->setPlaceholder('grid', $this->migx->replaceLang($this->modx->controller->fetchTemplate($gridfile)));
-        }        
+        }
     }
 
     /**

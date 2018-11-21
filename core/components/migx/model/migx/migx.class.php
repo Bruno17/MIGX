@@ -254,7 +254,7 @@ class Migx {
         if (!empty($groupingField)) {
             $newgroupvalue = isset($fields[$groupingField]) ? $fields[$groupingField] : '';
             $gr_level = empty($level) ? '' : $level;
-            
+
             /*
             print_r($oldgroupvalue);
             echo 'old:' . $oldgroupvalue[$level];
@@ -642,7 +642,7 @@ class Migx {
             if ($collection = $this->modx->getCollection($classname, $c)) {
                 $idx = 0;
                 $formtabs = false;
-                $firstformtabs = array();                
+                $firstformtabs = array();
 
                 foreach ($collection as $object) {
 
@@ -672,10 +672,10 @@ class Migx {
                 }
 
                 $formtabs = $formtabs ? $formtabs : $firstformtabs;
- 
-                $config = $this->customconfigs; 
-                $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));       
-                
+
+                $config = $this->customconfigs;
+                $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));
+
                 if (is_array($hooksnippets)) {
                     $hooksnippet = $this->modx->getOption('getformnames', $hooksnippets, '');
                     if (!empty($hooksnippet)) {
@@ -683,7 +683,7 @@ class Migx {
                         $snippetProperties['formnames'] = &$formnames;
                         $result = $this->modx->runSnippet($hooksnippet, $snippetProperties);
                     }
-                }                
+                }
 
                 $controller->setPlaceholder('formnames', $formnames);
 
@@ -738,7 +738,7 @@ class Migx {
             if ($sender == 'mgr/fields' && ($req_configs == 'migxcolumns' || $req_configs == 'migxdbfilters')) {
                 $preloadGridConfigs = true;
                 $configs_id = $this->modx->getOption('co_id', $_REQUEST, '');
-                $this->configsObject = $this->modx->getObject('migxConfig', $configs_id);
+                $this->configsObject = $this->modx->getObject('migxConfig', (int)$configs_id);
             }
 
             if ($sender == 'migxconfigs/fields') {
@@ -1661,7 +1661,7 @@ class Migx {
 
         if (isset($sources[$this->working_context]) && !empty($sources[$this->working_context])) {
             //try using field-specific mediasource from config
-            if ($mediasource = $this->modx->getObject('sources.modMediaSource', $sources[$this->working_context])) {
+            if ($mediasource = $this->modx->getObject('sources.modMediaSource', array('id' => $sources[$this->working_context]))) {
                 return $mediasource;
             }
         }
@@ -1706,7 +1706,7 @@ class Migx {
     function checkForConnectedResource($resource_id = false, &$config) {
         if ($resource_id) {
             $check_resid = $this->modx->getOption('check_resid', $config);
-            if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
+            if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', array('id' => $resource_id))) {
                 if ($check = $resource->getTvValue($config['check_resid_TV'])) {
                     $check_resid = $check;
                 }
@@ -1723,7 +1723,7 @@ class Migx {
     function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
         $fieldid = 0;
         $config = $this->customconfigs;
-        $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));       
+        $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));
         if (is_array($hooksnippets)) {
             $hooksnippet_beforecreateform = $this->modx->getOption('beforecreateform', $hooksnippets, '');
             if (!empty($hooksnippet_beforecreateform)) {
@@ -1799,9 +1799,9 @@ class Migx {
                     $tv->set('id','skdjflskjd');
                     echo 'id:'. $tv->get('id');
                     $tv->_fieldMeta['id']['phptype'] = 'string';
-                    echo($tv->_fieldMeta['id']['phptype']); 
+                    echo($tv->_fieldMeta['id']['phptype']);
                     $tv->set('id','skdjflskjd');
-                    echo 'id:'. $tv->get('id');                                               
+                    echo 'id:'. $tv->get('id');
                     */
 
                     if (!empty($field['inputOptionValues'])) {
@@ -1895,21 +1895,21 @@ class Migx {
 
                     /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
                     * may be performancewise its better todo that here?
-                    
+
                     if (!empty($properties['basePath'])) {
                     if ($properties['autoResourceFolders'] == 'true') {
                     $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
                     $targetDir = $params['basePath'];
 
                     $cacheManager = $this->modx->getCacheManager();
-                    // if directory doesnt exist, create it 
+                    // if directory doesnt exist, create it
                     if (!file_exists($targetDir) || !is_dir($targetDir)) {
                     if (!$cacheManager->writeTree($targetDir)) {
                     $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
                     return $this->modx->error->failure('Could not create directory: ' . $targetDir);
                     }
                     }
-                    // make sure directory is readable/writable 
+                    // make sure directory is readable/writable
                     if (!is_readable($targetDir) || !is_writable($targetDir)) {
                     $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
                     return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
@@ -1949,12 +1949,12 @@ class Migx {
                     $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
 
                     /*
-                    //extract scripts from content                    
-                    $pattern = '#<script(.*?)</script>#is'; 
-                    preg_match_all($pattern, $inputForm, $matches); 
+                    //extract scripts from content
+                    $pattern = '#<script(.*?)</script>#is';
+                    preg_match_all($pattern, $inputForm, $matches);
                     foreach ($matches[0] as $jsvalue) {
                     $js .= $jsvalue;
-                    }               
+                    }
                     $inputForm = preg_replace($pattern, '', $inputForm);
                     */
 
@@ -2362,9 +2362,9 @@ class Migx {
      * Sort DB result
      *
      * @param array $data Result of sql query as associative array
-     * 
-     * @param array $options Sortoptions as array 
-     * 
+     *
+     * @param array $options Sortoptions as array
+     *
      *
      * <code>
      *
@@ -2377,11 +2377,11 @@ class Migx {
      *                      'date' => date('Y-m-d', rand(0, time()))
      *                  );
      * }
-     * 
+     *
      * $options = array(array('sortby'=>'date','sortdir'=>'DESC','sortmode'=>'numeric'));
      * $data = sortDbResult($data, $options);
      * printf('<pre>%s</pre>', print_r($data, true));
-     * 
+     *
      * $options = array(array('sortby'=>'last_name','sortdir'=>'ASC','sortmode'=>'string'),array('sortby'=>'first_name','sortdir'=>'ASC','sortmode'=>'string'));
      * $data = sortDbResult($data, $options);
      * printf('<pre>%s</pre>', print_r($data, true));
@@ -2455,7 +2455,7 @@ class Migx {
                         /*
                         if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
                         $localkey = $joinFkMeta['local'];
-                        }    
+                        }
                         */
                         $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
                         switch ($type) {
@@ -2666,7 +2666,7 @@ class Migx {
 
         $col = explode(':', $col);
         if (!empty($newpos_id) && !empty($object_id) && count($col) > 1) {
-            $workingobject = $xpdo->getObject($classname, $object_id);
+            $workingobject = $xpdo->getObject($classname, (int)$object_id);
             $posfield = $col[0];
             $position = $col[1];
 
@@ -2690,7 +2690,7 @@ class Migx {
                 /*
                 if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
                 $localkey = $joinFkMeta['local'];
-                }    
+                }
                 */
                 $c->leftjoin($joinclass, $joinalias);
                 $c->select($xpdo->getSelectColumns($joinclass, $joinalias, 'Joined_'));

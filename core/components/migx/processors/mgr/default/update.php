@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * MIGXdb; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package migx
  */
@@ -126,7 +126,7 @@ if (!empty($joinalias)) {
         if ($checkConnected && $fkMeta['owner'] == 'foreign') {
             $joinfield = $fkMeta['foreign'];
             $joinvalue = $resource_id;
-            if ($parent_object = $modx->getObject($joinclass, $resource_id)) {
+            if ($parent_object = $modx->getObject($joinclass, (int)$resource_id)) {
                 $joinvalue = $parent_object->get($joinfield);
             }
             $scriptProperties[$fkMeta['local']] = $joinvalue;
@@ -142,7 +142,7 @@ $task = $modx->getOption('task', $scriptProperties, 'update');
 
 switch ($task) {
     case 'publish':
-        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('publishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '1');
         $unpub = $object->get('unpub_date');
@@ -151,7 +151,7 @@ switch ($task) {
         }
         break;
     case 'unpublish':
-        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('unpublishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '0');
         $object->set('unpublishedby', $modx->user->get('id')); //feld fehlt noch
@@ -161,13 +161,13 @@ switch ($task) {
         }
         break;
     case 'delete':
-        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('deletedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('deleted', '1');
         $object->set('deletedby', $modx->user->get('id'));
         break;
     case 'recall':
-        $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
+        $object = $xpdo->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('deleted', '0');
         break;
     default:
@@ -273,7 +273,7 @@ switch ($task) {
             //handle published
             $postvalues['published'] = isset($postvalues['published']) ? $postvalues['published'] : '1';
         } else {
-            $object = $xpdo->getObject($classname, $scriptProperties['object_id']);
+            $object = $xpdo->getObject($classname, (int)$scriptProperties['object_id']);
             if (empty($object))
                 return $modx->error->failure($modx->lexicon('quip.thread_err_nf'));
             $postvalues['editedon'] = strftime('%Y-%m-%d %H:%M:%S');

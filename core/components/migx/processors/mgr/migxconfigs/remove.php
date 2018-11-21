@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * XdbEdit; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package xdbedit
  */
@@ -36,7 +36,7 @@ if (empty($scriptProperties['object_id'])){
 
 	return $modx->error->failure($modx->lexicon('quip.thread_err_ns'));
 
-} 
+}
 
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
@@ -56,16 +56,16 @@ if ($modx->lexicon)
 
 switch ($scriptProperties['task']) {
 	case 'removeone':
-	    $object = $modx->getObject($classname, $scriptProperties['object_id']);
+	    $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         if ($object->remove() === false) {
             return $modx->error->failure($modx->lexicon('quip.comment_err_remove'));
         }
 	    break;
 
     default:
-    break;    
+    break;
 }
-    
+
 //clear cache
 $paths = array(
     'config.cache.php',
@@ -83,7 +83,7 @@ $options = array(
     'extensions' => array('.cache.php', '.msg.php', '.tpl.php'),
 );
 if ($modx->getOption('cache_db')) $options['objects'] = '*';
-$results= $modx->cacheManager->clearCache($paths, $options);	
+$results= $modx->cacheManager->clearCache($paths, $options);
 
 return $modx->error->success();
 

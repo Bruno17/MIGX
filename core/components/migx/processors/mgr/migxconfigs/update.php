@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * XdbEdit; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package xdbedit
  */
@@ -62,7 +62,7 @@ if (isset($scriptProperties['data'])) {
 
 switch ($task) {
     case 'publish':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('publishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '1');
         $unpub = $object->get('unpub_date');
@@ -71,7 +71,7 @@ switch ($task) {
         }
         break;
     case 'unpublish':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('unpublishedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('published', '0');
         $object->set('unpublishedby', $modx->user->get('id')); //feld fehlt noch
@@ -81,13 +81,13 @@ switch ($task) {
         }
         break;
     case 'delete':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('deletedon', strftime('%Y-%m-%d %H:%M:%S'));
         $object->set('deleted', '1');
         $object->set('deletedby', $modx->user->get('id'));
         break;
     case 'recall':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         $object->set('deleted', '0');
         break;
     default:
@@ -111,7 +111,7 @@ switch ($task) {
             }
             break;
             default:
-            // handles checkboxes & multiple selects elements 
+            // handles checkboxes & multiple selects elements
             if (is_array($value)) {
             $featureInsert = array();
             while (list($featureValue, $featureItem) = each($value)) {
@@ -154,7 +154,7 @@ switch ($task) {
             $tempvalues['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
             $postvalues['createdby'] = $modx->user->get('id');
         } else {
-            $object = $modx->getObject($classname, $scriptProperties['object_id']);
+            $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
             if (empty($object))
                 return $modx->error->failure($modx->lexicon('quip.thread_err_nf'));
             $postvalues['editedon'] = strftime('%Y-%m-%d %H:%M:%S');
@@ -183,14 +183,14 @@ switch ($task) {
             if (is_array($formlayouts) && count($formlayouts) > 0) {
                 $fields = array();
                 $tab = false;
-                $layout_id = 0; 
+                $layout_id = 0;
                 $column_id = 0;
                 $columnwidth = 0;
                 $columncaption = '';
                 $columnstyle = '';
-                $columnminwidth = '';                          
+                $columnminwidth = '';
                 $layoutcaption = '';
-                $layoutstyle = '';                   
+                $layoutstyle = '';
                 foreach ($formlayouts as $formlayout) {
                     $type = $modx->getOption('MIGXtype', $formlayout, '');
                     switch ($type) {
@@ -202,14 +202,14 @@ switch ($task) {
                                 $fields = array();
                             }
                             $tab = $formlayout;
-                            $layout_id = 0; 
+                            $layout_id = 0;
                             $column_id = 0;
-                            $columnwidth = 0; 
+                            $columnwidth = 0;
                             $columncaption = '';
                             $columnstyle = '';
-                            $columnminwidth = '';                          
+                            $columnminwidth = '';
                             $layoutcaption = '';
-                            $layoutstyle = '';                                                         
+                            $layoutstyle = '';
                             break;
                         case 'layout':
                             $layout_id++;
@@ -217,9 +217,9 @@ switch ($task) {
                             $columnwidth = 0;
                             $columncaption = '';
                             $columnstyle = '';
-                            $columnminwidth = '';                          
+                            $columnminwidth = '';
                             $layoutcaption = $modx->getOption('MIGXlayoutcaption', $formlayout, '');
-                            $layoutstyle = $modx->getOption('MIGXlayoutstyle', $formlayout, '');                            
+                            $layoutstyle = $modx->getOption('MIGXlayoutstyle', $formlayout, '');
                             break;
                         case 'column':
                             $column_id++;
@@ -241,7 +241,7 @@ switch ($task) {
                             $field['MIGXcolumnstyle'] = $columnstyle;
                             $field['MIGXcolumncaption'] = $columncaption;
                             $field['MIGXlayoutstyle'] = $layoutstyle;
-                            $field['MIGXlayoutcaption'] = $layoutcaption;                            
+                            $field['MIGXlayoutcaption'] = $layoutcaption;
                             $fields[] = $field;
                             break;
                     }
@@ -283,12 +283,12 @@ switch ($task) {
         $pub=$object->get('published');
         if (empty($pub)){
         $tempvalues['publishedon']=strftime('%Y-%m-%d %H:%M:%S');
-        $postvalues['publishedby']=$modx->user->get('id');				    	
+        $postvalues['publishedby']=$modx->user->get('id');
         }
         $unpub=$object->get('unpub_date');
         if($unpub<strftime('%Y-%m-%d %H:%M:%S')){
         $postvalues['unpub_date']=NULL;
-        }			
+        }
         }
         if ($postvalues['published']=='0'){
         $pub=$object->get('pub_date');
@@ -306,7 +306,7 @@ switch ($task) {
         }
         else{
         $tempvalues['alias'] = $oldalias;
-        } 
+        }
         */
         //overwrites
         if (isset($tempvalues['createdon']) && empty($postvalues['ow_createdon'])) {
@@ -315,11 +315,11 @@ switch ($task) {
         if (isset($tempvalues['publishedon']) && empty($postvalues['ow_publishedon'])) {
             $postvalues['publishedon'] = $tempvalues['publishedon'];
         }
-      
+
         /* handle alias
         if (empty($postvalues['ow_alias'])) {
 
-        $postvalues['alias'] = $tempvalues['alias']; 
+        $postvalues['alias'] = $tempvalues['alias'];
         }
         else{
         //if posted empty alias generate new one from pagetitle
@@ -328,12 +328,12 @@ switch ($task) {
         }
         else{
         $postvalues['alias'] = $resource->cleanAlias($postvalues['alias']);
-        } 			
+        }
         }
         //if new alias was created check if same alias exists for same day
 
         //$configs['classname']=$classname;
-        $getnews = $modx->getService('getnews','Getnews',$modx->getOption('core_path').'components/newsandmore/model/newsandmore/',$configs);    	
+        $getnews = $modx->getService('getnews','Getnews',$modx->getOption('core_path').'components/newsandmore/model/newsandmore/',$configs);
         $createdon = strtotime($postvalues['createdon']);
 
         $params['year']=strftime('%Y', $createdon);
@@ -355,7 +355,7 @@ switch ($task) {
         Erstellungsdatum: '.strftime('%d.%m.%Y', $createdon).'<br/>
 
         ';
-        return ;						
+        return ;
         }
 
 

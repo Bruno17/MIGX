@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * XdbEdit; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package xdbedit
  */
@@ -55,7 +55,7 @@ if ($modx->lexicon) {
 
 switch ($scriptProperties['task']) {
     case 'removeone':
-        $object = $modx->getObject($classname, $scriptProperties['object_id']);
+        $object = $modx->getObject($classname, (int)$scriptProperties['object_id']);
         if ($object->remove() === false) {
             return $modx->error->failure($modx->lexicon('quip.comment_err_remove'));
         }
