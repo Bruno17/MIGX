@@ -35,7 +35,7 @@
 /*example: <ul>[[!getImageList? &tvname=`myTV`&tpl=`@CODE:<li>[[+idx]]<img src="[[+imageURL]]"/><p>[[+imageAlt]]</p></li>`]]</ul>*/
 /* get default properties */
 
-
+$allow_request = (bool)$modx->getOption('allowRequest', $scriptProperties, false);
 $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $inherit_children_tvname = $modx->getOption('inherit_children_tvname', $scriptProperties, '');
 $tpl = $modx->getOption('tpl', $scriptProperties, '');
@@ -58,10 +58,14 @@ $placeholdersKeyField = $modx->getOption('placeholdersKeyField', $scriptProperti
 $toJsonPlaceholder = $modx->getOption('toJsonPlaceholder', $scriptProperties, false);
 $jsonVarKey = $modx->getOption('jsonVarKey', $scriptProperties, 'migx_outputvalue');
 $outputvalue = $modx->getOption('value', $scriptProperties, '');
-$outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
+if ($allow_request) {
+    $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
+}
 $docidVarKey = $modx->getOption('docidVarKey', $scriptProperties, 'migx_docid');
 $docid = $modx->getOption('docid', $scriptProperties, (isset($modx->resource) ? $modx->resource->get('id') : 1));
-$docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
+if ($allow_request) {
+    $docid = isset($_REQUEST[$docidVarKey]) ? $_REQUEST[$docidVarKey] : $docid;
+}
 $processTVs = $modx->getOption('processTVs', $scriptProperties, '1');
 $reverse = $modx->getOption('reverse', $scriptProperties, '0');
 $sumFields = $modx->getOption('sumFields', $scriptProperties, '');
@@ -118,7 +122,7 @@ if (!empty($tvname)) {
         }
         if ($jsonVarKey == 'migx_outputvalue' && !empty($properties['jsonvarkey'])) {
             $jsonVarKey = $properties['jsonvarkey'];
-            $outputvalue = isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
+            $outputvalue = $allow_request && isset($_REQUEST[$jsonVarKey]) ? $_REQUEST[$jsonVarKey] : $outputvalue;
         }
 
         if (empty($outputvalue)) {
