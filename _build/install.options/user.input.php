@@ -53,12 +53,13 @@ $hasMenu = '1';
 
 if ($hasMenu == '1') {
     $output = 
-    '<p>&nbsp;</p>
-    <label for="menu_placement">Where to place the menu for this Extra</label>
-    <p>&nbsp;</p>
-    <input type="radio" name="menu_placement" value="topnav" /> Top Nav <br>
-    <input type="radio" name="menu_placement" value="components" /> Extras/Components <br>
-    <p>&nbsp;</p>';
+    '<label for="menu_placement">Where to place the menu for this Extra</label>
+    <div class="x-form-check-wrap">
+	<input type="radio" name="menu_placement" class="x-form-radio" id="menu-placement-topnav" value="topnav" /> 
+	 <label for="menu-placement-topnav" class="x-form-cb-label">Top Nav</label> <br>
+	<input type="radio" name="menu_placement" class="x-form-radio" id="menu-placement-components" value="components" /> 
+	 <label for="menu-placement-components" class="x-form-cb-label">Extras/Components</label> <br>
+    </div>';
 }
 
 
