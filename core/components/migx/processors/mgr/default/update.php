@@ -42,7 +42,7 @@ $config = $modx->migx->customconfigs;
 
 $hooksnippets = $modx->fromJson($modx->getOption('hooksnippets', $config, ''));
 if (is_array($hooksnippets)) {
-	$hooksnippet_beforesave = $modx->getOption('beforesave', $hooksnippets, '');
+    $hooksnippet_beforesave = $modx->getOption('beforesave', $hooksnippets, '');
     $hooksnippet_aftersave = $modx->getOption('aftersave', $hooksnippets, '');
     $hooksnippet_validate = $modx->getOption('validate', $hooksnippets, '');
 }
@@ -84,17 +84,6 @@ if (!empty($config['packageName'])) {
 $snippetProperties = array();
 $snippetProperties['config'] = &$config;
 $snippetProperties['scriptProperties'] = &$scriptProperties;
-
-if (!empty($hooksnippet_beforesave)) {
-    $result = $modx->runSnippet($hooksnippet_beforesave, $snippetProperties);
-    $result = $modx->fromJson($result);
-    $error = $modx->getOption('error', $result, '');
-    if (!empty($error)) {
-        $updateerror = true;
-        $errormsg = $error;
-        return;
-    }
-}
 
 $classname = $config['classname'];
 
@@ -328,6 +317,21 @@ switch ($task) {
         $object->fromArray($postvalues);
 }
 
+$snippetProperties['object'] = &$object;
+$snippetProperties['config'] = &$config;
+$snippetProperties['scriptProperties'] = &$scriptProperties;
+
+if (!empty($hooksnippet_beforesave)) {
+    $result = $modx->runSnippet($hooksnippet_beforesave, $snippetProperties);
+    $result = $modx->fromJson($result);
+    $error = $modx->getOption('error', $result, '');
+    if (!empty($error)) {
+        $updateerror = true;
+        $errormsg = $error;
+        return;
+    }
+}
+
 if ($object->save() == false) {
     $updateerror = true;
     $errormsg = $modx->lexicon('quip.thread_err_save');
@@ -392,6 +396,4 @@ $modx->cacheManager->refresh(array(
     'auto_publish' => array('contexts' => $contexts),
     'context_settings' => array('contexts' => $contexts),
     'resource' => array('contexts' => $contexts),
-    ));
-
-?>
+));
