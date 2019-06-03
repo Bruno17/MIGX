@@ -129,10 +129,6 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
         $modx->migx->prepareJoins($classname, $joins, $c);
     }
 
-    if ($joins) {
-        $modx->migx->prepareJoins($classname, $joins, $c);
-    }
-
     if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
         foreach ($config['gridfilters'] as $filter) {
 
