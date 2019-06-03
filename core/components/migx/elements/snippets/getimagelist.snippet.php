@@ -267,7 +267,27 @@ if ($count > 0) {
                 //don't manipulate any urls here
                 $modx->setOption('manipulatable_url_tv_output_types', '');
                 $tv->set('default_text', $value);
-                $value = $tv->renderOutput($docid);
+
+                // $value = $tv->renderOutput($docid); breaks if the TV used in MIGX is also assigned to this Template,
+                // example tv: imageLogo is assigned to the template and imageLogo is assigned to the MIGX TV as a result
+                // only the value of the imageLogo is returned for the MIGX TV instance
+                // need to override default MODX method: $value = $tv->renderOutput($docid);
+                /* process any TV commands in value */
+                $tv_value = $tv->processBindings($value, $docid);
+
+                $params = $tv->get('output_properties');
+                if (empty($params) || $params === null) {
+                    $params = [];
+                }
+
+                /* run prepareOutput to allow for custom overriding */
+                $tv_value = $tv->prepareOutput($tv_value, $docid);
+
+                /* find the render */
+                $outputRenderPaths = $tv->getRenderDirectories('OnTVOutputRenderList','output');
+                $value = $tv->getRender($params, $tv_value, $outputRenderPaths, 'output', $docid, $tv->get('display'));
+                // End override of $value = $tv->renderOutput($docid);
+
                 //set option back
                 $modx->setOption('manipulatable_url_tv_output_types', $mTypes);
                 //now manipulate urls
