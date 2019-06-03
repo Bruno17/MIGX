@@ -7,6 +7,8 @@ $httpimg = '<img style="height:60px" src="'.$val.'"/>';
 $phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+source+'";
 $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 
+$assets_url = $this->modx->getOption('assets_url');
+
 $renderer['this.renderImage'] = "
     renderImage : function(val, md, rec, row, col, s){
         var source = s.pathconfigs[col];
@@ -85,7 +87,7 @@ renderCrossTick : function(val, md, rec, row, col, s) {
         case '':
         case null:
         case false:
-            renderImage = '/assets/components/migx/style/images/cross.png';
+            renderImage = ''".$assets_url."components/migx/style/images/cross.png';
             handler = 'this.publishObject';
             classname = 'publish';
             altText = 'No';
@@ -93,7 +95,7 @@ renderCrossTick : function(val, md, rec, row, col, s) {
         case 1:
         case '1':
         case true:
-            renderImage = '/assets/components/migx/style/images/tick.png';
+            renderImage = '".$assets_url."components/migx/style/images/tick.png';
             handler = 'this.unpublishObject';
             classname = 'unpublish';
             altText = 'Yes';
@@ -113,7 +115,7 @@ renderClickCrossTick : function(val, md, rec, row, col, s) {
         case '':
         case null:
         case false:
-            renderImage = '/assets/components/migx/style/images/cross.png';
+            renderImage = '".$assets_url."components/migx/style/images/cross.png';
             handler = 'this.publishObject';
             classname = 'unpublished';
             altText = 'No';
@@ -121,7 +123,7 @@ renderClickCrossTick : function(val, md, rec, row, col, s) {
         case 1:
         case '1':
         case true:
-            renderImage = '/assets/components/migx/style/images/tick.png';
+            renderImage = '".$assets_url."components/migx/style/images/tick.png';
             handler = 'this.unpublishObject';
             classname = 'published';
             altText = 'Yes';
@@ -149,11 +151,11 @@ renderSwitchStatusOptions : function(val, md, rec, row, col, s) {
 }
 ";
 
-$tpl = '{6} <a href="#" ><img class="controlBtn btn_selectpos {4} selectpos" src="'.$base_url.'assets/components/migx/style/images/arrow_updown.png" alt="select" title="select position"></a>';
+$tpl = '{6} <a href="#" ><img class="controlBtn btn_selectpos {4} selectpos" src="'.$base_url.$assets_url.'components/migx/style/images/arrow_updown.png" alt="select" title="select position"></a>';
 $tpl_active = '{6} '; 
-$tpl_active .= '<a href="#" ><img class="controlBtn btn_before {4} {5}:before" src="'.$base_url.'assets/components/migx/style/images/arrow_up.png" alt="before" title="move before"></a>';
-$tpl_active .= '<a href="#" ><img class="controlBtn btn_cancel {4} cancel" src="'.$base_url.'assets/components/migx/style/images/cancel.png" alt="cancel" title="cancel"></a>';
-$tpl_active .= '<a href="#" ><img class="controlBtn btn_after {4} {5}:after" src="'.$base_url.'assets/components/migx/style/images/arrow_down.png" alt="after" title="move after"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_before {4} {5}:before" src="'.$base_url.$assets_url.'components/migx/style/images/arrow_up.png" alt="before" title="move before"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_cancel {4} cancel" src="'.$base_url.$assets_url.'components/migx/style/images/cancel.png" alt="cancel" title="cancel"></a>';
+$tpl_active .= '<a href="#" ><img class="controlBtn btn_after {4} {5}:after" src="'.$base_url.$assets_url.'components/migx/style/images/arrow_down.png" alt="after" title="move after"></a>';
 
 $renderer['this.renderPositionSelector'] = "
 renderPositionSelector : function(val, md, rec, row, col, s) {
@@ -224,7 +226,7 @@ renderOptionSelector : function(val, md, rec, row, col, s) {
     //var column = this.getColumnModel().getColumnAt(col);
     //var ro = Ext.util.JSON.decode(rec.json[column.dataIndex+'_ro']);
     var renderImage, altText, handler, classname;
-    renderImage = '/assets/components/migx/style/images/tick.png';
+    renderImage = '".$assets_url."components/migx/style/images/tick.png';
     handler = 'this.selectSelectorOption';
     classname = 'test';
     altText = 'test';
