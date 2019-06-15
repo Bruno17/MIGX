@@ -274,20 +274,17 @@ if ($count > 0) {
                 // need to override default MODX method: $value = $tv->renderOutput($docid);
                 /* process any TV commands in value */
                 $tv_value = $tv->processBindings($value, $docid);
-
                 $params = $tv->get('output_properties');
                 if (empty($params) || $params === null) {
                     $params = [];
                 }
-
                 /* run prepareOutput to allow for custom overriding */
                 $tv_value = $tv->prepareOutput($tv_value, $docid);
-
                 /* find the render */
                 $outputRenderPaths = $tv->getRenderDirectories('OnTVOutputRenderList','output');
                 $value = $tv->getRender($params, $tv_value, $outputRenderPaths, 'output', $docid, $tv->get('display'));
                 // End override of $value = $tv->renderOutput($docid);
-
+				
                 //set option back
                 $modx->setOption('manipulatable_url_tv_output_types', $mTypes);
                 //now manipulate urls

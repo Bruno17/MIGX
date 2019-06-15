@@ -114,3 +114,5 @@ foreach ($record as $field => $fieldvalue) {
         }
     }
 }
+
+$modx->migx->record_fields = $record;

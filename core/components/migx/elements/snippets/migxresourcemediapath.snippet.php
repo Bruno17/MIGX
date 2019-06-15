@@ -112,6 +112,7 @@ if ($resource = $modx->getObject('modResource', $docid)) {
     }
     if ($user = $modx->user) {
         $path = str_replace('{username}', $modx->user->get('username'), $path);
+        $path = str_replace('{userid}', $modx->user->get('id'), $path);
     }
 
     $fullpath = $modx->getOption('base_path') . $path;
