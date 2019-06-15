@@ -102,7 +102,6 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
 
     /* setup default properties */
     $sort = $modx->getOption('sort', $scriptProperties, 'id');
-    $sort = $modx->getOption('sort', $scriptProperties, 'id');
     $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
     $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
     $object_id = $modx->getOption('object_id', $scriptProperties, '');
