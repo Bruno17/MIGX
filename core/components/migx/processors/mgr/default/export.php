@@ -116,10 +116,15 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     $groupby = $modx->getOption('getlistgroupby', $config, '');
     $selectfields = $modx->getOption('getlistselectfields', $config, '');
     $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
+    $ignoreselectfields = $modx->getOption('ignoreselectfields', $config, 0);
     $specialfields = $modx->getOption('getlistspecialfields', $config, '');    
 
     $c = $xpdo->newQuery($classname);
-    $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
+    if ($ignoreselectfields){
+        
+    }else{
+        $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));    
+    }
     if (!empty($specialfields)) {
         $c->select($specialfields);
     }
