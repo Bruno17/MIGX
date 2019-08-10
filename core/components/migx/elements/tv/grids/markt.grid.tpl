@@ -137,9 +137,9 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
             return '<img style="height:60px" src="' + val + '"/>' ;
         }
         if (val != ''){
-            //return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?w=100&h=100&f=png&ra=1&src=' + val + '" alt="" />';
+            //return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?w=80&h=80&f=png&ra=1&src=' + val + '" alt="" />';
 
-            return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?w=100&h=100&f=png&ra=1&src='+val+'&wctx={$ctx}'+source+'{literal}" alt="" />';
+            return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?w=80&h=80&f=png&ra=1&src='+val+'&wctx={$ctx}'+source+'{literal}" alt="" />';
         }
         return val;
     }
