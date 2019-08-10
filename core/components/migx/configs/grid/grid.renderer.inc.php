@@ -4,7 +4,7 @@ $ctx = '{$ctx}';
 $val = "' + val + '";
 $httpimg = '<img style="height:60px" src="'.$val.'"/>';
 
-$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+source+'";
+$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?w=100&h=100&f=png&ra=1&src='+val+source+'";
 $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 
 $assets_url = $this->modx->getOption('assets_url');
@@ -15,16 +15,16 @@ $renderer['this.renderImage'] = "
         if (val !== null) {
             if (val.substr(0,4) == 'http'){
                 return '{$httpimg}' ;
-            }        
+            }
             if (val != ''){
                 return '{$phpthumbimg}';
             }
             return val;
         }
-	}
+    }
 ";
 
-$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?h=60&src='+val+'";
+$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?w=100&h=100&f=png&ra=1&src='+val+'";
 $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 
 $renderer['this.renderImageFromHtml'] = "
@@ -33,18 +33,17 @@ $renderer['this.renderImageFromHtml'] = "
         if (val !== null) {
             if (val != ''){
                 var el = document.createElement('div');
-                el.innerHTML = val;               
+                el.innerHTML = val;
                 var img = el.querySelector('img');
-                
+
                 if (img){
                     val = img.getAttribute('src');
                     return '{$phpthumbimg}';
                 }
-                
             }
             return val;
         }
-	}
+    }
 
 ";
 
@@ -53,34 +52,33 @@ $renderer['this.renderImageFromHtml'] = "
 
 $renderer['this.renderPlaceholder'] = "
 renderPlaceholder : function(val, md, rec, row, col, s){
-         return '[[+'+val+'.'+rec.json.MIGX_id+']]';
-        
-	}
+        return '[[+'+val+'.'+rec.json.MIGX_id+']]';
+    }
 ";
 
 $renderer['this.renderFirst'] = "
 renderFirst : function(val, md, rec, row, col, s){
-		val = val.split(':');
+        val = val.split(':');
         return val[0];
-	}        
+    }
 ";
 
 $renderer['this.renderLimited'] = "
 renderLimited : function(val, md, rec, row, col, s){
-		var max = 100;
+        var max = 100;
         var count = val.length;
-		if (count>max){
+        if (count>max){
             return(val.substring(0, max));
-		}        
-		return val;
-	}    
+        }
+        return val;
+    }
 ";
 
 $img = '<img src="{0}" alt="{1}" title="{2}">';
 $renderer['this.renderCrossTick'] = "
 renderCrossTick : function(val, md, rec, row, col, s) {
     var renderImage, altText, handler, classname;
-    
+
     switch (val) {
         case 0:
         case '0':
@@ -152,7 +150,7 @@ renderSwitchStatusOptions : function(val, md, rec, row, col, s) {
 ";
 
 $tpl = '{6} <a href="#" ><img class="controlBtn btn_selectpos {4} selectpos" src="'.$base_url.$assets_url.'components/migx/style/images/arrow_updown.png" alt="select" title="select position"></a>';
-$tpl_active = '{6} '; 
+$tpl_active = '{6} ';
 $tpl_active .= '<a href="#" ><img class="controlBtn btn_before {4} {5}:before" src="'.$base_url.$assets_url.'components/migx/style/images/arrow_up.png" alt="before" title="move before"></a>';
 $tpl_active .= '<a href="#" ><img class="controlBtn btn_cancel {4} cancel" src="'.$base_url.$assets_url.'components/migx/style/images/cancel.png" alt="cancel" title="cancel"></a>';
 $tpl_active .= '<a href="#" ><img class="controlBtn btn_after {4} {5}:after" src="'.$base_url.$assets_url.'components/migx/style/images/arrow_down.png" alt="after" title="move after"></a>';
@@ -169,10 +167,10 @@ renderPositionSelector : function(val, md, rec, row, col, s) {
     }
     value = val;
     classname = 'test';
-    
+
     if (this.isPosSelecting){
         altText = 'before' ;
-        return String.format('{$tpl_active}', renderImage, altText, altText, classname, handler, column.dataIndex, value);            
+        return String.format('{$tpl_active}', renderImage, altText, altText, classname, handler, column.dataIndex, value);
     }
     else{
         altText = 'select' ;
@@ -183,9 +181,9 @@ renderPositionSelector : function(val, md, rec, row, col, s) {
 ";
 
 $renderer['this.renderRowActions'] = "
-	dummy:function(v,md,rec) {
+    dummy:function(v,md,rec) {
         // this function is fixed in the grid
-	} 
+    }
 ";
 
 $renderer['this.renderChunk'] = "
@@ -196,26 +194,25 @@ renderChunk : function(val, md, rec, row, col, s) {
 ";
 
 $renderer['ImagePlus.MIGX_Renderer'] = "
-	dummyImagePlus:function(v,md,rec) {
+    dummyImagePlus:function(v,md,rec) {
         // this function is included with the ImagePlus - TV
-	} 
+    }
 ";
 
 $renderer['this.renderDate'] = "
 renderDate : function(val, md, rec, row, col, s) {
     var date;
-	if (val && val != '') {
+    if (val && val != '') {
         if (typeof val == 'number') {
             date = new Date(val*1000);
         } else {
-			date = Date.parseDate(val, 'Y-m-d H:i:s');
+            date = Date.parseDate(val, 'Y-m-d H:i:s');
         }
         if (typeof(date) != 'undefined' ){
-		    return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
-        }    
-	} 
-	return '';
-	
+            return String.format('{0}', date.format(MODx.config.manager_date_format+' '+MODx.config.manager_time_format));
+        }
+    }
+    return '';
 }
 ";
 

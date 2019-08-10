@@ -10,27 +10,27 @@
 
 MODx.grid.multiTVgrid = function(config) {
     config = config || {};
-	Ext.applyIf(config,{
-	autoHeight: true,
+    Ext.applyIf(config,{
+    autoHeight: true,
     collapsible: true,
-	resizable: true,
+    resizable: true,
     store: 	new Ext.data.JsonStore({
         fields : config.fields
-    }), // define the data store in a separate variable		
+    }), // define the data store in a separate variable
     loadMask: true,
-	viewConfig: {
+    viewConfig: {
         emptyText: 'No items found',
         sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
         forceFit: true,
-		autoFill: true
-    }, 
-	columns: config.columns, // define grid columns in a separate variable
+        autoFill: true
+    },
+    columns: config.columns, // define grid columns in a separate variable
     listeners: {
         "render": {
             scope: this,
             fn: function(grid) {
-		        this.setWidth('99%');
-		        //this.syncSize();
+                this.setWidth('99%');
+                //this.syncSize();
                 //load the grid store
                 //after the grid has been rendered
                 //store.load();
@@ -38,113 +38,112 @@ MODx.grid.multiTVgrid = function(config) {
         }
     }
 
-		,tbar: [{
+        ,tbar: [{
             text: '{/literal}{$i18n.mig_edit}{literal}',
-			handler: this.update
-        }]        
-		,viewConfig: {
+            handler: this.update
+        }]
+        ,viewConfig: {
             forceFit:true
         }
     });
-	
+
     MODx.grid.multiTVgrid.superclass.constructor.call(this,config)
     this.getStore().pathconfigs=config.pathconfigs;
-	this.loadData();
+    this.loadData();
 };
 Ext.extend(MODx.grid.multiTVgrid,MODx.grid.LocalGrid,{
     _renderUrl: function(v,md,rec) {
         return '<a href="'+v+'" target="_blank">'+rec.data.pagetitle+'</a>';
     }
     ,renderImage : function(val, md, rec, row, col, s){
-		var pc = s.pathconfigs[col];
-		if (val.substr(0,4) == 'http'){
-			return '<img style="height:60px" src="' + val + '"/>' ;
-		}        
-		if (val != ''){
-			//return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?h=60&src=' + val + '" alt="" />';
-			
-			return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?h=60&src='+val+'&wctx={$ctx}&basePath='+pc.basePath+'&basePathRelative='+pc.basePathRelative+'&baseUrl='+pc.baseUrl+'&baseUrlRelative='+pc.baseUrlRelative+'{literal}" alt="" />';
-		
-		}
-		return val;
-	}
-    ,renderLimited : function(val, md, rec, row, col, s){
-		var max = 100;
-        var count = val.length;
-		if (count>max){
-            return(val.substring(0, max));
-		}        
-		return val;
-	}    
-    ,renderPreview : function(val,md,rec){
-		return val;
-	}
+        var pc = s.pathconfigs[col];
+        if (val.substr(0,4) == 'http'){
+            return '<img style="height:60px" src="' + val + '"/>' ;
+        }
+        if (val != ''){
+            //return '<img src="{/literal}{$_config.connectors_url}{literal}system/phpthumb.php?w=100&h=100&f=png&ra=1&src=' + val + '" alt="" />';
 
-	,loadData: function(){
-	    var items_string = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
+            return '<img src="'+MODx.config.connectors_url+'{/literal}system/phpthumb.php?w=100&h=100&f=png&ra=1&src='+val+'&wctx={$ctx}&basePath='+pc.basePath+'&basePathRelative='+pc.basePathRelative+'&baseUrl='+pc.baseUrl+'&baseUrlRelative='+pc.baseUrlRelative+'{literal}" alt="" />';
+        }
+        return val;
+    }
+    ,renderLimited : function(val, md, rec, row, col, s){
+        var max = 100;
+        var count = val.length;
+        if (count>max){
+            return(val.substring(0, max));
+        }
+        return val;
+    }
+    ,renderPreview : function(val,md,rec){
+        return val;
+    }
+
+    ,loadData: function(){
+        var items_string = Ext.get('tv{/literal}{$tv->id}{literal}').dom.value;
         var items = [];
         try {
             items = Ext.util.JSON.decode(items_string);
         }
         catch (e){
         }
-		this.getStore().sortInfo = null;
-		this.getStore().loadData(items);
-			
-		this.syncSize();
+        this.getStore().sortInfo = null;
+        this.getStore().loadData(items);
+
+        this.syncSize();
         this.setWidth('100%');
     }
-	,addItem: function(btn,e) {
-		var s=this.getStore();
-		this.loadWin(btn,e,s.getCount(),'a');
-	}	
-	,update: function(btn,e) {
+    ,addItem: function(btn,e) {
+        var s=this.getStore();
+        this.loadWin(btn,e,s.getCount(),'a');
+    }
+    ,update: function(btn,e) {
       this.loadWin(btn,e,'0','u');
     }
-	,loadWin: function(btn,e,index,action) {
+    ,loadWin: function(btn,e,index,action) {
         if (action == 'a'){
            var json='{/literal}{$newitem}{literal}';
            var data=Ext.util.JSON.decode(json);
         }else{
-		   var s = this.getStore();
-           var rec = s.getAt(index)            
+           var s = this.getStore();
+           var rec = s.getAt(index)
            var data = rec.data;
            var json = Ext.util.JSON.encode(rec.json);
         }
-		
+
         var win_xtype = 'modx-window-tv-item-update';
-		if (this.windows[win_xtype]){
-			this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
-			this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
-		    this.windows[win_xtype].fp.autoLoad.params.itemid=index;
+        if (this.windows[win_xtype]){
+            this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
+            this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
+            this.windows[win_xtype].fp.autoLoad.params.itemid=index;
             this.windows[win_xtype].fp.autoLoad.params.record_json=json;
-			this.windows[win_xtype].grid=this;
+            this.windows[win_xtype].grid=this;
             this.windows[win_xtype].action=action;
-		}
-		this.loadWindow(btn,e,{
+        }
+        this.loadWindow(btn,e,{
             xtype: win_xtype
             ,record: data
-			,grid: this
+            ,grid: this
             ,action: action
-			,baseParams : {
-				record_json:json,
-			    action: 'mgr/fields',
-				tv_id: '{/literal}{$tv->id}{literal}',
-				tv_name: '{/literal}{$tv->name}{literal}',
-				'class_key': 'modDocument',
-				itemid : index
-			}
+            ,baseParams : {
+                record_json:json,
+                action: 'mgr/fields',
+                tv_id: '{/literal}{$tv->id}{literal}',
+                tv_name: '{/literal}{$tv->name}{literal}',
+                'class_key': 'modDocument',
+                itemid : index
+            }
         });
-    }	
-	,collectItems: function(){
-		var items=[];
-		// read jsons from grid-store-items 
+    }
+    ,collectItems: function(){
+        var items=[];
+        // read jsons from grid-store-items
         var griddata=this.store.data;
-		for(i = 0; i <  griddata.length; i++) {
- 			items.push(griddata.items[i].json);
+        for(i = 0; i <  griddata.length; i++) {
+             items.push(griddata.items[i].json);
         }
         Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
-		return;						 
+        return;
     }
 });
 Ext.reg('modx-grid-multitvgrid',MODx.grid.multiTVgrid);
@@ -153,9 +152,9 @@ MODx.window.UpdateTvItem = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         title: _('property_update')
-        ,id: 'modx-window-mi-grid-update' 
+        ,id: 'modx-window-mi-grid-update'
         ,width: '1000px'
-		,closeAction: 'hide'
+        ,closeAction: 'hide'
         ,shadow: true
         ,resizable: true
         ,collapsible: true
@@ -174,14 +173,14 @@ MODx.window.UpdateTvItem = function(config) {
             ,handler: this.submit
         }]
         ,record: {}
-		,grid: null
+        ,grid: null
         ,action: 'u'
-		,record_json: ''
+        ,record_json: ''
         ,keys: [{
             key: Ext.EventObject.ENTER
             ,fn: this.submit
             ,scope: this
-        }]		
+        }]
         ,fields: []
     });
     MODx.window.UpdateTvItem.superclass.constructor.call(this,config);
@@ -193,10 +192,10 @@ MODx.window.UpdateTvItem = function(config) {
         success: true
         ,failure: true
         ,beforeSubmit: true
-		,hide:true
-		,show:true
+        ,hide:true
+        ,show:true
     });
-    this._loadForm();	
+    this._loadForm();
 };
 Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     submit: function() {
@@ -204,14 +203,14 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         if (this.fp.getForm().isValid()) {
             var s = this.grid.getStore();
             if (this.action == 'u'){
-                var idx = this.baseParams.itemid; 
+                var idx = this.baseParams.itemid;
             }else{
                 /*append record*/
                 var items=Ext.util.JSON.decode('{/literal}{$newitem}{literal}');
-		        s.loadData(items,true);
-                idx=s.getCount()-1;                
+                s.loadData(items,true);
+                idx=s.getCount()-1;
             }
-            
+
             var rec = s.getAt(idx);
             var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
             var item = {};
@@ -219,17 +218,17 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             if (fields.length>0){
                 for (var i = 0; i < fields.length; i++) {
                     tvid = (fields[i].tv_id);
-                    item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';							
+                    item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';
                     //set defined record-fields to its new value
                     rec.set(fields[i].field,item[fields[i].field])
                 }
                 //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
                 rec.json=item;
-            }					
+            }
             this.grid.getView().refresh();
             this.grid.collectItems();
-            //this.onDirty();			
-			
+            //this.onDirty();
+
             if (this.fireEvent('success',v)) {
                 this.fp.getForm().reset();
                 this.hide();
@@ -240,13 +239,13 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     },
     _loadForm: function() {
         //if (this.checkIfLoaded(this.config.record || null)) { return false; }
-		this.fp = this.createForm({
+        this.fp = this.createForm({
             url: this.config.url
             ,baseParams: this.config.baseParams || { action: this.config.action || '' }
             ,items: this.config.fields || []
         });
         this.renderForm();
-    }	
+    }
     ,createForm: function(config){
         config = config || {};
         Ext.applyIf(config,{
@@ -254,7 +253,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
             ,labelWidth: this.config.labelWidth || 100
             ,frame: this.config.formFrame || true
             ,popwindow : this
-			,border: false
+            ,border: false
             ,bodyBorder: false
             ,autoHeight: true
             ,errorReader: MODx.util.JSONReader
@@ -265,9 +264,9 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         return new MODx.panel.MiGridUpdate(config);
     }
     ,renderForm: function() {
-		this.add(this.fp);
-		
-    }		
+        this.add(this.fp);
+
+    }
     ,onShow: function() {
         if (this.fp.isloading) return;
         this.fp.isloading=true;
@@ -282,9 +281,9 @@ MODx.panel.MiGridUpdate = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'xdbedit-panel-object-{/literal}{$tv->id}{literal}'
-		,title: _('template_variables')
+        ,title: _('template_variables')
         ,url: config.url
-        ,baseParams: config.baseParams	
+        ,baseParams: config.baseParams
         ,class_key: ''
         ,bodyStyle: 'padding: 15px;'
         ,autoSize: true
@@ -293,51 +292,51 @@ MODx.panel.MiGridUpdate = function(config) {
         ,listeners: {
             //'beforeSubmit': {fn:this.beforeSubmit,scope:this},
             'success': {fn:this.success,scope:this}
-			,'load': {fn:this.load,scope:this}
-        }		
+            ,'load': {fn:this.load,scope:this}
+        }
     });
- 	MODx.panel.MiGridUpdate.superclass.constructor.call(this,config);
-	
-	//this.addEvents({ load: true });
+     MODx.panel.MiGridUpdate.superclass.constructor.call(this,config);
+
+    //this.addEvents({ load: true });
 };
 Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
     autoload: function(config) {
-		this.isloading=true;
-		var a = {
+        this.isloading=true;
+        var a = {
             url: MODx.config.assets_url+'components/migx/connector.php'
             //url: config.url
-			,method: 'POST'
+            ,method: 'POST'
             ,params: config.baseParams
             ,scripts: true
             ,callback: function() {
-				this.isloading=false;
-				this.isloaded=true;
-				this.fireEvent('load');
+                this.isloading=false;
+                this.isloaded=true;
+                this.fireEvent('load');
                 //MODx.fireEvent('ready');
             }
             ,scope: this
         };
-        return a;        	
+        return a;
     },scope: this
-    
+
     ,
     setup: function() {
 
     }
     ,beforeSubmit: function(o) {
-        //tinyMCE.triggerSave(); 
+        //tinyMCE.triggerSave();
     }
     ,success: function(o) {
-		this.doAutoLoad();
-		var gf = Ext.getCmp('xdbedit-grid-objects');
-		gf.isModified = true;
-		gf.refresh();
+        this.doAutoLoad();
+        var gf = Ext.getCmp('xdbedit-grid-objects');
+        gf.isModified = true;
+        gf.refresh();
      },
-	 load: function() {
-		//MODx.loadRTE();
-		
+     load: function() {
+        //MODx.loadRTE();
+
         if (typeof(Tiny) != 'undefined') {
-		    var s={};
+            var s={};
             if (Tiny.config){
                 s = Tiny.config || {};
                 delete s.assets_path;
@@ -352,20 +351,20 @@ Ext.extend(MODx.panel.MiGridUpdate,MODx.FormPanel,{
                 var z = Ext.state.Manager.get(MODx.siteId + '-tiny');
                 if (z !== false) {
                     delete s.elements;
-                }			
-		    }
-			s.mode = "specific_textareas";
+                }
+            }
+            s.mode = "specific_textareas";
             s.editor_selector = "modx-richtext";
-		    //s.language = "en";// de seems not to work at the moment
-            tinyMCE.init(s);				
-		}
-        
+            //s.language = "en";// de seems not to work at the moment
+            tinyMCE.init(s);
+        }
+
         //this.popwindow.width='1000px';
-		//this.width='1000px';
-		this.syncSize();
-		this.popwindow.syncSize();
-		return '';
-	 }
+        //this.width='1000px';
+        this.syncSize();
+        this.popwindow.syncSize();
+        return '';
+     }
 });
 Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate);
 
@@ -375,10 +374,10 @@ Ext.reg('xdbedit-panel-object',MODx.panel.MiGridUpdate);
             ,tv: '{/literal}{$tv->id}{literal}'
             ,cls:'tv{/literal}{$tv->id}{literal}_items'
             ,id:'tv{/literal}{$tv->id}{literal}_items'
-			,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
-			,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
+            ,columns:Ext.util.JSON.decode('{/literal}{$columns}{literal}')
+            ,pathconfigs:Ext.util.JSON.decode('{/literal}{$pathconfigs}{literal}')
             ,fields:Ext.util.JSON.decode('{/literal}{$fields}{literal}')
-            ,width: '97%'			
+            ,width: '97%'
         });
 
 
