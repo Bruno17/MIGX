@@ -114,15 +114,15 @@ MODx.grid.multiTVdbgrid = function(config) {
             items: [{
                     text: 'Stapeloperationen',
                     menu: [{
-                        text: 'markierte ver�ffentlichen',
+                        text: 'markierte veröffentlichen',
                         handler: this.publishSelected,
                         scope: this
                     }, {
-                        text: 'markierte zur�ckziehen',
+                        text: 'markierte zurückziehen',
                         handler: this.unpublishSelected,
                         scope: this
                     }, {
-                        text: 'markierte l�schen',
+                        text: 'markierte löschen',
                         handler: this.deleteSelected,
                         scope: this
                     }]
@@ -470,7 +470,7 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
         });
         } else if (n.deleted == 0) {
         m.push({
-            text: 'l�schen'
+            text: 'löschen'
             ,handler: this.deleteObject
         });
         }
