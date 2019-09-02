@@ -4,7 +4,7 @@ $ctx = '{$ctx}';
 $val = "' + val + '";
 $httpimg = '<img style="height:60px" src="'.$val.'"/>';
 
-$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?w=80&h=80&f=png&ra=1&src='+val+source+'";
+$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?w=80&h=80&f=png&src='+val+source+'";
 $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 
 $assets_url = $this->modx->getOption('assets_url');
@@ -24,7 +24,7 @@ $renderer['this.renderImage'] = "
     }
 ";
 
-$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?w=80&h=80&f=png&ra=1&src='+val+'";
+$phpthumb = "'+MODx.config.connectors_url+'system/phpthumb.php?w=80&h=80&f=png&src='+val+'";
 $phpthumbimg = '<img src="'.$phpthumb.'" alt="" />';
 
 $renderer['this.renderImageFromHtml'] = "
