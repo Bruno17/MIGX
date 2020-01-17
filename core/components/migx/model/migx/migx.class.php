@@ -1,5 +1,5 @@
 <?php
-
+use MODX\Revolution\Sources\modMediaSource;
 /**
  * migx
  *

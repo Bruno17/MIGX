@@ -1,4 +1,9 @@
 <?php
+use MODX\Revolution\modPlugin;
+use MODX\Revolution\modEvent;
+use MODX\Revolution\modPropertySet;
+use MODX\Revolution\modPluginEvent;
+
 
 /**
  * Resolver to connect plugins to system events for MIGX extra
@@ -57,9 +62,9 @@ if ($object->xpdo) {
 
             if (is_array($events) && count($events) > 0) {
                 foreach ($events as $k => $fields) {
-                    $event = $modx->getObject('modEvent', array('name' => $fields['name']));
+                    $event = $modx->getObject(modEvent::class, array('name' => $fields['name']));
                     if (!$event) {
-                        $event = $modx->newObject('modEvent');
+                        $event = $modx->newObject(modEvent::class);
                         if ($event) {
                             $event->fromArray($fields, "", true, true);
                             $event->save();
@@ -77,21 +82,21 @@ if ($object->xpdo) {
                     if (!checkFields('pluginid,event,priority,propertyset', $fields)) {
                         continue;
                     }
-                    $event = $modx->getObject('modEvent', array('name' => $fields['event']));
+                    $event = $modx->getObject(modEvent::class , array('name' => $fields['event']));
 
-                    $plugin = $modx->getObject('modPlugin', array('name' => $fields['pluginid']));
+                    $plugin = $modx->getObject(modPlugin::class, array('name' => $fields['pluginid']));
                     $propertySetObj = null;
                     if (!empty($fields['propertyset'])) {
-                        $propertySetObj = $modx->getObject('modPropertySet', array('name' => $fields['propertyset']));
+                        $propertySetObj = $modx->getObject(modPropertySet::class, array('name' => $fields['propertyset']));
                     }
                     if (!$plugin || !$event) {
                         $modx->log(xPDO::LOG_LEVEL_ERROR, 'Could not find Plugin and/or Event ' . $fields['plugin'] . ' - ' . $fields['event']);
                         continue;
                     }
-                    $pluginEvent = $modx->getObject('modPluginEvent', array('pluginid' => $plugin->get('id'), 'event' => $fields['event']));
+                    $pluginEvent = $modx->getObject(modPluginEvent::class, array('pluginid' => $plugin->get('id'), 'event' => $fields['event']));
 
                     if (!$pluginEvent) {
-                        $pluginEvent = $modx->newObject('modPluginEvent');
+                        $pluginEvent = $modx->newObject(modPluginEvent::class);
                     }
                     if ($pluginEvent) {
                         $pluginEvent->set('event', $fields['event']);

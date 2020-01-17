@@ -1,4 +1,5 @@
 <?php
+use MODX\Revolution\modManagerController;
 /**
  * MIGX
  *
@@ -17,13 +18,13 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * MIGX; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA 
+ * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package migx
  */
 /**
  * xdbedit connector
- * 
+ *
  * @package migx
  * @subpackage controllers
  */
@@ -40,10 +41,12 @@ $_REQUEST['action'] = isset($_REQUEST['actionx']) ? $_REQUEST['actionx'] : $acti
 /* handle request */
 $miTVCorePath = $modx->getOption('migx.core_path',null,$modx->getOption('core_path').'components/migx/');
 require_once $miTVCorePath.'model/migx/migx.class.php';
-require_once $modx->getOption('core_path').'model/modx/modmanagercontroller.class.php';
+//require_once $modx->getOption('core_path').'model/modx/modmanagercontroller.class.php';
+//require_once $modx->getOption(modManagerController::class);
+
 $modx->migx = new Migx($modx);
 $modx->migx->config['configs'] = isset($_REQUEST['configs']) ? $_REQUEST['configs'] : '';
-$modx->migx->config['tvname'] = isset($_REQUEST['tv_name']) ? $_REQUEST['tv_name'] : ''; 
+$modx->migx->config['tvname'] = isset($_REQUEST['tv_name']) ? $_REQUEST['tv_name'] : '';
 $modx->migx->loadConfigs();
 
 $modx->request->handleRequest(array(

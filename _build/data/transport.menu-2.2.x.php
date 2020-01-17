@@ -1,4 +1,6 @@
 <?php
+use MODX\Revolution\modMenu;
+use MODX\Revolution\modAction;
 
 /**
  * menus transport file for MIGX extra
@@ -29,7 +31,7 @@ $menus = array();
 if (is_array($menuprops)) {
     $i = 1;
     foreach ($menuprops as $m_props) {
-        $action = $modx->newObject('modAction');
+        $action = $modx->newObject(modAction::class);
         $action->fromArray(array(
             'namespace' => !empty($m_props['action.namespace']) ? $m_props['action.namespace'] : 'migx',
             'controller' => !empty($m_props['action.controller']) ? $m_props['action.controller'] : 'index',
@@ -41,7 +43,7 @@ if (is_array($menuprops)) {
             ), '', true, true);
 
 
-        $menus[$i] = $modx->newObject('modMenu');
+        $menus[$i] = $modx->newObject(modMenu::class);
         $menus[$i]->fromArray(array(
             'text' => !empty($m_props['text']) ? $m_props['text'] : '',
             'parent' => !empty($m_props['parent']) ? $m_props['parent'] : '',

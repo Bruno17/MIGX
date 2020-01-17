@@ -1,11 +1,2 @@
-_build/build.config.php
-_build/data/transport.menus.php
-_build/data/transport.menus.php.copy
-_build/resolvers/resolve.tables.xxx.php
-core/components/migx/templates/mgr/grids/dragdrop_orig.grid.tpl
-packages/migx-2.8.2-beta1.transport.zip
-core/components/migx/configs/grid/grid.renderer.config.php
-packages/migx-2.8.3-pl.transport.zip
-packages/migx-2.8.3-beta1.transport.zip
 _build/site/
 .idea/

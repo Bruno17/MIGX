@@ -1,4 +1,12 @@
 <?php
+use MODX\Revolution\modX;
+use MODX\Revolution\Transport\modPackageBuilder;
+use MODX\Revolution\modCategory;
+use MODX\Revolution\Error\modError;
+use MODX\Revolution\modSnippet;
+use MODX\Revolution\modChunk;
+use MODX\Revolution\modTemplate;
+use MODX\Revolution\modPlugin;
 
 /**
  * Important: You should almost never need to edit this file,
@@ -221,7 +229,8 @@ if ((!isset($modx)) || (!$modx instanceof modX)) {
     require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
     $modx = new modX();
     $modx->initialize('mgr');
-    $modx->getService('error', 'error.modError', '', '');
+    $modx->services->add('error', new modError($modx));
+    $modx->error = $modx->services->get('error');
 }
 $modx->lexicon->load('mycomponent:default');
 $modx->setLogLevel(xPDO::LOG_LEVEL_INFO);
@@ -348,13 +357,12 @@ $hasContextSettings = file_exists($sources['data'] . 'transport.contextsettings.
 $hasSubPackages = is_dir($sources['subpackages']);
 $minifyJS = $modx->getOption('minifyJS', $props, false);
 
-$helper->sendLog(modX::LOG_LEVEL_INFO, "\n" . $modx->lexicon('mc_project') . ': ' . $currentProject);
+//$helper->sendLog(modX::LOG_LEVEL_INFO, "\n" . $modx->lexicon('mc_project') . ': ' . $currentProject);
 $helper->sendLog(modX::LOG_LEVEL_INFO, $modx->lexicon('mc_action') . ': ' . $modx->lexicon('mc_build'));
 $helper->sendLog(modX::LOG_LEVEL_INFO, $modx->lexicon('mc_created_package') . ': ' . PKG_NAME_LOWER . '-' . PKG_VERSION . '-' . PKG_RELEASE);
 $helper->sendLog(modX::LOG_LEVEL_INFO, "\n" . $modx->lexicon('mc_created_namespace') . ': ' . PKG_NAME_LOWER);
 /* load builder */
 $modx->setLogLevel(modX::LOG_LEVEL_ERROR);
-$modx->loadClass('transport.modPackageBuilder', '', false, true);
 $builder = new modPackageBuilder($modx);
 $builder->createPackage(PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE);
 
@@ -491,7 +499,7 @@ foreach ($categories as $k => $cat) {
     //$hasPropertySets = file_exists($sources['data'] . $categoryNameLower . '/transport.propertysets.php');
 
     /* @var $category modCategory */
-    $category = $modx->newObject('modCategory');
+    $category = $modx->newObject(modCategory::class);
     $i++;
     /* will be 1 for the first category */
     $category->set('id', $i);
@@ -506,7 +514,7 @@ foreach ($categories as $k => $cat) {
         $snippets = array();
         $el_i = 1;
         foreach ($cat['snippets'] as $element) {
-            $snippets[$el_i] = $modx->newObject('modSnippet');
+            $snippets[$el_i] = $modx->newObject(modSnippet::class);
             $snippets[$el_i]->fromArray(array(
                 'id' => $el_i,
                 'property_preprocess' => '',
@@ -531,19 +539,7 @@ foreach ($categories as $k => $cat) {
         }
     }
 
-    if ($hasPropertySets) {
-        $propertySets = include $sources['data'] . $categoryNameLower . '/transport.propertysets.php';
-        //  note: property set' properties are set in transport.propertysets.php
-        if (is_array($propertySets)) {
-            if ($category->addMany($propertySets, 'PropertySets')) {
-                $helper->sendLog(modX::LOG_LEVEL_INFO, '    ' . $modx->lexicon('mc_packaged') . ' ' . count($propertySets) . ' ' . $modx->lexicon('mc_property_sets'));
-            } else {
-                $helper->sendLog(modX::LOG_LEVEL_FATAL, '    ' . $modx->lexicon('mc_adding_property_sets_failed'));
-            }
-        } else {
-            $helper->sendLog(modX::LOG_LEVEL_FATAL, '    ' . $modx->lexicon('mc_non_array_in') . ' transport.propertysets.php');
-        }
-    }
+
     if ($hasChunks) {
         /* add chunks  */
         $helper->sendLog(modX::LOG_LEVEL_INFO, 'Adding Chunks.');
@@ -553,7 +549,7 @@ foreach ($categories as $k => $cat) {
         $chunks = array();
         $el_i = 1;
         foreach ($cat['chunks'] as $element) {
-            $chunks[$el_i] = $modx->newObject('modChunk');
+            $chunks[$el_i] = $modx->newObject(modChunk::class);
             $chunks[$el_i]->fromArray(array(
                 'id' => $el_i,
                 'property_preprocess' => '',
@@ -586,7 +582,7 @@ foreach ($categories as $k => $cat) {
         $templates = array();
         $el_i = 1;
         foreach ($cat['templates'] as $element) {
-            $templates[$el_i] = $modx->newObject('modTemplate');
+            $templates[$el_i] = $modx->newObject(modTemplate::class);
             $templates[$el_i]->fromArray(array(
                 'id' => $el_i,
                 'property_preprocess' => '',
@@ -613,21 +609,7 @@ foreach ($categories as $k => $cat) {
         }
     }
 
-    if ($hasTemplateVariables) {
-        /* add template variables  */
-        $helper->sendLog(modX::LOG_LEVEL_INFO, $modx->lexicon('mc_adding_template_variables'));
-        /* note: Template Variables' default properties are set in transport.tvs.php */
-        $tvs = include $sources['data'] . $categoryNameLower . '/transport.tvs.php';
-        if (is_array($tvs)) {
-            if ($category->addMany($tvs, 'TemplateVars')) {
-                $helper->sendLog(modX::LOG_LEVEL_INFO, '    ' . $modx->lexicon('mc_packaged') . ' ' . count($tvs) . ' ' . $modx->lexicon('mc_tvs'));
-            } else {
-                $helper->sendLog(modX::LOG_LEVEL_FATAL, '    ' . $modx->lexicon('mc_adding_tvs_failed'));
-            }
-        } else {
-            $helper->sendLog(modX::LOG_LEVEL_FATAL, '    ' . $modx->lexicon('mc_non_array_in') . ' transport.tvs.php');
-        }
-    }
+
 
     $plugin_events = array();
     if ($hasPlugins) {
@@ -637,7 +619,7 @@ foreach ($categories as $k => $cat) {
         $el_i = 1;
 
         foreach ($cat['plugins'] as $element) {
-            $plugins[$el_i] = $modx->newObject('modPlugin');
+            $plugins[$el_i] = $modx->newObject(modPlugin::class);
             $plugins[$el_i]->fromArray(array(
                 'id' => $el_i,
                 'property_preprocess' => '',
@@ -850,7 +832,7 @@ if ($hasMenu) {
 }
 
 /* Next-to-last step - pack in the license file, readme.txt, changelog,
-* and setup options 
+* and setup options
 */
 $attr = array(
     'license' => file_get_contents($sources['docs'] . 'license.txt'),

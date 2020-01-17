@@ -1,6 +1,6 @@
 <?php
 
-class MigxPackageManager extends xPDOGenerator_mysql {
+class MigxPackageManager extends \xPDO\Om\mysql\xPDOGenerator {
     function __construct(modX & $modx, array $config = array()) {
         $this->modx = &$modx;
         $this->maps = array();
@@ -56,7 +56,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
             $xpdo = &$this->xpdo2;
         } else {
             $xpdo = &$this->modx;
-        }        
+        }
         $table = $xpdo->getTableName($class);
         $fieldsStmt = $xpdo->query('SHOW COLUMNS FROM ' . $table);
         if ($fieldsStmt) {
@@ -74,7 +74,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
             $xpdo = &$this->xpdo2;
         } else {
             $xpdo = &$this->modx;
-        }    
+        }
         //get current indexes from table
         $table = $xpdo->getTableName($class);
         $indexStmt = $xpdo->query('SHOW INDEX FROM ' . $table);
@@ -124,7 +124,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
             $xpdo = &$this->xpdo2;
         } else {
             $xpdo = &$this->modx;
-        }        
+        }
         if ($xpdo->getConnection(array(xPDO::OPT_CONN_MUTABLE => true))) {
             $className = $xpdo->loadClass($class);
             if ($className) {
@@ -156,7 +156,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
             $xpdo = &$this->xpdo2;
         } else {
             $xpdo = &$this->modx;
-        }                
+        }
         $table = $xpdo->getTableName($class);
         $fieldsStmt = $xpdo->query('SHOW COLUMNS FROM ' . $table);
         if ($fieldsStmt) {
@@ -188,7 +188,7 @@ class MigxPackageManager extends xPDOGenerator_mysql {
             $xpdo = &$this->xpdo2;
         } else {
             $xpdo = &$this->modx;
-        }          
+        }
         $table = $xpdo->getTableName($class);
         $fieldsStmt = $xpdo->query('SHOW COLUMNS FROM ' . $table);
         if ($fieldsStmt) {

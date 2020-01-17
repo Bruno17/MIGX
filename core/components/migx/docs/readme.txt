@@ -1,4 +1,4 @@
---------------------
+ы--------------------
 MIGX
 --------------------
 Version: 2.1.0
@@ -16,7 +16,7 @@ Installation:
 
 install by package-management.
 Create a new menu:
-System -> Actions 
+System -> Actions
 
 Actions-tree:
 migx -> right-click -> create Acton here

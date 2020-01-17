@@ -1,5 +1,5 @@
 <?php
-
+use xPDO\Om\xPDOSimpleObject;
 class migxFormtab extends xPDOSimpleObject
 {
 

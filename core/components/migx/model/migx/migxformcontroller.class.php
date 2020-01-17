@@ -1,4 +1,5 @@
 <?php
+use MODX\Revolution\modManagerController;
 class MigxFormController extends modManagerController {
 
     public function process(array $scriptProperties = array()) {

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @var modX $this->modx
  * @var modTemplateVar $this
@@ -8,7 +7,7 @@
  * @package modx
  * @subpackage processors.element.tv.renders.mgr.input
  */
-class migxInputRender extends modTemplateVarInputRender {
+class migxInputRender extends MODX\Revolution\modTemplateVarInputRender {
     
     public function process($value, array $params = array()) {
         
