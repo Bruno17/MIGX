@@ -60,14 +60,29 @@ class migxCreatePackageProcessor extends modProcessor {
 
         if ($properties['task'] == 'createPackage' || $properties['task'] == 'writeSchema') {
             // create folders
+            
+            $permissions = octdec('0' . (int)($this->modx->getOption('new_folder_permissions', null, '755', true)));
+            
             if (!is_dir($packagepath)) {
-                mkdir($packagepath, 0777);
+                if (!@mkdir($packagepath, $permissions, true)) {
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migx create package]: could not create directory %s).', $packagepath));
+                } else {
+                    chmod($packagepath, $permissions);
+                }               
             }
             if (!is_dir($modelpath)) {
-                mkdir($modelpath, 0777);
+                if (!@mkdir($modelpath, $permissions, true)) {
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migx create package]: could not create directory %s).', $modelpath));
+                } else {
+                    chmod($modelpath, $permissions);
+                }                      
             }
             if (!is_dir($schemapath)) {
-                mkdir($schemapath, 0777);
+                if (!@mkdir($schemapath, $permissions, true)) {
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migx create package]: could not create directory %s).', $schemapath));
+                } else {
+                    chmod($schemapath, $permissions);
+                }                  
             }
         }
 
