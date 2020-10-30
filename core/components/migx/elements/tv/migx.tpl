@@ -1,4 +1,4 @@
-<textarea id="tv{$tv->id}" name="tv{$tv->id}" style="display:none" tvtype="{$tv->type}" />{$tv_value|escape}</textarea>
+<textarea id="tv{$tv->id}" name="tv{$tv->id}" style="display:none" tvtype="{$tv->type}">{$tv_value|escape}</textarea>
 
 <div id="tvpanel{$tv->id}" style="width:100%">
 </div>
