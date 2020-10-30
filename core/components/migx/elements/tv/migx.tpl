@@ -1,4 +1,4 @@
-<input id="tv{$tv->id}" name="tv{$tv->id}" type="hidden" class="textfield" value="{$tv_value|escape}"{$style|default} tvtype="{$tv->type}" />
+<textarea id="tv{$tv->id}" name="tv{$tv->id}" style="display:none" tvtype="{$tv->type}" />{$tv_value|escape}</textarea>
 
 <div id="tvpanel{$tv->id}" style="width:100%">
 </div>
