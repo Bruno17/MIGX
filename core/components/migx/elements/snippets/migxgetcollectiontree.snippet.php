@@ -172,6 +172,7 @@ if (!class_exists('MigxGetCollectionTree')) {
             $currentKeyField = $modx->getOption('currentKeyField', $this->config, 'id');
             $currentlabel = $modx->getOption('currentlabel', $this->config, 'current');
             $classname = $modx->getOption('classname', $scriptProperties, '');
+			$sortResult = $modx->getOption('sortResult', $scriptProperties, '');
             $currentClassname = !empty($this->config['currentClassname']) ? $this->config['currentClassname'] : $classname;
 
             $activelabel = $modx->getOption('activelabel', $this->config, 'active');
@@ -285,6 +286,10 @@ if (!class_exists('MigxGetCollectionTree')) {
                 $rows[] = $row;
             }
 
+            if (!empty($sortResult) && is_array($sortResult)){
+                $rows = $migx->sortDbResult($rows, $sortResult);
+			}
+
             return $rows;
         }
 
@@ -345,6 +350,7 @@ if (is_array($treeSchema)) {
     $level = 1;
     $scriptProperties['alias'] = 'row';
     $rows = $instance->getRows($scriptProperties, $level);
+
     $row = array();
     $row['innercounts.row'] = count($rows);
     $row['innerrows.row'] = $rows;

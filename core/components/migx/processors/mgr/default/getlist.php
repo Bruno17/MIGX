@@ -148,14 +148,13 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
 
             $requestvalue = $modx->getOption($filter['name'], $scriptProperties, 'all');
 
-            if (isset($scriptProperties[$filter['name']]) && $requestvalue != 'all') {
+            if (isset($scriptProperties[$filter['name']]) && !empty($requestvalue) && $requestvalue != 'all') {
 
                 $chunk = $modx->newObject('modChunk');
                 $chunk->setCacheable(false);
                 $chunk->setContent($filter['getlistwhere']);
                 $fwhere = $chunk->process($scriptProperties);
                 $fwhere = strpos($fwhere, '{') === 0 ? $modx->fromJson($fwhere) : $fwhere;
-
                 $c->where($fwhere);
             }
         }
