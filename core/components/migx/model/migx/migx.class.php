@@ -1814,14 +1814,11 @@ class Migx {
                         $tv->set('display', $field['display']);
                     }
                     if (!empty($field['configs'])) {
-                        $props = $record;
-                        $cfg_parsed = $this->renderChunk($field['configs'], $props, false, false);                        
-                        $cfg = json_decode($cfg_parsed,1);
-
+                        $cfg = $this->modx->fromJson($field['configs']);
                         if (is_array($cfg)) {
                             $params = array_merge($params, $cfg);
                         } else {
-                            $params['configs'] = $cfg_parsed;
+                            $params['configs'] = $field['configs'];
                         }
                     }
 

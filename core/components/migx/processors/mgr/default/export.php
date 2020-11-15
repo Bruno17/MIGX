@@ -101,8 +101,7 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     }
 
     /* setup default properties */
-    $sort = !empty($config['getlistsort']) ? $config['getlistsort'] : $xpdo->getPK($classname);
-    $sort = $modx->getOption('sort', $scriptProperties, $sort);
+    $sort = $modx->getOption('sort', $scriptProperties, 'id');
     $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
     $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
     $object_id = $modx->getOption('object_id', $scriptProperties, '');
@@ -112,22 +111,8 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
     $where = $modx->getOption('where', $scriptProperties, $where);
 
-    $sortConfig = $modx->getOption('sortconfig', $config, '');    
-    $groupby = $modx->getOption('getlistgroupby', $config, '');
-    $selectfields = $modx->getOption('getlistselectfields', $config, '');
-    $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
-    $ignoreselectfields = $modx->getOption('ignoreselectfields', $config, 0);
-    $specialfields = $modx->getOption('getlistspecialfields', $config, '');    
-
     $c = $xpdo->newQuery($classname);
-    if ($ignoreselectfields){
-        
-    }else{
-        $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));    
-    }
-    if (!empty($specialfields)) {
-        $c->select($specialfields);
-    }
+    $c->select($xpdo->getSelectColumns($classname, $classname));
 
     if (!empty($joinalias)) {
         /*
@@ -184,32 +169,15 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     if (!empty($where)) {
         $c->where($modx->fromJson($where));
     }
-    
-    $c->prepare();
-    if (!empty($groupby)) {
-        $c->groupby($groupby); 
-    }
-    
-    //$count = $xpdo->getCount($classname, $c);
-    $count= 0;
-    if($c->prepare() && $c->stmt->execute()){
-        $count= $c->stmt->rowCount();
-    }
 
-    if (empty($sort)) {
-        if (is_array($sortConfig)) {
-            foreach ($sortConfig as $sort) {
-                $sortby = $sort['sortby'];
-                $sortdir = isset($sort['sortdir']) ? $sort['sortdir'] : 'ASC';
-                $c->sortby($sortby, $sortdir);
-            }
-        }
-    } else {
-        $c->sortby($sort, $dir);
-    }
+    $count = $modx->getCount($classname, $c);
 
-    $c->prepare();
-    //echo $c->toSql();
+    $c->sortby($sort, $dir);
+
+    //$c->prepare();
+    //adie ($c->toSql());
+
+    $collection = $xpdo->getCollection($classname, $c);
 
     $collectfieldnames = false;
     if (isset($config['exportfields']) && !empty($config['exportfields'])) {
@@ -218,17 +186,14 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
         $collectfieldnames = true;
     }
 
+
     $excludeFields = $modx->getOption('excludeFields', $config);
     $excludeFields = explode(',', $excludeFields);
-    
+
     $rows = array();
-    if ($collection = $modx->migx->getCollection($c)) {
-        $rows = $collection;
-    }    
-    
     $i = 0;
-    foreach ($collection as $tempRow) {
-        //$tempRow = $row->toArray();
+    foreach ($collection as $row) {
+        $tempRow = $row->toArray();
 
         foreach ($tempRow as $tempfield => $tempvalue) {
             //get fieldnames from first record

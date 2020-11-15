@@ -4,6 +4,10 @@ $xpdo_meta_map['migxConfigElement']= array (
   'version' => '1.1',
   'table' => 'migx_config_elements',
   'extends' => 'xPDOSimpleObject',
+  'tableMeta' => 
+  array (
+    'engine' => 'MyISAM',
+  ),
   'fields' => 
   array (
     'config_id' => 0,
