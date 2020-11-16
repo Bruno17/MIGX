@@ -19,8 +19,7 @@
           "static":false,
           "static_file":"",
           "name":"getImageList",
-          "file":"getimagelist.snippet.php",
-          "category":"MIGX"
+          "file":"getimagelist.snippet.php"
         },
         {
           "source":0,
@@ -34,8 +33,7 @@
           "static":false,
           "static_file":"",
           "name":"migxGetRelations",
-          "file":"migxgetrelations.snippet.php",
-          "category":"MIGX"
+          "file":"migxgetrelations.snippet.php"
         },
         {
           "source":0,
@@ -49,8 +47,7 @@
           "static":false,
           "static_file":"",
           "name":"migx",
-          "file":"migx.snippet.php",
-          "category":"MIGX"
+          "file":"migx.snippet.php"
         },
         {
           "source":0,
@@ -64,8 +61,7 @@
           "static":false,
           "static_file":"",
           "name":"migxLoopCollection",
-          "file":"migxloopcollection.snippet.php",
-          "category":"MIGX"
+          "file":"migxloopcollection.snippet.php"
         },
         {
           "source":0,
@@ -81,8 +77,7 @@
           "static":false,
           "static_file":"",
           "name":"migxResourceMediaPath",
-          "file":"migxresourcemediapath.snippet.php",
-          "category":"MIGX"
+          "file":"migxresourcemediapath.snippet.php"
         },
         {
           "source":0,
@@ -96,8 +91,7 @@
           "static":false,
           "static_file":"",
           "name":"migxImageUpload",
-          "file":"migximageupload.snippet.php",
-          "category":"MIGX"
+          "file":"migximageupload.snippet.php"
         },
         {
           "source":0,
@@ -111,8 +105,7 @@
           "static":false,
           "static_file":"",
           "name":"migxChunklistToJson",
-          "file":"migxchunklisttojson.snippet.php",
-          "category":"MIGX"
+          "file":"migxchunklisttojson.snippet.php"
         },
         {
           "source":0,
@@ -126,8 +119,7 @@
           "static":false,
           "static_file":"",
           "name":"migxSwitchDetailChunk",
-          "file":"migxswitchdetailchunk.snippet.php",
-          "category":"MIGX"
+          "file":"migxswitchdetailchunk.snippet.php"
         },
         {
           "source":0,
@@ -141,8 +133,7 @@
           "static":false,
           "static_file":"",
           "name":"getSwitchColumnCol",
-          "file":"getswitchcolumncol.snippet.php",
-          "category":"MIGX"
+          "file":"getswitchcolumncol.snippet.php"
         },
         {
           "source":0,
@@ -156,8 +147,7 @@
           "static":false,
           "static_file":"",
           "name":"getDayliMIGXrecord",
-          "file":"getdaylimigxrecord.snippet.php",
-          "category":"MIGX"
+          "file":"getdaylimigxrecord.snippet.php"
         },
         {
           "source":0,
@@ -171,8 +161,7 @@
           "static":false,
           "static_file":"",
           "name":"filterbytag",
-          "file":"filterbytag.snippet.php",
-          "category":"MIGX"
+          "file":"filterbytag.snippet.php"
         },
         {
           "source":0,
@@ -186,8 +175,7 @@
           "static":false,
           "static_file":"",
           "name":"migxObjectMediaPath",
-          "file":"migxobjectmediapath.snippet.php",
-          "category":"MIGX"
+          "file":"migxobjectmediapath.snippet.php"
         },
         {
           "source":0,
@@ -201,8 +189,7 @@
           "static":false,
           "static_file":"",
           "name":"exportMIGX2db",
-          "file":"exportmigx2db.snippet.php",
-          "category":"MIGX"
+          "file":"exportmigx2db.snippet.php"
         },
         {
           "source":0,
@@ -216,8 +203,7 @@
           "static":false,
           "static_file":"",
           "name":"preparedatewhere",
-          "file":"preparedatewhere.snippet.php",
-          "category":"MIGX"
+          "file":"preparedatewhere.snippet.php"
         },
         {
           "source":0,
@@ -231,8 +217,7 @@
           "static":false,
           "static_file":"",
           "name":"migxJsonToPlaceholders",
-          "file":"migxjsontoplaceholders.snippet.php",
-          "category":"MIGX"
+          "file":"migxjsontoplaceholders.snippet.php"
         },
         {
           "source":0,
@@ -241,13 +226,14 @@
           "editor_type":0,
           "cache_type":0,
           "locked":false,
-          "properties":null,
+          "properties":[
+            
+          ],
           "moduleguid":"",
           "static":false,
           "static_file":"",
           "name":"migxGetCollectionTree",
-          "file":"migxgetcollectiontree.snippet.php",
-          "category":"MIGX"
+          "file":"migxgetcollectiontree.snippet.php"
         },
         {
           "source":0,
@@ -261,8 +247,7 @@
           "static":false,
           "static_file":"",
           "name":"migxIsNewObject",
-          "file":"migxisnewobject.snippet.php",
-          "category":"MIGX"
+          "file":"migxisnewobject.snippet.php"
         },
         {
           "source":0,
@@ -276,8 +261,7 @@
           "static":false,
           "static_file":"",
           "name":"migx_example_validate",
-          "file":"migx_example_validate.snippet.php",
-          "category":"MIGX"
+          "file":"migx_example_validate.snippet.php"
         },
         {
           "source":0,
@@ -291,8 +275,7 @@
           "static":false,
           "static_file":"",
           "name":"migxHookAftercollectmigxitems",
-          "file":"migxhookaftercollectmigxitems.snippet.php",
-          "category":"MIGX"
+          "file":"migxhookaftercollectmigxitems.snippet.php"
         },
         {
           "source":0,
@@ -306,8 +289,7 @@
           "static":false,
           "static_file":"",
           "name":"migxAutoPublish",
-          "file":"migxautopublish.snippet.php",
-          "category":"MIGX"
+          "file":"migxautopublish.snippet.php"
         },
         {
           "source":0,
@@ -323,8 +305,7 @@
           "static":false,
           "static_file":"",
           "name":"migxGetObject",
-          "file":"migxgetobject.snippet.php",
-          "category":"MIGX"
+          "file":"migxgetobject.snippet.php"
         }
       ],
       "chunks":[
@@ -354,8 +335,7 @@
             "OnTVInputPropertiesList",
             "OnTVInputRenderList"
           ],
-          "file":"migx.plugin.php",
-          "category":"MIGX"
+          "file":"migx.plugin.php"
         },
         {
           "source":0,
@@ -375,8 +355,7 @@
           "events":[
             "OnDocFormPrerender"
           ],
-          "file":"migxquip.plugin.php",
-          "category":"MIGX"
+          "file":"migxquip.plugin.php"
         },
         {
           "source":0,
@@ -396,10 +375,23 @@
           "events":[
             "OnFileManagerUpload"
           ],
-          "file":"migxresizeonupload.plugin.php",
-          "category":"MIGX"
+          "file":"migxresizeonupload.plugin.php"
         }
       ]
     }
+  },
+  "name":"MIGX",
+  "lowCaseName":"migx",
+  "description":"",
+  "author":"",
+  "version":"2.13.0-beta4",
+  "database":{
+    "tables":[
+      "migxConfig",
+      "migxFormtab",
+      "migxFormtabField",
+      "migxConfigElement",
+      "migxElement"
+    ]
   }
 }

@@ -1,4 +1,5 @@
 _build/build.config.php
+config.core.php
 _build/data/transport.menus.php
 _build/data/transport.menus.php.copy
 _build/resolvers/resolve.tables.xxx.php
@@ -9,3 +10,7 @@ packages/migx-2.8.3-pl.transport.zip
 packages/migx-2.8.3-beta1.transport.zip
 _build/site/
 .idea/
+
+_packages/*.*
+!_packages/.gitignore
+!_packages/*.zip
