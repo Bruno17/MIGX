@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<model package="[[+package]]" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" phpdoc-package="" phpdoc-subpackage="" version="1.1">
+<model package="[[+package]]" baseClass="xPDOObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="" phpdoc-subpackage="" version="1.1">
 
     <object class="[[+package]]Group" table="[[+package]]_groups" extends="xPDOSimpleObject">
         <field key="title" dbtype="varchar" phptype="string" precision="100" null="false" default="" />

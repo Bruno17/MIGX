@@ -6,7 +6,7 @@ $xpdo_meta_map['migxConfig']= array (
   'extends' => 'xPDOSimpleObject',
   'tableMeta' => 
   array (
-    'engine' => 'MyISAM',
+    'engine' => 'InnoDB',
   ),
   'fields' => 
   array (
@@ -167,7 +167,7 @@ $xpdo_meta_map['migxConfig']= array (
     array (
       'dbtype' => 'varchar',
       'phptype' => 'string',
-      'precision' => '255',
+      'precision' => '191',
       'null' => false,
       'default' => '',
       'index' => 'index',

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<model package="migx" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" phpdoc-package="" phpdoc-subpackage="" version="1.1">
+<model package="migx" baseClass="xPDOObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="" phpdoc-subpackage="" version="1.1">
 
     <object class="migxConfig" table="migx_configs" extends="xPDOSimpleObject">
     	<field key="name" dbtype="varchar" phptype="string" precision="100" null="false" default="" />
@@ -21,7 +21,7 @@
         <field key="published" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />        
 		<field key="publishedon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
-        <field key="category" dbtype="varchar" phptype="string" precision="255" null="false" default="" index="index" />        
+        <field key="category" dbtype="varchar" phptype="string" precision="191" null="false" default="" index="index" />        
 
         <aggregate alias="ConfigElements" class="migxConfigElement" local="id" foreign="config_id" cardinality="many" owner="local" /> 
         <composite alias="Formtabs" class="migxFormtab" local="id" foreign="config_id" cardinality="many" owner="local" /> 
@@ -41,7 +41,7 @@
     <object class="migxFormtabField" table="migx_formtab_fields" extends="xPDOSimpleObject">
         <field key="config_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
         <field key="formtab_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
-        <field key="field" dbtype="varchar" phptype="string" precision="255" null="false" default="" index="index" />
+        <field key="field" dbtype="varchar" phptype="string" precision="191" null="false" default="" index="index" />
         <field key="caption" dbtype="varchar" phptype="string" precision="255" null="false" default="" />
         <field key="description" dbtype="text" phptype="string" null="false" default="" />
         <field key="pos" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
