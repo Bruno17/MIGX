@@ -112,18 +112,18 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
     $where = $modx->getOption('where', $scriptProperties, $where);
 
-    $sortConfig = $modx->getOption('sortconfig', $config, '');    
+    $sortConfig = $modx->getOption('sortconfig', $config, '');
     $groupby = $modx->getOption('getlistgroupby', $config, '');
     $selectfields = $modx->getOption('getlistselectfields', $config, '');
     $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
     $ignoreselectfields = $modx->getOption('ignoreselectfields', $config, 0);
-    $specialfields = $modx->getOption('getlistspecialfields', $config, '');    
+    $specialfields = $modx->getOption('getlistspecialfields', $config, '');
 
     $c = $xpdo->newQuery($classname);
-    if ($ignoreselectfields){
-        
-    }else{
-        $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));    
+    if ($ignoreselectfields) {
+
+    } else {
+        $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
     }
     if (!empty($specialfields)) {
         $c->select($specialfields);
@@ -184,16 +184,16 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     if (!empty($where)) {
         $c->where($modx->fromJson($where));
     }
-    
+
     $c->prepare();
     if (!empty($groupby)) {
-        $c->groupby($groupby); 
+        $c->groupby($groupby);
     }
-    
+
     //$count = $xpdo->getCount($classname, $c);
-    $count= 0;
-    if($c->prepare() && $c->stmt->execute()){
-        $count= $c->stmt->rowCount();
+    $count = 0;
+    if ($c->prepare() && $c->stmt->execute()) {
+        $count = $c->stmt->rowCount();
     }
 
     if (empty($sort)) {
@@ -220,61 +220,60 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
 
     $excludeFields = $modx->getOption('excludeFields', $config);
     $excludeFields = explode(',', $excludeFields);
-    
+
     $rows = array();
     if ($collection = $modx->migx->getCollection($c)) {
-        $rows = $collection;
-    }    
-    
-    $i = 0;
-    foreach ($collection as $tempRow) {
-        //$tempRow = $row->toArray();
+        $i = 0;
+        foreach ($collection as $tempRow) {
+            //$tempRow = $row->toArray();
 
-        foreach ($tempRow as $tempfield => $tempvalue) {
-            //get fieldnames from first record
+            foreach ($tempRow as $tempfield => $tempvalue) {
+                //get fieldnames from first record
 
-            if ($collectfieldnames) {
-                $exportFields[$tempfield] = $tempfield;
-            }
-
-            //extract json-fields to new fieldnames
-
-
-            if (is_array($tempvalue)) {
-                foreach ($tempvalue as $field => $value) {
-                    $tempRow[$tempfield . '_' . $field] = $value;
-                    if ($collectfieldnames) {
-                        $exportFields[$tempfield . '_' . $field] = $field;
-                    }
+                if ($collectfieldnames) {
+                    $exportFields[$tempfield] = $tempfield;
                 }
-                unset($tempRow[$tempfield]);
-                unset($exportFields[$tempfield]);
+
+                //extract json-fields to new fieldnames
+
+
+                if (is_array($tempvalue)) {
+                    foreach ($tempvalue as $field => $value) {
+                        $tempRow[$tempfield . '_' . $field] = $value;
+                        if ($collectfieldnames) {
+                            $exportFields[$tempfield . '_' . $field] = $field;
+                        }
+                    }
+                    unset($tempRow[$tempfield]);
+                    unset($exportFields[$tempfield]);
+
+                }
+
+
+                if (in_array($tempfield, $excludeFields)) {
+                    unset($exportFields[$tempfield]);
+                    unset($tempRow[$tempfield]);
+                }
+
+                //print_r($tempRow);
+
 
             }
 
 
-            if (in_array($tempfield, $excludeFields)) {
-                unset($exportFields[$tempfield]);
-                unset($tempRow[$tempfield]);
+            /*
+            $newRow = array();
+
+            foreach ($exportFields as $key => $exportKey) {
+            if (isset($tempRow[$key])) {
+            $newRow[$exportKey] = $tempRow[$key];
             }
-
-            //print_r($tempRow);
-
-
+            }
+            */
+            $rows[] = $tempRow;
+            $i++;
         }
 
-
-        /*
-        $newRow = array();
-
-        foreach ($exportFields as $key => $exportKey) {
-        if (isset($tempRow[$key])) {
-        $newRow[$exportKey] = $tempRow[$key];
-        }
-        }
-        */
-        $rows[] = $tempRow;
-        $i++;
     }
 
     $temprows = $rows;

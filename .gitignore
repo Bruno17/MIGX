@@ -14,3 +14,8 @@ _build/site/
 _packages/*.*
 !_packages/.gitignore
 !_packages/*.zip
+
+core/components/migx/rest/*.*
+core/components/migx/rest/Controllers/*.*
+assets/components/migx/rest/*.*
+

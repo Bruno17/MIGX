@@ -215,8 +215,7 @@ if ($isCombo || $isLimit) {
     $c->limit($limit, $start);
 }
 //$c->sortby($sort,$dir);
-$c->prepare();
-//echo $c->toSql();
+//$c->prepare();echo $c->toSql();
 
 $rows = array();
 if ($collection = $modx->migx->getCollection($c)) {
