@@ -111,7 +111,8 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     }
     ,submit: function() {
         var object_id = this.baseParams.object_id;
-               
+        var action = 'mgr/migxdb/update'; 
+        var processaction = '';      
         if (this.action == 'd'){
             MODx.fireResourceFormChange();
             object_id = 'new';     
@@ -120,7 +121,12 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
             /*update record*/
         }else{
             /*append record*/
-        }        
+        }
+        
+        if (this.baseParams.tempParams == 'importcsv'){
+            action = 'mgr/migxdb/process';
+            processaction = 'importcsv';            
+        }                
         
         if (this.fp.getForm().isValid()) {
 			var item = this.getFormValues();		
@@ -128,7 +134,8 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
             MODx.Ajax.request({
                 url: this.grid.url
                 ,params: {
-                    action: 'mgr/migxdb/update'
+                    action: action
+                    ,processaction: processaction
                     ,data: Ext.util.JSON.encode(item)
 				    ,configs: this.grid.configs
                     ,resource_id: this.grid.resource_id
@@ -224,7 +231,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     }
     
     ,onShow: function() {
-        //console.log('onshow');
+        //console.log(this);
         if (this.fp.isloading) return;
         //console.log('onshow2');
         this.fp.isloading=true;
@@ -312,6 +319,7 @@ Ext.extend(MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal},MODx.FormPanel,
 		//this.width='1000px';
 		//this.syncSize();
 		//this.popwindow.syncSize();
+ 
 		return '';
 	 }
 });

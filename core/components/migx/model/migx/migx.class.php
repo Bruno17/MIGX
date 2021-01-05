@@ -714,6 +714,8 @@ class Migx {
         } elseif (isset($this->config['configs']) && !empty($this->config['configs'])) {
             $configs = explode(',', $this->config['configs']);
         }
+        
+        $tempParams = $this->modx->getOption('tempParams', $properties, '');
 
         if (!empty($configs)) {
             //$configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
@@ -769,6 +771,10 @@ class Migx {
                 }
 
             }
+            
+            if ($tempParams == 'importcsv'){
+                $configs[] = 'importcsv';   
+            }
 
             foreach ($configs as $config) {
                 $parts = explode(':', $config);
@@ -809,7 +815,7 @@ class Migx {
 
                 if ($other) {
                     //second try to find config-object
-
+                    
                     if (isset($configpath) && !$cfObject && file_exists($configpath . $config . '.config.js')) {
                         $filecontent = @file_get_contents($configpath . $config . '.config.js');
                         $objectarray = $this->importconfig($this->modx->fromJson($filecontent));
@@ -822,6 +828,15 @@ class Migx {
                         $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
 
                     }
+                    //and from MIGX config folder
+                    $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.js'; // [ file ]
+                    if (file_exists($configFile)) {
+                        $filecontent = @file_get_contents($configFile);
+                        $objectarray = $this->importconfig($this->modx->fromJson($filecontent));
+                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
+                    }                      
+                    
+                    
                     //third add configs from file, if exists
                     $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
                     if (file_exists($configFile)) {
@@ -834,6 +849,10 @@ class Migx {
                         }
                     }
                 }
+                
+                
+                 //print_r($this->customconfigs['tabs']) ;                
+                
             }
         }
 
@@ -873,14 +892,14 @@ class Migx {
 
         if (isset($this->customconfigs)) {
             $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $objectarray) : $objectarray;
-            $this->customconfigs['tabs'] = $this->modx->fromJson($objectarray['formtabs']);
-            $this->customconfigs['filters'] = $this->modx->fromJson($objectarray['filters']);
+            $this->customconfigs['tabs'] = isset($objectarray['formtabs']) ? $this->modx->fromJson($objectarray['formtabs']) : array();
+            $this->customconfigs['filters'] = isset($objectarray['filters']) ? $this->modx->fromJson($objectarray['filters']) : array();
             //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
             //$this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
-            $this->customconfigs['columns'] = $this->modx->fromJson($objectarray['columns']);
+            $this->customconfigs['columns'] = isset($objectarray['columns']) ? $this->modx->fromJson($objectarray['columns']) : array();
         }
 
-        $menus = $objectarray['contextmenus'];
+        $menus = isset($objectarray['contextmenus']) ? $objectarray['contextmenus'] : '';
 
         if (!empty($menus)) {
             $menus = explode('||', $menus);
@@ -888,7 +907,7 @@ class Migx {
                 $gridcontextmenus[$menu]['active'] = 1;
             }
         }
-        $columnbuttons = $objectarray['columnbuttons'];
+        $columnbuttons = isset($objectarray['columnbuttons']) ? $objectarray['columnbuttons'] : '';
 
         if (!empty($columnbuttons)) {
             $columnbuttons = explode('||', $columnbuttons);
@@ -901,7 +920,7 @@ class Migx {
             }
         }
 
-        $actionbuttons = $objectarray['actionbuttons'];
+        $actionbuttons = isset($objectarray['actionbuttons']) ? $objectarray['actionbuttons'] : '';
         if (!empty($actionbuttons)) {
             $actionbuttons = explode('||', $actionbuttons);
             foreach ($actionbuttons as $button) {

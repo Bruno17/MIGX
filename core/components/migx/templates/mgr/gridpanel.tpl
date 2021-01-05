@@ -113,8 +113,7 @@ Ext.extend(Migx.panel.Object,MODx.FormPanel,{
 		gf.refresh();
      },
 	 load: function() {
-        //console.log('test');
-		//MODx.loadRTE();
+        //MODx.loadRTE();
         if (typeof(Tiny) != 'undefined') {
 		    var s={};
             if (Tiny.config){

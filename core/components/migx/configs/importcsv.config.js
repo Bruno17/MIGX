@@ -1,0 +1,71 @@
+{
+  "name":"importcsv",
+  "formtabs":[
+    {
+      "MIGX_id":89,
+      "caption":"Import",
+      "print_before_tabs":"0",
+      "fields":[
+        {
+          "field":"file",
+          "caption":"CSV File",
+          "description":"",
+          "inputTVtype":"",
+          "validation":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"",
+          "default":"",
+          "useDefaultIfEmpty":"0"
+        },
+        {
+          "field":"matchfields",
+          "caption":"Match fields (commaseparated)",
+          "description":"",
+          "description_is_code":"0",
+          "inputTV":"",
+          "inputTVtype":"",
+          "validation":"",
+          "configs":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"",
+          "default":"",
+          "useDefaultIfEmpty":"0"
+        },
+        {
+          "field":"settings",
+          "caption":"Settings",
+          "description":"",
+          "description_is_code":"0",
+          "inputTV":"",
+          "inputTVtype":"checkbox",
+          "validation":"",
+          "configs":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"empty table==empty||insert only items, that do not exist==insert_missing_only||update matching==update_existing||preserve keys==preserve_keys||save settings==save_settings",
+          "default":"",
+          "useDefaultIfEmpty":"0",
+          "pos":8
+        }
+      ]
+    }
+  ],
+ 
+  "extended":{
+    "formcaption":"CSV Import",
+    "update_win_title":"CSV Import",
+    "win_id":"importcsv",
+    "winbuttonslist":"",
+    "winbuttons":"",
+    "onsubmitsuccess":"",
+    "submitparams":""
+  }
+}

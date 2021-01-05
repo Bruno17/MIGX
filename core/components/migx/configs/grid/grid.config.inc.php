@@ -894,3 +894,10 @@ $gridfunctions['this.importCsvMigx'] = "
 	}     
 ";
 
+$gridfunctions['this.importCsvMigxdb'] = "
+importCsvMigxdb: function(btn,e) {
+      this.loadWin(btn,e,'a','importcsv');  
+    }
+";
+
+

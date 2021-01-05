@@ -22,11 +22,11 @@ if (!empty($config['packageName'])) {
         $xpdo = $modx->migx->getXpdoInstanceAndAddPackage($config);
     } else {
         //all packages must have the same prefix for now!
-        foreach ($packageNames as $packageName) {
-            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+        foreach ($packageNames as $p) {
+            $packagepath = $modx->getOption('core_path') . 'components/' . $p . '/';
             $modelpath = $packagepath . 'model/';
             if (is_dir($modelpath)) {
-                $modx->addPackage($packageName, $modelpath, $prefix);
+                $modx->addPackage($p, $modelpath, $prefix);
             }
 
         }
@@ -89,6 +89,13 @@ if ($object) {
 } else {
     $record = array();
 }
+
+$tempParams = $modx->getOption('tempParams',$scriptProperties,'');
+if ($tempParams == 'importcsv'){
+    $core_path = str_replace($modx->getOption('base_path'),'',$modx->getOption('core_path'));
+    $record['file'] = $core_path . 'components/' . $packageName . '/import/' . $classname . '.csv';
+}
+
 
 //$hooksnippet_aftergetfields = 'viacor_aftergetfields';
 if (!empty($hooksnippet_aftergetfields)) {
