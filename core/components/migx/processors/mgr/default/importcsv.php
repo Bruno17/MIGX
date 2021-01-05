@@ -80,7 +80,7 @@ $classname = $config['classname'];
 if ($save_settings){
     $cacheName = $modx->getOption('core_path') . 'components/' . $packageName . '/import/' . $classname . '.settings.js';
     $cacheManager = $modx->getCacheManager();
-    $cacheManager->writeFile($cacheName, str_replace('save_settings','',$settings_output));    
+    $cacheManager->writeFile($cacheName, $settings_output);    
 }
 
 $idx = 1;

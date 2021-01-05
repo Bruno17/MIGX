@@ -92,8 +92,17 @@ if ($object) {
 
 $tempParams = $modx->getOption('tempParams',$scriptProperties,'');
 if ($tempParams == 'importcsv'){
-    $core_path = str_replace($modx->getOption('base_path'),'',$modx->getOption('core_path'));
-    $record['file'] = $core_path . 'components/' . $packageName . '/import/' . $classname . '.csv';
+    
+    $settingName = $modx->getOption('core_path') . 'components/' . $packageName . '/import/' . $classname . '.settings.js';
+    if (file_exists($settingName)){
+        $record = json_decode(file_get_contents($settingName),true);
+    }
+    
+    $defaultfile = str_replace($modx->getOption('base_path'),'',$modx->getOption('core_path')) . 'components/' . $packageName . '/import/' . $classname . '.csv';
+    $record['file'] = isset($record['file']) && !empty($record['file']) ? $record['file'] : $defaultfile ;
+    if (isset($record['settings'])){
+        $record['settings'] = array_diff($record['settings'],array('save_settings'));    
+    }
 }
 
 
