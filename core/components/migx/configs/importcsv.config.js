@@ -50,7 +50,7 @@
           "display":"",
           "sourceFrom":"config",
           "sources":"",
-          "inputOptionValues":"empty table==empty||insert only items, that do not exist==insert_missing_only||update matching==update_existing||preserve keys==preserve_keys||save settings==save_settings",
+          "inputOptionValues":"empty table (Warning! This will remove all existing items in that table!)==empty||insert only items, that do not exist==insert_missing_only||update matching==update_existing||preserve keys==preserve_keys||save settings==save_settings",
           "default":"",
           "useDefaultIfEmpty":"0",
           "pos":8
@@ -62,7 +62,6 @@
   "extended":{
     "formcaption":"CSV Import",
     "update_win_title":"CSV Import",
-    "win_id":"importcsv",
     "winbuttonslist":"",
     "winbuttons":"",
     "onsubmitsuccess":"",

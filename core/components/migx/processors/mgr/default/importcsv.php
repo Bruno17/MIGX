@@ -60,11 +60,11 @@ if (!empty($config['packageName'])) {
         $xpdo = $modx->migx->getXpdoInstanceAndAddPackage($config);
     } else {
         //all packages must have the same prefix for now!
-        foreach ($packageNames as $packageName) {
-            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+        foreach ($packageNames as $p) {
+            $packagepath = $modx->getOption('core_path') . 'components/' . $p . '/';
             $modelpath = $packagepath . 'model/';
             if (is_dir($modelpath)) {
-                $modx->addPackage($packageName, $modelpath, $prefix);
+                $modx->addPackage($p, $modelpath, $prefix);
             }
 
         }
@@ -77,10 +77,10 @@ if (!empty($config['packageName'])) {
 set_time_limit(1000);
 $classname = $config['classname'];
 
+$settingName = $modx->getOption('core_path') . 'components/' . $packageName . '/import/' . $classname . '.settings.js';
 if ($save_settings){
-    $cacheName = $modx->getOption('core_path') . 'components/' . $packageName . '/import/' . $classname . '.settings.js';
     $cacheManager = $modx->getCacheManager();
-    $cacheManager->writeFile($cacheName, $settings_output);    
+    $cacheManager->writeFile($settingName, $settings_output);    
 }
 
 $idx = 1;

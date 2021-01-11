@@ -900,4 +900,10 @@ importCsvMigxdb: function(btn,e) {
     }
 ";
 
+$gridfunctions['this.exportCsvMigxdb'] = "
+exportCsvMigxdb: function(btn,e) {
+      this.loadWin(btn,e,'a','exportcsv');  
+    }
+";
+
 

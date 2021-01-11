@@ -1,0 +1,138 @@
+{
+  "name":"exportcsv",
+  "formtabs":[
+    {
+      "caption":"Export",
+      "print_before_tabs":"0",
+      "fields":[
+        {
+          "field":"export_file",
+          "caption":"CSV File for local export",
+          "description":"",
+          "inputTVtype":"",
+          "validation":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"",
+          "default":"",
+          "useDefaultIfEmpty":"0"
+        },          
+        {
+          "field":"import_file",
+          "caption":"CSV File for import on production package",
+          "description":"",
+          "inputTVtype":"",
+          "validation":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"",
+          "default":"",
+          "useDefaultIfEmpty":"0"
+        },
+        {
+          "field":"export_joins",
+          "caption":"Joins",
+          "description":"",
+          "inputTVtype":"textarea",
+          "validation":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"",
+          "default":"",
+          "useDefaultIfEmpty":"0"
+        }, 
+        {
+          "field":"export_action",
+          "caption":"Export Action",
+          "description":"",
+          "description_is_code":"0",
+          "inputTV":"",
+          "inputTVtype":"option",
+          "validation":"",
+          "configs":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"local export==local||download==download||for import on production package==for_import",
+          "default":"download",
+          "useDefaultIfEmpty":"0"
+        },
+        {
+          "field":"settings",
+          "caption":"Settings",
+          "description":"",
+          "description_is_code":"0",
+          "inputTV":"",
+          "inputTVtype":"checkbox",
+          "validation":"",
+          "configs":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"Use Joins==use_joins||save import settings as default(saves the import settings for packaging and removes custom import settings, so they get not packaged)==save_imp_settings",
+          "default":"",
+          "useDefaultIfEmpty":"0",
+          "pos":8
+        }
+      ]
+    },        
+    {
+      "caption":"Import Settings",
+      "print_before_tabs":"0",
+      "fields":[ 
+        {
+          "field":"import_matchfields",
+          "caption":"Match fields (commaseparated)",
+          "description":"",
+          "description_is_code":"0",
+          "inputTV":"",
+          "inputTVtype":"",
+          "validation":"",
+          "configs":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"",
+          "default":"",
+          "useDefaultIfEmpty":"0"
+        },             
+        {
+          "field":"import_settings",
+          "caption":"Settings",
+          "description":"",
+          "description_is_code":"0",
+          "inputTV":"",
+          "inputTVtype":"checkbox",
+          "validation":"",
+          "configs":"",
+          "restrictive_condition":"",
+          "display":"",
+          "sourceFrom":"config",
+          "sources":"",
+          "inputOptionValues":"empty table==empty||insert only items, that do not exist==insert_missing_only||update matching==update_existing||preserve keys==preserve_keys",
+          "default":"",
+          "useDefaultIfEmpty":"0",
+          "pos":8
+        }
+      ]
+    }
+  ],
+ 
+  "extended":{
+    "formcaption":"CSV Export",
+    "update_win_title":"CSV Export",
+    "winbuttonslist":"",
+    "winbuttons":"",
+    "onsubmitsuccess":"",
+    "submitparams":""
+  }
+}

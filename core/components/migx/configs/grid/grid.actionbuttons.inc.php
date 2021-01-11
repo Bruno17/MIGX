@@ -68,4 +68,9 @@ $gridactionbuttons['importcsvmigxdb']['handler'] = 'this.importCsvMigxdb';
 $gridactionbuttons['importcsvmigxdb']['scope'] = 'this';
 $gridactionbuttons['importcsvmigxdb']['standalone'] = '0';
 
+$gridactionbuttons['exportcsvmigxdb']['text'] = "'[[%migx.export_current_view]]'"; 
+$gridactionbuttons['exportcsvmigxdb']['handler'] = 'this.exportCsvMigxdb';
+$gridactionbuttons['exportcsvmigxdb']['scope'] = 'this';
+$gridactionbuttons['exportcsvmigxdb']['standalone'] = '0';
+
 

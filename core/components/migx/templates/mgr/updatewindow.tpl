@@ -126,10 +126,15 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
         if (this.baseParams.tempParams == 'importcsv'){
             action = 'mgr/migxdb/process';
             processaction = 'importcsv';            
-        }                
+        } 
+        if (this.baseParams.tempParams == 'exportcsv'){
+            action = 'mgr/migxdb/process';
+            processaction = 'exportcsv';            
+        }                        
         
         if (this.fp.getForm().isValid()) {
-			var item = this.getFormValues();		
+			var item = this.getFormValues();
+            var tempParams = this.baseParams.tempParams || '';		
             //console.log(this.config);
             MODx.Ajax.request({
                 url: this.grid.url
@@ -143,10 +148,15 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
                     ,object_id: object_id
                     ,tv_id: this.baseParams.tv_id
                     ,wctx: this.baseParams.wctx
-                    ,tempParams: this.baseParams.tempParams || ''
+                    ,tempParams: tempParams
                 }
                 ,listeners: {
-                    'success': {fn:this.onSubmitSuccess,scope:this}
+                    'success':{fn:function(r) {
+                        if (r.object && typeof(r.object.download_filename) != 'undefined'){
+                            location.href = this.grid.url+'?action='+action+'&configs='+this.grid.configs+'&processaction='+processaction+'&download='+r.object.download_filename+'&id='+id+'&HTTP_MODAUTH=' + MODx.siteId;
+                        }
+                        return this.onSubmitSuccess(r);
+                    },scope:this}                    
                     ,'failure':{fn:function(r) {
                         return this.fireEvent('failure',r);
                     },scope:this}
@@ -156,7 +166,7 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
         }
         return false;
     },
-    onSubmitSuccess: function(){
+    onSubmitSuccess: function(r){
             this.grid.refresh();
             //this.grid.collectItems();
             //this.onDirty();
