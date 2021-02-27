@@ -418,7 +418,7 @@
   "lowCaseName":"migx",
   "description":"",
   "author":"",
-  "version":"2.13.0-beta4",
+  "version":"2.13.0-beta5",
   "database":{
     "tables":[
       "migxConfig",
