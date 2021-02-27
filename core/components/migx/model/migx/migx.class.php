@@ -53,6 +53,7 @@ class Migx {
         $prefix = null;
         $this->modx->addPackage($packageName, $modelpath, $prefix);
 
+
         /* allows you to set paths in different environments
         * this allows for easier SVN management of files
         */
@@ -195,7 +196,7 @@ class Migx {
                     }
                 }
             } else {
-               $where = array($where);
+                $where = array($where);
             }
             $c->where($where);
         }
@@ -253,7 +254,7 @@ class Migx {
         if (!empty($groupingField)) {
             $newgroupvalue = isset($fields[$groupingField]) ? $fields[$groupingField] : '';
             $gr_level = empty($level) ? '' : $level;
-            
+
             /*
             print_r($oldgroupvalue);
             echo 'old:' . $oldgroupvalue[$level];
@@ -358,7 +359,6 @@ class Migx {
         $group_keys = array();
         
         $jsonOptions = $jsonPrettyPrint ? JSON_PRETTY_PRINT : null;
-        
 
         if ($count > 0) {
             foreach ($rows as $key => $fields) {
@@ -406,24 +406,24 @@ class Migx {
                 $output = array();
                 $i = 0;
                 foreach ($rows as $fields) {
-                    if ($i==0 && $createChunk){
-                        if ($chunk = $modx->getObject('modChunk',array('name'=>$createChunk))){
+                    if ($i == 0 && $createChunk) {
+                        if ($chunk = $modx->getObject('modChunk', array('name' => $createChunk))) {
 
-                        }else{
+                        } else {
                             $ph_prefix = !empty($toPlaceholders) ? $toPlaceholders . '.' : '';
                             $chunk = $modx->newObject('modChunk');
-                            $chunk->set('name',$createChunk);
+                            $chunk->set('name', $createChunk);
                             $chunk_content = array();
-                            foreach ($fields as $field=>$value){
+                            foreach ($fields as $field => $value) {
                                 $chunk_content[] = '[[+' . $ph_prefix . $field . ']]';
                             }
-                            $chunk->set('content',implode("\n",$chunk_content));
+                            $chunk->set('content', implode("\n", $chunk_content));
                             $chunk->save();
                         }
                     }
-                    if ($toPlaceholders){
+                    if ($toPlaceholders) {
                         //works only for one row - output the fields to placeholders
-                        if ($toPlaceholders == 'print_r'){
+                        if ($toPlaceholders == 'print_r') {
                             return '<pre>' . print_r($fields, 1) . '</pre>';
                         }
                         $modx->toPlaceholders($fields, $toPlaceholders);
@@ -505,11 +505,11 @@ class Migx {
             $modx->setPlaceholder($toJsonPlaceholder, json_encode($output));
             return '';
         }
-        
+
         if ($toJson) {
             return json_encode($output,$jsonOptions);    
         }
-        
+
         if (!empty($toSeparatePlaceholders)) {
             $modx->toPlaceholders($output, $toSeparatePlaceholders);
             return '';
@@ -651,7 +651,7 @@ class Migx {
             if ($collection = $this->modx->getCollection($classname, $c)) {
                 $idx = 0;
                 $formtabs = false;
-                $firstformtabs = array();                
+                $firstformtabs = array();
 
                 foreach ($collection as $object) {
 
@@ -681,10 +681,10 @@ class Migx {
                 }
 
                 $formtabs = $formtabs ? $formtabs : $firstformtabs;
- 
-                $config = $this->customconfigs; 
-                $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));       
-                
+
+                $config = $this->customconfigs;
+                $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));
+
                 if (is_array($hooksnippets)) {
                     $hooksnippet = $this->modx->getOption('getformnames', $hooksnippets, '');
                     if (!empty($hooksnippet)) {
@@ -692,7 +692,7 @@ class Migx {
                         $snippetProperties['formnames'] = &$formnames;
                         $result = $this->modx->runSnippet($hooksnippet, $snippetProperties);
                     }
-                }                
+                }
 
                 $controller->setPlaceholder('formnames', $formnames);
 
@@ -723,6 +723,8 @@ class Migx {
         } elseif (isset($this->config['configs']) && !empty($this->config['configs'])) {
             $configs = explode(',', $this->config['configs']);
         }
+
+        $tempParams = $this->modx->getOption('tempParams', $properties, '');
 
         if (!empty($configs)) {
             //$configs = (isset($this->config['configs'])) ? explode(',', $this->config['configs']) : array();
@@ -779,6 +781,14 @@ class Migx {
 
             }
 
+            if ($tempParams == 'importcsv') {
+                $configs[] = 'importcsv';
+            }
+
+            if ($tempParams == 'exportcsv') {
+                $configs[] = 'exportcsv';
+            }
+
             foreach ($configs as $config) {
                 $parts = explode(':', $config);
                 $cfObject = false;
@@ -831,6 +841,19 @@ class Migx {
                         $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
 
                     }
+                    //and from MIGX config folder
+                    $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.js'; // [ file ]
+                    if (file_exists($configFile)) {
+                        $filecontent = @file_get_contents($configFile);
+                        $objectarray = $this->importconfig($this->modx->fromJson($filecontent));
+
+                        if (isset($objectarray['name']) && ($objectarray['name'] == 'importcsv' || $objectarray['name'] == 'exportcsv')){
+                            if (isset($this->customconfigs['win_id'])){
+                                $objectarray['extended']['win_id'] = $this->customconfigs['win_id'];    
+                            }
+                        }
+                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
+                    }
                     //third add configs from file, if exists
                     $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
                     if (file_exists($configFile)) {
@@ -843,6 +866,10 @@ class Migx {
                         }
                     }
                 }
+
+
+                //print_r($this->customconfigs['tabs']) ;
+
             }
         }
 
@@ -882,14 +909,14 @@ class Migx {
 
         if (isset($this->customconfigs)) {
             $this->customconfigs = is_array($this->customconfigs) ? array_merge($this->customconfigs, $objectarray) : $objectarray;
-            $this->customconfigs['tabs'] = $this->modx->fromJson($objectarray['formtabs']);
-            $this->customconfigs['filters'] = $this->modx->fromJson($objectarray['filters']);
+            $this->customconfigs['tabs'] = isset($objectarray['formtabs']) ? $this->modx->fromJson($objectarray['formtabs']) : array();
+            $this->customconfigs['filters'] = isset($objectarray['filters']) ? $this->modx->fromJson($objectarray['filters']) : array();
             //$this->customconfigs['tabs'] =  stripslashes($cfObject->get('formtabs'));
             //$this->customconfigs['columns'] = $this->modx->fromJson(stripslashes($cfObject->get('columns')));
-            $this->customconfigs['columns'] = $this->modx->fromJson($objectarray['columns']);
+            $this->customconfigs['columns'] = isset($objectarray['columns']) ? $this->modx->fromJson($objectarray['columns']) : array();
         }
 
-        $menus = $objectarray['contextmenus'];
+        $menus = isset($objectarray['contextmenus']) ? $objectarray['contextmenus'] : '';
 
         if (!empty($menus)) {
             $menus = explode('||', $menus);
@@ -897,7 +924,7 @@ class Migx {
                 $gridcontextmenus[$menu]['active'] = 1;
             }
         }
-        $columnbuttons = $objectarray['columnbuttons'];
+        $columnbuttons = isset($objectarray['columnbuttons']) ? $objectarray['columnbuttons'] : '';
 
         if (!empty($columnbuttons)) {
             $columnbuttons = explode('||', $columnbuttons);
@@ -910,7 +937,7 @@ class Migx {
             }
         }
 
-        $actionbuttons = $objectarray['actionbuttons'];
+        $actionbuttons = isset($objectarray['actionbuttons']) ? $objectarray['actionbuttons'] : '';
         if (!empty($actionbuttons)) {
             $actionbuttons = explode('||', $actionbuttons);
             foreach ($actionbuttons as $button) {
@@ -1732,7 +1759,7 @@ class Migx {
     function createForm(&$tabs, &$record, &$allfields, &$categories, $scriptProperties) {
         $fieldid = 0;
         $config = $this->customconfigs;
-        $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));       
+        $hooksnippets = $this->modx->fromJson($this->modx->getOption('hooksnippets', $config, ''));
         if (is_array($hooksnippets)) {
             $hooksnippet_beforecreateform = $this->modx->getOption('beforecreateform', $hooksnippets, '');
             if (!empty($hooksnippet_beforecreateform)) {
@@ -1824,8 +1851,8 @@ class Migx {
                     }
                     if (!empty($field['configs'])) {
                         $props = $record;
-                        $cfg_parsed = $this->renderChunk($field['configs'], $props, false, false);                        
-                        $cfg = json_decode($cfg_parsed,1);
+                        $cfg_parsed = $this->renderChunk($field['configs'], $props, false, false);
+                        $cfg = json_decode($cfg_parsed, 1);
 
                         if (is_array($cfg)) {
                             $params = array_merge($params, $cfg);
