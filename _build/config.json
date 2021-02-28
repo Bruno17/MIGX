@@ -1,5 +1,16 @@
 {
   "package":{
+    "menus":[
+      {
+        "text":"MIGX",
+        "description":"",
+        "action":"index",
+        "parent":"components",
+        "namespace":"migx",
+        "params":"&configs=migxconfigs||packagemanager||setup",
+        "menuIndex":1
+      }
+    ],    
     "elements":{
       "categories":[
         
@@ -419,6 +430,14 @@
   "description":"",
   "author":"",
   "version":"2.13.0-rc1",
+  "build":{
+    "resolver":{
+      "resolversDir":"resolvers",
+      "after":[
+        "tables.resolver.php"
+      ]
+    }
+  },  
   "database":{
     "tables":[
       "migxConfig",
