@@ -87,7 +87,7 @@ renderCrossTick : function(val, md, rec, row, col, s) {
         case '':
         case null:
         case false:
-            renderImage = ''".$assets_url."components/migx/style/images/cross.png';
+            renderImage = '".$assets_url."components/migx/style/images/cross.png';
             handler = 'this.publishObject';
             classname = 'publish';
             altText = 'No';

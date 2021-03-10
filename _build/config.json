@@ -10,7 +10,7 @@
         "params":"&configs=migxconfigs||packagemanager||setup",
         "menuIndex":1
       }
-    ],    
+    ],
     "elements":{
       "categories":[
         
@@ -429,7 +429,7 @@
   "lowCaseName":"migx",
   "description":"",
   "author":"",
-  "version":"2.13.0-rc1",
+  "version":"2.13.0-rc2",
   "build":{
     "resolver":{
       "resolversDir":"resolvers",
@@ -437,7 +437,7 @@
         "tables.resolver.php"
       ]
     }
-  },  
+  },
   "database":{
     "tables":[
       "migxConfig",
