@@ -381,6 +381,8 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
                 ,items: Ext.get('tv{/literal}{$tv->id}{literal}').dom.value
                 ,record_index: recordIndex
                 ,extra_params: extra_params
+                ,reqConfigs: '{/literal}{$config.req_configs}{literal}'
+                ,source: '{/literal}{$config.media_source_id}{literal}'
             }
             ,listeners: {
                 'success': {fn:function(res){

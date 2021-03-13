@@ -31,7 +31,7 @@ $gridactionbuttons['exportimportmigx']['scope'] = 'this';
 $gridactionbuttons['exportimportmigx']['standalone'] = '1';
 
 $gridactionbuttons['upload']['text'] = "'[[%migx.upload_images]]'";
-$gridactionbuttons['upload']['handler'] = 'this.uploadImages';
+$gridactionbuttons['upload']['handler'] = 'this.uploadImages,this.uploadFiles,this.uploadSuccess,this.loadFromSource';
 $gridactionbuttons['upload']['scope'] = 'this';
 $gridactionbuttons['upload']['standalone'] = '1';
 
