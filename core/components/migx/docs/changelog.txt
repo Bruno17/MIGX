@@ -21,6 +21,8 @@ Add CSV Import functionality
 Improve CSV Export functionality
 add toJson property to migxLoopCollection
 Fix transparency in .png in renderimage column renderer
+Optimize loadfromxource functionality, especially for MIGX within MIGXdb
+deep nested saving when nested windows are open and saving without closing the window
 
 MIGX 2.12.0
 ==============
