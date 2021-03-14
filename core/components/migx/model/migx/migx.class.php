@@ -828,7 +828,7 @@ class Migx {
 
                 if ($other) {
                     //second try to find config-object
-
+                    
                     if (isset($configpath) && !$cfObject && file_exists($configpath . $config . '.config.js')) {
                         $filecontent = @file_get_contents($configpath . $config . '.config.js');
                         $objectarray = $this->importconfig($this->modx->fromJson($filecontent));
@@ -854,6 +854,13 @@ class Migx {
                         }
                         $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
                     }
+                    
+                    if (!is_array($objectarray)){
+                        //get some default configs, if not allready done
+                        $objectarray = array();
+                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);                        
+                    }
+                   
                     //third add configs from file, if exists
                     $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
                     if (file_exists($configFile)) {
@@ -945,6 +952,8 @@ class Migx {
             }
         }
 
+        $winbuttonslist = null;
+
         if (isset($this->customconfigs['winbuttonslist'])) {
             $winbuttonslist = $this->customconfigs['winbuttonslist'];
             if (!empty($winbuttonslist)) {
@@ -954,7 +963,14 @@ class Migx {
                 }
             }
         }
-
+        
+        if (!is_array($winbuttonslist)){
+            foreach ($winbuttons as $key =>$button){
+                if (isset($button['default']) && !empty($button['default'])){
+                    $winbuttons[$key]['active'] = 1;
+                }
+            }            
+        }
     }
 
     function loadPackageManager() {
@@ -1173,19 +1189,7 @@ class Migx {
                 }
                 if (count($buttons_a) > 0) {
                     $winbuttons = ',buttons:[' . implode(',', $buttons_a) . ']';
-                } else {
-                    $winbuttons = ",buttons: [{
-            text: config.cancelBtnText || _('cancel')
-            ,scope: this
-            ,handler: this.cancel
-        },{
-            text: config.saveBtnText || _('done')
-            ,scope: this
-            ,handler: this.submit
-        }]";
                 }
-
-
             }
         }
         $this->customconfigs['winbuttons'] = $winbuttons;
@@ -1551,6 +1555,7 @@ class Migx {
         $controller->setPlaceholder('object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
         $controller->setPlaceholder('reqTempParams', $this->modx->getOption('tempParams', $_REQUEST, ''));
         $controller->setPlaceholder('connected_object_id', $this->modx->getOption('object_id', $_REQUEST, ''));
+        $controller->setPlaceholder('window_id', $this->modx->getOption('window_id', $_REQUEST, ''));
         $controller->setPlaceholder('pathconfigs', json_encode($pathconfigs));
         $controller->setPlaceholder('columns', json_encode($cols));
         $controller->setPlaceholder('fields', json_encode($fields));
@@ -1930,8 +1935,7 @@ class Migx {
 
 
                     $this->modx->smarty->assign('tv', $tv);
-
-
+                    
                     /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
                     * may be performancewise its better todo that here?
                     
@@ -1968,6 +1972,7 @@ class Migx {
                     }
 
                     $this->modx->smarty->assign('params', $params);
+                                                            
                     /* find the correct renderer for the TV, if not one, render a textbox */
                     $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
 
@@ -1984,7 +1989,7 @@ class Migx {
                             $tv->set('type', 'textarea');
                         }
                     }
-
+                    
                     $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
 
                     /*

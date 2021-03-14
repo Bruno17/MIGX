@@ -34,6 +34,7 @@ MODx.window.UpdateTvdbItem = function(config) {
     MODx.window.UpdateTvdbItem.superclass.constructor.call(this,config);
     this.options = config;
     this.config = config;
+    this.parent_window = '{/literal}{$smarty.request.window_id}{literal}';
 
     //this.on('show',this.onShow,this);
     this.on('hide',this.onHideWindow,this);
@@ -108,8 +109,32 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
             //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
         } 
         return item        
-    }
-    ,submit: function() {
+    },
+    submit:function() {
+        this.hideOnSubmit=true;
+        this.saveDeepOnSubmit = false;
+        this.doSubmit();
+    },
+    submitUnclosed:function(btn,event,from_child_window) {
+        var from_child = from_child_window || false;
+        this.saveDeepOnSubmit = true;
+        if (this.action == 'u'){
+            this.hideOnSubmit=false;    
+        } else {
+            this.hideOnSubmit=true;//close in any case, if a new item!
+        }
+        if (from_child){
+            this.hideOnSubmit=false;//dont hide, if called from child window
+            if (this.action == 'u'){
+                    
+            } else {
+                return;//dont save, if called from child and if a new item!
+            }                
+        }
+        
+        this.doSubmit();
+    }    
+    ,doSubmit: function() {
         var object_id = this.baseParams.object_id;
         var action = 'mgr/migxdb/update'; 
         var processaction = '';      
@@ -171,7 +196,17 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
             //this.grid.collectItems();
             //this.onDirty();
             this.fp.getForm().reset();
-            this.hide();
+            if (this.hideOnSubmit){
+                this.hide();
+            } 
+            if (this.saveDeepOnSubmit){
+               if (this.parent_window){
+                   var parent_window = Ext.getCmp(this.parent_window);
+                   if (typeof(parent_window.submitUnclosed) != 'undefined'){
+                       parent_window.submitUnclosed(null,null,true);
+                   } 
+               }
+            }
             return true;
     },
     _loadForm: function() {
@@ -242,12 +277,21 @@ Ext.extend(MODx.window.UpdateTvdbItem,Ext.Window,{
     
     ,onShow: function() {
         //console.log(this);
+        //console.log('onshow');
         if (this.fp.isloading) return;
         //console.log('onshow2');
         this.fp.isloading=true;
         this.fp.autoLoad.params.record_json=this.baseParams.record_json;
         this.fp.doAutoLoad();
     }
+    ,getParentWindows(){
+        
+    }
+    ,setParentWindows(){
+            
+    }
+    
+    
 
 });
 Ext.reg('modx-window-tv-dbitem-update-{/literal}{$win_id}{literal}',MODx.window.UpdateTvdbItem);
@@ -277,13 +321,15 @@ MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal} = function(config) {
 Ext.extend(MODx.panel.MidbGridUpdate{/literal}{$win_id}{literal},MODx.FormPanel,{
     autoload: function(config) {
 		this.isloading=true;
-        var self = this; 
+        var self = this;
+        var baseParams = config.baseParams;
+        baseParams.window_id = '{/literal}modx-window-mi-grid-update-{$win_id}{literal}'; 
         
 		return a = {
             url: '{/literal}{$config.connectorUrl}{literal}'
             //url: config.url
 			,method: 'POST'
-            ,params: config.baseParams
+            ,params: baseParams
             ,scripts: true
             ,callback: function() {
 				self.isloading=false;

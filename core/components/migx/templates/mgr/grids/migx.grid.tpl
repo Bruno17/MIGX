@@ -477,6 +477,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
                 record_json:json,
                 action: 'mgr/fields',
                 tv_id: '{/literal}{$tv->id}{literal}',
+                parent_window: '{/literal}{$window_id}{literal}',
                 tv_name: '{/literal}{$tv->name}{literal}',
                 configs: '{/literal}{$properties.configs|default}{literal}',
                 'class_key': 'modDocument',

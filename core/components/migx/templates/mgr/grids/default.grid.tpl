@@ -135,7 +135,6 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
     }	
                 	     
 	,loadWin: function(btn,e,action,tempParams) {
-        
         var storeParams = Ext.util.JSON.encode(this.store.baseParams); 
         var resource_id = '{/literal}{$resource.id}{literal}';
         var tempParams = tempParams || null;
@@ -196,6 +195,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
             ,action: action
             ,baseParams : {
 			    action: 'mgr/migxdb/fields',
+                parent_window: '{/literal}{$window_id}{literal}',
                 win_id: '{/literal}{$win_id}{literal}',
 				tv_id: '{/literal}{$tv_id}{literal}',
 				tv_name: '{/literal}{$tv->name}{literal}',

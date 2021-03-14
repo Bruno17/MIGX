@@ -30,15 +30,7 @@ MODx.window.UpdateTvItem = function(config) {
         ,forceLayout: true
         ,boxMaxHeight: '700'
         ,autoScroll: true
-        ,buttons: [{
-            text: config.cancelBtnText || _('cancel')
-            ,scope: this
-            ,handler: this.cancel
-        },{
-            text: config.saveBtnText || _('done')
-            ,scope: this
-            ,handler: this.submit
-        }]
+        {/literal}{$customconfigs.winbuttons}{literal}
         ,record: {}
         ,grid: null
         ,action: 'u'
@@ -55,6 +47,7 @@ MODx.window.UpdateTvItem = function(config) {
     MODx.window.UpdateTvItem.superclass.constructor.call(this,config);
     this.options = config;
     this.config = config;
+    this.parent_window = '{/literal}{$smarty.request.window_id}{literal}';
 
     //this.on('show',this.onShow,this);
     this.on('hide',this.onHideWindow,this);
@@ -99,7 +92,31 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         }
         this.destroy();
     },
-    submit: function() {
+    submit:function() {
+        this.hideOnSubmit=true;
+        this.saveDeepOnSubmit = false;
+        this.doSubmit();
+    },
+    submitUnclosed:function(btn,event,from_child_window) {
+        var from_child = from_child_window || false;
+        this.saveDeepOnSubmit = true;
+        if (this.action == 'u'){
+            this.hideOnSubmit=false;    
+        } else {
+            this.hideOnSubmit=true;//close in any case, if a new item!
+        }
+        if (from_child){
+            this.hideOnSubmit=false;//dont hide, if called from child window
+            if (this.action == 'u'){
+                    
+            } else {
+                return;//dont save, if called from child and if a new item!
+            }                
+        }
+        
+        this.doSubmit();
+    },  
+    doSubmit: function() {
         var v = this.fp.getForm().getValues();
         var object_id = this.baseParams.object_id;
         var fields = Ext.util.JSON.decode(v['mulititems_grid_item_fields']);
@@ -172,7 +189,17 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
 
             if (this.fireEvent('success',v)) {
                 this.fp.getForm().reset();
-                this.hide();
+                if (this.hideOnSubmit){
+                    this.hide();
+                } 
+                if (this.saveDeepOnSubmit){
+                    if (this.parent_window){
+                        var parent_window = Ext.getCmp(this.parent_window);
+                        if (typeof(parent_window.submitUnclosed) != 'undefined'){
+                            parent_window.submitUnclosed(null,null,true);
+                        } 
+                    }
+                }
                 return true;
             }
         }
@@ -278,11 +305,13 @@ MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal} = function(config) {
 Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
     autoload: function(config) {
         this.isloading=true;
+        var baseParams = config.baseParams;
+        baseParams.window_id = '{/literal}modx-window-mi-grid-update-{$tv->id}{literal}';         
         var a = {
             url: '{/literal}{$config.connectorUrl}{literal}'
             //url: config.url
             ,method: 'POST'
-            ,params: config.baseParams
+            ,params: baseParams
             ,scripts: true
             ,callback: function() {
                 this.isloading=false;
