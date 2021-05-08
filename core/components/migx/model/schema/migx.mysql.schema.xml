@@ -10,6 +10,8 @@
         <field key="columnbuttons" dbtype="text" phptype="string" null="false" default="" />
         <field key="filters" dbtype="text" phptype="string" null="false" default="" />
         <field key="extended" dbtype="text" phptype="json" null="false" default="" />
+        <field key="permissions" dbtype="text" phptype="json" null="false" default="" />
+        <field key="fieldpermissions" dbtype="text" phptype="json" null="false" default="" />
         <field key="columns" dbtype="text" phptype="string" null="false" default="" />
 		<field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />	
     	<field key="createdon" dbtype="datetime" phptype="datetime" null="true" />

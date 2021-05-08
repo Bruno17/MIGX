@@ -161,7 +161,6 @@ if (isset($config['gridfilters']) && count($config['gridfilters']) > 0) {
     }
 }
 
-
 if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
 
     if (!empty($joinalias)) {
@@ -229,3 +228,5 @@ if ($collection = $modx->migx->getCollection($c)) {
 }
 
 $rows = $modx->migx->checkRenderOptions($rows);
+
+
