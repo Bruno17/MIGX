@@ -7,7 +7,7 @@
         "action":"index",
         "parent":"components",
         "namespace":"migx",
-        "params":"&configs=migxconfigs||packagemanager||setup",
+        "params":"&configs=migxconfigs||packagemanager",
         "menuIndex":1
       }
     ],
