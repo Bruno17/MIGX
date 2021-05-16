@@ -197,3 +197,13 @@ if (n.published == 1) {
         }      
 ";
 $gridcontextmenus['unpublishtarget']['handler'] = 'this.unpublishTargetObject';
+
+$gridcontextmenus['export_import_migxitem']['code']="
+        m.push({
+            className : 'export_import', 
+            text: '[[%migx.export_import_item]]',
+            handler: 'this.exportImportItem'
+        });
+        m.push('-');
+";
+$gridcontextmenus['export_import_migxitem']['handler'] = 'this.exportImportItem';

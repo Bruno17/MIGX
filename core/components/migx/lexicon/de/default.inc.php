@@ -78,3 +78,4 @@ $_lang['migx.add_item_after'] = 'Datensatz danach einfügen';
 
 $_lang['migx.select_dbfields'] = 'DB Felder auswählen';
 $_lang['migx.select_dbfields_desc'] = 'Bevor Datenbankfelder ausgewählt werden können, müssen die packageName, classname und joins - Konfigurationen befüllt sein und die Konfiguration gespeichert werden!';
+$_lang['migx.export_import_item'] = 'Export/Import';

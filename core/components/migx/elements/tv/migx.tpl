@@ -100,14 +100,14 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
     submitUnclosed:function(btn,event,from_child_window) {
         var from_child = from_child_window || false;
         this.saveDeepOnSubmit = true;
-        if (this.action == 'u'){
+        if (this.action == 'u' || this.action == 'export_import_migxitem'){
             this.hideOnSubmit=false;    
         } else {
             this.hideOnSubmit=true;//close in any case, if a new item!
         }
         if (from_child){
             this.hideOnSubmit=false;//dont hide, if called from child window
-            if (this.action == 'u'){
+            if (this.action == 'u' || this.action == 'export_import_migxitem'){
                     
             } else {
                 return;//dont save, if called from child and if a new item!
@@ -141,6 +141,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
 
         if (this.fp.getForm().isValid()) {
             var s = this.grid.getStore();
+
             if (this.action == 'd'){
                 MODx.fireResourceFormChange();
             }
@@ -151,7 +152,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                 this.grid.loadData();
 
             }else{
-                if (this.action == 'u'){
+                if (this.action == 'u' || this.action == 'export_import_migxitem'){
                     var idx = this.baseParams.itemid;
                 }else{
                     /*append record*/
@@ -164,19 +165,51 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                 }
 
                 var rec = s.getAt(idx);
-
-                if (fields.length>0){
-                    for (var i = 0; i < fields.length; i++) {
-                        tvid = (fields[i].tv_id);
-                        if (v['tv'+tvid+'_prefix']) v['tv'+tvid]=v['tv'+tvid+'_prefix']+v['tv'+tvid];//url-TV support
-                        item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';
-                        //set defined record-fields to its new value
-                        rec.set(fields[i].field,item[fields[i].field])
+                if (this.action == 'export_import_migxitem'){
+                    var jsonexport = '';
+                    var jsonobject = {};
+                    if (fields.length>0){
+                        for (var i = 0; i < fields.length; i++) {
+                            tvid = (fields[i].tv_id);
+                            if(fields[i].field == 'MIGX_id'){
+                                item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';
+                                //set defined record-fields to its new value
+                                rec.set(fields[i].field,item[fields[i].field])
+                            }
+                            if(fields[i].field == 'jsonexport'){
+                                jsonexport = v['tv'+tvid+'[]'] || v['tv'+tvid] || '';
+                                try {
+                                    jsonobject = JSON.parse(jsonexport);
+                                } catch (e) {
+                                    
+                                }
+                                if (typeof jsonobject === 'object'){
+                                    const keys = Object.keys(jsonobject);
+                                    keys.forEach((key, index) => {
+                                        if (key != 'MIGX_id'){
+                                            item[key] = jsonobject[key];
+                                            rec.set(key,jsonobject[key]);
+                                        }
+                                    });
+                                }
+                            }  
+                        }
+                        //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
+                        rec.json=item;
+                    }             
+                } else { 
+                    if (fields.length>0){
+                        for (var i = 0; i < fields.length; i++) {
+                            tvid = (fields[i].tv_id);
+                            if (v['tv'+tvid+'_prefix']) v['tv'+tvid]=v['tv'+tvid+'_prefix']+v['tv'+tvid];//url-TV support
+                            item[fields[i].field]=v['tv'+tvid+'[]'] || v['tv'+tvid] || '';
+                            //set defined record-fields to its new value
+                            rec.set(fields[i].field,item[fields[i].field])
+                        }
+                        //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
+                        rec.json=item;
                     }
-                    //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
-                    rec.json=item;
                 }
-
                 if (addNewItemAt == 'top'){
                     s.insert(0,rec);
                 }

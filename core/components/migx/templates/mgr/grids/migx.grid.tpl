@@ -430,7 +430,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         }
         {/literal}{/if}{literal}
 
-        var isnew = (action == 'u') ? '0':'1';
+        var isnew = (action == 'u' || action == 'export_import_migxitem') ? '0':'1';
         var isduplicate = (action == 'd') ? '1':'0';
 
         if (action == 'e'){
@@ -648,7 +648,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             form.on('success', this.onFormSuccess, this);
         }
 
-    	var items=[];
+        var items=[];
         // read jsons from grid-store-items
 
         var griddata=this.store.data;

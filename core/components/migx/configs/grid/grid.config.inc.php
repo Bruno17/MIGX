@@ -909,4 +909,10 @@ exportCsvMigxdb: function(btn,e) {
     }
 ";
 
+$gridfunctions['this.exportImportItem'] = "
+exportImportItem: function(btn,e) {
+  this.loadWin(btn,e,this.menu.recordIndex,'export_import_migxitem');
+}  
+";
+
 
