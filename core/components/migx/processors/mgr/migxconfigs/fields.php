@@ -34,7 +34,7 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
 $record = $object->toArray();
 
 $modx->migx->configsObject = &$object;
-echo 'test';
+
 if (!empty($scriptProperties['tempParams']) && $scriptProperties['tempParams'] == 'export_import') {
     $temprecord = $record;
     unset($temprecord['id'], $temprecord['name'], $temprecord['createdby'], $temprecord['createdon'], $temprecord['editedby'], $temprecord['editedon'], $temprecord['deleted'], $temprecord['deletedon'], $temprecord['deletedby'],
