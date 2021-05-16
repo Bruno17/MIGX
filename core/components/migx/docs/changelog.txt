@@ -23,6 +23,7 @@ add toJson property to migxLoopCollection
 Fix transparency in .png in renderimage column renderer
 Optimize loadfromxource functionality, especially for MIGX within MIGXdb
 deep nested saving when nested windows are open and saving without closing the window
+export/import single MIGX - items
 
 MIGX 2.12.0
 ==============
