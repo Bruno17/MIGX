@@ -8,9 +8,10 @@ $editors['this.textEditor'] = "
                 blur: {
                     scope: this,
                     fn: function(field){
-                          //on blur without specialkey reset to old value
+                          //on blur without specialkey RESET to old value
                           field.setValue(field.value);
-                          //OR on blur without specialkey save new value
+                          //on blur without specialkey SAVE new value
+                          //this.setSelectedRecords();
                           //this.updateSelected(column,field.getValue());
                     }                
                 },
@@ -47,9 +48,10 @@ $editors['this.numberEditor'] = "
                 blur: {
                     scope: this,
                     fn: function(field){
-                          //on blur without specialkey reset to old value
+                          //on blur without specialkey RESET to old value
                           field.setValue(field.value);
-                          //OR on blur without specialkey save new value
+                          //on blur without specialkey SAVE new value
+                          //this.setSelectedRecords();
                           //this.updateSelected(column,field.getValue());
                     }                
                 },
