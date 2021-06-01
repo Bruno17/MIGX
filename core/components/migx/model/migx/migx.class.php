@@ -357,7 +357,7 @@ class Migx {
         $groups = array();
         $oldgroupvalue = array();
         $group_keys = array();
-        
+
         $jsonOptions = $jsonPrettyPrint ? JSON_PRETTY_PRINT : null;
 
         if ($count > 0) {
@@ -507,7 +507,7 @@ class Migx {
         }
 
         if ($toJson) {
-            return json_encode($output,$jsonOptions);    
+            return json_encode($output,$jsonOptions);
         }
 
         if (!empty($toSeparatePlaceholders)) {
@@ -828,7 +828,7 @@ class Migx {
 
                 if ($other) {
                     //second try to find config-object
-                    
+
                     if (isset($configpath) && !$cfObject && file_exists($configpath . $config . '.config.js')) {
                         $filecontent = @file_get_contents($configpath . $config . '.config.js');
                         $objectarray = $this->importconfig($this->modx->fromJson($filecontent));
@@ -849,18 +849,18 @@ class Migx {
 
                         if (isset($objectarray['name']) && ($objectarray['name'] == 'importcsv' || $objectarray['name'] == 'exportcsv')){
                             if (isset($this->customconfigs['win_id'])){
-                                $objectarray['extended']['win_id'] = $this->customconfigs['win_id'];    
+                                $objectarray['extended']['win_id'] = $this->customconfigs['win_id'];
                             }
                         }
                         $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
                     }
-                    
+
                     if (!is_array($objectarray)){
                         //get some default configs, if not allready done
                         $objectarray = array();
-                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);                        
+                        $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
                     }
-                   
+
                     //third add configs from file, if exists
                     $configFile = $this->config['corePath'] . 'configs/' . $config . '.config.inc.php'; // [ file ]
                     if (file_exists($configFile)) {
@@ -963,13 +963,13 @@ class Migx {
                 }
             }
         }
-        
+
         if (!is_array($winbuttonslist)){
             foreach ($winbuttons as $key =>$button){
                 if (isset($button['default']) && !empty($button['default'])){
                     $winbuttons[$key]['active'] = 1;
                 }
-            }            
+            }
         }
     }
 
@@ -1295,7 +1295,7 @@ class Migx {
                 scale: 'large'
             },
             items: [{$gridactionbuttons}]
-    	  }       
+          }
           ";
         }
 
@@ -1317,7 +1317,7 @@ class Migx {
                 scale: 'large'
             },
             items: [{$gridfilters}]
-    	  }       
+          }
           ";
         }
 
@@ -1360,7 +1360,7 @@ class Migx {
         m.push({
             text: '[[%migx.duplicate]]'
             ,handler: this.migx_duplicate
-        });        
+        });
         m.push('-');
         m.push({
             text: '[[%migx.remove]]'
@@ -1370,11 +1370,11 @@ class Migx {
         m.push({
             text: '[[%migx.move_to_top]]'
             ,handler: this.moveToTop
-        }); 
+        });
         m.push({
             text: '[[%migx.move_to_bottom]]'
             ,handler: this.moveToBottom
-        });                  
+        });
             ";
         }
         $this->customconfigs['gridcontextmenus'] = $menues;
@@ -1840,9 +1840,9 @@ class Migx {
                     $tv->set('id','skdjflskjd');
                     echo 'id:'. $tv->get('id');
                     $tv->_fieldMeta['id']['phptype'] = 'string';
-                    echo($tv->_fieldMeta['id']['phptype']); 
+                    echo($tv->_fieldMeta['id']['phptype']);
                     $tv->set('id','skdjflskjd');
-                    echo 'id:'. $tv->get('id');                                               
+                    echo 'id:'. $tv->get('id');
                     */
 
                     if (!empty($field['inputOptionValues'])) {
@@ -1935,24 +1935,24 @@ class Migx {
 
 
                     $this->modx->smarty->assign('tv', $tv);
-                    
+
                     /* move this part into a plugin onMediaSourceGetProperties and create a mediaSource - property 'autoCreateFolder'
                     * may be performancewise its better todo that here?
-                    
+
                     if (!empty($properties['basePath'])) {
                     if ($properties['autoResourceFolders'] == 'true') {
                     $params['basePath'] = $basePath . $scriptProperties['resource_id'] . '/';
                     $targetDir = $params['basePath'];
 
                     $cacheManager = $this->modx->getCacheManager();
-                    // if directory doesnt exist, create it 
+                    // if directory doesnt exist, create it
                     if (!file_exists($targetDir) || !is_dir($targetDir)) {
                     if (!$cacheManager->writeTree($targetDir)) {
                     $this->modx->log(modX::LOG_LEVEL_ERROR, '[MIGX] Could not create directory: ' . $targetDir);
                     return $this->modx->error->failure('Could not create directory: ' . $targetDir);
                     }
                     }
-                    // make sure directory is readable/writable 
+                    // make sure directory is readable/writable
                     if (!is_readable($targetDir) || !is_writable($targetDir)) {
                     $this->modx->log(xPDO::LOG_LEVEL_ERROR, '[MIGX] Could not write to directory: ' . $targetDir);
                     return $this->modx->error->failure('Could not write to directory: ' . $targetDir);
@@ -1972,7 +1972,7 @@ class Migx {
                     }
 
                     $this->modx->smarty->assign('params', $params);
-                                                            
+
                     /* find the correct renderer for the TV, if not one, render a textbox */
                     $inputRenderPaths = $tv->getRenderDirectories('OnTVInputRenderList', 'input');
 
@@ -1989,16 +1989,16 @@ class Migx {
                             $tv->set('type', 'textarea');
                         }
                     }
-                    
+
                     $inputForm = $tv->getRender($params, $value, $inputRenderPaths, 'input', null, $tv->get('type'));
 
                     /*
-                    //extract scripts from content                    
-                    $pattern = '#<script(.*?)</script>#is'; 
-                    preg_match_all($pattern, $inputForm, $matches); 
+                    //extract scripts from content
+                    $pattern = '#<script(.*?)</script>#is';
+                    preg_match_all($pattern, $inputForm, $matches);
                     foreach ($matches[0] as $jsvalue) {
                     $js .= $jsvalue;
-                    }               
+                    }
                     $inputForm = preg_replace($pattern, '', $inputForm);
                     */
 
@@ -2406,9 +2406,9 @@ class Migx {
      * Sort DB result
      *
      * @param array $data Result of sql query as associative array
-     * 
-     * @param array $options Sortoptions as array 
-     * 
+     *
+     * @param array $options Sortoptions as array
+     *
      *
      * <code>
      *
@@ -2421,11 +2421,11 @@ class Migx {
      *                      'date' => date('Y-m-d', rand(0, time()))
      *                  );
      * }
-     * 
+     *
      * $options = array(array('sortby'=>'date','sortdir'=>'DESC','sortmode'=>'numeric'));
      * $data = sortDbResult($data, $options);
      * printf('<pre>%s</pre>', print_r($data, true));
-     * 
+     *
      * $options = array(array('sortby'=>'last_name','sortdir'=>'ASC','sortmode'=>'string'),array('sortby'=>'first_name','sortdir'=>'ASC','sortmode'=>'string'));
      * $data = sortDbResult($data, $options);
      * printf('<pre>%s</pre>', print_r($data, true));
@@ -2499,7 +2499,7 @@ class Migx {
                         /*
                         if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
                         $localkey = $joinFkMeta['local'];
-                        }    
+                        }
                         */
                         $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
                         switch ($type) {
@@ -2734,7 +2734,7 @@ class Migx {
                 /*
                 if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
                 $localkey = $joinFkMeta['local'];
-                }    
+                }
                 */
                 $c->leftjoin($joinclass, $joinalias);
                 $c->select($xpdo->getSelectColumns($joinclass, $joinalias, 'Joined_'));

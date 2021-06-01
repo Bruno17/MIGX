@@ -101,21 +101,21 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
         var from_child = from_child_window || false;
         this.saveDeepOnSubmit = true;
         if (this.action == 'u' || this.action == 'export_import_migxitem'){
-            this.hideOnSubmit=false;    
+            this.hideOnSubmit=false;
         } else {
             this.hideOnSubmit=true;//close in any case, if a new item!
         }
         if (from_child){
             this.hideOnSubmit=false;//dont hide, if called from child window
             if (this.action == 'u' || this.action == 'export_import_migxitem'){
-                    
+
             } else {
                 return;//dont save, if called from child and if a new item!
-            }                
+            }
         }
-        
+
         this.doSubmit();
-    },  
+    },
     doSubmit: function() {
         var v = this.fp.getForm().getValues();
         var object_id = this.baseParams.object_id;
@@ -181,7 +181,7 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                                 try {
                                     jsonobject = JSON.parse(jsonexport);
                                 } catch (e) {
-                                    
+
                                 }
                                 if (typeof jsonobject === 'object'){
                                     const keys = Object.keys(jsonobject);
@@ -192,12 +192,12 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                                         }
                                     });
                                 }
-                            }  
+                            }
                         }
                         //we store the item.values to rec.json because perhaps sometimes we can have different fields for each record
                         rec.json=item;
-                    }             
-                } else { 
+                    }
+                } else {
                     if (fields.length>0){
                         for (var i = 0; i < fields.length; i++) {
                             tvid = (fields[i].tv_id);
@@ -224,13 +224,13 @@ Ext.extend(MODx.window.UpdateTvItem,Ext.Window,{
                 this.fp.getForm().reset();
                 if (this.hideOnSubmit){
                     this.hide();
-                } 
+                }
                 if (this.saveDeepOnSubmit){
                     if (this.parent_window){
                         var parent_window = Ext.getCmp(this.parent_window);
                         if (typeof(parent_window.submitUnclosed) != 'undefined'){
                             parent_window.submitUnclosed(null,null,true);
-                        } 
+                        }
                     }
                 }
                 return true;
@@ -331,7 +331,7 @@ MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal} = function(config) {
             'load': {fn:this.load,scope:this}
         }
     });
- 	MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal}.superclass.constructor.call(this,config);
+    MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal}.superclass.constructor.call(this,config);
 
     //this.addEvents({ load: true });
 };
@@ -339,7 +339,7 @@ Ext.extend(MODx.panel.MiGridUpdate{/literal}{$tv->id}{literal},MODx.FormPanel,{
     autoload: function(config) {
         this.isloading=true;
         var baseParams = config.baseParams;
-        baseParams.window_id = '{/literal}modx-window-mi-grid-update-{$tv->id}{literal}';         
+        baseParams.window_id = '{/literal}modx-window-mi-grid-update-{$tv->id}{literal}';
         var a = {
             url: '{/literal}{$config.connectorUrl}{literal}'
             //url: config.url
