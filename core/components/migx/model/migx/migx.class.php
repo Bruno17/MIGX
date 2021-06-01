@@ -1565,7 +1565,7 @@ class Migx {
         $controller->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
         $controller->setPlaceholder('customconfigs', $this->customconfigs);
         $controller->setPlaceholder('win_id', $this->customconfigs['win_id']);
-        $controller->setPlaceholder('update_win_title', !empty($this->customconfigs['update_win_title']) ? $this->customconfigs['update_win_title'] : 'MIGX');
+        $controller->setPlaceholder('update_win_title', !empty($this->customconfigs['update_win_title']) ? $this->customconfigs['update_win_title'] : $tv->get('caption'));
 
     }
 
