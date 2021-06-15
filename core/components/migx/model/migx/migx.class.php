@@ -1748,11 +1748,9 @@ class Migx {
         if ($resource_id) {
             $check_resid = $this->modx->getOption('check_resid', $config);
             if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
-                if ($check = $resource->getTvValue($config['check_resid_TV'])) {
-                    $check_resid = $check;
-                }
+                $check = $resource->getTvValue($config['check_resid_TV']);
             }
-            if (!empty($check_resid)) {
+            if (!empty($check)) {
                 //$c->where("CONCAT('||',resource_ids,'||') LIKE '%||{$resource_id}||%'", xPDOQuery::SQL_AND);
                 return true;
             }
