@@ -18,6 +18,13 @@ class Migx {
      * @var modX A reference to the modX object.
      */
     public $modx = null;
+    
+    /**
+     * @access public
+     * @var modX A reference to the modX object.
+     */
+    public $pdoTools = null;
+    
     /**
      * @access public
      * @var array A collection of properties to adjust MIGX behaviour.
@@ -46,6 +53,8 @@ class Migx {
      */
     function __construct(modX & $modx, array $config = array()) {
         $this->modx = &$modx;
+        
+        
 
         $packageName = 'migx';
         $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
@@ -60,7 +69,12 @@ class Migx {
         $corePath = $this->modx->getOption('migx.core_path', null, $modx->getOption('core_path') . 'components/migx/');
         $assetsPath = $this->modx->getOption('migx.assets_path', null, $modx->getOption('assets_path') . 'components/migx/');
         $assetsUrl = $this->modx->getOption('migx.assets_url', null, $modx->getOption('assets_url') . 'components/migx/');
-
+		
+		/*pdoTools parser check*/
+		$this->pdoTools = $this->modx->getService('pdoTools');
+		$pdoToolsUse = $this->modx->getOption('migx.pdotools_use', null, false);        
+        $defaultconfig['pdoToolsUse'] = !empty($pdoToolsUse) && !empty($this->pdoTools);
+        
         $defaultconfig['debugUser'] = '';
         $defaultconfig['corePath'] = $corePath;
         $defaultconfig['modelPath'] = $corePath . 'model/';
@@ -1618,7 +1632,7 @@ class Migx {
     }
 
     function renderChunk($tpl, $properties = array(), $getChunk = true, $printIfemty = true) {
-
+		
         $value = $this->parseChunk($tpl, $properties, $getChunk, $printIfemty);
 
         $this->modx->getParser();
@@ -2136,13 +2150,16 @@ class Migx {
                 $tpl = false;
             }
         }
-
         if ($tpl) {
-            $chunk = $this->modx->newObject('modChunk');
-            $chunk->setCacheable(false);
-            $chunk->setContent($tpl);
+        	if(!empty($this->config['pdoToolsUse'])){
+        		$output = $this->pdoTools->getChunk('@INLINE '.$tpl,$fields);	            
+			}else{
+				$chunk = $this->modx->newObject('modChunk');
+	            $chunk->setCacheable(false);
+	            $chunk->setContent($tpl);
 
-            $output = $chunk->process($fields);
+	            $output = $chunk->process($fields);
+			}
 
         } elseif ($printIfemty) {
             $output = '<pre>' . print_r($fields, 1) . '</pre>';
