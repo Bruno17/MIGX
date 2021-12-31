@@ -1,0 +1,42 @@
+{
+    "name": "MIGX",
+    "lowCaseName": "migx",
+    "namespace": "Migx",
+    "description": "",
+    "author": "Bruno Perner",
+    "version": "3.0.0-alpha2",
+    "menus": [
+    ],
+    "plugins": [
+ 
+    ],
+    "snippets": [
+      {
+        "name":"getImageList",
+        "file":"getimagelist.snippet.php"
+      }
+    ],
+    "systemSettings": [
+
+    ],
+    "database": {
+      "tables": [
+        "\\Migx\\Model\\migxConfig",
+        "\\Migx\\Model\\migxFormtab",
+        "\\Migx\\Model\\migxFormtabField",
+        "\\Migx\\Model\\migxConfigElement",
+        "\\Migx\\Model\\migxElement"
+      ]
+    },
+    "build": {
+      "scriptsBefore": [
+
+      ],
+      "scriptsAfter": [
+
+      ],
+      "requires": {
+          "modx": ">=3.0.0-alpha"
+      }
+    }
+  }
