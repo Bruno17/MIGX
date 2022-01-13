@@ -17,340 +17,88 @@
       ],
       "snippets":[
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
           "name":"getImageList",
           "file":"getimagelist.snippet.php"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxGetRelations",
-          "file":"migxgetrelations.snippet.php"
+          "file":"migxgetrelations.snippet.php",
+          "name":"migxGetRelations"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migx",
-          "file":"migx.snippet.php"
+          "file":"migx.snippet.php",
+          "name":"migx"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxLoopCollection",
-          "file":"migxloopcollection.snippet.php"
+          "file":"migxloopcollection.snippet.php",
+          "name":"migxLoopCollection"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxResourceMediaPath",
-          "file":"migxresourcemediapath.snippet.php"
+          "file":"migxresourcemediapath.snippet.php",
+          "name":"migxResourceMediaPath"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxImageUpload",
-          "file":"migximageupload.snippet.php"
+          "file":"migximageupload.snippet.php",
+          "name":"migxImageUpload"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxChunklistToJson",
-          "file":"migxchunklisttojson.snippet.php"
+          "file":"migxchunklisttojson.snippet.php",
+          "name":"migxChunklistToJson"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxSwitchDetailChunk",
-          "file":"migxswitchdetailchunk.snippet.php"
+          "file":"migxswitchdetailchunk.snippet.php",
+          "name":"migxSwitchDetailChunk"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"getSwitchColumnCol",
-          "file":"getswitchcolumncol.snippet.php"
+          "file":"getswitchcolumncol.snippet.php",
+          "name":"getSwitchColumnCol"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"getDayliMIGXrecord",
-          "file":"getdaylimigxrecord.snippet.php"
+          "file":"getdaylimigxrecord.snippet.php",
+          "name":"getDayliMIGXrecord"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"filterbytag",
-          "file":"filterbytag.snippet.php"
+          "file":"filterbytag.snippet.php",
+          "name":"filterbytag"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxObjectMediaPath",
-          "file":"migxobjectmediapath.snippet.php"
+          "file":"migxobjectmediapath.snippet.php",
+          "name":"migxObjectMediaPath"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"exportMIGX2db",
-          "file":"exportmigx2db.snippet.php"
+          "file":"exportmigx2db.snippet.php",
+          "name":"exportMIGX2db"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"preparedatewhere",
-          "file":"preparedatewhere.snippet.php"
+          "file":"preparedatewhere.snippet.php",
+          "name":"preparedatewhere"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxJsonToPlaceholders",
-          "file":"migxjsontoplaceholders.snippet.php"
+          "file":"migxjsontoplaceholders.snippet.php",
+          "name":"migxJsonToPlaceholders"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxGetCollectionTree",
-          "file":"migxgetcollectiontree.snippet.php"
+          "file":"migxgetcollectiontree.snippet.php",
+          "name":"migxGetCollectionTree"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxIsNewObject",
-          "file":"migxisnewobject.snippet.php"
+          "file":"migxisnewobject.snippet.php",
+          "name":"migxIsNewObject"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migx_example_validate",
-          "file":"migx_example_validate.snippet.php"
+          "file":"migx_example_validate.snippet.php",
+          "name":"migx_example_validate"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxHookAftercollectmigxitems",
-          "file":"migxhookaftercollectmigxitems.snippet.php"
+          "file":"migxhookaftercollectmigxitems.snippet.php",
+          "name":"migxHookAftercollectmigxitems"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxAutoPublish",
-          "file":"migxautopublish.snippet.php"
+          "file":"migxautopublish.snippet.php",
+          "name":"migxAutoPublish"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxGetObject",
-          "file":"migxgetobject.snippet.php"
+          "file":"migxgetobject.snippet.php",
+          "name":"migxGetObject"
         }
       ],
       "chunks":[
@@ -361,19 +109,6 @@
       ],
       "plugins":[
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "disabled":false,
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
           "name":"MIGX",
           "events":[
             "OnDocFormPrerender",
@@ -383,44 +118,18 @@
           "file":"migx.plugin.php"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "disabled":true,
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"MIGXquip",
           "events":[
             "OnDocFormPrerender"
           ],
-          "file":"migxquip.plugin.php"
+          "file":"migxquip.plugin.php",
+          "name":"MIGXquip"
         },
         {
-          "source":0,
-          "property_preprocess":false,
-          "description":"",
-          "editor_type":0,
-          "cache_type":0,
-          "locked":false,
-          "properties":[
-            
-          ],
-          "disabled":false,
-          "moduleguid":"",
-          "static":false,
-          "static_file":"",
-          "name":"migxResizeOnUpload",
           "events":[
             "OnFileManagerUpload"
           ],
-          "file":"migxresizeonupload.plugin.php"
+          "file":"migxresizeonupload.plugin.php",
+          "name":"migxResizeOnUpload"
         }
       ]
     }

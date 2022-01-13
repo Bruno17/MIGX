@@ -34,8 +34,12 @@ MODx.window.UpdateTvdbItem = function(config) {
     MODx.window.UpdateTvdbItem.superclass.constructor.call(this,config);
     this.options = config;
     this.config = config;
-    this.parent_window = '{/literal}{$smarty.request.window_id}{literal}';
-
+    this.parent_window = null;
+    {/literal}
+    {if array_key_exists('window_id',$smarty.request)}
+        this.parent_window = '{$smarty.request.window_id}';
+    {/if}
+    {literal}
     //this.on('show',this.onShow,this);
     this.on('hide',this.onHideWindow,this);
     this.on('resize',this.onResizeWindow,this);

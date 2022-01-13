@@ -125,8 +125,8 @@ switch ($task) {
             /* handles checkboxes & multiple selects elements */
             if (is_array($value)) {
                 $featureInsert = array();
-                while (list($featureValue, $featureItem) = each($value)) {
-                    $featureInsert[count($featureInsert)] = $featureItem;
+                foreach ($value as $featureValue => $featureItem){
+                    $featureInsert[] = $featureItem;
                 }
                 $value = implode('||', $featureInsert);
             }
@@ -137,7 +137,9 @@ switch ($task) {
                     //extended field (json-array)
                     $postvalues[$field[0]][$field[1]] = $value;
                 } else {
-                    $postvalues[$field[0]] = $value;
+                    if (!empty($field[0]) && is_string($field[0])){
+                        $postvalues[$field[0]] = $value;
+                    }
                 }
             }
 
@@ -367,7 +369,6 @@ switch ($task) {
             $postvalues['customerid'] = $postvalues['resource_id'];
         }
 
-
         $object->fromArray($postvalues);
 
 
@@ -382,27 +383,15 @@ if ($object->save() == false) {
 }
 
 
-//clear cache
-$paths = array(
-    'config.cache.php',
-    'sitePublishing.idx.php',
-    'registry/mgr/workspace/',
-    'lexicon/',
-    );
-$contexts = $modx->getCollection('modContext');
-foreach ($contexts as $context) {
-    $paths[] = $context->get('key') . '/';
+//clear cache for all contexts
+$collection = $modx->getCollection('modContext');
+foreach ($collection as $context) {
+    $contexts[] = $context->get('key');
 }
-
-$options = array(
-    'publishing' => 1,
-    'extensions' => array(
-        '.cache.php',
-        '.msg.php',
-        '.tpl.php'),
-    );
-if ($modx->getOption('cache_db'))
-    $options['objects'] = '*';
-$results = $modx->cacheManager->clearCache($paths, $options);
-
+$modx->cacheManager->refresh(array(
+    'db' => array(),
+    'auto_publish' => array('contexts' => $contexts),
+    'context_settings' => array('contexts' => $contexts),
+    'resource' => array('contexts' => $contexts),
+    ));
 ?>

@@ -855,7 +855,7 @@ class Migx {
                         $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);
                     }
                     
-                    if (!is_array($objectarray)){
+                    if (!isset($objectarray) || !is_array($objectarray)){
                         //get some default configs, if not allready done
                         $objectarray = array();
                         $this->prepareConfigsArray($objectarray, $gridactionbuttons, $gridcontextmenus, $gridcolumnbuttons, $winbuttons);                        
@@ -904,7 +904,7 @@ class Migx {
 
     public function prepareConfigsArray($objectarray, &$gridactionbuttons, &$gridcontextmenus, &$gridcolumnbuttons, &$winbuttons) {
 
-        if (is_array($objectarray['extended'])) {
+        if (isset($objectarray['extended']) && is_array($objectarray['extended'])) {
             foreach ($objectarray['extended'] as $key => $value) {
                 if (!empty($value)) {
                     $this->customconfigs[$key] = $value;
