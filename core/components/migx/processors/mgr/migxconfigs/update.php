@@ -43,7 +43,7 @@ $prefix = $config['prefix'];
 $packageName = $config['packageName'];
 $task = $modx->getOption('task', $scriptProperties, '');
 
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+$packagepath = $modx->migx->findPackagePath($packageName); 
 $modelpath = $packagepath . 'model/';
 
 $modx->addPackage($packageName, $modelpath, $prefix);

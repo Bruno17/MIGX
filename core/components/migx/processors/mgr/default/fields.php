@@ -54,7 +54,6 @@ if (isset($config['joins']) && !empty($config['joins'])){
     $export_joins = $config['joins'];    
 }
 
-
 if (!empty($joinalias)) {
     if ($fkMeta = $xpdo->getFKDefinition($classname, $joinalias)) {
         $joinclass = $fkMeta['class'];

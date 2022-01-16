@@ -57,10 +57,11 @@ class migxFormProcessor extends modProcessor {
         $filename = str_replace(array('.class', '.php'), '', basename(__file__)) . $action . '.php';
         $processorspath = dirname(dirname(__file__)) . '/';
         $filenames = array();
+        
         if ($processor_file = $this->modx->migx->findProcessor($processorspath, $filename, $filenames)) {
+
             include_once ($processor_file);
         }
-
 
         //$object = $this->modx->getObject('Angebote',$scriptProperties['angebot']);
         //if (empty($object)) return $this->modx->error->failure($this->modx->lexicon('quip.thread_err_nf'));
@@ -80,6 +81,8 @@ class migxFormProcessor extends modProcessor {
         $categories = array();
         
         $tabs = $this->modx->migx->checkMultipleForms($tabs,$controller,$allfields,$record);
+
+       
         
         $this->modx->migx->createForm($tabs, $record, $allfields, $categories, $scriptProperties);
         $formcaption = $this->modx->getOption('formcaption',$customconfigs,'');

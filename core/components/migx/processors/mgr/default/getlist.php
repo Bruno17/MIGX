@@ -36,7 +36,7 @@ if (!empty($config['packageName'])) {
     } else {
         //all packages must have the same prefix for now!
         foreach ($packageNames as $packageName) {
-            $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $packagepath = $modx->migx->findPackagePath($packageName); 
             $modelpath = $packagepath . 'model/';
             if (is_dir($modelpath)) {
                 $modx->addPackage($packageName, $modelpath, $prefix);

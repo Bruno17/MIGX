@@ -48,7 +48,7 @@ class Migx {
         $this->modx = &$modx;
 
         $packageName = 'migx';
-        $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+        $packagepath = $this->findPackagePath($packageName); 
         $modelpath = $packagepath . 'model/';
         $prefix = null;
         $this->modx->addPackage($packageName, $modelpath, $prefix);
@@ -97,6 +97,11 @@ class Migx {
         }
     }
 
+    public function findPackagePath($packageName) {
+        $modx = &$this->modx;
+        return $modx->getOption( $packageName . '.core_path',null,$modx->getOption('core_path').'components/' . $packageName . '/');     
+    }
+
     public function getXpdoInstanceAndAddPackage($scriptProperties) {
         $modx = &$this->modx;
 
@@ -110,9 +115,9 @@ class Migx {
         }
 
         $packageName = $modx->getOption('packageName', $scriptProperties, '');
-
+        
         if (!empty($packageName)) {
-            $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $packagepath = $this->findPackagePath($packageName);           
             $modelpath = $packagepath . 'model/';
 
             $xpdo_name = $packageName . '_xpdo';
@@ -567,7 +572,7 @@ class Migx {
         $packageName = $packageName[0];
         $task = $this->getTask();
         if (!empty($packageName)) {
-            $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+            $packagepath = $this->findPackagePath($packageName); 
             switch ($type) {
                 case 'processors':
                     $path = $packagepath . 'processors/mgr/';
@@ -769,11 +774,12 @@ class Migx {
                 if (!empty($packageName)) {
                     $packageName = explode(',', $packageName);
                     $packageName = $packageName[0];
-                    $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/grid/grid.' . $config . '.config.inc.php'; // [ file ]
+                    $packagepath = $this->findPackagePath($packageName); 
+                    $configFile = $packagepath . 'migxconfigs/grid/grid.' . $config . '.config.inc.php'; // [ file ]
                     if (file_exists($configFile)) {
                         include ($configFile);
                     }
-                    $configFile = $this->modx->getOption('core_path') . 'components/' . $packageName . '/migxconfigs/grid/grid.config.inc.php'; // [ file ]
+                    $configFile = $packagepath . 'migxconfigs/grid/grid.config.inc.php'; // [ file ]
                     if (file_exists($configFile)) {
                         include ($configFile);
                     }
@@ -803,7 +809,7 @@ class Migx {
                 if (isset($packageName)) {
                     $packageName = explode(',', $packageName);
                     $packageName = $packageName[0];
-                    $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+                    $packagepath = $this->findPackagePath($packageName); 
                     $configpath = $packagepath . 'migxconfigs/';
                 }
 

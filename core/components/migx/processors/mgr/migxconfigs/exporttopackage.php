@@ -4,7 +4,7 @@
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
 $packageName = $config['packageName'];
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+$packagepath = $modx->migx->findPackagePath($packageName); 
 $modelpath = $packagepath . 'model/';
 $modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
@@ -13,7 +13,7 @@ if ($object = $modx->getObject($classname, $scriptProperties['object_id'])) {
     $row = $modx->migx->recursive_decode($object->toArray());
     $packageName = $row['extended']['packageName'];
     if (!empty($packageName)) {
-        $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+        $packagepath = $modx->migx->findPackagePath($packageName); 
         $configpath = $packagepath . 'migxconfigs/';
         $filepath = $configpath . $row['name'] . '.config.js';
         if (file_exists($packagepath)) {
