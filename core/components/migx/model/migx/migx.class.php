@@ -1551,6 +1551,11 @@ class Migx {
 
         //$controller->setPlaceholder('i18n', $this->migxi18n);
 
+        $tv_caption = $tv->get('caption');
+        $tv_name = $tv->get('name');
+        $default_win_title = !empty($tv_name) ? $tv_name : 'MIGX';
+        $default_win_title = !empty($tv_caption) ? $tv_caption : $default_win_title;
+
         $controller->setPlaceholder('filterDefaults', json_encode($filterDefaults));
         $controller->setPlaceholder('tv_id', $tv_id);
         $controller->setPlaceholder('migx_lang', json_encode($this->migxlang));
@@ -1571,7 +1576,7 @@ class Migx {
         $controller->setPlaceholder('auth', $_SESSION["modx.{$this->modx->context->get('key')}.user.token"]);
         $controller->setPlaceholder('customconfigs', $this->customconfigs);
         $controller->setPlaceholder('win_id', $this->customconfigs['win_id']);
-        $controller->setPlaceholder('update_win_title', !empty($this->customconfigs['update_win_title']) ? $this->customconfigs['update_win_title'] : 'MIGX');
+        $controller->setPlaceholder('update_win_title', !empty($this->customconfigs['update_win_title']) ? $this->customconfigs['update_win_title'] : $default_win_title);
 
     }
 
