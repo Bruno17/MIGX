@@ -2836,6 +2836,19 @@ class Migx {
         return $divisors;
     }
 
+    public function is_modx3(){
+        $result = false;
+        $versionData = [];
+        if (method_exists($this->modx,'getVersionData')){
+            $versionData = $this->modx->getVersionData();
+        }
+        
+        if (isset($versionData['version']) && (int) $versionData['version'] >= 3){
+            $result = true;
+        }
+        return $result;        
+    }
+
     function importconfig($array) {
         $excludekeys_ifarray = array(
             'getlistwhere',

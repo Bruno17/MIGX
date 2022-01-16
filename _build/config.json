@@ -122,7 +122,8 @@
             "OnDocFormPrerender"
           ],
           "file":"migxquip.plugin.php",
-          "name":"MIGXquip"
+          "name":"MIGXquip",
+          "disabled":true
         },
         {
           "events":[
@@ -138,12 +139,12 @@
   "lowCaseName":"migx",
   "description":"",
   "author":"",
-  "version":"2.13.0-pl",
+  "version":"3.0.0-alpha4",
   "build":{
     "resolver":{
       "resolversDir":"resolvers",
       "after":[
-        "tables.resolver.php"
+        "resolve.synctables.php"
       ]
     }
   },
