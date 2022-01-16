@@ -116,7 +116,19 @@
                                             {$tv->get('formElement')}
                                         </div>
                                      </div>
-                                    <script type="text/javascript">{literal}Ext.onReady(function() { new Ext.ToolTip({{/literal}target: 'tv{$tv->id}-caption',html: '[[*{$tv->name}]]'{literal}});});{/literal}</script>
+                                    <script type="text/javascript">
+                                        var migx_fields = {$fields};
+                                        var migx_field = migx_fields.find(item => item.tv_id == '{$tv->id}');
+                                        {literal}
+                                        Ext.onReady(function() { 
+                                            new Ext.ToolTip({
+                                                {/literal}
+                                                target: 'tv{$tv->id}-caption',
+                                                html: '[[+'+migx_field.field+']]'{literal}
+                                            });}
+                                        );{/literal}
+                                    </script>
+ 
                                 {else}
                                     <input type="hidden" id="tvdef{$tv->id}" value="{$tv->default_text|escape}" />
                                     {$tv->get('formElement')}
