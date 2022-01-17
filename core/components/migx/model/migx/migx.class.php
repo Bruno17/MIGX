@@ -558,7 +558,12 @@ class Migx {
     }
 
     function findProcessor($processorspath, $filename, &$filenames) {
-        return $this->findCustomFile($processorspath, $filename, $filenames);
+        $result = $this->findCustomFile($processorspath, $filename, $filenames);
+        if (!$result){
+            $filename = strtolower($filename);
+            $result = $this->findCustomFile($processorspath, $filename, $filenames);    
+        }
+        return $result;
     }
 
     function findGrid($processorspath, $filename, &$filenames) {
