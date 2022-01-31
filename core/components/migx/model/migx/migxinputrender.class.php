@@ -38,7 +38,7 @@ class migxInputRender extends modTemplateVarInputRender {
         //$inputTvs = $this->migx->extractInputTvs($formtabs);
 
         /* get base path based on either TV param or filemanager_path */
-        $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
+        //$this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
 
         $resource_array = array();
         $resource_id = 0;

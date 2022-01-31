@@ -1434,7 +1434,7 @@ class Migx {
         $inputTvs = $this->extractFieldsFromTabs($formtabs);
 
         /* get base path based on either TV param or filemanager_path */
-        $this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
+        //$this->modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->modx->context->get('key')));
 
         /* pasted from processors.element.tv.renders.mgr.input*/
         /* get working context */
