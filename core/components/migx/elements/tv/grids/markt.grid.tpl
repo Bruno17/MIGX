@@ -23,7 +23,7 @@ MODx.grid.multiTVdbgrid = function(config) {
     },
     url : config.url,
     baseParams: { 
-        action: 'mgr/migxdb/getList',
+        action: 'mgr/migxdb/getlist',
         configs: config.configs,
         resource_id: config.resource_id,
         'HTTP_MODAUTH': config.auth},

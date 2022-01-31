@@ -29,7 +29,7 @@ $resource = is_object($this->xpdo->resource) ? $this->xpdo->resource->toArray() 
 $inputTvs = $migx->extractInputTvs($formtabs);
 
 /* get base path based on either TV param or filemanager_path */
-$modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->xpdo->context->get('key')));
+//$modx->getService('fileHandler', 'modFileHandler', '', array('context' => $this->xpdo->context->get('key')));
 
 /* pasted from processors.element.tv.renders.mgr.input*/
 /* get working context */

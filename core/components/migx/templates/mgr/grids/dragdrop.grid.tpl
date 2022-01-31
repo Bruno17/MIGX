@@ -140,7 +140,7 @@
     },
     url : config.url,
     baseParams: {
-    action: 'mgr/migxdb/getList',
+    action: 'mgr/migxdb/getlist',
     configs: config.configs,
     reqTempParams:'{/literal}{$reqTempParams}{literal}',
     reqConfigs:'{/literal}{$reqConfigs}{literal}',

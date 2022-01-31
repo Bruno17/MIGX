@@ -35,7 +35,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     Ext.applyIf(config,{
         url: config.url
         ,baseParams: { 
-            action: 'mgr/comment/getList'
+            action: 'mgr/comment/getlist'
             ,thread: config.thread || null
             ,family: config.family || null
         }

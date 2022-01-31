@@ -87,7 +87,7 @@ MODx.grid.multiTVdbgrid = function(config) {
 },	
     url : config.url,
     baseParams: { 
-        action: 'mgr/migxdb/getList',
+        action: 'mgr/migxdb/getlist',
         configs: config.configs,
         resource_id: config.resource_id,
         'HTTP_MODAUTH': config.auth
@@ -114,15 +114,15 @@ MODx.grid.multiTVdbgrid = function(config) {
             items: [{
 					text: 'Stapeloperationen',
 					menu: [{
-						text: 'markierte veröffentlichen',
+						text: 'markierte verï¿½ffentlichen',
 						handler: this.publishSelected,
 						scope: this
 					}, {
-						text: 'markierte zurückziehen',
+						text: 'markierte zurï¿½ckziehen',
 						handler: this.unpublishSelected,
 						scope: this
 					}, {
-						text: 'markierte löschen',
+						text: 'markierte lï¿½schen',
 						handler: this.deleteSelected,
 						scope: this
 					}]
@@ -471,7 +471,7 @@ Ext.extend(MODx.grid.multiTVdbgrid,MODx.grid.Grid,{
         });						
         } else if (n.deleted == 0) {
         m.push({
-            text: 'löschen'
+            text: 'lï¿½schen'
             ,handler: this.deleteObject
         });		
         }	        
