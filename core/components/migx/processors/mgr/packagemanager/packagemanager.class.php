@@ -34,7 +34,7 @@ class migxCreatePackageProcessor extends modProcessor {
             //$this->setPlaceholder('schema', @file_get_contents($schemafile));
         }
 
-        $packagepath = $this->modx->getOption('core_path') . 'components/' . $packageName . '/';
+        $packagepath = $this->modx->migx->findPackagePath($packageName); 
         $modelpath = $packagepath . 'model/';
         $schemapath = $modelpath . 'schema/';
         $schemafile = $schemapath . $packageName . '.mysql.schema.xml';

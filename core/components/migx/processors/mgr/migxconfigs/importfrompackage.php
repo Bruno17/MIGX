@@ -3,7 +3,8 @@
 $config = $modx->migx->customconfigs;
 $prefix = $config['prefix'];
 $packageName = $config['packageName'];
-$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+//$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+$packagepath = $modx->migx->findPackagePath($packageName); 
 $modelpath = $packagepath . 'model/';
 $modx->addPackage($packageName, $modelpath, $prefix);
 $classname = $config['classname'];
@@ -12,7 +13,7 @@ $classname = $config['classname'];
 $packageName = $modx->getOption('package', $scriptProperties, '');
 
 if (!empty($packageName)) {
-    $packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+    //$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
     $configpath = $packagepath . 'migxconfigs/';
     if (is_dir($configpath)) {
         if ($handle = opendir($configpath)) {
