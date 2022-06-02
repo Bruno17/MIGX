@@ -1760,7 +1760,7 @@ class Migx {
         return $fields;
     }
 
-    function checkForConnectedResource($resource_id = false, &$config) {
+    function checkForConnectedResource($resource_id = false, &$config = []) {
         if ($resource_id) {
             $check_resid = $this->modx->getOption('check_resid', $config);
             if ($check_resid == '@TV' && $resource = $this->modx->getObject('modResource', $resource_id)) {
