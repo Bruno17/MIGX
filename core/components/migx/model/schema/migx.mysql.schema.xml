@@ -72,14 +72,14 @@
         <field key="rank" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         
         <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />	
-    	<field key="createdon" dbtype="datetime" phptype="datetime" null="false" />
+    	<field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="editedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
-		<field key="editedon" dbtype="datetime" phptype="datetime" null="false" />
+		<field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="deleted" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
-		<field key="deletedon" dbtype="datetime" phptype="datetime" null="false" />
+		<field key="deletedon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="deletedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="published" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />        
-		<field key="publishedon" dbtype="datetime" phptype="datetime" null="false" />
+		<field key="publishedon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         
         <aggregate alias="Config" class="migxConfig" local="config_id" foreign="id" cardinality="one" owner="foreign" /> 
@@ -91,14 +91,14 @@
         <field key="content" dbtype="text" phptype="string" null="false" default="" />
 	
         <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />	
-    	<field key="createdon" dbtype="datetime" phptype="datetime" null="false" />
+    	<field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="editedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
-		<field key="editedon" dbtype="datetime" phptype="datetime" null="false" />
+		<field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="deleted" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
-		<field key="deletedon" dbtype="datetime" phptype="datetime" null="false" />
+		<field key="deletedon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="deletedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="published" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />        
-		<field key="publishedon" dbtype="datetime" phptype="datetime" null="false" />
+		<field key="publishedon" dbtype="datetime" phptype="datetime" null="true" />
 		<field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" /> 
         
         <aggregate alias="Configs" class="migxConfigElement" local="id" foreign="element_id" cardinality="many" owner="local" />        
