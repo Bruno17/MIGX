@@ -54,6 +54,7 @@ class migxCreatePackageProcessor extends modProcessor {
         } else {
             $xpdo = &$this->modx;
         }
+        $isMODX3 = $xpdo->getVersionData()['version'] >= 3;
 
         $manager = $xpdo->getManager();
         $generator = $manager->getGenerator();
@@ -107,14 +108,23 @@ class migxCreatePackageProcessor extends modProcessor {
         if ($properties['task'] == 'writeSchema') {
 
             //Use this to create a schema from an existing database
-            $xml = $generator->writeSchema($schemafile, $packageName, 'xPDOObject', $prefix, $restrictPrefix, $tableList);
+            if ($isMODX3){
+                $xml = $generator->writeSchema($schemafile, $packageName, 'xPDO\Om\xPDOObject', is_null($prefix) ? '' : $prefix, $restrictPrefix);
+            } else {
+                $xml = $generator->writeSchema($schemafile, $packageName, 'xPDOObject', $prefix, $restrictPrefix, $tableList);
+            }
 
         }
 
         if ($properties['task'] == 'parseSchema') {
             //Use this to generate classes and maps from your schema
             // NOTE: by default, only maps are overwritten; delete class files if you want to regenerate classes
-            $generator->parseSchema($schemafile, $modelpath);
+            if ($isMODX3){
+                //Always regenerate the files
+                $generator->parseSchema($schemafile, $modelpath, ["regenerate" => 2]);
+            } else {
+                $generator->parseSchema($schemafile, $modelpath);
+            }
         }
 
         if ($properties['task'] == 'alterfields' || $properties['task'] == 'addmissing' || $properties['task'] == 'removedeleted' || $properties['task'] == 'checkindexes') {
@@ -127,7 +137,11 @@ class migxCreatePackageProcessor extends modProcessor {
             $pkgman = $this->modx->migx->loadPackageManager();
             $pkgman->xpdo2 = &$xpdo;
             $pkgman->manager = $xpdo->getManager();
-            $pkgman->parseSchema($schemafile, $modelpath, true);
+            if ($isMODX3){
+                $pkgman->parseSchema($schemafile, $modelpath, ['compile' => true, 'update' => 0]);
+            } else {
+                $pkgman->parseSchema($schemafile, $modelpath, true);
+            }
 
             $pkgman->checkClassesFields($options);
 
@@ -145,14 +159,23 @@ class migxCreatePackageProcessor extends modProcessor {
             $xpdo->addPackage($packageName, $modelpath, $prefix);
             $pkgman = $this->modx->migx->loadPackageManager();
             $pkgman->manager = $xpdo->getManager();
-            $pkgman->parseSchema($schemafile, $modelpath, true);
+            if ($isMODX3){
+                $pkgman->parseSchema($schemafile, $modelpath, ['compile' => true, 'update' => 0]);
+            } else {
+                $pkgman->parseSchema($schemafile, $modelpath, true);
+            }
             $pkgman->createTables();
         }
 
         if ($properties['task'] == 'saveSchema') {
             $fp = @fopen($schemafile, 'w+');
             if ($fp) {
-                $result = @fwrite($fp, stripslashes($properties['schema']));
+                if ($isMODX3){
+                    //The schema now contains backslashes
+                    $result = @fwrite($fp, $properties['schema']);
+                } else {
+                    $result = @fwrite($fp, stripslashes($properties['schema']));
+                }
                 @fclose($fp);
             }
         }

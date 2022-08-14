@@ -1,6 +1,12 @@
 <?php
+$isMODX3 = $this->modx->getVersionData()['version'] >= 3;
+if ($isMODX3) {
+    abstract class DynamicBaseMigxPackageManager extends \xPDO\Om\mysql\xPDOGenerator {}
+} else {
+    abstract class DynamicBaseMigxPackageManager extends xPDOGenerator_mysql {}
+}
 
-class MigxPackageManager extends xPDOGenerator_mysql {
+class MigxPackageManager extends DynamicBaseMigxPackageManager {
     function __construct(modX & $modx, array $config = array()) {
         $this->modx = &$modx;
         $this->maps = array();
@@ -9,11 +15,20 @@ class MigxPackageManager extends xPDOGenerator_mysql {
         $this->config = array_merge($defaultconfig, $config);
 
         $this->manager = $this->modx->getManager();
-
+        $this->isMODX3 = $this->modx->getVersionData()['version'] >= 3;
     }
 
     public function compile($path = '') {
-        $this->packageClasses = $this->classes;
+        if ($this->isMODX3) {
+            $this->packageClasses = array();
+            //Add package name (namespace) to the class name
+            $packagename = $this->model['package'];
+            foreach ($this->classes as $class => $value) {
+                $this->packageClasses[$packagename . '\\' . $class] = $value;
+            }
+        } else {
+            $this->packageClasses = $this->classes;
+        }
         return true;
     }
 
