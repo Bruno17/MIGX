@@ -2196,7 +2196,7 @@ class Migx {
         return true;
     }
 
-    function tvFilters($tvFilters = '', &$criteria) {
+    function tvFilters($tvFilters = '', &$criteria = null) {
 
         //tvFilter::categories=inArray=[[+category]]
 
