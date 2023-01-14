@@ -179,7 +179,8 @@ class Migx {
 
         $c = $xpdo->newQuery($classname);
 
-        $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
+        $shortClassName = end(explode('\\', $classname)); 
+        $c->select($xpdo->getSelectColumns($classname, $shortClassName, '', $selectfields));
         if (!empty($specialfields)) {
             $c->select($specialfields);
         }
