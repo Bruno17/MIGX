@@ -46,7 +46,7 @@ $mf_options = array();
 $mf_options[] = '---==0';
 $classname = 'migxConfig';
 $c = $this->modx->newQuery($classname);
-$c->select($this->modx->getSelectColumns($classname, $classname, '', array('id', 'name')));
+$c->select($this->modx->getSelectColumns($classname, $c->getAlias(), '', array('id', 'name')));
 $c->sortby('name');
 if ($collection = $this->modx->getCollection($classname, $c)) {
     foreach ($collection as $object) {

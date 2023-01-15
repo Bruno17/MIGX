@@ -30,8 +30,8 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
 } else {
     $c = $modx->newQuery($classname, $scriptProperties['object_id']);
     $c->select('
-        `' . $classname . '`.*,
-    	`' . $classname . '`.`id` AS `object_id`
+        `' . $c->getAlias() . '`.*,
+    	`' . $c->getAlias() . '`.`id` AS `object_id`
     ');
     if (!empty($joinalias)) {
         $c->leftjoin($joinclass, $joinalias);

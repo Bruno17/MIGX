@@ -82,7 +82,7 @@ $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
 $where = $modx->getOption('where', $scriptProperties, $where);
 
 $c = $xpdo->newQuery($classname);
-$c->select($xpdo->getSelectColumns($classname, $classname));
+$c->select($xpdo->getSelectColumns($classname, $c->getAlias()));
 
 if (!empty($joinalias)) {
     /*

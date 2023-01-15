@@ -46,7 +46,7 @@ $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 
 $c = $modx->newQuery($classname);
 $selectfields = !empty($selectfields) ? explode(',', $selectfields) : null;
-$c->select($modx->getSelectColumns($classname, $classname, '', $selectfields));
+$c->select($modx->getSelectColumns($classname, $c->getAlias(), '', $selectfields));
 
 if (!empty($joinalias)) {
     /*

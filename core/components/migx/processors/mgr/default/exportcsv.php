@@ -148,7 +148,7 @@ if (!isset($scriptProperties['download']) || !($scriptProperties['download'])) {
     if ($ignoreselectfields) {
 
     } else {
-        $c->select($xpdo->getSelectColumns($classname, $classname, '', $selectfields));
+        $c->select($xpdo->getSelectColumns($classname, $c->getAlias(), '', $selectfields));
     }
     if (!empty($specialfields)) {
         $c->select($specialfields);

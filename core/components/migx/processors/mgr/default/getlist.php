@@ -112,9 +112,7 @@ $chunk->setContent($where);
 $where = $chunk->process($scriptProperties);
 
 $c = $xpdo->newQuery($classname);
-
-$shortClassName = end(explode('\\', $classname));
-$c->select($xpdo->getSelectColumns($classname, $shortClassName, '', $selectfields));
+$c->select($xpdo->getSelectColumns($classname, $c->getAlias(), '', $selectfields));
 if (!empty($specialfields)) {
     $c->select($specialfields);
 }

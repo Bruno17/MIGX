@@ -68,13 +68,11 @@ if (empty($scriptProperties['object_id']) || $scriptProperties['object_id'] == '
     }
 
 } else {
-    $shortClassName = end(explode('\\', $classname));
-    
     $c = $xpdo->newQuery($classname, $scriptProperties['object_id']);
     $pk = $xpdo->getPK($classname);
     $c->select('
-        `' . $shortClassName . '`.*,
-    	`' . $shortClassName . '`.`' . $pk . '` AS `object_id`
+        `' . $c->getAlias() . '`.*,
+    	`' . $c->getAlias() . '`.`' . $pk . '` AS `object_id`
     ');
     if (!empty($joinalias)) {
         $c->leftjoin($joinclass, $joinalias);

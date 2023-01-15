@@ -7,7 +7,7 @@ $rows = array();
 $output = '';
 
 $c = $modx->newQuery($classname);
-$c->select($modx->getSelectColumns($classname, $classname, '', array('id', 'name')));
+$c->select($modx->getSelectColumns($classname, $c->getAlias(), '', array('id', 'name')));
 $c->sortby('name');
 
 if (!empty($category)) {

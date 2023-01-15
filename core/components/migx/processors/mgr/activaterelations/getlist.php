@@ -66,7 +66,7 @@ $where = !empty($config['getlistwhere']) ? $config['getlistwhere'] : '';
 $where = $modx->getOption('where', $scriptProperties, $where);
 
 $c = $modx->newQuery($classname);
-$c->select($modx->getSelectColumns($classname, $classname));
+$c->select($modx->getSelectColumns($classname, $c->getAlias()));
 
 
 if ($joins) {

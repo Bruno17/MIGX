@@ -179,8 +179,7 @@ class Migx {
 
         $c = $xpdo->newQuery($classname);
 
-        $shortClassName = end(explode('\\', $classname)); 
-        $c->select($xpdo->getSelectColumns($classname, $shortClassName, '', $selectfields));
+        $c->select($xpdo->getSelectColumns($classname, $c->getAlias(), '', $selectfields));
         if (!empty($specialfields)) {
             $c->select($specialfields);
         }
@@ -655,7 +654,7 @@ class Migx {
             $mf_configs = explode('||', $multiple_formtabs);
             $classname = 'migxConfig';
             $c = $this->modx->newQuery($classname);
-            $c->select($this->modx->getSelectColumns($classname, $classname));
+            $c->select($this->modx->getSelectColumns($classname, $c->getAlias()));
             $c->where(array('id:IN' => $mf_configs));
             $c->sortby('FIELD(' . $classname . '.id, ' . implode(',', $mf_configs) . ')');
             $formnames = array();

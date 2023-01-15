@@ -40,7 +40,7 @@ $showtrash = $modx->getOption('showtrash', $scriptProperties, '');
 $resource_id = $modx->getOption('resource_id', $scriptProperties, false);
 
 $c = $modx->newQuery($classname);
-$c->select($modx->getSelectColumns($classname, $classname));
+$c->select($modx->getSelectColumns($classname, $c->getAlias()));
 
 if (!empty($joinalias)) {
     /*
