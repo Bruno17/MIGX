@@ -13,6 +13,7 @@ class migxCreatePackageProcessor extends modProcessor {
 
     public function process() {
 
+        $isMODX3 = $this->modx->getVersionData()['version'] >= 3;
         $properties = $this->getProperties();
         $prefix = isset($properties['prefix']) && !empty($properties['prefix']) ? $properties['prefix'] : null;
         $restrictPrefix = true;
@@ -22,8 +23,14 @@ class migxCreatePackageProcessor extends modProcessor {
                 $restrictPrefix = false;
             }
         }
+        if (empty($properties['package']) && empty($properties['packageName'])){
+            return $this->success('Error: No Package Name');
+        }
 
         $packageName = $properties['package'] = $properties['packageName'];
+        $namespace_prefix = ucfirst($packageName) . '\\';
+        $package_namespace = $namespace_prefix . 'Model\\';
+        
         //$tablename = $properties['tablename'];
         $tableList = isset($properties['tableList']) && !empty($properties['tableList']) ? $properties['tableList'] : null;
         //$tableList = array(array('table1'=>'classname1'),array('table2'=>'className2'));
@@ -35,8 +42,15 @@ class migxCreatePackageProcessor extends modProcessor {
         }
 
         $packagepath = $this->modx->migx->findPackagePath($packageName); 
-        $modelpath = $packagepath . 'model/';
-        $schemapath = $modelpath . 'schema/';
+                
+        if ($isMODX3){
+            $modelpath = $packagepath . 'src/';
+            $schemapath = $packagepath . 'schema/';
+        }  else {
+            $modelpath = $packagepath . 'model/';  
+            $schemapath = $modelpath . 'schema/';    
+        }
+        
         $schemafile = $schemapath . $packageName . '.mysql.schema.xml';
 
         if (file_exists($packagepath . 'config/config.inc.php')) {
@@ -54,8 +68,7 @@ class migxCreatePackageProcessor extends modProcessor {
         } else {
             $xpdo = &$this->modx;
         }
-        $isMODX3 = $xpdo->getVersionData()['version'] >= 3;
-
+        
         $manager = $xpdo->getManager();
         $generator = $manager->getGenerator();
 
@@ -66,31 +79,49 @@ class migxCreatePackageProcessor extends modProcessor {
             
             if (!is_dir($packagepath)) {
                 if (!@mkdir($packagepath, $permissions, true)) {
+                    $this->modx->error->addError('could not create path: ' . $packagepath);
                     $this->modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migx create package]: could not create directory %s).', $packagepath));
                 } else {
                     chmod($packagepath, $permissions);
+                    $this->modx->error->addError('path created: ' . $packagepath);
                 }               
+            } else {
+                $this->modx->error->addError('path exists allready: ' . $packagepath);
             }
             if (!is_dir($modelpath)) {
                 if (!@mkdir($modelpath, $permissions, true)) {
+                    $this->modx->error->addError('could not create path: ' . $modelpath);
                     $this->modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migx create package]: could not create directory %s).', $modelpath));
                 } else {
                     chmod($modelpath, $permissions);
+                    $this->modx->error->addError('path created: ' . $modelpath);
                 }                      
+            } else {
+                $this->modx->error->addError('path exists allready: ' . $modelpath);
             }
             if (!is_dir($schemapath)) {
                 if (!@mkdir($schemapath, $permissions, true)) {
+                    $this->modx->error->addError('could not create path: ' . $schemapath);
                     $this->modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migx create package]: could not create directory %s).', $schemapath));
                 } else {
                     chmod($schemapath, $permissions);
+                    $this->modx->error->addError('path created: ' . $schemapath);
                 }                  
+            } else {
+                $this->modx->error->addError('path exists allready: ' . $schemapath);
             }
         }
 
 
         if ($properties['task'] == 'createPackage') {
             $content = '';
-            $schematemplate = $this->modx->migx->config['templatesPath'] . 'mgr/schemas/default.mysql.schema.xml';
+            if ($isMODX3){
+                $properties['package_namespace'] = $package_namespace;
+                $schematemplate = $this->modx->migx->config['templatesPath'] . 'mgr/schemas/default.for3.mysql.schema.xml';    
+            }  else {
+                $schematemplate = $this->modx->migx->config['templatesPath'] . 'mgr/schemas/default.mysql.schema.xml';    
+            }
+            
             if (file_exists($schematemplate)) {
                 $content = file_get_contents($schematemplate);
                 $chunk = $this->modx->newObject('modChunk');
@@ -101,6 +132,9 @@ class migxCreatePackageProcessor extends modProcessor {
 
             if (!file_exists($schemafile)) {
                 file_put_contents($schemafile, $content);
+                $this->modx->error->addError('File written: ' . $schemafile);
+            } else {
+                $this->modx->error->addError('File exists allready: ' . $schemafile);
             }
 
         }
@@ -109,9 +143,14 @@ class migxCreatePackageProcessor extends modProcessor {
 
             //Use this to create a schema from an existing database
             if ($isMODX3){
-                $xml = $generator->writeSchema($schemafile, $packageName, 'xPDO\Om\xPDOObject', is_null($prefix) ? '' : $prefix, $restrictPrefix);
+                $result = $generator->writeSchema($schemafile, $package_namespace, 'xPDO\Om\xPDOObject', is_null($prefix) ? '' : $prefix, $restrictPrefix);
             } else {
-                $xml = $generator->writeSchema($schemafile, $packageName, 'xPDOObject', $prefix, $restrictPrefix, $tableList);
+                $result = $generator->writeSchema($schemafile, $packageName, 'xPDOObject', $prefix, $restrictPrefix, $tableList);
+            }
+            if ($result){
+                $this->modx->error->addError('New file created: ' . $schemafile);
+            } else {
+                $this->modx->error->addError('File could not be created: ' . $schemafile);
             }
 
         }
@@ -121,7 +160,7 @@ class migxCreatePackageProcessor extends modProcessor {
             // NOTE: by default, only maps are overwritten; delete class files if you want to regenerate classes
             if ($isMODX3){
                 //Always regenerate the files
-                $generator->parseSchema($schemafile, $modelpath, ["regenerate" => 2]);
+                $generator->parseSchema($schemafile, $modelpath, ["regenerate" => 2,"namespacePrefix" => $namespace_prefix]);
             } else {
                 $generator->parseSchema($schemafile, $modelpath);
             }
@@ -148,10 +187,12 @@ class migxCreatePackageProcessor extends modProcessor {
         }
 
         if ($properties['task'] == 'loadSchema') {
+            
             if (file_exists($schemafile)) {
                 return $this->success('', array('content' => @file_get_contents($schemafile)));
                 //$this->setPlaceholder('schema', @file_get_contents($schemafile));
             }
+            return $this->success('Error: Could not find ' . $schemafile);
         }
 
         if ($properties['task'] == 'createTables') {
@@ -180,8 +221,8 @@ class migxCreatePackageProcessor extends modProcessor {
             }
         }
 
-
-        return $this->success();
+        $messages = $this->modx->error->getErrors();
+        return $this->success(implode("\n",$messages));
     }
 }
 return 'migxCreatePackageProcessor';

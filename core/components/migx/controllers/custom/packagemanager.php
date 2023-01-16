@@ -65,7 +65,7 @@ updatePackage: function(task) {
 
 $customHandlers[] = "
     updatePackageSuccess : function(r) {
-        
+        const message = r.message || 'success';
         if (r.object.content){
             //console.log(r.object.content);
             Ext.get('migxpm_schema').dom.value = r.object.content;
@@ -73,7 +73,7 @@ $customHandlers[] = "
             
             return;
         }
-        alert ('success');
+        alert (message);
         
     }	
 ";
