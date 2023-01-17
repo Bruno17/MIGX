@@ -112,16 +112,38 @@ class migxCreatePackageProcessor extends modProcessor {
             }
         }
 
-
         if ($properties['task'] == 'createPackage') {
             $content = '';
             if ($isMODX3){
+                $ns_class = 'MODX\Revolution\modNamespace';
                 $properties['package_namespace'] = $package_namespace;
                 $schematemplate = $this->modx->migx->config['templatesPath'] . 'mgr/schemas/default.for3.mysql.schema.xml';    
+                $bootstraptemplate = $this->modx->migx->config['templatesPath'] . 'mgr/bootstrap/bootstrap.tpl'; 
+                if (!file_exists($packagepath . 'bootstrap.php')) {
+                    $contents = file_get_contents($bootstraptemplate);
+                    $contents = str_replace('{$namespace}', rtrim($namespace_prefix,'\\'), $contents);
+                    file_put_contents($packagepath . 'bootstrap.php', $contents);
+                    $this->modx->error->addError('file created: ' . $packagepath . 'bootstrap.php');
+                } else {
+                    $this->modx->error->addError('file exists allready: ' . $packagepath . 'bootstrap.php'); 
+                }            
+            
             }  else {
+                $ns_class = 'modNamespace';
                 $schematemplate = $this->modx->migx->config['templatesPath'] . 'mgr/schemas/default.mysql.schema.xml';    
             }
-            
+
+            if ($namespace = $this->modx->getObject($ns_class,array('name' => $packageName))){
+                $this->modx->error->addError('MODX namespace exists allready: ' . $packageName);    
+            } else {
+                $namespace = $this->modx->newObject($ns_class);
+                $namespace->set('name',$packageName);
+                $namespace->set('path','{core_path}components/' . $packageName . '/');
+                $namespace->set('assets_path','{assets_path}components/' . $packageName . '/');
+                $namespace->save();
+                $this->modx->error->addError('MODX namespace created: ' . $packageName);  
+            }  
+
             if (file_exists($schematemplate)) {
                 $content = file_get_contents($schematemplate);
                 $chunk = $this->modx->newObject('modChunk');
@@ -197,12 +219,13 @@ class migxCreatePackageProcessor extends modProcessor {
 
         if ($properties['task'] == 'createTables') {
             //$prefix = empty($prefix) ? null : $prefix;
-            $xpdo->addPackage($packageName, $modelpath, $prefix);
             $pkgman = $this->modx->migx->loadPackageManager();
             $pkgman->manager = $xpdo->getManager();
             if ($isMODX3){
-                $pkgman->parseSchema($schemafile, $modelpath, ['compile' => true, 'update' => 0]);
+                $xpdo->addPackage($package_namespace, $modelpath, $prefix, $namespace_prefix);
+                $pkgman->parseSchema($schemafile, $modelpath, ['compile' => true, 'update' => 0,"namespacePrefix" => $namespace_prefix]);
             } else {
+                $xpdo->addPackage($packageName, $modelpath, $prefix);
                 $pkgman->parseSchema($schemafile, $modelpath, true);
             }
             $pkgman->createTables();

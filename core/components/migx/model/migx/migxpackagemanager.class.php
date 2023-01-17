@@ -24,7 +24,7 @@ class MigxPackageManager extends DynamicBaseMigxPackageManager {
             //Add package name (namespace) to the class name
             $packagename = $this->model['package'];
             foreach ($this->classes as $class => $value) {
-                $this->packageClasses[$packagename . '\\' . $class] = $value;
+                $this->packageClasses[rtrim($packagename,'\\') . '\\' . $class] = $value;
             }
         } else {
             $this->packageClasses = $this->classes;
