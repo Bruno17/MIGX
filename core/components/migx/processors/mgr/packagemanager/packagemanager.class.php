@@ -179,10 +179,10 @@ class migxCreatePackageProcessor extends modProcessor {
 
         if ($properties['task'] == 'parseSchema') {
             //Use this to generate classes and maps from your schema
-            // NOTE: by default, only maps are overwritten; delete class files if you want to regenerate classes
+            // NOTE: by default, only maps are overwritten; delete class files if you want to regenerate all classes
             if ($isMODX3){
-                //Always regenerate the files
-                $generator->parseSchema($schemafile, $modelpath, ["regenerate" => 2,"namespacePrefix" => $namespace_prefix]);
+                //only update platform classes, let main classes alone
+                $generator->parseSchema($schemafile, $modelpath, ["update" => 1,"namespacePrefix" => $namespace_prefix]);
             } else {
                 $generator->parseSchema($schemafile, $modelpath);
             }
@@ -190,16 +190,22 @@ class migxCreatePackageProcessor extends modProcessor {
 
         if ($properties['task'] == 'alterfields' || $properties['task'] == 'addmissing' || $properties['task'] == 'removedeleted' || $properties['task'] == 'checkindexes') {
             $prefix = empty($prefix) ? null : $prefix;
+            $options = [];
             $options['addmissing'] = 0;
             $options['removedeleted'] = 0;
             $options[$properties['task']] = 1;
 
-            $xpdo->addPackage($packageName, $modelpath, $prefix);
+            if ($isMODX3){
+                $xpdo->addPackage($package_namespace, $modelpath, $prefix, $namespace_prefix);
+            } else {
+                $xpdo->addPackage($packageName, $modelpath, $prefix);
+            }
+
             $pkgman = $this->modx->migx->loadPackageManager();
             $pkgman->xpdo2 = &$xpdo;
             $pkgman->manager = $xpdo->getManager();
             if ($isMODX3){
-                $pkgman->parseSchema($schemafile, $modelpath, ['compile' => true, 'update' => 0]);
+                $pkgman->parseSchema($schemafile, $modelpath, ['compile' => true, 'update' => 1,"namespacePrefix" => $namespace_prefix]);
             } else {
                 $pkgman->parseSchema($schemafile, $modelpath, true);
             }
@@ -223,7 +229,7 @@ class migxCreatePackageProcessor extends modProcessor {
             $pkgman->manager = $xpdo->getManager();
             if ($isMODX3){
                 $xpdo->addPackage($package_namespace, $modelpath, $prefix, $namespace_prefix);
-                $pkgman->parseSchema($schemafile, $modelpath, ['compile' => true, 'update' => 0,"namespacePrefix" => $namespace_prefix]);
+                $pkgman->parseSchema($schemafile, $modelpath, ['compile' => true, 'update' => 1,"namespacePrefix" => $namespace_prefix]);
             } else {
                 $xpdo->addPackage($packageName, $modelpath, $prefix);
                 $pkgman->parseSchema($schemafile, $modelpath, true);

@@ -15,7 +15,6 @@
         <field key="published" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="publishedon" dbtype="datetime" phptype="datetime" null="true" />
         <field key="publishedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
-        <field key="group_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
 
         <composite alias="Item" class="[[+package_namespace]][[+package]]Item" local="id" foreign="group_id" cardinality="many" owner="local" />
     </object>
@@ -39,6 +38,17 @@
         <field key="group_id" dbtype="int" precision="10" phptype="integer" null="false" default="0" index="index" />
 
         <aggregate alias="Group" class="[[+package_namespace]][[+package]]Group" local="group_id" foreign="id" cardinality="one" owner="foreign" />
+
+        <index alias="group_id" name="group_id" primary="false" unique="false" type="BTREE">
+            <column key="group_id" length="" collation="A" null="false" />
+        </index> 
+        <index alias="pos" name="pos" primary="false" unique="false" type="BTREE">
+            <column key="pos" length="" collation="A" null="false" />
+        </index>
+        <index alias="price" name="price" primary="false" unique="false" type="BTREE">
+            <column key="price" length="" collation="A" null="false" />
+        </index>          
+
     </object>
 
 </model>
