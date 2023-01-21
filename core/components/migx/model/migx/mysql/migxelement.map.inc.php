@@ -52,7 +52,7 @@ $xpdo_meta_map['migxElement']= array (
     array (
       'dbtype' => 'datetime',
       'phptype' => 'datetime',
-      'null' => false,
+      'null' => true,
     ),
     'editedby' => 
     array (
@@ -66,7 +66,7 @@ $xpdo_meta_map['migxElement']= array (
     array (
       'dbtype' => 'datetime',
       'phptype' => 'datetime',
-      'null' => false,
+      'null' => true,
     ),
     'deleted' => 
     array (
@@ -81,7 +81,7 @@ $xpdo_meta_map['migxElement']= array (
     array (
       'dbtype' => 'datetime',
       'phptype' => 'datetime',
-      'null' => false,
+      'null' => true,
     ),
     'deletedby' => 
     array (
@@ -104,7 +104,7 @@ $xpdo_meta_map['migxElement']= array (
     array (
       'dbtype' => 'datetime',
       'phptype' => 'datetime',
-      'null' => false,
+      'null' => true,
     ),
     'publishedby' => 
     array (
