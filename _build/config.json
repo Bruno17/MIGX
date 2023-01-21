@@ -139,7 +139,7 @@
   "lowCaseName":"migx",
   "description":"",
   "author":"",
-  "version":"3.0.0-alpha5",
+  "version":"3.0.0-beta1",
   "build":{
     "resolver":{
       "resolversDir":"resolvers",
