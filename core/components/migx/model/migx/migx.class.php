@@ -1901,7 +1901,7 @@ class Migx {
                     $desc = '';
                     if (!empty($field['description'])) {
                         $desc = $field['description'];
-                        $field['description'] = htmlentities($this->replaceLang($field['description']), ENT_QUOTES, $this->modx->getOption('modx_charset'));
+                        $field['description'] = is_string($desc) ? htmlentities($this->replaceLang($desc), ENT_QUOTES, $this->modx->getOption('modx_charset')) : '';
                         $tv->set('description', $field['description']);
                     }
 

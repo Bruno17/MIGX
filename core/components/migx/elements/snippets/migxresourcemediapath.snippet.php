@@ -32,12 +32,8 @@ $path = '';
 $createpath = false;
 $defaultpath = $modx->getOption('defaultPath', $scriptProperties, 'assets/migxdefault/');
 
-$debug = (bool)$modx->getOption('debug');
-
 if (empty($pathTpl)) {
-    if ($modx->getDebug() === true) {
-        $modx->log(MODX_LOG_LEVEL_ERROR, '[migxResourceMediaPath]: pathTpl not specified.');
-    }
+    $modx->log(MODX_LOG_LEVEL_DEBUG, '[migxResourceMediaPath]: pathTpl not specified.');
     return $defaultpath;
 }
 
@@ -73,9 +69,7 @@ if (empty($docid)) {
 }
 
 if (empty($docid)) {
-    if ($debug) {
-        $modx->log(MODX_LOG_LEVEL_ERROR, '[migxResourceMediaPath]: docid could not be determined.');
-    }
+    $modx->log(MODX_LOG_LEVEL_DEBUG, '[migxResourceMediaPath]: docid could not be determined.');
     return $defaultpath;
 }
 
@@ -143,9 +137,7 @@ if ($resource = $modx->getObject('modResource', $docid)) {
 
         $permissions = octdec('0' . (int)($modx->getOption('new_folder_permissions', null, '755', true)));
         if (!@mkdir($fullpath, $permissions, true)) {
-            if ($debug) {
-                $modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migxResourceMediaPath]: could not create directory %s).', $fullpath));
-            }
+            $modx->log(MODX_LOG_LEVEL_DEBUG, sprintf('[migxResourceMediaPath]: could not create directory %s).', $fullpath));
         } else {
             chmod($fullpath, $permissions);
         }
@@ -153,8 +145,6 @@ if ($resource = $modx->getObject('modResource', $docid)) {
 
     return $path;
 } else {
-    if ($debug) {
-        $modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migxResourceMediaPath]: resource not found (page id %s).', $docid));
-    }
+    $modx->log(MODX_LOG_LEVEL_DEBUG, sprintf('[migxResourceMediaPath]: resource not found (page id %s).', $docid));
     return $defaultpath;
 }
