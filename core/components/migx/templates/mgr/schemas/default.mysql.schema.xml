@@ -2,7 +2,7 @@
 
 <model package="[[+package]]" baseClass="xPDOObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="" phpdoc-subpackage="" version="1.1">
 
-    <object class="[[+package]]Group" table="[[+package]]_groups" extends="xPDOSimpleObject">
+    <object class="[[+package]]Group" table="[[+lc_package]]_groups" extends="xPDOSimpleObject">
         <field key="title" dbtype="varchar" phptype="string" precision="100" null="false" default="" />
         <field key="description" dbtype="text" phptype="string" null="false" default="" />
         <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
@@ -20,7 +20,7 @@
         <composite alias="Item" class="[[+package]]Item" local="id" foreign="group_id" cardinality="many" owner="local" />
     </object>
 
-    <object class="[[+package]]Item" table="[[+package]]_items" extends="xPDOSimpleObject">
+    <object class="[[+package]]Item" table="[[+lc_package]]_items" extends="xPDOSimpleObject">
         <field key="title" dbtype="varchar" phptype="string" precision="100" null="false" default="" />
         <field key="description" dbtype="text" phptype="string" null="false" default="" />
         <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0" index="index" />

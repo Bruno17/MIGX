@@ -28,6 +28,7 @@ class migxCreatePackageProcessor extends modProcessor {
         }
 
         $packageName = $properties['package'] = $properties['packageName'];
+        $lc_packageName = $properties['lc_package'] = strtolower($packageName);
         $namespace_prefix = ucfirst($packageName) . '\\';
         $package_namespace = $namespace_prefix . 'Model\\';
         
@@ -51,7 +52,7 @@ class migxCreatePackageProcessor extends modProcessor {
             $schemapath = $modelpath . 'schema/';    
         }
         
-        $schemafile = $schemapath . $packageName . '.mysql.schema.xml';
+        $schemafile = $schemapath . $lc_packageName . '.mysql.schema.xml';
 
         if (file_exists($packagepath . 'config/config.inc.php')) {
             include ($packagepath . 'config/config.inc.php');
@@ -133,15 +134,15 @@ class migxCreatePackageProcessor extends modProcessor {
                 $schematemplate = $this->modx->migx->config['templatesPath'] . 'mgr/schemas/default.mysql.schema.xml';    
             }
 
-            if ($namespace = $this->modx->getObject($ns_class,array('name' => $packageName))){
-                $this->modx->error->addError('MODX namespace exists allready: ' . $packageName);    
+            if ($namespace = $this->modx->getObject($ns_class,array('name' => $lc_packageName))){
+                $this->modx->error->addError('MODX namespace exists allready: ' . $lc_packageName);    
             } else {
                 $namespace = $this->modx->newObject($ns_class);
-                $namespace->set('name',$packageName);
-                $namespace->set('path','{core_path}components/' . $packageName . '/');
-                $namespace->set('assets_path','{assets_path}components/' . $packageName . '/');
+                $namespace->set('name',$lc_packageName);
+                $namespace->set('path','{core_path}components/' . $lc_packageName . '/');
+                $namespace->set('assets_path','{assets_path}components/' . $lc_packageName . '/');
                 $namespace->save();
-                $this->modx->error->addError('MODX namespace created: ' . $packageName);  
+                $this->modx->error->addError('MODX namespace created: ' . $lc_packageName);  
             }  
 
             if (file_exists($schematemplate)) {

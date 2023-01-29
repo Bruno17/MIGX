@@ -99,7 +99,8 @@ class Migx {
 
     public function findPackagePath($packageName) {
         $modx = &$this->modx;
-        return $modx->getOption( $packageName . '.core_path',null,$modx->getOption('core_path').'components/' . $packageName . '/');     
+        $lc_packageName = strtolower($packageName);
+        return $modx->getOption( $lc_packageName . '.core_path',null,$modx->getOption('core_path').'components/' . $lc_packageName . '/');     
     }
 
     public function getXpdoInstanceAndAddPackage($scriptProperties) {
