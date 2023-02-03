@@ -29,12 +29,12 @@ $tvname = $modx->getOption('tvname', $scriptProperties, '');
 $checktvs = $modx->getOption('checkTVs', $scriptProperties, false);
 
 $path = '';
+$fullpath = '';
 $createpath = false;
-$defaultpath = $modx->getOption('defaultPath', $scriptProperties, 'assets/migxdefault/');
+$fallbackpath = $modx->getOption('fallbackPath', $scriptProperties, 'assets/migxfallback/');
 
 if (empty($pathTpl)) {
     $modx->log(MODX_LOG_LEVEL_DEBUG, '[migxResourceMediaPath]: pathTpl not specified.');
-    return $defaultpath;
 }
 
 if (empty($docid) && $modx->getPlaceholder('mediasource_docid')) {
@@ -70,10 +70,15 @@ if (empty($docid)) {
 
 if (empty($docid)) {
     $modx->log(MODX_LOG_LEVEL_DEBUG, '[migxResourceMediaPath]: docid could not be determined.');
-    return $defaultpath;
 }
 
-if ($resource = $modx->getObject('modResource', $docid)) {
+if (empty($docid) || empty($pathTpl)) {
+    $path = $fallbackpath;
+    $fullpath = $modx->getOption('base_path') . $fallbackpath;
+    $createpath = true;
+}
+
+if (empty($fullpath) && $resource = $modx->getObject('modResource', $docid)) {
     $path = $pathTpl;
     $ultimateParent = '';
     if (strstr($path, '{breadcrumb}') || strstr($path, '{ultimateparent}')) {
@@ -133,18 +138,18 @@ if ($resource = $modx->getObject('modResource', $docid)) {
 
     }
 
-    if ($createpath && !file_exists($fullpath)) {
-
-        $permissions = octdec('0' . (int)($modx->getOption('new_folder_permissions', null, '755', true)));
-        if (!@mkdir($fullpath, $permissions, true)) {
-            $modx->log(MODX_LOG_LEVEL_DEBUG, sprintf('[migxResourceMediaPath]: could not create directory %s).', $fullpath));
-        } else {
-            chmod($fullpath, $permissions);
-        }
-    }
-
-    return $path;
 } else {
     $modx->log(MODX_LOG_LEVEL_DEBUG, sprintf('[migxResourceMediaPath]: resource not found (page id %s).', $docid));
-    return $defaultpath;
 }
+
+if ($createpath && !file_exists($fullpath)) {
+
+    $permissions = octdec('0' . (int)($modx->getOption('new_folder_permissions', null, '755', true)));
+    if (!@mkdir($fullpath, $permissions, true)) {
+        $modx->log(MODX_LOG_LEVEL_DEBUG, sprintf('[migxResourceMediaPath]: could not create directory %s).', $fullpath));
+    } else {
+        chmod($fullpath, $permissions);
+    }
+}
+
+return $path;
