@@ -1664,6 +1664,7 @@ class Migx {
                             $row['_this.value'] = $value;
                             $properties = $row;
                             $properties['_request'] = $_REQUEST;
+                            $properties['_media_source_id'] = $this->config['media_source_id'];
                             $renderchunktpl = $this->modx->getOption('_renderchunktpl', $option, '');
                             if (!empty($renderchunktpl)) {
                                 $row[$column] = $this->renderChunk($renderchunktpl, $properties, false);
