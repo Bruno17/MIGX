@@ -60,7 +60,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     this.view.groupTextTpl = '<div class="statisticGroup">{text}</div>';
     this._makeTemplates();
     this.getStore().pathconfigs=config.pathconfigs;
-    this.on('click', this.onClick, this);   
+    this.on('click', this.onClickGrid, this);   
 
 };
 Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
@@ -165,7 +165,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         rec.data.column_value = v;
         return this.tplRowActions.apply(rec.data);
 	} 
-	,onClick: function(e){
+	,onClickGrid: function(e){
 		
         var t = e.getTarget();
 		var elm = t.className.split(' ')[0];

@@ -178,7 +178,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
     this.getStore().pathconfigs=config.pathconfigs;
 
     this.loadData();
-    this.on('click', this.onClick, this);
+    this.on('click', this.onClickGrid, this);
 
 };
 Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid,{
@@ -708,7 +708,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         }
     	return;
     }
-    ,onClick: function(e){
+    ,onClickGrid: function(e){
 
         var t = e.getTarget();
         var elm = t.className.split(' ')[0];

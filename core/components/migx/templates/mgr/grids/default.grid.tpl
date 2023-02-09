@@ -73,7 +73,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     this._makeTemplates();
     this.setDefaultFilters();
     this.getStore().pathconfigs=config.pathconfigs;
-    this.on('click', this.onClick, this);   
+    this.on('click', this.onClickx, this);   
 
 };
 Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
@@ -291,7 +291,10 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
     ,getMenu: function() {
 		var n = this.menu.record;
         var m = [];
-        {/literal}{$customconfigs.gridcontextmenus}{literal}        	        
+        {/literal}{$customconfigs.gridcontextmenus}{literal}   
+        if (m.length > 0) {
+            //this.addContextMenuItem(m);
+        }             	        
 		return m;
     }
     ,renderRowActions:function(v,md,rec) {
@@ -348,7 +351,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
 
          MODx.fireResourceFormChange();   
 	} 
-	,onClick: function(e){
+	,onClickx: function(e){
         var t = e.getTarget();
         var elm = t.className.split(' ')[0];
 		if(elm == 'controlBtn') {
