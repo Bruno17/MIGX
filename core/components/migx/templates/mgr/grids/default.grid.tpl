@@ -73,7 +73,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     this._makeTemplates();
     this.setDefaultFilters();
     this.getStore().pathconfigs=config.pathconfigs;
-    this.on('click', this.onClickx, this);   
+    this.on('click', this.onClickGrid, this);   
 
 };
 Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
@@ -351,7 +351,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
 
          MODx.fireResourceFormChange();   
 	} 
-	,onClickx: function(e){
+	,onClickGrid: function(e){
         var t = e.getTarget();
         var elm = t.className.split(' ')[0];
 		if(elm == 'controlBtn') {
