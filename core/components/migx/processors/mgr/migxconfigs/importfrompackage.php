@@ -13,7 +13,7 @@ $classname = $config['classname'];
 $packageName = $modx->getOption('package', $scriptProperties, '');
 
 if (!empty($packageName)) {
-    //$packagepath = $modx->getOption('core_path') . 'components/' . $packageName . '/';
+    $packagepath = $modx->migx->findPackagePath($packageName); 
     $configpath = $packagepath . 'migxconfigs/';
     if (is_dir($configpath)) {
         if ($handle = opendir($configpath)) {
