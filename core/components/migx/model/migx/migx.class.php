@@ -145,7 +145,9 @@ class Migx {
                 $xpdo = &$this->modx;
             }
 
-            $xpdo->addPackage($packageName, $modelpath, $prefix);
+            if (is_dir($modelpath)) {
+                $xpdo->addPackage($packageName, $modelpath, $prefix);
+            }
         } else {
             $xpdo = &$this->modx;
         }
