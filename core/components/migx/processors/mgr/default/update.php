@@ -312,9 +312,15 @@ switch ($task) {
         //overwrites
         if (empty($postvalues['ow_createdon'])) {
             $postvalues['createdon'] = $tempvalues['createdon'];
+            if ($tempvalues['createdon'] < 0){
+                unset($postvalues['createdon']);
+            }
         }
         if (empty($postvalues['ow_publishedon'])) {
             $postvalues['publishedon'] = $tempvalues['publishedon'];
+            if ($tempvalues['pubishedon'] < 0){
+                unset($postvalues['publishedon']);
+            }            
         }
 
 
