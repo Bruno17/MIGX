@@ -1638,7 +1638,7 @@ class Migx {
 
     function renderChunk($tpl, $properties = array(), $getChunk = true, $printIfemty = true) {
 
-        /* convert any multivalue fields, stored as arrays, comma delimited list string */
+        /* convert any multivalue fields, stored as arrays, to comma delimited list string */
         foreach ($properties as $key => $prop) {
             if (is_array($prop) && count($prop) > 0) {
                 $properties[$key] = implode(',',$prop);
