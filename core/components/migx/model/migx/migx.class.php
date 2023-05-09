@@ -178,7 +178,7 @@ class Migx {
         $classname = $scriptProperties['classname'];
         $groupby = $modx->getOption('groupby', $scriptProperties, '');
 
-        $debug = $modx->getOption('debug', $scriptProperties, false);
+        $debug = isset($scriptProperties['debug']) ? $scriptProperties['debug'] : false;
 
         $c = $xpdo->newQuery($classname);
 
@@ -274,7 +274,7 @@ class Migx {
             echo $level . ' - ';
             */
 
-            if ($oldgroupvalue[$level] == $newgroupvalue) {
+            if (isset($oldgroupvalue[$level]) && $oldgroupvalue[$level] == $newgroupvalue) {
                 //still the same group
                 if ($fields['_last']) {
                     //last item at all
@@ -289,7 +289,7 @@ class Migx {
                         $group_idx++;
                     }
                 }
-            } else {
+            } elseif (isset($group_keys[$level])) {
                 //new group has started
                 $group_count = count($group_keys[$level]);
                 $group_idx = 1;
