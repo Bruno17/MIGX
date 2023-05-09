@@ -880,14 +880,13 @@ class Migx {
                     if (file_exists($configFile)) {
                         include ($configFile);
                     }
-                    if (!empty($packageName)) {
+                    if (isset($configpath) && !empty($packageName)) {
                         $configFile = $configpath . $config . '.config.inc.php'; // [ file ]
                         if (file_exists($configFile)) {
                             include ($configFile);
                         }
                     }
                 }
-
 
                 //print_r($this->customconfigs['tabs']) ;
 
