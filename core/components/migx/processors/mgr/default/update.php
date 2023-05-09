@@ -318,7 +318,7 @@ switch ($task) {
         }
         if (empty($postvalues['ow_publishedon'])) {
             $postvalues['publishedon'] = $tempvalues['publishedon'];
-            if ($tempvalues['pubishedon'] < 0){
+            if ($tempvalues['publishedon'] < 0){
                 unset($postvalues['publishedon']);
             }            
         }
