@@ -11,7 +11,7 @@ use xPDO\xPDO;
 // Add the service
 try {
     // Add the package and model classes
-    $modx->addPackage('{$namespace}\Model', $namespace['path'] . 'src/', null, '{$namespace}\\');
+    $modx->addPackage('{$namespace}\\Model\\', $namespace['path'] . 'src/', {$table_prefix}, '{$namespace}\\');
 
     if (class_exists('{$namespace}\\{$namespace}')) {
         $modx->services->add('{$namespace}', function($c) use ($modx) {
