@@ -274,6 +274,11 @@ class Migx {
             echo $level . ' - ';
             */
 
+            if (!isset($group_keys[$level])){
+                $group_keys[$level] = array(); 
+                $group_keys[$level][$key] = $key;   
+            }            
+
             if (isset($oldgroupvalue[$level]) && $oldgroupvalue[$level] == $newgroupvalue) {
                 //still the same group
                 if ($fields['_last']) {
@@ -313,6 +318,9 @@ class Migx {
             }
 
             $group_keys[$level][] = $key;
+            if (!isset($oldgroupvalue[$level])){
+                $oldgroupvalue[$level] = $newgroupvalue;
+            }            
         }
 
 
