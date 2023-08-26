@@ -1,5 +1,9 @@
 Changelog for MIGX.
 
+MIGX 3.0.2
+==========
+fix some MODX 3 and PHP 8 compatibility and more issues
+
 MIGX 2.13.0
 ==============
 add snippet migxGetObject and property toPlaceholders
