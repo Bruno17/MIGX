@@ -28,7 +28,7 @@ if (isset($config['use_custom_prefix']) && !empty($config['use_custom_prefix']))
 
 if (!empty($config['packageName'])) {
     $packageNames = explode(',', $config['packageName']);
-    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';    
+    $packageName = isset($packageNames[0]) ? $packageNames[0] : '';
 
     if (count($packageNames) == '1') {
         //for now connecting also to foreign databases, only with one package by default possible
@@ -36,7 +36,7 @@ if (!empty($config['packageName'])) {
     } else {
         //all packages must have the same prefix for now!
         foreach ($packageNames as $packageName) {
-            $packagepath = $modx->migx->findPackagePath($packageName); 
+            $packagepath = $modx->migx->findPackagePath($packageName);
             $modelpath = $packagepath . 'model/';
             if (is_dir($modelpath)) {
                 $modx->addPackage($packageName, $modelpath, $prefix);
@@ -47,9 +47,9 @@ if (!empty($config['packageName'])) {
     }
     if ($this->modx->lexicon) {
         $this->modx->lexicon->load($packageName . ':default');
-    }    
+    }
 }else{
-    $xpdo = &$modx;    
+    $xpdo = &$modx;
 }
 
 $classname = isset($config['classname']) ? $config['classname'] : '';
@@ -65,10 +65,10 @@ if (!empty($joinalias)) {
         $joinclass = $fkMeta['class'];
         if($fkMeta['owner'] == 'foreign'){
             $joinfield = $fkMeta['foreign'];
-		    //$parent_joinfield = $fkMeta['local']; 
+		    //$parent_joinfield = $fkMeta['local'];
 		} elseif ($fkMeta['owner'] == 'local'){
             $joinfield = $fkMeta['local'];
-		    //$parent_joinfield = $fkMeta['foreign']; 
+		    //$parent_joinfield = $fkMeta['foreign'];
 		}
     } else {
         $joinalias = '';
@@ -121,7 +121,7 @@ if (!empty($joinalias)) {
     /*
     if ($joinFkMeta = $modx->getFKDefinition($joinclass, 'Resource')){
     $localkey = $joinFkMeta['local'];
-    }    
+    }
     */
     $c->leftjoin($joinclass, $joinalias);
     $c->select($xpdo->getSelectColumns($joinclass, $joinalias, 'Joined_'));
@@ -169,15 +169,15 @@ if ($modx->migx->checkForConnectedResource($resource_id, $config)) {
         }
         $c->where(array($joinalias . '.' . $joinfield => $joinvalue));
     } else {
-        $c->where(array($classname . '.resource_id' => $resource_id));
+        $c->where(array($c->getAlias() . '.resource_id' => $resource_id));
     }
 }
 
 if ($checkdeleted) {
     if (!empty($showtrash)) {
-        $c->where(array($classname . '.deleted' => '1'));
+        $c->where(array($c->getAlias() . '.deleted' => '1'));
     } else {
-        $c->where(array($classname . '.deleted' => '0'));
+        $c->where(array($c->getAlias() . '.deleted' => '0'));
     }
 }
 
@@ -227,5 +227,3 @@ if ($collection = $modx->migx->getCollection($c)) {
 }
 
 $rows = $modx->migx->checkRenderOptions($rows);
-
-
