@@ -46,8 +46,8 @@
 
         <aggregate alias="List" class="[[+package]]Tasklist" local="list_id" foreign="id" cardinality="one" owner="foreign" />
 
-        <index alias="task_id" name="group_id" primary="false" unique="false" type="BTREE">
-            <column key="task_id" length="" collation="A" null="false" />
+        <index alias="list_id" name="list_id" primary="false" unique="false" type="BTREE">
+            <column key="list_id" length="" collation="A" null="false" />
         </index>
         <index alias="title" name="title" primary="false" unique="false" type="BTREE">
             <column key="title" length="" collation="A" null="false" />
