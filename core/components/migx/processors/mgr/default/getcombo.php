@@ -87,7 +87,7 @@ $execute = true;
 
 switch ($mode) {
     case 'year':
-        $sort = $modx->getOption('sort', $scriptProperties, 'YEAR(`' . $classname . '`.`' . $textfield . '`)');
+        $sort = $modx->getOption('sort', $scriptProperties, 'YEAR(`' . $c->getAlias() . '`.`' . $textfield . '`)');
         $dir = $modx->getOption('dir', $scriptProperties, 'DESC');
         $c->select('id,YEAR(' . $textfield . ') as combo_id , YEAR(' . $textfield . ') as combo_name');
         break;
@@ -96,9 +96,9 @@ switch ($mode) {
             $rows = array();
             $execute = false;
         } else {
-            $sort = $modx->getOption('sort', $scriptProperties, 'MONTH(`' . $classname . '`.`' . $textfield . '`)');
+            $sort = $modx->getOption('sort', $scriptProperties, 'MONTH(`' . $c->getAlias() . '`.`' . $textfield . '`)');
             $dir = $modx->getOption('dir', $scriptProperties, 'ASC');
-            $c->select('id, MONTH(' . $textfield . ') as combo_id, MONTH(' . $textfield . ') as combo_name,YEAR(`' . $classname . '`.`' . $textfield . '`) as year');
+            $c->select('id, MONTH(' . $textfield . ') as combo_id, MONTH(' . $textfield . ') as combo_name,YEAR(`' . $c->getAlias() . '`.`' . $textfield . '`) as year');
             //$c->where("YEAR(" . $modx->escape($classname) . '.' . $modx->escape('createdon') . ") = " .$scriptProperties['year'], xPDOQuery::SQL_AND);
         }
 
@@ -110,7 +110,7 @@ switch ($mode) {
             $c->leftjoin($joinclass, $joinalias);
             //$c->select($modx->getSelectColumns($joinclass, $joinalias, $joinalias . '_'));
         }
-        $c->select($classname . '.id, ' . $idfield . ' as combo_id, ' . $textfield . ' as combo_name');
+        $c->select($c->getAlias() . '.id, ' . $idfield . ' as combo_id, ' . $textfield . ' as combo_name');
         break;
 }
 
