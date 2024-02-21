@@ -47,9 +47,9 @@ $totalVar = $modx->getOption('totalVar', $scriptProperties, 'total');
 $randomize = $modx->getOption('randomize', $scriptProperties, false);
 $preselectLimit = $modx->getOption('preselectLimit', $scriptProperties, 0); // when random preselect important images
 $where = $modx->getOption('where', $scriptProperties, '');
-$where = !empty($where) ? $modx->fromJSON($where) : array();
+$where = !empty($where) ? json_decode($where,true) : array();
 $sort = $modx->getOption('sort', $scriptProperties, '');
-$sort = !empty($sort) ? $modx->fromJSON($sort) : array();
+$sort = !empty($sort) ? json_decode($sort,true) : array();
 $toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders', $scriptProperties, false);
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
 $outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, '');
@@ -73,7 +73,7 @@ $sumPrefix = $modx->getOption('sumPrefix', $scriptProperties, 'summary_');
 $addfields = $modx->getOption('addfields', $scriptProperties, '');
 $addfields = !empty($addfields) ? explode(',', $addfields) : null;
 //split json into parts
-$splits = $modx->fromJson($modx->getOption('splits', $scriptProperties, 0));
+$splits = json_decode($modx->getOption('splits', $scriptProperties, 0),true);
 $splitTpl = $modx->getOption('splitTpl', $scriptProperties, '');
 $splitSeparator = $modx->getOption('splitSeparator', $scriptProperties, '');
 $inheritFrom = $modx->getOption('inheritFrom', $scriptProperties, ''); //commaseparated list of resource-ids or/and the keyword 'parents' where to inherit from
@@ -108,7 +108,7 @@ if (!empty($tvname)) {
         }
         if (empty($formtabs) && isset($properties['formtabs'])) {
             //try to get formtabs and its fields from properties
-            $formtabs = $modx->fromJSON($properties['formtabs']);
+            $formtabs = json_decode($properties['formtabs'],true);
         }
 
         if (!empty($properties['basePath'])) {
@@ -174,7 +174,11 @@ if (empty($outputvalue)) {
 
 //echo $outputvalue.'<br/><br/>';
 
-$items = $modx->fromJSON($outputvalue);
+$items = json_decode($outputvalue,true);
+
+if (!is_array($items)){
+    $items = [];
+}
 
 // where filter
 if (is_array($where) && count($where) > 0) {
@@ -249,7 +253,7 @@ if ($count > 0) {
             if (is_array($value)) {
                 if (is_array($value[0])) {
                     //nested array - convert to json
-                    $value = $modx->toJson($value);
+                    $value = json_encode($value);
                 } else {
                     $value = implode('||', $value); //handle arrays (checkboxes, multiselects)
                 }
@@ -411,7 +415,7 @@ if (count($summaries) > 0) {
 
 
 if ($toJsonPlaceholder) {
-    $modx->setPlaceholder($toJsonPlaceholder, $modx->toJson($output));
+    $modx->setPlaceholder($toJsonPlaceholder, json_encode($output));
     return '';
 }
 
