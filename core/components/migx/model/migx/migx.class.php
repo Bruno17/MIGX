@@ -2755,7 +2755,7 @@ class Migx {
             //$parent = $workingobject->get('parent');
             $c = $xpdo->newQuery($classname);
             //$c->where(array('deleted'=>0 , 'parent'=>$parent));
-            $c->select($xpdo->getSelectColumns($classname, $classname));
+            $c->select($xpdo->getSelectColumns($classname, $c->getAlias()));
 
             if (!empty($joinalias)) {
                 /*
