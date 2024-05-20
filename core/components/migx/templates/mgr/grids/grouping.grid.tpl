@@ -39,7 +39,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     isModified : false,    
     sm: this.sm,
 	viewConfig: {
-        emptyText: 'No items found',
+        emptyText: '[[%migx.noitems]]',
         forceFit: true,
 		autoFill: true
     },
