@@ -35,6 +35,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
     enableDragDrop: true, // enable drag and drop of grid rows
     viewConfig: {
         emptyText: '[[%migx.noitems]]',
+        deferEmptyText: false,
         sm: new Ext.grid.RowSelectionModel({
             singleSelect:true
             }),

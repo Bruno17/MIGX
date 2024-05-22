@@ -47,10 +47,11 @@
     enableDragDrop: true, // enable drag and drop of grid rows
     sm: this.sm,
     viewConfig: {
-    emptyText: '[[%migx.noitems]]',
-    forceFit: true,
-    sm: new Ext.grid.RowSelectionModel({singleSelect:false}),
-    autoFill: true
+        emptyText: '[[%migx.noitems]]',
+        deferEmptyText: false,
+        forceFit: true,
+        sm: new Ext.grid.RowSelectionModel({singleSelect:false}),
+        autoFill: true
     },
     listeners: {
     "render": {
