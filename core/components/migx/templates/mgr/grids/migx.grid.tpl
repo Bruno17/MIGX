@@ -27,17 +27,18 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
     autoHeight: true,
     collapsible: true,
     resizable: true,
-    store: 	new Ext.data.JsonStore({
-        fields : config.fields
+    store: new Ext.data.JsonStore({
+        fields: config.fields
     }), // define the data store in a separate variable
     loadMask: true,
     ddGroup:'{/literal}{$tv->id}{literal}_gridDD',
     enableDragDrop: true, // enable drag and drop of grid rows
     viewConfig: {
-        emptyText: 'No items found',
+        emptyText: '[[%migx.noitems]]',
+        deferEmptyText: false,
         sm: new Ext.grid.RowSelectionModel({
             singleSelect:true
-            }),
+        }),
         forceFit: true,
         autoFill: true
     },
@@ -123,7 +124,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
                                 for(i = 0; i <  rows.length; i++) {
                                 ds.remove(ds.getById(rows[i].id));
                                 }
-     							ds.insert(cindex,data.selections);
+                                 ds.insert(cindex,data.selections);
                                 sm.clearSelections();
                              }
                              MODx.fireResourceFormChange();
@@ -243,7 +244,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
 
         this.autoinc = 0;
         for(i = 0; i <  items.length; i++) {
- 		    item = items[i];
+             item = items[i];
             if (item.MIGX_id){
                 if (parseInt(item.MIGX_id)  > this.autoinc){
                     this.autoinc = item.MIGX_id;
@@ -392,7 +393,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
                         Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
                         this.autoinc = 0;
                         for(i = 0; i <  items.length; i++) {
- 		                    item = items[i];
+                             item = items[i];
                             if (item.MIGX_id){
 
                                 if (parseInt(item.MIGX_id)  > this.autoinc){
@@ -533,7 +534,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         }
         var win_xtype = 'modx-window-mi-iframe-{/literal}{$win_id}{literal}';
         var object_id_field = null;
-    	if (this.windows[win_xtype]){
+        if (this.windows[win_xtype]){
             //this.windows[win_xtype].fp.autoLoad.params.tv_id='{/literal}{$tv->id}{literal}';
             //this.windows[win_xtype].fp.autoLoad.params.tv_name='{/literal}{$tv->name}{literal}';
             //this.windows[win_xtype].fp.autoLoad.params.itemid=index;
@@ -594,7 +595,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         var n = this.menu.record;
         var m = [];
         {/literal}{$customconfigs.gridcontextmenus}{literal}
-    	return m;
+        return m;
     }
     ,renderRowActions:function(v,md,rec) {
         var n = rec.data;
@@ -612,7 +613,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         var rec = null;
         if (column && column.dataIndex){
             col = column.dataIndex;
- 		    var records = this.selected_records;
+             var records = this.selected_records;
             if (records){
                 for(i = 0; i < records.length; i++) {
                 rec = records[i];
@@ -653,7 +654,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
 
         var griddata=this.store.data;
         for(i = 0; i <  griddata.length; i++) {
- 			items.push(griddata.items[i].json);
+             items.push(griddata.items[i].json);
         }
 
         if (this.call_collectmigxitems || this.call_collectmigxitems_once){
@@ -678,7 +679,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
                         Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = Ext.util.JSON.encode(items);
                         this.autoinc = 0;
                         for(i = 0; i <  items.length; i++) {
- 		                    item = items[i];
+                             item = items[i];
                             if (item.MIGX_id){
                                 if (parseInt(item.MIGX_id)  > this.autoinc){
                                     this.autoinc = item.MIGX_id;
@@ -706,7 +707,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
            Ext.get('tv{/literal}{$tv->id}{literal}').dom.value = '';
         }
         }
-    	return;
+        return;
     }
     ,onClickGrid: function(e){
 
@@ -727,7 +728,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             fn = fn.createDelegate(this);
             fn(null,e,col);
             e.stopEvent();
- 		}
+         }
     }
 });
 Ext.reg('modx-grid-multitvgrid-{/literal}{$tv->id}{literal}',MODx.grid.multiTVgrid{/literal}{$tv->id}{literal});

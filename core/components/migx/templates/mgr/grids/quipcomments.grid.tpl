@@ -5,7 +5,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     this.sm = new Ext.grid.CheckboxSelectionModel();
     this.ident = config.ident || 'quip-'+Ext.id();
 
-    var quipconfig = Ext.util.JSON.decode('{/literal}{$customconfigs.quipconfig}{literal}');    
+    var quipconfig = Ext.util.JSON.decode('{/literal}{$customconfigs.quipconfig}{literal}');
     config.url = quipconfig.connectorUrl;
     config.columns = [this.sm,{
             header: _('quip.comment')
@@ -29,17 +29,17 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
             ,width: 100
             ,renderer: this._renderUrl
         }];
-        
-    config.fields = ['id','author','username','body','createdon','name','approved','deleted','ip','url','pagetitle','comments','website','email','cls'];    
+
+    config.fields = ['id','author','username','body','createdon','name','approved','deleted','ip','url','pagetitle','comments','website','email','cls'];
 
     Ext.applyIf(config,{
         url: config.url
-        ,baseParams: { 
+        ,baseParams: {
             action: 'mgr/comment/getlist'
             ,thread: config.thread || null
             ,family: config.family || null
         }
-        ,fields: config.fields 
+        ,fields: config.fields
         ,paging: true
         ,autosave: false
         ,remoteSort: true
@@ -118,10 +118,10 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         },this);
     }
     ,clearFilter: function() {
-    	var s = this.getStore();
+        var s = this.getStore();
         s.baseParams.search = '';
         Ext.getCmp(this.ident+'-tf-search').reset();
-    	this.getBottomToolbar().changePage(1);
+        this.getBottomToolbar().changePage(1);
         this.refresh();
     }
     ,search: function(tf,newValue,oldValue) {
@@ -147,7 +147,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
         var cls = 'quip-posted';
         if (!rec.data.approved) cls += ' quip-unapproved';
         if (rec.data.deleted) cls += ' quip-deleted';
-        
+
         return '<div class="'+cls+'">'+v+'<br /><span class="quip-ip">'+rec.data.ip+'</span></div>';
     }
     ,toggleDeleted: function(btn,e) {
@@ -166,7 +166,7 @@ Ext.extend(MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal},MODx.grid.Grid,{
     ,approveSelected: function(btn,e) {
         var cs = this.getSelectedAsList();
         if (cs === false) return false;
-        
+
         MODx.Ajax.request({
             url: this.config.url
             ,params: {
@@ -440,8 +440,8 @@ Ext.reg('modx-grid-multitvdbgrid-{/literal}{$win_id}{literal}',MODx.grid.multiTV
 
 Quip.window.UpdateComment = function(config) {
     config = config || {};
-    var quipconfig = Ext.util.JSON.decode('{/literal}{$customconfigs.quipconfig}{literal}');    
-    config.url = quipconfig.connectorUrl;    
+    var quipconfig = Ext.util.JSON.decode('{/literal}{$customconfigs.quipconfig}{literal}');
+    config.url = quipconfig.connectorUrl;
     Ext.applyIf(config,{
         title: _('quip.comment_update')
         ,url: Quip.config.connector_url
@@ -456,17 +456,17 @@ Quip.window.UpdateComment = function(config) {
             xtype: 'textfield'
             ,fieldLabel: _('quip.name')
             ,name: 'name'
-            ,anchor: '90%'        
+            ,anchor: '90%'
         },{
             xtype: 'textfield'
             ,fieldLabel: _('quip.email')
             ,name: 'email'
-            ,anchor: '90%'        
+            ,anchor: '90%'
         },{
             xtype: 'textfield'
             ,fieldLabel: _('quip.website')
             ,name: 'website'
-            ,anchor: '90%'        
+            ,anchor: '90%'
         },{
             xtype: 'statictextfield'
             ,fieldLabel: _('quip.ip')
