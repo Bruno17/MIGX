@@ -134,7 +134,6 @@ switch ($task) {
             }
 
             if ($field != 'configs' && array_key_exists($field,$fieldsarray)) {
-                $oldfield = $field;
                 $field = explode('.', $field);
                 if (count($field) > 1) {
                     //extended field (json-array)
@@ -144,10 +143,7 @@ switch ($task) {
                         $postvalues[$field[0]] = $value;
                     }
                 }
-            } else {
-                //echo 'field ' . $field . '<br>';
             }
-
 
         }
         if (isset($postvalues['newcategory']) && !empty($postvalues['newcategory'])) {
