@@ -179,7 +179,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
     this.getStore().pathconfigs=config.pathconfigs;
 
     this.loadData();
-    this.on('click', this.onClickGrid, this);
+    //this.on('click', this.onClickGrid, this);
 
 };
 Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid,{
@@ -709,8 +709,7 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
         }
         return;
     }
-    ,onClickGrid: function(e){
-
+    ,onClick: function(e){
         var t = e.getTarget();
         var elm = t.className.split(' ')[0];
         if(elm == 'controlBtn') {
@@ -728,6 +727,8 @@ Ext.extend(MODx.grid.multiTVgrid{/literal}{$tv->id}{literal},MODx.grid.LocalGrid
             fn = fn.createDelegate(this);
             fn(null,e,col);
             e.stopEvent();
+         } else {
+            this.superclass().onClick.call(this,e);            
          }
     }
 });
