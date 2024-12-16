@@ -2,6 +2,8 @@
 MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
     config = config || {};
     //var cols=[this.sm];
+    var hide_actionscolumn = "{/literal}{$customconfigs.hide_actionscolumn|default}{literal}";
+    var showActionsColumn = hide_actionscolumn == "1" ? false : true;
     var cols=[];
     // add empty pathconfig (source) to array to match number of col in renderimage
     var renderer = null;
@@ -27,6 +29,7 @@ MODx.grid.multiTVgrid{/literal}{$tv->id}{literal} = function(config) {
     autoHeight: true,
     collapsible: true,
     resizable: true,
+    showActionsColumn: showActionsColumn,
     store: new Ext.data.JsonStore({
         fields: config.fields
     }), // define the data store in a separate variable

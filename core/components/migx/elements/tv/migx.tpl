@@ -49,7 +49,7 @@ MODx.window.UpdateTvItem = function(config) {
     this.config = config;
     
     {/literal}
-    console.log('window_id','{$smarty.request.window_id}');
+    //console.log('window_id','{$smarty.request.window_id}');
     {if array_key_exists('window_id',$smarty.request)}
         this.parent_window = '{$smarty.request.window_id}';
     {/if}

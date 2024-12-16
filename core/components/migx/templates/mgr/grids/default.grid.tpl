@@ -2,7 +2,8 @@
 
 MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     config = config || {};
-    //console.log(config);
+    var hide_actionscolumn = "{/literal}{$customconfigs.hide_actionscolumn|default}{literal}";
+    var showActionsColumn = hide_actionscolumn == "1" ? false : true;
     this.sm = new Ext.grid.CheckboxSelectionModel();
 
     // define grid columns in a separate variable
@@ -41,6 +42,7 @@ MODx.grid.multiTVdbgrid{/literal}{$win_id}{literal} = function(config) {
     autoHeight: true,
     collapsible: true,
     resizable: true,
+    showActionsColumn: showActionsColumn,    
     loadMask: true,
     paging: true,
     pageSize: 10,

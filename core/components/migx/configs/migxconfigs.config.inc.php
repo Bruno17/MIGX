@@ -1,5 +1,7 @@
 <?php
 
+$is_modx3 = $this->is_modx3();
+
 /*
 * the packageName where you have your classes
 * this can be used in processors
@@ -107,6 +109,14 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
         }
     }
 
+    $hide_actionscolumn = '';
+     
+    if ($is_modx3){
+        $hide_actionscolumn = '
+        {"field":"extended.hide_actionscolumn","caption":"Hide Actions Column","inputTVtype":"checkbox","inputOptionValues":"hide==1"},    
+        ';
+    }
+
     $tabs = '
 [
 {"caption":"Settings", "fields": [
@@ -132,6 +142,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     {"field":"extended.multiple_formtabs_optionsvalue","caption":"Multiple Formtabs Optionsvalue","description":"Value in formtabs-selectbox for this config. Default is the name of this config."}        
 ]},
 {"caption":"Columns", "fields": [
+    ' . $hide_actionscolumn . '
     {"field":"columns","caption":"Columns","inputTVtype":"' . $inputType . '","configs":"migxcolumns"}
 ]},
 {"caption":"Contextmenues", "fields": [
