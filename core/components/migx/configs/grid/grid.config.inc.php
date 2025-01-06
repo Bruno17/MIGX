@@ -845,6 +845,7 @@ $gridfunctions['this.importCsvMigx'] = "
     importCsvMigx: function(data) {
         var recordIndex = 'none';
         var pathname = data.pathname;
+        var fullRelativeUrl = data.fullRelativeUrl;
         if (this.menu.recordIndex == 0){
             recordIndex = 0; 
         }else{
@@ -861,6 +862,7 @@ $gridfunctions['this.importCsvMigx'] = "
                 ,items: Ext.get('tv' + tv_id).dom.value
                 ,record_index: recordIndex
                 ,pathname: pathname
+                ,fullRelativeUrl: fullRelativeUrl
             }
             ,listeners: {
                 'success': {fn:function(res){
@@ -914,5 +916,3 @@ exportImportItem: function(btn,e) {
   this.loadWin(btn,e,this.menu.recordIndex,'export_import_migxitem');
 }  
 ";
-
-
