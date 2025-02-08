@@ -25,7 +25,7 @@ if (!empty($field['inputOptionValues'])) {
 }
 
 $resource_id = 0;
-$inputoptions = $tv->parseInputOptions($tv->processBindings($tv->get('elements'),$resouce_id));
+$inputoptions = $tv->parseInputOptions($tv->processBindings($tv->get('elements'),$resource_id));
 $options = array();
 if (is_array($inputoptions)){
     foreach ($inputoptions as $option){
