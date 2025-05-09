@@ -101,6 +101,11 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     $c = $this->modx->newQuery($classname);
     $c->sortby('category');
     $c->groupby('category');
+    // === FIX for only_full_group_by ===
+    if (!in_array('id', $c->query['groupby'])) {
+        $c->groupby('id'); // Add grouping by primary key
+    }
+    // === END FIX ===
     $categorylist = array();
     $categorylist[] = 'select one==';
     if ($collection = $this->modx->getCollection($classname,$c)){
