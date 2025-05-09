@@ -47,6 +47,24 @@ class Migx {
     function __construct(modX & $modx, array $config = array()) {
         $this->modx = &$modx;
 
+        // ===============
+        // INJECTED PATCH
+        // Disable ONLY_FULL_GROUP_BY mode for all MIGX requests
+        static $sql_mode_disabled = false;
+        if (!$sql_mode_disabled) {
+            try {
+                $modx->query("SET SESSION sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))");
+                if ($modx->getOption('migx.debug', null, false)) {
+                    $modx->log(modX::LOG_LEVEL_INFO, 'MIGX: ONLY_FULL_GROUP_BY mode disabled for compatibility');
+                }
+                $sql_mode_disabled = true;
+            } catch (Exception $e) {
+                $modx->log(modX::LOG_LEVEL_ERROR, 'MIGX: Failed to disable ONLY_FULL_GROUP_BY mode: ' . $e->getMessage());
+            }
+        }
+        // END IJECTED PATCH
+        // =================
+
         $packageName = 'migx';
         $packagepath = $this->findPackagePath($packageName); 
         $modelpath = $packagepath . 'model/';
