@@ -221,7 +221,12 @@ class Migx {
         }
 
         if (!empty($groupby)) {
-            $c->groupby($groupby);
+            // Fix ERROR "SELECT list is not in GROUP BY clause" with sql_mode=only_full_group_by
+            if ($groupby == 'name') {
+                $c->groupby(array('id', 'name'));
+            } else {
+                $c->groupby($groupby);
+            }
         }
 
         //set "total" placeholder for getPage
