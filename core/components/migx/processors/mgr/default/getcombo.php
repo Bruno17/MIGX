@@ -132,6 +132,11 @@ if ($execute) {
     }
 
     $c->groupby('combo_name');
+    // === FIX for only_full_group_by ===
+    if (!in_array('id', $c->query['groupby'])) {
+        $c->groupby('id'); // Add grouping by primary key
+    }
+    // === END FIX ===
     $c->sortby($sort, $dir);
     $stmt = $c->prepare();
     //echo $c->toSql();
