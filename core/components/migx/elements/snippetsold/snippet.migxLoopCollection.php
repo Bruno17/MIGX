@@ -75,6 +75,11 @@ if (!empty($queries)) {
 
 if (!empty($groupby)) {
     $c->groupby($groupby);
+    // === FIX for only_full_group_by ===
+    if (!in_array('id', $c->query['groupby'])) {
+        $c->groupby('id'); // Add grouping by primary key
+    }
+    // === END FIX ===
 }
 
 //set "total" placeholder for getPage
