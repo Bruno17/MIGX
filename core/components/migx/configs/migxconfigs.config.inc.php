@@ -99,6 +99,7 @@ if (!empty($_REQUEST['tempParams']) && $_REQUEST['tempParams'] == 'export_import
     $prefixes[] = 'Custom Prefix==1';
     
     $c = $this->modx->newQuery($classname);
+    $c->select(['MIN(id) AS id','category']);
     $c->sortby('category');
     $c->groupby('category');
     $categorylist = array();

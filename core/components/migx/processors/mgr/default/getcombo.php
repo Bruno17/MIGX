@@ -110,7 +110,7 @@ switch ($mode) {
             $c->leftjoin($joinclass, $joinalias);
             //$c->select($modx->getSelectColumns($joinclass, $joinalias, $joinalias . '_'));
         }
-        $c->select($c->getAlias() . '.id, ' . $idfield . ' as combo_id, ' . $textfield . ' as combo_name');
+        $c->select('MIN(' . $c->getAlias() . '.id) as id, ' . $idfield . ' as combo_id, ' . $textfield . ' as combo_name');
         break;
 }
 
@@ -131,6 +131,7 @@ if ($execute) {
         $c->where($fwhere);
     }
 
+    $c->groupby('combo_id');
     $c->groupby('combo_name');
     $c->sortby($sort, $dir);
     $stmt = $c->prepare();
