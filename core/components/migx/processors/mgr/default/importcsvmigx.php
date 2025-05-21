@@ -24,6 +24,11 @@ if (!empty($hooksnippet_getcustomconfigs)){
 $reference_field = $modx->getOption('reference_field', $scriptProperties, 'id');
 $items = $modx->getOption('items', $scriptProperties, '');
 $pathname = $modx->getOption('pathname', $scriptProperties, '');
+if ($modx->migx->is_modx3()) {
+    // In MODX 3, 'pathname' is not an absolute path, but relative to the media source
+    $base_path = $modx->getOption('base_path', null, MODX_BASE_PATH);
+    $pathname = $base_path . $modx->getOption('fullRelativeUrl', $scriptProperties, '');
+}
 $items = !empty($items) ? $this->modx->fromJson($items) : array();
 
 
