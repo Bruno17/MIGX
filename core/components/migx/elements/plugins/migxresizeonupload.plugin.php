@@ -18,14 +18,11 @@ if ($modx->event->name != 'OnFileManagerUpload') {
 }
 
 
-$file = $modx->event->params['files']['file'];
+/* MODX 3 passes the uploaded files of the request, keyed by the uploader (the file browser can upload several). */
+$files = $modx->event->params['files'] ?? [];
 $directory = $modx->event->params['directory'];
+$resizeConfigs = [];
 
-if ($file['error'] != 0) {
-    return;
-}
-
-$name = $file['name'];
 //$extensions = explode(',', $modx->getOption('upload_images'));
 
 $source = $modx->event->params['source'];
@@ -60,59 +57,67 @@ if ($source instanceof modMediaSource) {
 }
 
 if (is_array($resizeConfigs) && count($resizeConfigs) > 0) {
-    foreach ($resizeConfigs as $rc) {
-        if (isset($rc['alias'])) {
-            $filePath = $basePath . $directory;
-            $filePath = str_replace('//','/',$filePath);
-            if ($rc['alias'] == 'origin') {
-                $thumbPath = $filePath;
-            } else {
-                $thumbPath = $filePath . $rc['alias'] . '/';
-                $permissions = octdec('0' . (int)($modx->getOption('new_folder_permissions', null, '755', true)));
-                if (!@mkdir($thumbPath, $permissions, true)) {
-                    $modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migxResourceMediaPath]: could not create directory %s).', $thumbPath));
+    foreach ((array) $files as $file) {
+        if (!is_array($file) || empty($file['name']) || (isset($file['error']) && $file['error'] != 0)) {
+            continue;
+        }
+
+        $name = $file['name'];
+
+        foreach ($resizeConfigs as $rc) {
+            if (isset($rc['alias'])) {
+                $filePath = $basePath . $directory;
+                $filePath = str_replace('//','/',$filePath);
+                if ($rc['alias'] == 'origin') {
+                    $thumbPath = $filePath;
                 } else {
-                    chmod($thumbPath, $permissions);
+                    $thumbPath = $filePath . $rc['alias'] . '/';
+                    $permissions = octdec('0' . (int)($modx->getOption('new_folder_permissions', null, '755', true)));
+                    if (!@mkdir($thumbPath, $permissions, true)) {
+                        $modx->log(MODX_LOG_LEVEL_ERROR, sprintf('[migxResourceMediaPath]: could not create directory %s).', $thumbPath));
+                    } else {
+                        chmod($thumbPath, $permissions);
+                    }
+
                 }
 
-            }
 
-
-            $filename = $filePath . $name;
-            $thumbname = $thumbPath . $name;
-            $ext = substr(strrchr($name, '.'), 1);
-            if (in_array($ext, $imageExtensions)) {
-                $sizes = getimagesize($filename);
-                echo $sizes[0]; 
-                //$format = substr($sizes['mime'], 6);
-                if ($sizes[0] > $rc['w'] || $sizes[1] > $rc['h']) {
-                    if ($sizes[0] < $rc['w']) {
-                        $rc['w'] = $sizes[0];
-                    }
-                    if ($sizes[1] < $rc['h']) {
-                        $rc['h'] = $sizes[1];
-                    }
-                    $type = $sizes[0] > $sizes[1] ? 'landscape' : 'portrait';
-                    if (isset($rc['far']) && $rc['far'] == '1' && isset($rc['w']) && isset($rc['h'])) {
-                        if ($type = 'landscape') {
-                            unset($rc['h']);
-                        }else {
-                            unset($rc['w']);
+                $filename = $filePath . $name;
+                $thumbname = $thumbPath . $name;
+                $ext = substr(strrchr($name, '.'), 1);
+                if (in_array($ext, $imageExtensions)) {
+                    $sizes = getimagesize($filename);
+                    echo $sizes[0]; 
+                    //$format = substr($sizes['mime'], 6);
+                    if ($sizes[0] > $rc['w'] || $sizes[1] > $rc['h']) {
+                        if ($sizes[0] < $rc['w']) {
+                            $rc['w'] = $sizes[0];
                         }
-                    }
-
-                    $options = '';
-                    foreach ($rc as $k => $v) {
-                        if ($k != 'alias') {
-                            $options .= '&' . $k . '=' . $v;
+                        if ($sizes[1] < $rc['h']) {
+                            $rc['h'] = $sizes[1];
                         }
+                        $type = $sizes[0] > $sizes[1] ? 'landscape' : 'portrait';
+                        if (isset($rc['far']) && $rc['far'] == '1' && isset($rc['w']) && isset($rc['h'])) {
+                            if ($type = 'landscape') {
+                                unset($rc['h']);
+                            }else {
+                                unset($rc['w']);
+                            }
+                        }
+
+                        $options = '';
+                        foreach ($rc as $k => $v) {
+                            if ($k != 'alias') {
+                                $options .= '&' . $k . '=' . $v;
+                            }
+                        }
+                        $resized = $modx->runSnippet('phpthumbof', array('input' => $filePath . $name, 'options' => $options));
+                        rename(MODX_BASE_PATH . substr($resized, 1), $thumbname);
                     }
-                    $resized = $modx->runSnippet('phpthumbof', array('input' => $filePath . $name, 'options' => $options));
-                    rename(MODX_BASE_PATH . substr($resized, 1), $thumbname);
                 }
+
+
             }
-
-
         }
     }
 }
